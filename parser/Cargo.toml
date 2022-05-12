@@ -6,3 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chumsky = "0.8"
+
+[dependencies.saplang-ast]
+path = "../ast"
+
+[dev-dependencies]
+test-case = "2.0"

@@ -1,8 +1,11 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
+use derive_more::From;
+
+#[derive(Debug, From, PartialEq)]
+pub enum Expr {
+    Lit(Literal),
+}
+
+#[derive(Debug, From, PartialEq)]
+pub enum Literal {
+    Num(f64),
 }

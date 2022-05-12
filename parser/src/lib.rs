@@ -1,8 +1,8 @@
+mod error;
+mod parser;
+
+pub use self::error::Error;
+pub use self::parser::expr;
+
 #[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
+mod tests;
