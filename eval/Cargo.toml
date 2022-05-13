@@ -6,3 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+derive_more = "0.99"
+
+[dependencies.saplang-ast]
+path = "../ast"
+
+[dependencies.saplang-parser]
+path = "../parser"
+
+[dev-dependencies]
+test-case = "2.0"

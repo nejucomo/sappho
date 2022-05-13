@@ -1,8 +1,10 @@
+mod error;
+mod eval;
+mod value;
+
+pub use self::error::{Error, Result};
+pub use self::eval::eval;
+pub use self::value::Value;
+
 #[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
+mod tests;
