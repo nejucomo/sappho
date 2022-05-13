@@ -1,3 +1,4 @@
+use crate::delimited::delimited;
 use crate::space::ws;
 use crate::Error;
 use chumsky::error::Simple;
@@ -34,7 +35,7 @@ fn expr(expr: Recursive<'_, char, Expr, Error>) -> impl Parser<char, Expr, Error
 fn parens_expr(
     expr: Recursive<'_, char, Expr, Error>,
 ) -> impl Parser<char, Expr, Error = Error> + '_ {
-    expr.delimited_by(just('(').then_ignore(ws().or_not()), just(')'))
+    delimited('(', expr, ')')
 }
 
 fn literal() -> impl Parser<char, Expr, Error = Error> {
@@ -90,13 +91,7 @@ fn func_clause(
 fn object_expr(
     expr: Recursive<'_, char, Expr, Error>,
 ) -> impl Parser<char, Expr, Error = Error> + '_ {
-    func_clause(expr)
-        .or_not()
-        .delimited_by(
-            just('{').then_ignore(ws().or_not()),
-            just('}').then_ignore(ws().or_not()),
-        )
-        .map(Expr::object_expr)
+    delimited('{', func_clause(expr).or_not(), '}').map(Expr::object_expr)
 }
 
 fn pattern() -> impl Parser<char, Pattern, Error = Error> {
