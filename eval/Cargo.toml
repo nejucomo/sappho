@@ -11,6 +11,9 @@ derive_more = "0.99"
 [dependencies.saplang-ast]
 path = "../ast"
 
+[dependencies.saplang-east]
+path = "../east"
+
 [dependencies.saplang-parser]
 path = "../parser"
 

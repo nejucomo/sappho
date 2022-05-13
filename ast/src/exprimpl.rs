@@ -19,7 +19,7 @@ impl Expr {
     pub fn func_expr(binding: Pattern, body: Expr) -> Self {
         Expr::Func(FuncExpr {
             binding,
-            body: std::rc::Rc::new(body),
+            body: Box::new(body),
         })
     }
 
@@ -27,7 +27,7 @@ impl Expr {
         Expr::Object(ObjectExpr {
             func: func.map(|(binding, body)| FuncExpr {
                 binding,
-                body: std::rc::Rc::new(body),
+                body: Box::new(body),
             }),
         })
     }

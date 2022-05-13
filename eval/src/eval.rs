@@ -1,9 +1,10 @@
 use crate::scope::ScopeRef;
-use crate::{FuncObj, List, Result, ValRef, Value};
-use saplang_ast::{Application, Expr, FuncExpr, Identifier, LetExpr, Literal};
+use crate::{List, Object, Result, ValRef, Value};
+use saplang_east::{Application, Expr, Identifier, LetExpr, Literal, ObjectExpr};
 
 pub fn eval(src: &str) -> Result<ValRef> {
-    let expr = saplang_parser::parse(src)?;
+    let astexpr = saplang_parser::parse(src)?;
+    let expr = Expr::from(astexpr);
     expr.eval(ScopeRef::default())
 }
 
@@ -33,9 +34,8 @@ impl Eval for Expr {
             Ref(x) => x.eval(scope),
             List(x) => x.eval(scope),
             Let(x) => x.eval(scope),
-            Func(x) => x.eval(scope),
             Apply(x) => x.eval(scope),
-            Object(x) => todo!("{:?}", x),
+            Object(x) => x.eval(scope),
         }
     }
 }
@@ -85,18 +85,6 @@ impl Eval for LetExpr {
     }
 }
 
-impl EvalV for FuncExpr {
-    fn eval_val(&self, scope: ScopeRef) -> Result<Value> {
-        let binding = self.binding.clone();
-        let body = self.body.clone();
-
-        Ok(Value::Func(FuncObj(Box::new(move |arg| {
-            let callscope = scope.extend(&binding, arg);
-            body.eval(callscope)
-        }))))
-    }
-}
-
 impl Eval for Application {
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
         use crate::Error::Uncallable;
@@ -106,8 +94,27 @@ impl Eval for Application {
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
         match tval.borrow() {
-            Value::Func(FuncObj(fnbox)) => fnbox(aval),
+            Value::Object(Object { func: Some(fnbox) }) => fnbox(aval),
             _ => Err(Uncallable(tval)),
         }
+    }
+}
+
+impl EvalV for ObjectExpr {
+    fn eval_val(&self, scope: ScopeRef) -> Result<Value> {
+        Ok(Value::Object(Object {
+            func: self
+                .func
+                .as_ref()
+                .map(|fc| -> Box<dyn Fn(ValRef) -> Result<ValRef>> {
+                    let binding = fc.binding.clone();
+                    let body = fc.body.clone();
+
+                    Box::new(move |arg| {
+                        let callscope = scope.extend(&binding, arg);
+                        body.eval(callscope)
+                    })
+                }),
+        }))
     }
 }

@@ -5,7 +5,7 @@ mod value;
 
 pub use self::error::{Error, Result};
 pub use self::eval::eval;
-pub use self::value::{FuncObj, List, ValRef, Value};
+pub use self::value::{List, Object, ValRef, Value};
 
 #[cfg(test)]
 mod tests;

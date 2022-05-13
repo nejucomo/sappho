@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "ast",
+  "east",
   "eval",
   "parser",
 ]

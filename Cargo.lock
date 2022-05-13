@@ -180,11 +180,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "saplang-east"
+version = "0.1.0"
+dependencies = [
+ "saplang-ast",
+]
+
+[[package]]
 name = "saplang-eval"
 version = "0.1.0"
 dependencies = [
  "derive_more",
  "saplang-ast",
+ "saplang-east",
  "saplang-parser",
  "test-case",
 ]
