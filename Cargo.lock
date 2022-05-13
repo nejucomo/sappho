@@ -161,6 +161,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "saplang-eval"
+version = "0.1.0"
+
+[[package]]
 name = "saplang-parser"
 version = "0.1.0"
 dependencies = [
