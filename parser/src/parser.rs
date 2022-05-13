@@ -8,7 +8,7 @@ use chumsky::Parser;
 use saplang_ast::{Application, Expr, FuncExpr, Identifier, LetExpr, Literal, Pattern};
 use std::str::FromStr;
 
-pub fn expression() -> impl Parser<char, Expr, Error = Error> {
+pub(crate) fn expression() -> impl Parser<char, Expr, Error = Error> {
     recursive(expr).then_ignore(chumsky::primitive::end())
 }
 

@@ -1,4 +1,3 @@
-use chumsky::Parser;
 use saplang_ast::{
     Application,
     Expr::{self, *},
@@ -92,5 +91,5 @@ use test_case::test_case;
     ; "rightwards application"
 )]
 fn positive(input: &str) -> Expr {
-    crate::expression().parse(input).unwrap()
+    crate::parse(input).unwrap()
 }
