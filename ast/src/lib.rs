@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 pub type Identifier = String;
 pub type Pattern = Identifier;
 
@@ -7,7 +9,7 @@ pub enum Expr {
     Ref(Identifier),
     List(Vec<Expr>),
     Let(Box<LetExpr>),
-    Func(Box<FuncExpr>),
+    Func(FuncExpr),
     Apply(Box<Application>),
 }
 
@@ -26,7 +28,7 @@ pub struct LetExpr {
 #[derive(Debug, PartialEq)]
 pub struct FuncExpr {
     pub binding: Pattern,
-    pub body: Expr,
+    pub body: Rc<Expr>,
 }
 
 #[derive(Debug, PartialEq)]

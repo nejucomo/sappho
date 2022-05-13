@@ -4,6 +4,7 @@ use saplang_ast::{
     FuncExpr, LetExpr,
     Literal::*,
 };
+use std::rc::Rc;
 use test_case::test_case;
 
 #[test_case("42" => Lit(Num(42.0)))]
@@ -54,10 +55,10 @@ use test_case::test_case;
 )]
 #[test_case(
     "fn x -> x" =>
-    Func(Box::new(FuncExpr {
+    Func(FuncExpr {
         binding: "x".to_string(),
-        body: Ref("x".to_string()),
-    }))
+        body: Rc::new(Ref("x".to_string())),
+    })
     ; "identify fn"
 )]
 #[test_case(

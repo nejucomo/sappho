@@ -17,7 +17,7 @@ fn expr(expr: Recursive<'_, char, Expr, Error>) -> impl Parser<char, Expr, Error
 
     let inner = parens_expr(expr.clone())
         .or(let_expr(expr.clone()).map(|le| Let(Box::new(le))))
-        .or(func_expr(expr.clone()).map(|fe| Func(Box::new(fe))))
+        .or(func_expr(expr.clone()).map(Func))
         .or(reference().map(Ref))
         .or(literal().map(Lit))
         .or(list(expr).map(List));
@@ -88,7 +88,10 @@ fn func_expr(
         .ignore_then(pattern())
         .then_ignore(just("->").delimited_by(ws(), ws()))
         .then(expr)
-        .map(|(binding, body)| FuncExpr { binding, body })
+        .map(|(binding, body)| FuncExpr {
+            binding,
+            body: std::rc::Rc::new(body),
+        })
 }
 
 fn pattern() -> impl Parser<char, Pattern, Error = Error> {

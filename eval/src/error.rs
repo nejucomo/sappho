@@ -1,3 +1,4 @@
+use crate::ValRef;
 use derive_more::From;
 use saplang_ast::Identifier;
 
@@ -5,6 +6,7 @@ use saplang_ast::Identifier;
 pub enum Error {
     Parse(Vec<saplang_parser::Error>),
     Unbound(Identifier),
+    Uncallable(ValRef),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
