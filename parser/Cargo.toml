@@ -12,4 +12,6 @@ chumsky = "0.8"
 path = "../ast"
 
 [dev-dependencies]
+derive_more = "0.99"
 test-case = "2.0"
+include_dir = "0.7"
