@@ -90,12 +90,13 @@ use test_case::test_case;
 )]
 #[test_case(
     "{}" =>
-    GenExpr::object_expr(None)
+    GenExpr::object_expr(None, None)
     ; "empty object"
 )]
 #[test_case(
     "{ fn x -> x }" =>
     GenExpr::object_expr(
+        None,
         Some((
             "x".to_string(),
             Ref("x".to_string()),

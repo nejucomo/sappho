@@ -17,6 +17,7 @@ pub enum GenExpr<Effects> {
     Let(LetExpr<Effects>),
     Func(FuncExpr),
     Apply(Application<Effects>),
+    Query(QueryExpr),
     Object(ObjectExpr),
     Effect(Effects),
 }
@@ -62,6 +63,12 @@ pub struct Application<Effects> {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct QueryExpr {
+    pub body: Box<GenExpr<QueryEffects>>,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct ObjectExpr {
+    pub query: Option<QueryExpr>,
     pub func: Option<FuncExpr>,
 }

@@ -91,7 +91,7 @@ fn func_clause(
 fn object_expr(
     expr: Recursive<'_, char, Expr, Error>,
 ) -> impl Parser<char, Expr, Error = Error> + '_ {
-    delimited('{', func_clause(expr).or_not(), '}').map(Expr::object_expr)
+    delimited('{', func_clause(expr).or_not(), '}').map(|fe| Expr::object_expr(None, fe))
 }
 
 fn pattern() -> impl Parser<char, Pattern, Error = Error> {

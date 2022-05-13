@@ -43,7 +43,13 @@ pub struct Application<Effects> {
 
 #[derive(Debug, PartialEq)]
 pub struct ObjectExpr {
+    pub query: Option<QueryClause>,
     pub func: Option<FuncClause>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct QueryClause {
+    pub body: Rc<GenExpr<QueryEffects>>,
 }
 
 #[derive(Debug, PartialEq)]

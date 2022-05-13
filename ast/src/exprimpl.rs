@@ -1,4 +1,6 @@
-use crate::{Application, Expr, FuncExpr, LetExpr, ObjectExpr, Pattern};
+use crate::{
+    Application, Expr, FuncExpr, GenExpr, LetExpr, ObjectExpr, Pattern, QueryEffects, QueryExpr,
+};
 
 impl Expr {
     pub fn let_expr(binding: Pattern, bindexpr: Expr, tail: Expr) -> Self {
@@ -23,8 +25,14 @@ impl Expr {
         })
     }
 
-    pub fn object_expr(func: Option<(Pattern, Expr)>) -> Self {
+    pub fn object_expr(
+        query: Option<GenExpr<QueryEffects>>,
+        func: Option<(Pattern, Expr)>,
+    ) -> Self {
         Expr::Object(ObjectExpr {
+            query: query.map(|body| QueryExpr {
+                body: Box::new(body),
+            }),
             func: func.map(|(binding, body)| FuncExpr {
                 binding,
                 body: Box::new(body),

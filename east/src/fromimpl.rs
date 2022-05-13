@@ -1,5 +1,6 @@
 use crate::{
-    Application, FuncClause, GenExpr, LetExpr, ObjectExpr, ProcEffects, PureEffects, QueryEffects,
+    Application, FuncClause, GenExpr, LetExpr, ObjectExpr, ProcEffects, PureEffects, QueryClause,
+    QueryEffects,
 };
 use saplang_ast as ast;
 
@@ -60,6 +61,7 @@ where
             ast::GenExpr::Let(x) => Let(x.into()),
             ast::GenExpr::Func(x) => Object(x.into()),
             ast::GenExpr::Apply(x) => Apply(x.into()),
+            ast::GenExpr::Query(x) => Object(x.into()),
             ast::GenExpr::Object(x) => Object(x.into()),
             ast::GenExpr::Effect(x) => Effect(FX::from_effects(x)),
         }
@@ -94,6 +96,7 @@ where
 impl From<ast::ObjectExpr> for ObjectExpr {
     fn from(ao: ast::ObjectExpr) -> ObjectExpr {
         ObjectExpr {
+            query: ao.query.map(QueryClause::from),
             func: ao.func.map(FuncClause::from),
         }
     }
@@ -102,6 +105,7 @@ impl From<ast::ObjectExpr> for ObjectExpr {
 impl From<ast::FuncExpr> for ObjectExpr {
     fn from(fe: ast::FuncExpr) -> ObjectExpr {
         ObjectExpr {
+            query: None,
             func: Some(FuncClause::from(fe)),
         }
     }
@@ -111,6 +115,23 @@ impl From<ast::FuncExpr> for FuncClause {
     fn from(fe: ast::FuncExpr) -> FuncClause {
         FuncClause {
             binding: fe.binding,
+            body: std::rc::Rc::new(GenExpr::from(*fe.body)),
+        }
+    }
+}
+
+impl From<ast::QueryExpr> for ObjectExpr {
+    fn from(fe: ast::QueryExpr) -> ObjectExpr {
+        ObjectExpr {
+            query: Some(QueryClause::from(fe)),
+            func: None,
+        }
+    }
+}
+
+impl From<ast::QueryExpr> for QueryClause {
+    fn from(fe: ast::QueryExpr) -> QueryClause {
+        QueryClause {
             body: std::rc::Rc::new(GenExpr::from(*fe.body)),
         }
     }
