@@ -2,29 +2,43 @@ mod fromimpl;
 
 use std::rc::Rc;
 
-pub use saplang_ast::{Identifier, Literal, Pattern};
+pub use saplang_ast::{Identifier, Literal, Pattern, PureEffects};
+
+pub type Expr = GenExpr<PureEffects>;
 
 #[derive(Debug, PartialEq)]
-pub enum Expr {
+pub enum GenExpr<Effects> {
     Lit(Literal),
     Ref(Identifier),
-    List(Vec<Expr>),
-    Let(LetExpr),
-    Apply(Application),
+    List(Vec<GenExpr<Effects>>),
+    Let(LetExpr<Effects>),
+    Apply(Application<Effects>),
     Object(ObjectExpr),
+    Effect(Effects),
 }
 
 #[derive(Debug, PartialEq)]
-pub struct LetExpr {
+pub enum QueryEffects {
+    Inquire(Box<GenExpr<QueryEffects>>),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ProcEffects {
+    Inquire(Box<GenExpr<ProcEffects>>),
+    Evoke(Box<GenExpr<ProcEffects>>),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct LetExpr<Effects> {
     pub binding: Pattern,
-    pub bindexpr: Box<Expr>,
-    pub tail: Box<Expr>,
+    pub bindexpr: Box<GenExpr<Effects>>,
+    pub tail: Box<GenExpr<Effects>>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Application {
-    pub target: Box<Expr>,
-    pub argument: Box<Expr>,
+pub struct Application<Effects> {
+    pub target: Box<GenExpr<Effects>>,
+    pub argument: Box<GenExpr<Effects>>,
 }
 
 #[derive(Debug, PartialEq)]

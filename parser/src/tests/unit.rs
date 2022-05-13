@@ -1,5 +1,5 @@
 use saplang_ast::{
-    Expr::{self, List, Lit, Ref},
+    GenExpr::{self, List, Lit, Ref},
     Literal::Num,
 };
 use test_case::test_case;
@@ -43,7 +43,7 @@ use test_case::test_case;
 )]
 #[test_case(
     "let x = 42;\nx" =>
-    Expr::let_expr(
+    GenExpr::let_expr(
         "x".to_string(),
         Lit(Num(42.0)),
         Ref("x".to_string()),
@@ -52,7 +52,7 @@ use test_case::test_case;
 )]
 #[test_case(
     "fn x -> x" =>
-    Expr::func_expr(
+    GenExpr::func_expr(
         "x".to_string(),
         Ref("x".to_string()),
     )
@@ -60,7 +60,7 @@ use test_case::test_case;
 )]
 #[test_case(
     "f x" =>
-    Expr::application(
+    GenExpr::application(
         Ref("f".to_string()),
         Ref("x".to_string()),
     )
@@ -68,8 +68,8 @@ use test_case::test_case;
 )]
 #[test_case(
     "f x y" =>
-    Expr::application(
-        Expr::application(
+    GenExpr::application(
+        GenExpr::application(
             Ref("f".to_string()),
             Ref("x".to_string()),
         ),
@@ -79,9 +79,9 @@ use test_case::test_case;
 )]
 #[test_case(
     "g (f x)" =>
-    Expr::application(
+    GenExpr::application(
         Ref("g".to_string()),
-        Expr::application(
+        GenExpr::application(
             Ref("f".to_string()),
             Ref("x".to_string()),
         ),
@@ -90,12 +90,12 @@ use test_case::test_case;
 )]
 #[test_case(
     "{}" =>
-    Expr::object_expr(None)
+    GenExpr::object_expr(None)
     ; "empty object"
 )]
 #[test_case(
     "{ fn x -> x }" =>
-    Expr::object_expr(
+    GenExpr::object_expr(
         Some((
             "x".to_string(),
             Ref("x".to_string()),
@@ -103,6 +103,6 @@ use test_case::test_case;
     )
     ; "object fn"
 )]
-fn positive(input: &str) -> Expr {
+fn positive(input: &str) -> saplang_ast::Expr {
     crate::parse(input).unwrap()
 }

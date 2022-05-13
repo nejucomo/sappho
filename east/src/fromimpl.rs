@@ -1,24 +1,76 @@
-use crate::{Application, Expr, FuncClause, LetExpr, ObjectExpr};
+use crate::{
+    Application, FuncClause, GenExpr, LetExpr, ObjectExpr, ProcEffects, PureEffects, QueryEffects,
+};
 use saplang_ast as ast;
 
-impl From<ast::Expr> for Expr {
-    fn from(ae: ast::Expr) -> Expr {
-        use Expr::*;
+pub trait FromEffects {
+    type ASTEffects;
 
-        match ae {
-            ast::Expr::Lit(x) => Lit(x),
-            ast::Expr::Ref(x) => Ref(x),
-            ast::Expr::List(x) => List(x.into_iter().map(Expr::from).collect()),
-            ast::Expr::Let(x) => Let(x.into()),
-            ast::Expr::Func(x) => Object(x.into()),
-            ast::Expr::Apply(x) => Apply(x.into()),
-            ast::Expr::Object(x) => Object(x.into()),
+    fn from_effects(fx: Self::ASTEffects) -> Self;
+}
+
+type AstFxFor<FX> = <FX as FromEffects>::ASTEffects;
+
+impl FromEffects for PureEffects {
+    type ASTEffects = Self;
+
+    fn from_effects(fx: Self) -> Self {
+        fx
+    }
+}
+
+impl FromEffects for QueryEffects {
+    type ASTEffects = ast::QueryEffects;
+
+    fn from_effects(fx: ast::QueryEffects) -> QueryEffects {
+        use ast::QueryEffects::Inquire as ASTInquire;
+        use QueryEffects::*;
+
+        match fx {
+            ASTInquire(bx) => Inquire(box_expr_from(bx)),
         }
     }
 }
 
-impl From<ast::LetExpr> for LetExpr {
-    fn from(ale: ast::LetExpr) -> LetExpr {
+impl FromEffects for ProcEffects {
+    type ASTEffects = ast::ProcEffects;
+
+    fn from_effects(fx: ast::ProcEffects) -> ProcEffects {
+        use ast::ProcEffects::{Evoke as ASTEvoke, Inquire as ASTInquire};
+        use ProcEffects::*;
+
+        match fx {
+            ASTInquire(bx) => Inquire(box_expr_from(bx)),
+            ASTEvoke(bx) => Evoke(box_expr_from(bx)),
+        }
+    }
+}
+
+impl<FX> From<ast::GenExpr<AstFxFor<FX>>> for GenExpr<FX>
+where
+    FX: FromEffects,
+{
+    fn from(ae: ast::GenExpr<AstFxFor<FX>>) -> GenExpr<FX> {
+        use GenExpr::*;
+
+        match ae {
+            ast::GenExpr::Lit(x) => Lit(x),
+            ast::GenExpr::Ref(x) => Ref(x),
+            ast::GenExpr::List(x) => List(x.into_iter().map(GenExpr::from).collect()),
+            ast::GenExpr::Let(x) => Let(x.into()),
+            ast::GenExpr::Func(x) => Object(x.into()),
+            ast::GenExpr::Apply(x) => Apply(x.into()),
+            ast::GenExpr::Object(x) => Object(x.into()),
+            ast::GenExpr::Effect(x) => Effect(FX::from_effects(x)),
+        }
+    }
+}
+
+impl<FX> From<ast::LetExpr<AstFxFor<FX>>> for LetExpr<FX>
+where
+    FX: FromEffects,
+{
+    fn from(ale: ast::LetExpr<AstFxFor<FX>>) -> LetExpr<FX> {
         LetExpr {
             binding: ale.binding,
             bindexpr: box_expr_from(ale.bindexpr),
@@ -27,8 +79,11 @@ impl From<ast::LetExpr> for LetExpr {
     }
 }
 
-impl From<ast::Application> for Application {
-    fn from(aa: ast::Application) -> Application {
+impl<FX> From<ast::Application<AstFxFor<FX>>> for Application<FX>
+where
+    FX: FromEffects,
+{
+    fn from(aa: ast::Application<AstFxFor<FX>>) -> Application<FX> {
         Application {
             target: box_expr_from(aa.target),
             argument: box_expr_from(aa.argument),
@@ -56,12 +111,15 @@ impl From<ast::FuncExpr> for FuncClause {
     fn from(fe: ast::FuncExpr) -> FuncClause {
         FuncClause {
             binding: fe.binding,
-            body: std::rc::Rc::new(Expr::from(*fe.body)),
+            body: std::rc::Rc::new(GenExpr::from(*fe.body)),
         }
     }
 }
 
 #[allow(clippy::boxed_local)]
-fn box_expr_from(b: Box<ast::Expr>) -> Box<Expr> {
-    Box::new(Expr::from(*b))
+fn box_expr_from<FX>(b: Box<ast::GenExpr<AstFxFor<FX>>>) -> Box<GenExpr<FX>>
+where
+    FX: FromEffects,
+{
+    Box::new(GenExpr::from(*b))
 }

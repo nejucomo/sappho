@@ -1,6 +1,8 @@
 use crate::scope::ScopeRef;
 use crate::{List, Object, Result, ValRef, Value};
-use saplang_east::{Application, Expr, Identifier, LetExpr, Literal, ObjectExpr};
+use saplang_east::{
+    Application, Expr, GenExpr, Identifier, LetExpr, Literal, ObjectExpr, PureEffects,
+};
 
 pub fn eval(src: &str) -> Result<ValRef> {
     let astexpr = saplang_parser::parse(src)?;
@@ -25,9 +27,12 @@ where
     }
 }
 
-impl Eval for Expr {
+impl<FX> Eval for GenExpr<FX>
+where
+    FX: Eval,
+{
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
-        use Expr::*;
+        use GenExpr::*;
 
         match &self {
             Lit(x) => x.eval(scope),
@@ -36,7 +41,14 @@ impl Eval for Expr {
             Let(x) => x.eval(scope),
             Apply(x) => x.eval(scope),
             Object(x) => x.eval(scope),
+            Effect(x) => x.eval(scope),
         }
+    }
+}
+
+impl Eval for PureEffects {
+    fn eval(&self, _scope: ScopeRef) -> Result<ValRef> {
+        unreachable!("There are no pure effects beyond `GenExpr` so theis should never evaluate.");
     }
 }
 
@@ -54,13 +66,19 @@ impl Eval for Identifier {
     }
 }
 
-impl EvalV for Vec<Expr> {
+impl<FX> EvalV for Vec<GenExpr<FX>>
+where
+    FX: Eval,
+{
     fn eval_val(&self, scope: ScopeRef) -> Result<Value> {
         eval_list_slice(&self[..], scope).map(Value::from)
     }
 }
 
-fn eval_list_slice(exprs: &[Expr], scope: ScopeRef) -> Result<List> {
+fn eval_list_slice<FX>(exprs: &[GenExpr<FX>], scope: ScopeRef) -> Result<List>
+where
+    FX: Eval,
+{
     if exprs.is_empty() {
         Ok(List::default())
     } else {
@@ -70,7 +88,10 @@ fn eval_list_slice(exprs: &[Expr], scope: ScopeRef) -> Result<List> {
     }
 }
 
-impl Eval for LetExpr {
+impl<FX> Eval for LetExpr<FX>
+where
+    FX: Eval,
+{
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
         let LetExpr {
             binding,
@@ -85,7 +106,10 @@ impl Eval for LetExpr {
     }
 }
 
-impl Eval for Application {
+impl<FX> Eval for Application<FX>
+where
+    FX: Eval,
+{
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
         use crate::Error::Uncallable;
         use std::borrow::Borrow;
