@@ -5,7 +5,7 @@ use chumsky::primitive::just;
 use chumsky::recursive::{recursive, Recursive};
 use chumsky::text;
 use chumsky::Parser;
-use saplang_ast::{Application, Expr, FuncExpr, Identifier, LetExpr, Literal, Pattern};
+use saplang_ast::{Expr, Literal, Pattern};
 use std::str::FromStr;
 
 pub(crate) fn expression() -> impl Parser<char, Expr, Error = Error> {
@@ -13,21 +13,19 @@ pub(crate) fn expression() -> impl Parser<char, Expr, Error = Error> {
 }
 
 fn expr(expr: Recursive<'_, char, Expr, Error>) -> impl Parser<char, Expr, Error = Error> + '_ {
-    use Expr::*;
-
     let inner = parens_expr(expr.clone())
-        .or(let_expr(expr.clone()).map(|le| Let(Box::new(le))))
-        .or(func_expr(expr.clone()).map(Func))
-        .or(reference().map(Ref))
-        .or(literal().map(Lit))
-        .or(list(expr).map(List));
+        .or(let_expr(expr.clone()))
+        .or(func_expr(expr.clone()))
+        .or(reference())
+        .or(literal())
+        .or(list(expr));
 
     let innerws = inner.then_ignore(ws().or_not());
 
     innerws.repeated().at_least(1).map(|exprs| {
         exprs
             .into_iter()
-            .reduce(|target, argument| Expr::Apply(Box::new(Application { target, argument })))
+            .reduce(Expr::application)
             .expect(".at_least(1) postcondition failed.")
     })
 }
@@ -38,10 +36,10 @@ fn parens_expr(
     expr.delimited_by(just('(').then_ignore(ws().or_not()), just(')'))
 }
 
-fn literal() -> impl Parser<char, Literal, Error = Error> {
+fn literal() -> impl Parser<char, Expr, Error = Error> {
     use Literal::*;
 
-    number().map(Num)
+    number().map(Num).map(Expr::Lit)
 }
 
 fn number() -> impl Parser<char, f64, Error = Error> {
@@ -50,21 +48,17 @@ fn number() -> impl Parser<char, f64, Error = Error> {
     })
 }
 
-fn reference() -> impl Parser<char, Identifier, Error = Error> {
-    text::ident()
+fn reference() -> impl Parser<char, Expr, Error = Error> {
+    text::ident().map(Expr::Ref)
 }
 
-fn list(
-    expr: Recursive<'_, char, Expr, Error>,
-) -> impl Parser<char, Vec<Expr>, Error = Error> + '_ {
+fn list(expr: Recursive<'_, char, Expr, Error>) -> impl Parser<char, Expr, Error = Error> + '_ {
     use crate::listform::list_form;
 
-    list_form(expr)
+    list_form(expr).map(Expr::List)
 }
 
-fn let_expr(
-    expr: Recursive<'_, char, Expr, Error>,
-) -> impl Parser<char, LetExpr, Error = Error> + '_ {
+fn let_expr(expr: Recursive<'_, char, Expr, Error>) -> impl Parser<char, Expr, Error = Error> + '_ {
     text::keyword("let")
         .then_ignore(ws())
         .ignore_then(pattern())
@@ -73,25 +67,18 @@ fn let_expr(
         .then_ignore(just(';'))
         .then_ignore(ws())
         .then(expr)
-        .map(|((binding, bindexpr), tail)| LetExpr {
-            binding,
-            bindexpr,
-            tail,
-        })
+        .map(|((binding, bindexpr), tail)| Expr::let_expr(binding, bindexpr, tail))
 }
 
 fn func_expr(
     expr: Recursive<'_, char, Expr, Error>,
-) -> impl Parser<char, FuncExpr, Error = Error> + '_ {
+) -> impl Parser<char, Expr, Error = Error> + '_ {
     text::keyword("fn")
         .then_ignore(ws())
         .ignore_then(pattern())
         .then_ignore(just("->").delimited_by(ws(), ws()))
         .then(expr)
-        .map(|(binding, body)| FuncExpr {
-            binding,
-            body: std::rc::Rc::new(body),
-        })
+        .map(|(binding, body)| Expr::func_expr(binding, body))
 }
 
 fn pattern() -> impl Parser<char, Pattern, Error = Error> {

@@ -1,3 +1,5 @@
+mod exprimpl;
+
 use std::rc::Rc;
 
 pub type Identifier = String;
@@ -8,9 +10,9 @@ pub enum Expr {
     Lit(Literal),
     Ref(Identifier),
     List(Vec<Expr>),
-    Let(Box<LetExpr>),
+    Let(LetExpr),
     Func(FuncExpr),
-    Apply(Box<Application>),
+    Apply(Application),
 }
 
 #[derive(Debug, PartialEq)]
@@ -21,8 +23,8 @@ pub enum Literal {
 #[derive(Debug, PartialEq)]
 pub struct LetExpr {
     pub binding: Pattern,
-    pub bindexpr: Expr,
-    pub tail: Expr,
+    pub bindexpr: Box<Expr>,
+    pub tail: Box<Expr>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -33,6 +35,6 @@ pub struct FuncExpr {
 
 #[derive(Debug, PartialEq)]
 pub struct Application {
-    pub target: Expr,
-    pub argument: Expr,
+    pub target: Box<Expr>,
+    pub argument: Box<Expr>,
 }
