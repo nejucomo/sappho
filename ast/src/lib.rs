@@ -31,6 +31,12 @@ pub struct LetExpr {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct FuncExpr {
+    pub binding: Pattern,
+    pub body: Box<Expr>,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct Application {
     pub target: Box<Expr>,
     pub argument: Box<Expr>,
@@ -39,10 +45,4 @@ pub struct Application {
 #[derive(Debug, PartialEq)]
 pub struct ObjectExpr {
     pub func: Option<FuncExpr>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct FuncExpr {
-    pub binding: Pattern,
-    pub body: Box<Expr>,
 }
