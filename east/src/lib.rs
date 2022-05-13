@@ -1,11 +1,8 @@
-//! This Abstract Syntax Tree corresponds to the textual grammar of `saplang`. Some of the grammar
-//! is short-hand convenience for a simpler grammar used in evaluation. Example:
-//!
-//! `fn x -> x` is short-hand for `{ fn x -> x }`.
-mod exprimpl;
+mod fromimpl;
 
-pub type Identifier = String;
-pub type Pattern = Identifier;
+use std::rc::Rc;
+
+pub use saplang_ast::{Identifier, Literal, Pattern};
 
 #[derive(Debug, PartialEq)]
 pub enum Expr {
@@ -13,14 +10,8 @@ pub enum Expr {
     Ref(Identifier),
     List(Vec<Expr>),
     Let(LetExpr),
-    Func(FuncExpr),
     Apply(Application),
     Object(ObjectExpr),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Literal {
-    Num(f64),
 }
 
 #[derive(Debug, PartialEq)]
@@ -38,11 +29,11 @@ pub struct Application {
 
 #[derive(Debug, PartialEq)]
 pub struct ObjectExpr {
-    pub func: Option<FuncExpr>,
+    pub func: Option<FuncClause>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct FuncExpr {
+pub struct FuncClause {
     pub binding: Pattern,
-    pub body: Box<Expr>,
+    pub body: Rc<Expr>,
 }

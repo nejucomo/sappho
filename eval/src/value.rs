@@ -8,7 +8,7 @@ pub type ValRef = Rc<Value>;
 pub enum Value {
     Num(f64),
     List(List),
-    Func(FuncObj),
+    Object(Object),
 }
 
 #[derive(Debug)]
@@ -29,10 +29,16 @@ impl List {
     }
 }
 
-pub struct FuncObj(pub Box<dyn Fn(ValRef) -> Result<ValRef>>);
+pub struct Object {
+    pub func: Option<Box<dyn Fn(ValRef) -> Result<ValRef>>>,
+}
 
-impl std::fmt::Debug for FuncObj {
+impl std::fmt::Debug for Object {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "<func>")
+        write!(
+            f,
+            "<object{}>",
+            if self.func.is_some() { " fn" } else { "" }
+        )
     }
 }
