@@ -35,6 +35,7 @@ impl Eval for Expr {
             Let(x) => x.eval(scope),
             Func(x) => x.eval(scope),
             Apply(x) => x.eval(scope),
+            Object(x) => todo!("{:?}", x),
         }
     }
 }
