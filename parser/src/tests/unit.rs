@@ -88,6 +88,21 @@ use test_case::test_case;
     )
     ; "rightwards application"
 )]
+#[test_case(
+    "{}" =>
+    Expr::object_expr(None)
+    ; "empty object"
+)]
+#[test_case(
+    "{ fn x -> x }" =>
+    Expr::object_expr(
+        Some((
+            "x".to_string(),
+            Ref("x".to_string()),
+        )),
+    )
+    ; "object fn"
+)]
 fn positive(input: &str) -> Expr {
     crate::parse(input).unwrap()
 }

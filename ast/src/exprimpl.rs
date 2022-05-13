@@ -1,4 +1,4 @@
-use crate::{Application, Expr, FuncExpr, LetExpr, Pattern};
+use crate::{Application, Expr, FuncExpr, LetExpr, ObjectExpr, Pattern};
 
 impl Expr {
     pub fn let_expr(binding: Pattern, bindexpr: Expr, tail: Expr) -> Self {
@@ -20,6 +20,15 @@ impl Expr {
         Expr::Func(FuncExpr {
             binding,
             body: std::rc::Rc::new(body),
+        })
+    }
+
+    pub fn object_expr(func: Option<(Pattern, Expr)>) -> Self {
+        Expr::Object(ObjectExpr {
+            func: func.map(|(binding, body)| FuncExpr {
+                binding,
+                body: std::rc::Rc::new(body),
+            }),
         })
     }
 }

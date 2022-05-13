@@ -14,6 +14,7 @@ pub(crate) fn expression() -> impl Parser<char, Expr, Error = Error> {
 
 fn expr(expr: Recursive<'_, char, Expr, Error>) -> impl Parser<char, Expr, Error = Error> + '_ {
     let inner = parens_expr(expr.clone())
+        .or(object_expr(expr.clone()))
         .or(let_expr(expr.clone()))
         .or(func_expr(expr.clone()))
         .or(reference())
@@ -73,12 +74,29 @@ fn let_expr(expr: Recursive<'_, char, Expr, Error>) -> impl Parser<char, Expr, E
 fn func_expr(
     expr: Recursive<'_, char, Expr, Error>,
 ) -> impl Parser<char, Expr, Error = Error> + '_ {
+    func_clause(expr).map(|(binding, body)| Expr::func_expr(binding, body))
+}
+
+fn func_clause(
+    expr: Recursive<'_, char, Expr, Error>,
+) -> impl Parser<char, (Pattern, Expr), Error = Error> + '_ {
     text::keyword("fn")
         .then_ignore(ws())
         .ignore_then(pattern())
         .then_ignore(just("->").delimited_by(ws(), ws()))
         .then(expr)
-        .map(|(binding, body)| Expr::func_expr(binding, body))
+}
+
+fn object_expr(
+    expr: Recursive<'_, char, Expr, Error>,
+) -> impl Parser<char, Expr, Error = Error> + '_ {
+    func_clause(expr)
+        .or_not()
+        .delimited_by(
+            just('{').then_ignore(ws().or_not()),
+            just('}').then_ignore(ws().or_not()),
+        )
+        .map(Expr::object_expr)
 }
 
 fn pattern() -> impl Parser<char, Pattern, Error = Error> {

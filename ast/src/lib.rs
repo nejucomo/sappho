@@ -1,3 +1,7 @@
+//! This Abstract Syntax Tree corresponds to the textual grammar of `saplang`. Some of the grammar
+//! is short-hand convenience for a simpler grammar used in evaluation. Example:
+//!
+//! `fn x -> x` is short-hand for `{ fn x -> x }`.
 mod exprimpl;
 
 use std::rc::Rc;
@@ -13,6 +17,7 @@ pub enum Expr {
     Let(LetExpr),
     Func(FuncExpr),
     Apply(Application),
+    Object(ObjectExpr),
 }
 
 #[derive(Debug, PartialEq)]
@@ -37,4 +42,9 @@ pub struct FuncExpr {
 pub struct Application {
     pub target: Box<Expr>,
     pub argument: Box<Expr>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ObjectExpr {
+    pub func: Option<FuncExpr>,
 }
