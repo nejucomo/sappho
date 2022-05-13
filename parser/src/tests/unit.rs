@@ -1,6 +1,7 @@
 use saplang_ast::{
-    GenExpr::{self, List, Lit, Ref},
+    GenExpr::{self, Effect, List, Lit, Ref},
     Literal::Num,
+    QueryEffects,
 };
 use test_case::test_case;
 
@@ -89,9 +90,33 @@ use test_case::test_case;
     ; "rightwards application"
 )]
 #[test_case(
+    "query x" =>
+    GenExpr::query_expr(Ref("x".to_string()))
+    ; "query x"
+)]
+#[test_case(
+    "query $x" =>
+    GenExpr::query_expr(
+        Effect(
+            QueryEffects::Inquire(
+                Box::new(Ref("x".to_string()))
+            )
+        )
+    )
+    ; "query inquire x"
+)]
+#[test_case(
     "{}" =>
     GenExpr::object_expr(None, None)
     ; "empty object"
+)]
+#[test_case(
+    "{ query x }" =>
+    GenExpr::object_expr(
+        Some(Ref("x".to_string())),
+        None,
+    )
+    ; "object query"
 )]
 #[test_case(
     "{ fn x -> x }" =>
@@ -103,6 +128,17 @@ use test_case::test_case;
         )),
     )
     ; "object fn"
+)]
+#[test_case(
+    "{ query x; fn x -> x }" =>
+    GenExpr::object_expr(
+        Some(Ref("x".to_string())),
+        Some((
+            "x".to_string(),
+            Ref("x".to_string()),
+        )),
+    )
+    ; "object full"
 )]
 fn positive(input: &str) -> saplang_ast::Expr {
     crate::parse(input).unwrap()

@@ -25,6 +25,12 @@ impl Expr {
         })
     }
 
+    pub fn query_expr(body: GenExpr<QueryEffects>) -> Self {
+        Expr::Query(QueryExpr {
+            body: Box::new(body),
+        })
+    }
+
     pub fn object_expr(
         query: Option<GenExpr<QueryEffects>>,
         func: Option<(Pattern, Expr)>,
