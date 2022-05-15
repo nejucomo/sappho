@@ -24,9 +24,9 @@ where
     FX: FxParser,
 {
     let inner = parens_expr(expr.clone())
-        .or(object_expr(expr.clone()))
+        .or(object_expr())
         .or(let_expr(expr.clone()))
-        .or(func_expr(expr.clone()))
+        .or(func_expr())
         .or(reference())
         .or(literal())
         .or(list(expr))
@@ -45,9 +45,8 @@ where
 impl FxParser for PureEffects {
     fn fx_parser() -> Box<dyn Parser<char, Self, Error = Error>> {
         Box::new(
-            chumsky::primitive::empty().validate(|(), span, emit| {
-                emit(Error::custom(span, "<internal non-parsing case>"))
-            }),
+            chumsky::primitive::empty()
+                .try_map(|(), span| Err(Error::custom(span, "<internal non-parsing case>"))),
         )
     }
 }
@@ -124,12 +123,7 @@ where
         .map(|((binding, bindexpr), tail)| GenExpr::let_expr(binding, bindexpr, tail))
 }
 
-fn func_expr<FX>(
-    expr: Recursive<'_, char, GenExpr<FX>, Error>,
-) -> impl Parser<char, GenExpr<FX>, Error = Error> + '_
-where
-    FX: FxParser,
-{
+fn func_expr<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error> {
     func_clause().map(|(binding, body)| GenExpr::func_expr(binding, body))
 }
 
@@ -141,12 +135,7 @@ fn func_clause() -> impl Parser<char, (Pattern, Expr), Error = Error> {
         .then(recursive(expr))
 }
 
-fn object_expr<FX>(
-    expr: Recursive<'_, char, GenExpr<FX>, Error>,
-) -> impl Parser<char, GenExpr<FX>, Error = Error> + '_
-where
-    FX: FxParser,
-{
+fn object_expr<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error> {
     delimited('{', func_clause().or_not(), '}').map(|fe| GenExpr::object_expr(None, fe))
 }
 
