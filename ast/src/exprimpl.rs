@@ -2,9 +2,9 @@ use crate::{
     Application, Expr, FuncExpr, GenExpr, LetExpr, ObjectExpr, Pattern, QueryEffects, QueryExpr,
 };
 
-impl Expr {
-    pub fn let_expr(binding: Pattern, bindexpr: Expr, tail: Expr) -> Self {
-        Expr::Let(LetExpr {
+impl<FX> GenExpr<FX> {
+    pub fn let_expr(binding: Pattern, bindexpr: GenExpr<FX>, tail: GenExpr<FX>) -> Self {
+        GenExpr::Let(LetExpr {
             binding,
             bindexpr: Box::new(bindexpr),
             tail: Box::new(tail),
@@ -12,21 +12,21 @@ impl Expr {
     }
 
     pub fn func_expr(binding: Pattern, body: Expr) -> Self {
-        Expr::Func(FuncExpr {
+        GenExpr::Func(FuncExpr {
             binding,
             body: Box::new(body),
         })
     }
 
-    pub fn application(target: Expr, argument: Expr) -> Self {
-        Expr::Apply(Application {
+    pub fn application(target: GenExpr<FX>, argument: GenExpr<FX>) -> Self {
+        GenExpr::Apply(Application {
             target: Box::new(target),
             argument: Box::new(argument),
         })
     }
 
     pub fn query_expr(body: GenExpr<QueryEffects>) -> Self {
-        Expr::Query(QueryExpr {
+        GenExpr::Query(QueryExpr {
             body: Box::new(body),
         })
     }
@@ -35,7 +35,7 @@ impl Expr {
         query: Option<GenExpr<QueryEffects>>,
         func: Option<(Pattern, Expr)>,
     ) -> Self {
-        Expr::Object(ObjectExpr {
+        GenExpr::Object(ObjectExpr {
             query: query.map(|body| QueryExpr {
                 body: Box::new(body),
             }),
