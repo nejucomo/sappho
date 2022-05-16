@@ -1,13 +1,13 @@
+mod universal;
+
 use crate::delimited::delimited;
 use crate::space::ws;
 use crate::Error;
-use chumsky::error::Simple;
 use chumsky::primitive::just;
 use chumsky::recursive::{recursive, Recursive};
 use chumsky::text;
 use chumsky::Parser;
 use saplang_ast::{GenExpr, Pattern, PureEffects, PureExpr, QueryEffects};
-use std::str::FromStr;
 
 pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = Error> {
     recursive(expr).then_ignore(chumsky::primitive::end())
@@ -24,11 +24,10 @@ where
     FX: FxParser,
 {
     let inner = parens_expr(expr.clone())
+        .or(self::universal::universal().map(GenExpr::Universal))
         .or(object_expr())
         .or(let_expr(expr.clone()))
         .or(func_expr())
-        .or(reference())
-        .or(literal())
         .or(list(expr))
         .or(FX::fx_parser().map(GenExpr::Effect));
 
@@ -71,26 +70,6 @@ where
     FX: FxParser,
 {
     delimited('(', expr, ')')
-}
-
-fn literal<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error>
-where
-    FX: FxParser,
-{
-    number().map(GenExpr::num)
-}
-
-fn number() -> impl Parser<char, f64, Error = Error> {
-    text::digits(10).try_map(|digs: String, span| {
-        f64::from_str(&digs).map_err(|e| Simple::custom(span, e.to_string()))
-    })
-}
-
-fn reference<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error>
-where
-    FX: FxParser,
-{
-    text::ident().map(GenExpr::ref_expr)
 }
 
 fn list<FX>(
