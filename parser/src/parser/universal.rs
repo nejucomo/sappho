@@ -4,7 +4,7 @@ use chumsky::{text, Parser};
 use saplang_ast::{Identifier, Literal, UniversalExpr};
 use std::str::FromStr;
 
-pub(super) fn universal() -> impl Parser<char, UniversalExpr, Error = Error> {
+pub(super) fn universal_expr() -> impl Parser<char, UniversalExpr, Error = Error> {
     use UniversalExpr::{Lit, Ref};
 
     reference().map(Ref).or(literal().map(Lit))
