@@ -7,7 +7,7 @@ mod exprimpl;
 pub type Identifier = String;
 pub type Pattern = Identifier;
 
-pub type Expr = GenExpr<PureEffects>;
+pub type PureExpr = GenExpr<PureEffects>;
 
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {
@@ -53,7 +53,7 @@ pub struct LetExpr<Effects> {
 #[derive(Debug, PartialEq)]
 pub struct FuncDef {
     pub binding: Pattern,
-    pub body: Box<Expr>,
+    pub body: Box<PureExpr>,
 }
 
 #[derive(Debug, PartialEq)]

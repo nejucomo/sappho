@@ -1,12 +1,12 @@
 use crate::scope::ScopeRef;
 use crate::{List, Object, Result, ValRef, Value};
 use saplang_east::{
-    Application, Expr, GenExpr, Identifier, LetExpr, Literal, ObjectDef, PureEffects,
+    Application, GenExpr, Identifier, LetExpr, Literal, ObjectDef, PureEffects, PureExpr,
 };
 
 pub fn eval(src: &str) -> Result<ValRef> {
     let astexpr = saplang_parser::parse(src)?;
-    let expr = Expr::from(astexpr);
+    let expr = PureExpr::from(astexpr);
     expr.eval(ScopeRef::default())
 }
 

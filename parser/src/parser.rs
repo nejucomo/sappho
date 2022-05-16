@@ -6,10 +6,10 @@ use chumsky::primitive::just;
 use chumsky::recursive::{recursive, Recursive};
 use chumsky::text;
 use chumsky::Parser;
-use saplang_ast::{Expr, GenExpr, Literal, Pattern, PureEffects, QueryEffects};
+use saplang_ast::{GenExpr, Literal, Pattern, PureEffects, PureExpr, QueryEffects};
 use std::str::FromStr;
 
-pub(crate) fn expression() -> impl Parser<char, Expr, Error = Error> {
+pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = Error> {
     recursive(expr).then_ignore(chumsky::primitive::end())
 }
 
@@ -127,7 +127,7 @@ fn func_expr<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error> {
     func_clause().map(|(binding, body)| GenExpr::func_expr(binding, body))
 }
 
-fn func_clause() -> impl Parser<char, (Pattern, Expr), Error = Error> {
+fn func_clause() -> impl Parser<char, (Pattern, PureExpr), Error = Error> {
     text::keyword("fn")
         .then_ignore(ws())
         .ignore_then(pattern())

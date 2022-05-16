@@ -1,5 +1,5 @@
 use crate::{
-    Application, Expr, FuncDef, GenExpr, LetExpr, ObjectDef, Pattern, QueryEffects, QueryDef,
+    Application, FuncDef, GenExpr, LetExpr, ObjectDef, Pattern, PureExpr, QueryDef, QueryEffects,
 };
 
 impl<FX> GenExpr<FX> {
@@ -11,7 +11,7 @@ impl<FX> GenExpr<FX> {
         })
     }
 
-    pub fn func_expr(binding: Pattern, body: Expr) -> Self {
+    pub fn func_expr(binding: Pattern, body: PureExpr) -> Self {
         GenExpr::Func(FuncDef {
             binding,
             body: Box::new(body),
@@ -33,7 +33,7 @@ impl<FX> GenExpr<FX> {
 
     pub fn object_expr(
         query: Option<GenExpr<QueryEffects>>,
-        func: Option<(Pattern, Expr)>,
+        func: Option<(Pattern, PureExpr)>,
     ) -> Self {
         GenExpr::Object(ObjectDef {
             query: query.map(|body| QueryDef {

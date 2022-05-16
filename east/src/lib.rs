@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 pub use saplang_ast::{Identifier, Literal, Pattern, PureEffects};
 
-pub type Expr = GenExpr<PureEffects>;
+pub type PureExpr = GenExpr<PureEffects>;
 
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {
@@ -55,5 +55,5 @@ pub struct QueryClause {
 #[derive(Debug, PartialEq)]
 pub struct FuncClause {
     pub binding: Pattern,
-    pub body: Rc<Expr>,
+    pub body: Rc<PureExpr>,
 }
