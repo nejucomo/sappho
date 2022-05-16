@@ -8,6 +8,8 @@ pub type Identifier = String;
 pub type Pattern = Identifier;
 
 pub type PureExpr = GenExpr<PureEffects>;
+pub type QueryExpr = GenExpr<QueryEffects>;
+pub type ProcExpr = GenExpr<ProcEffects>;
 
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {

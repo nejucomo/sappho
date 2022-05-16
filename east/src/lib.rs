@@ -5,6 +5,8 @@ use std::rc::Rc;
 pub use saplang_ast::{Identifier, Literal, Pattern, PureEffects};
 
 pub type PureExpr = GenExpr<PureEffects>;
+pub type QueryExpr = GenExpr<QueryEffects>;
+pub type ProcExpr = GenExpr<ProcEffects>;
 
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {
@@ -19,7 +21,7 @@ pub enum GenExpr<Effects> {
 
 #[derive(Debug, PartialEq)]
 pub enum QueryEffects {
-    Inquire(Box<GenExpr<QueryEffects>>),
+    Inquire(Box<QueryExpr>),
 }
 
 #[derive(Debug, PartialEq)]
@@ -49,7 +51,7 @@ pub struct ObjectDef {
 
 #[derive(Debug, PartialEq)]
 pub struct QueryClause {
-    pub body: Rc<GenExpr<QueryEffects>>,
+    pub body: Rc<QueryExpr>,
 }
 
 #[derive(Debug, PartialEq)]
