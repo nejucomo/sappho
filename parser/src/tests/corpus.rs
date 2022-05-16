@@ -1,6 +1,6 @@
 use derive_more::From;
 use include_dir::{include_dir, Dir};
-use saplang_ast::Expr;
+use saplang_ast::PureExpr;
 
 static CORPUS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/src/tests/corpus");
 
@@ -11,7 +11,7 @@ struct Error(std::path::PathBuf, Reason);
 enum Reason {
     Utf8(std::str::Utf8Error),
     Parse(Vec<crate::Error>),
-    InvalidParse(Expr),
+    InvalidParse(PureExpr),
 }
 
 #[test]
@@ -48,7 +48,7 @@ where
     }
 }
 
-fn parse_file(srcbytes: &[u8]) -> Result<Expr, Reason> {
+fn parse_file(srcbytes: &[u8]) -> Result<PureExpr, Reason> {
     let source = std::str::from_utf8(srcbytes)?;
     let expr = crate::parse(source)?;
     Ok(expr)

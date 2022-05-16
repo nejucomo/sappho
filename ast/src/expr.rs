@@ -22,6 +22,12 @@ impl<FX> GenExpr<FX> {
         GenExpr::Universal(UniversalExpr::Ref(ident))
     }
 
+    pub fn query_expr(body: QueryExpr) -> Self {
+        GenExpr::Common(CommonExpr::Query(QueryDef {
+            body: Box::new(body),
+        }))
+    }
+
     pub fn func_expr((binding, body): (Pattern, PureExpr)) -> Self {
         GenExpr::Common(CommonExpr::Func(FuncDef {
             binding,
@@ -58,5 +64,9 @@ impl<FX> GenExpr<FX> {
             target: Box::new(target),
             argument: Box::new(argument),
         }))
+    }
+
+    pub fn effect(effect: FX) -> Self {
+        GenExpr::Effect(effect)
     }
 }
