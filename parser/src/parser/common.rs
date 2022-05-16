@@ -6,7 +6,7 @@ use chumsky::recursive::Recursive;
 use chumsky::{text, Parser};
 use saplang_ast::{CommonExpr, FuncDef, PureExpr};
 
-pub(crate) fn common_expr(
+pub(crate) fn common_expr_within_pure(
     expr: Recursive<'_, char, PureExpr, Error>,
 ) -> impl Parser<char, CommonExpr, Error = Error> + '_ {
     use CommonExpr::*;
