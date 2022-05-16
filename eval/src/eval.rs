@@ -1,7 +1,7 @@
 use crate::scope::ScopeRef;
 use crate::{List, Object, Result, ValRef, Value};
 use saplang_east::{
-    Application, Expr, GenExpr, Identifier, LetExpr, Literal, ObjectExpr, PureEffects,
+    Application, Expr, GenExpr, Identifier, LetExpr, Literal, ObjectDef, PureEffects,
 };
 
 pub fn eval(src: &str) -> Result<ValRef> {
@@ -124,7 +124,7 @@ where
     }
 }
 
-impl EvalV for ObjectExpr {
+impl EvalV for ObjectDef {
     fn eval_val(&self, scope: ScopeRef) -> Result<Value> {
         Ok(Value::Object(Object {
             func: self

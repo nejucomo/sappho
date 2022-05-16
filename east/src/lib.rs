@@ -13,7 +13,7 @@ pub enum GenExpr<Effects> {
     List(Vec<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Apply(Application<Effects>),
-    Object(ObjectExpr),
+    Object(ObjectDef),
     Effect(Effects),
 }
 
@@ -42,7 +42,7 @@ pub struct Application<Effects> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ObjectExpr {
+pub struct ObjectDef {
     pub query: Option<QueryClause>,
     pub func: Option<FuncClause>,
 }

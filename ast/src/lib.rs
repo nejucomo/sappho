@@ -15,10 +15,10 @@ pub enum GenExpr<Effects> {
     Ref(Identifier),
     List(Vec<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
-    Func(FuncExpr),
+    Func(FuncDef),
     Apply(Application<Effects>),
-    Query(QueryExpr),
-    Object(ObjectExpr),
+    Query(QueryDef),
+    Object(ObjectDef),
     Effect(Effects),
 }
 
@@ -51,7 +51,7 @@ pub struct LetExpr<Effects> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct FuncExpr {
+pub struct FuncDef {
     pub binding: Pattern,
     pub body: Box<Expr>,
 }
@@ -63,12 +63,12 @@ pub struct Application<Effects> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct QueryExpr {
+pub struct QueryDef {
     pub body: Box<GenExpr<QueryEffects>>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ObjectExpr {
-    pub query: Option<QueryExpr>,
-    pub func: Option<FuncExpr>,
+pub struct ObjectDef {
+    pub query: Option<QueryDef>,
+    pub func: Option<FuncDef>,
 }

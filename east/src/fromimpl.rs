@@ -1,5 +1,5 @@
 use crate::{
-    Application, FuncClause, GenExpr, LetExpr, ObjectExpr, ProcEffects, PureEffects, QueryClause,
+    Application, FuncClause, GenExpr, LetExpr, ObjectDef, ProcEffects, PureEffects, QueryClause,
     QueryEffects,
 };
 use saplang_ast as ast;
@@ -93,26 +93,26 @@ where
     }
 }
 
-impl From<ast::ObjectExpr> for ObjectExpr {
-    fn from(ao: ast::ObjectExpr) -> ObjectExpr {
-        ObjectExpr {
+impl From<ast::ObjectDef> for ObjectDef {
+    fn from(ao: ast::ObjectDef) -> ObjectDef {
+        ObjectDef {
             query: ao.query.map(QueryClause::from),
             func: ao.func.map(FuncClause::from),
         }
     }
 }
 
-impl From<ast::FuncExpr> for ObjectExpr {
-    fn from(fe: ast::FuncExpr) -> ObjectExpr {
-        ObjectExpr {
+impl From<ast::FuncDef> for ObjectDef {
+    fn from(fe: ast::FuncDef) -> ObjectDef {
+        ObjectDef {
             query: None,
             func: Some(FuncClause::from(fe)),
         }
     }
 }
 
-impl From<ast::FuncExpr> for FuncClause {
-    fn from(fe: ast::FuncExpr) -> FuncClause {
+impl From<ast::FuncDef> for FuncClause {
+    fn from(fe: ast::FuncDef) -> FuncClause {
         FuncClause {
             binding: fe.binding,
             body: std::rc::Rc::new(GenExpr::from(*fe.body)),
@@ -120,17 +120,17 @@ impl From<ast::FuncExpr> for FuncClause {
     }
 }
 
-impl From<ast::QueryExpr> for ObjectExpr {
-    fn from(fe: ast::QueryExpr) -> ObjectExpr {
-        ObjectExpr {
+impl From<ast::QueryDef> for ObjectDef {
+    fn from(fe: ast::QueryDef) -> ObjectDef {
+        ObjectDef {
             query: Some(QueryClause::from(fe)),
             func: None,
         }
     }
 }
 
-impl From<ast::QueryExpr> for QueryClause {
-    fn from(fe: ast::QueryExpr) -> QueryClause {
+impl From<ast::QueryDef> for QueryClause {
+    fn from(fe: ast::QueryDef) -> QueryClause {
         QueryClause {
             body: std::rc::Rc::new(GenExpr::from(*fe.body)),
         }
