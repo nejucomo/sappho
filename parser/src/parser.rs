@@ -6,7 +6,7 @@ use chumsky::primitive::just;
 use chumsky::recursive::{recursive, Recursive};
 use chumsky::text;
 use chumsky::Parser;
-use saplang_ast::{GenExpr, Literal, Pattern, PureEffects, PureExpr, QueryEffects};
+use saplang_ast::{GenExpr, Pattern, PureEffects, PureExpr, QueryEffects};
 use std::str::FromStr;
 
 pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = Error> {
@@ -77,9 +77,7 @@ fn literal<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error>
 where
     FX: FxParser,
 {
-    use Literal::*;
-
-    number().map(Num).map(GenExpr::Lit)
+    number().map(GenExpr::num)
 }
 
 fn number() -> impl Parser<char, f64, Error = Error> {
@@ -92,7 +90,7 @@ fn reference<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error>
 where
     FX: FxParser,
 {
-    text::ident().map(GenExpr::Ref)
+    text::ident().map(GenExpr::ref_expr)
 }
 
 fn list<FX>(
@@ -103,7 +101,7 @@ where
 {
     use crate::listform::list_form;
 
-    list_form(expr).map(GenExpr::List)
+    list_form(expr).map(GenExpr::list)
 }
 
 fn let_expr<FX>(
@@ -124,7 +122,7 @@ where
 }
 
 fn func_expr<FX>() -> impl Parser<char, GenExpr<FX>, Error = Error> {
-    func_clause().map(|(binding, body)| GenExpr::func_expr(binding, body))
+    func_clause().map(GenExpr::func_expr)
 }
 
 fn func_clause() -> impl Parser<char, (Pattern, PureExpr), Error = Error> {
