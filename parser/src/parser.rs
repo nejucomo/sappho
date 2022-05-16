@@ -5,9 +5,8 @@ mod recursive;
 mod universal;
 
 use crate::Error;
-use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use saplang_ast::PureExpr;
+use saplang_ast::{PureExpr, QueryExpr};
 
 pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = Error> {
     use chumsky::primitive::end;
@@ -16,17 +15,27 @@ pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = Error> {
 }
 
 fn pure_expr() -> impl Parser<char, PureExpr, Error = Error> {
-    chumsky::recursive::recursive(pure_expr_rec)
+    chumsky::recursive::recursive(|expr| {
+        use self::base::{base_expr, uncommon_expr};
+        use self::common::purectx;
+
+        base_expr(
+            |expr| uncommon_expr(expr.clone()).or(purectx::common_expr(expr).map(PureExpr::Common)),
+            expr,
+        )
+    })
 }
 
-fn pure_expr_rec(
-    expr: Recursive<'_, char, PureExpr, Error>,
-) -> impl Parser<char, PureExpr, Error = Error> + '_ {
-    use self::base::{base_expr, uncommon_expr};
-    use self::common::common_expr_within_pure;
+fn query_expr() -> impl Parser<char, QueryExpr, Error = Error> {
+    chumsky::recursive::recursive(|expr| {
+        use self::base::{base_expr, uncommon_expr};
+        use self::common::queryctx;
 
-    base_expr(
-        |expr| uncommon_expr(expr.clone()).or(common_expr_within_pure(expr).map(PureExpr::Common)),
-        expr,
-    )
+        base_expr(
+            |expr| {
+                uncommon_expr(expr.clone()).or(queryctx::common_expr(expr).map(QueryExpr::Common))
+            },
+            expr,
+        )
+    })
 }
