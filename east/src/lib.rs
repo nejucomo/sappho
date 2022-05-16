@@ -6,7 +6,9 @@ mod expr;
 mod recursive;
 
 pub use self::common::ObjectDef;
-pub use self::effects::{AstFxFor, FromFx, ProcExpr, PureExpr, QueryExpr};
+pub use self::effects::{
+    AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,
+};
 pub use self::expr::GenExpr;
-pub use self::recursive::RecursiveExpr;
+pub use self::recursive::{Application, LetExpr, RecursiveExpr};
 pub use saplang_ast::{Identifier, Literal, Pattern, UniversalExpr};
