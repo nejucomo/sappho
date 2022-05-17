@@ -11,7 +11,20 @@ pub(super) fn universal_expr() -> impl Parser<char, UniversalExpr, Error = Error
 }
 
 fn reference() -> impl Parser<char, Identifier, Error = Error> {
-    text::ident()
+    use crate::keyword::Keyword;
+
+    text::ident().try_map(|ident, span| {
+        for kw in Keyword::iter() {
+            if ident == kw.as_str() {
+                return Err(Simple::custom(
+                    span,
+                    format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
+                ));
+            }
+        }
+
+        Ok(ident)
+    })
 }
 
 fn literal() -> impl Parser<char, Literal, Error = Error> {

@@ -11,8 +11,8 @@ pub struct ObjectDef {
 impl From<ast::ObjectDef> for ObjectDef {
     fn from(od: ast::ObjectDef) -> ObjectDef {
         ObjectDef {
-            query: od.query.map(|d| QueryClause::from(d)),
-            func: od.func.map(|d| FuncClause::from(d)),
+            query: od.query.map(QueryClause::from),
+            func: od.func.map(FuncClause::from),
         }
     }
 }

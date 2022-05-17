@@ -39,13 +39,22 @@ use test_case::test_case;
     ; "natural pair list"
 )]
 #[test_case(
+    "let x = 42; x" =>
+    GenExpr::let_expr(
+        "x".to_string(),
+        GenExpr::num(42.0),
+        GenExpr::ref_expr("x".to_string()),
+    )
+    ; "let x x space"
+)]
+#[test_case(
     "let x = 42;\nx" =>
     GenExpr::let_expr(
         "x".to_string(),
         GenExpr::num(42.0),
         GenExpr::ref_expr("x".to_string()),
     )
-    ; "let x x"
+    ; "let x x newline"
 )]
 #[test_case(
     "fn x -> x" =>
@@ -134,7 +143,18 @@ use test_case::test_case;
             GenExpr::ref_expr("x".to_string()),
         )),
     )
-    ; "object full"
+    ; "object full query first"
+)]
+#[test_case(
+    "{ fn x -> x; query x }" =>
+    GenExpr::object_expr(
+        Some(GenExpr::ref_expr("x".to_string())),
+        Some((
+            "x".to_string(),
+            GenExpr::ref_expr("x".to_string()),
+        )),
+    )
+    ; "object full fn first"
 )]
 fn positive(input: &str) -> saplang_ast::PureExpr {
     crate::parse(input).unwrap()
