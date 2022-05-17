@@ -2,6 +2,7 @@ mod delimited;
 mod error;
 mod listform;
 mod parser;
+mod restrict;
 mod space;
 
 pub use self::error::Error;
