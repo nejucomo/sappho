@@ -1,39 +1,14 @@
-mod fromimpl;
+//! The Eval Abstract Syntax Tree (east) is a subset of [`saplang-ast`] for evaluation
 
-use std::rc::Rc;
+mod common;
+mod effects;
+mod expr;
+mod recursive;
 
-pub use saplang_ast::{Identifier, Literal, Pattern};
-
-#[derive(Debug, PartialEq)]
-pub enum Expr {
-    Lit(Literal),
-    Ref(Identifier),
-    List(Vec<Expr>),
-    Let(LetExpr),
-    Apply(Application),
-    Object(ObjectExpr),
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LetExpr {
-    pub binding: Pattern,
-    pub bindexpr: Box<Expr>,
-    pub tail: Box<Expr>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Application {
-    pub target: Box<Expr>,
-    pub argument: Box<Expr>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct ObjectExpr {
-    pub func: Option<FuncClause>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct FuncClause {
-    pub binding: Pattern,
-    pub body: Rc<Expr>,
-}
+pub use self::common::ObjectDef;
+pub use self::effects::{
+    AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,
+};
+pub use self::expr::GenExpr;
+pub use self::recursive::{Application, LetExpr, RecursiveExpr};
+pub use saplang_ast::{Identifier, Literal, Pattern, UniversalExpr};
