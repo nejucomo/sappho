@@ -1,10 +1,10 @@
 use saplang_ast::{GenExpr, QueryEffects::Inquire};
 use test_case::test_case;
 
-#[test_case("42" => GenExpr::num(42.0))]
-#[test_case("42\n" => GenExpr::num(42.0))]
-#[test_case("bob" => GenExpr::ref_expr("bob".to_string()))]
-#[test_case("bob  \n   " => GenExpr::ref_expr("bob".to_string()))]
+#[test_case("42" => GenExpr::num(42.0) ; "forty-two")]
+#[test_case("42\n" => GenExpr::num(42.0) ; "forty-two newline")]
+#[test_case("bob" => GenExpr::ref_expr("bob".to_string()) ; "ref bob")]
+#[test_case("bob  \n   " => GenExpr::ref_expr("bob".to_string()) ; "ref bob newline")]
 #[test_case("[]" => GenExpr::list(vec![]) ; "tight empty list")]
 #[test_case("[\n]" => GenExpr::list(vec![]) ; "multiline empty list")]
 #[test_case("[ ] " => GenExpr::list(vec![]) ; "space empty list")]
