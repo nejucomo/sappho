@@ -1,51 +1,37 @@
-use derive_more::From;
+mod error;
+
+use self::error::{Error, Errors, Mismatch, Reason};
 use include_dir::{include_dir, Dir};
 use saplang_ast::PureExpr;
 
 static CORPUS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/src/tests/corpus");
 
-#[derive(Debug)]
-struct Error(std::path::PathBuf, Reason);
-
-#[derive(Debug, From)]
-enum Reason {
-    MissingFile(&'static str),
-    StrUtf8(std::str::Utf8Error),
-    StringUtf8(std::string::FromUtf8Error),
-    Parse(Vec<crate::Error>),
-    InvalidParse(PureExpr),
-    MismatchedOutput(String, String),
+#[test]
+fn positives() {
+    parse_corpus("positives", parse_file)
 }
 
 #[test]
-fn positives() -> Result<(), &'static str> {
-    parse_corpus_pretty("positives", parse_file)
+fn negatives() {
+    parse_corpus("negatives", parse_file_negative)
 }
 
-#[test]
-fn negatives() -> Result<(), &'static str> {
-    parse_corpus_pretty("negatives", parse_file_negative)
-}
-
-fn parse_corpus_pretty<F, T>(corpusname: &str, parsefunc: F) -> Result<(), &'static str>
+fn parse_corpus<F, T>(corpusname: &str, parsefunc: F)
 where
     F: Fn(&[u8]) -> Result<T, Reason>,
-    T: TestFormat,
+    T: ToString,
 {
-    parse_corpus(corpusname, parsefunc).map_err(|es| {
-        for Error(casepath, reason) in es {
-            eprintln!("Error in case {:?}: {:#?}", casepath, reason);
-        }
-        "some cases had errors"
-    })
+    if let Some(e) = parse_corpus_result(corpusname, parsefunc).err() {
+        panic!("{}", e);
+    }
 }
 
-fn parse_corpus<F, T>(corpusname: &str, parsefunc: F) -> Result<(), Vec<Error>>
+fn parse_corpus_result<F, T>(corpusname: &str, parsefunc: F) -> Result<(), Errors>
 where
     F: Fn(&[u8]) -> Result<T, Reason>,
-    T: TestFormat,
+    T: ToString,
 {
-    let mut ferrors = vec![];
+    let mut errors = Errors::default();
 
     let corpcase = CORPUS_DIR
         .get_dir(corpusname)
@@ -54,15 +40,11 @@ where
     for casedir in only_dirs(corpcase) {
         if let Some(reason) = parse_case(casedir, &parsefunc).err() {
             let casepath = casedir.path().to_path_buf();
-            ferrors.push(Error(casepath, reason))
+            errors.push(Error(casepath, reason))
         }
     }
 
-    if ferrors.is_empty() {
-        Ok(())
-    } else {
-        Err(ferrors)
-    }
+    errors.into_result()
 }
 
 fn only_dirs<'a>(d: &Dir<'a>) -> Vec<&'a Dir<'a>> {
@@ -81,13 +63,13 @@ fn only_dirs<'a>(d: &Dir<'a>) -> Vec<&'a Dir<'a>> {
 fn parse_case<F, T>(casedir: &Dir, parsefunc: F) -> Result<(), Reason>
 where
     F: Fn(&[u8]) -> Result<T, Reason>,
-    T: TestFormat,
+    T: ToString,
 {
     let input = file_contents(casedir, "input")?;
     match String::from_utf8(file_contents(casedir, "expected")?.to_vec()) {
-        Ok(expected) => match parsefunc(input).map(|v| v.test_format()) {
+        Ok(expected) => match parsefunc(input).map(|v| v.to_string()) {
             Ok(found) if found == expected => Ok(()),
-            Ok(found) => Err(Reason::MismatchedOutput(found, expected)),
+            Ok(found) => Err(Reason::MismatchedOutput(Mismatch { found, expected })),
             Err(reason) => Err(reason),
         },
         Err(r) => Err(Reason::from(r)),
@@ -106,29 +88,10 @@ fn parse_file(srcbytes: &[u8]) -> Result<PureExpr, Reason> {
     Ok(expr)
 }
 
-fn parse_file_negative(srcbytes: &[u8]) -> Result<Vec<crate::Error>, Reason> {
+fn parse_file_negative(srcbytes: &[u8]) -> Result<crate::Errors, Reason> {
     match parse_file(srcbytes) {
         Ok(expr) => Err(Reason::InvalidParse(expr)),
         Err(Reason::Parse(errs)) => Ok(errs),
         Err(e) => Err(e),
-    }
-}
-
-trait TestFormat {
-    fn test_format(self) -> String;
-}
-
-impl TestFormat for Vec<crate::Error> {
-    fn test_format(self) -> String {
-        self.into_iter()
-            .map(|e| e.to_string())
-            .collect::<Vec<String>>()
-            .join("\n")
-    }
-}
-
-impl TestFormat for PureExpr {
-    fn test_format(self) -> String {
-        format!("{:#?}", self)
     }
 }
