@@ -52,8 +52,8 @@ where
         .unwrap_or_else(|| panic!("src/tests/corpus/{} not found", corpusname));
 
     for casedir in only_dirs(corpcase) {
-        let casepath = casedir.path().to_path_buf();
         if let Some(reason) = parse_case(casedir, &parsefunc).err() {
+            let casepath = casedir.path().to_path_buf();
             ferrors.push(Error(casepath, reason))
         }
     }
@@ -95,9 +95,9 @@ where
 }
 
 fn file_contents<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a [u8], Reason> {
-    d.get_file(fname)
-        .ok_or_else(|| Reason::MissingFile(fname))
+    d.get_file(d.path().join(fname))
         .map(|f| f.contents())
+        .ok_or_else(|| Reason::MissingFile(fname))
 }
 
 fn parse_file(srcbytes: &[u8]) -> Result<PureExpr, Reason> {
