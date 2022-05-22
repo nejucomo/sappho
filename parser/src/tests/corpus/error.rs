@@ -42,7 +42,7 @@ impl fmt::Display for Reason {
             StringUtf8(x) => write!(f, "uft8 decode error: {}", x),
             Parse(x) => write!(f, "parse error: {}", x),
             InvalidParse(x) => write!(f, "unexpected parse: {}", x),
-            MismatchedOutput(x) => write!(f, "mismatched output: {}", x),
+            MismatchedOutput(x) => write!(f, "mismatched output:\n{}", x),
         }
     }
 }
@@ -51,17 +51,17 @@ impl fmt::Display for Mismatch {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "expected:\n{}\nfound:\n{}",
-            indent_lines(&self.expected),
-            indent_lines(&self.found)
+            "+ expected:\n{}\n+ found:\n{}",
+            prefix_lines("| ", &self.expected),
+            prefix_lines("| ", &self.found)
         )
     }
 }
 
-fn indent_lines(s: &str) -> String {
+fn prefix_lines(prefix: &str, s: &str) -> String {
     let mut result = String::new();
     for line in s.lines() {
-        result += "  ";
+        result += prefix;
         result += line;
         result += "\n";
     }
