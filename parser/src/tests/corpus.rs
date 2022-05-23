@@ -68,7 +68,7 @@ where
     let input = file_contents(casedir, "input")?;
     match String::from_utf8(file_contents(casedir, "expected")?.to_vec()) {
         Ok(expected) => match parsefunc(input).map(|v| v.to_string()) {
-            Ok(found) if found == expected => Ok(()),
+            Ok(found) if found == expected.trim_end() => Ok(()),
             Ok(found) => Err(Reason::MismatchedOutput(Mismatch { found, expected })),
             Err(reason) => Err(reason),
         },

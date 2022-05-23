@@ -1,0 +1,37 @@
+Recursive(
+    Let(
+        LetExpr {
+            binding: "f",
+            bindexpr: Common(
+                Func(
+                    FuncDef {
+                        binding: "x",
+                        body: Universal(
+                            Ref(
+                                "x",
+                            ),
+                        ),
+                    },
+                ),
+            ),
+            tail: Recursive(
+                Apply(
+                    Application {
+                        target: Universal(
+                            Ref(
+                                "f",
+                            ),
+                        ),
+                        argument: Universal(
+                            Lit(
+                                Num(
+                                    42.0,
+                                ),
+                            ),
+                        ),
+                    },
+                ),
+            ),
+        },
+    ),
+)
