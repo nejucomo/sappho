@@ -77,7 +77,7 @@ where
 }
 
 fn build_regex(src: &str) -> Result<Regex, regex::Error> {
-    regex::RegexBuilder::new(src)
+    regex::RegexBuilder::new(src.trim_end())
         .dot_matches_new_line(true)
         .build()
 }
