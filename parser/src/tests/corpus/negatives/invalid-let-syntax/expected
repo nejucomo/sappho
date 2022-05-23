@@ -1,3 +1,2 @@
 
-found '{' but one of  ,
- was expected
+found '\{' but one of .* was expected
