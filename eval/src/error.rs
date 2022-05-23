@@ -4,7 +4,7 @@ use saplang_ast::Identifier;
 
 #[derive(Debug, From)]
 pub enum Error {
-    Parse(Vec<saplang_parser::Error>),
+    Parse(saplang_parser::Errors),
     Unbound(Identifier),
     Uncallable(ValRef),
 }

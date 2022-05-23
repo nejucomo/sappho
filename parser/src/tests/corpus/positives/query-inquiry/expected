@@ -1,0 +1,15 @@
+Common\(
+    Query\(
+        QueryDef \{
+            body: Effect\(
+                Inquire\(
+                    Universal\(
+                        Ref\(
+                            "x",
+                        \),
+                    \),
+                \),
+            \),
+        \},
+    \),
+\)

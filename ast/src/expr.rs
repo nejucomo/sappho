@@ -70,3 +70,12 @@ impl<FX> GenExpr<FX> {
         GenExpr::Effect(effect)
     }
 }
+
+impl<FX> std::fmt::Display for GenExpr<FX>
+where
+    FX: std::fmt::Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:#?}", self)
+    }
+}
