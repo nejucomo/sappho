@@ -1,2 +1,1 @@
-
-found '\{' but one of .* was expected
+Error 1/1: found '\{' but one of .* was expected
