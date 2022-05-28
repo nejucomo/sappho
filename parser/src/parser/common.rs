@@ -1,17 +1,18 @@
 use crate::delimited::delimited;
+use crate::error::Span;
 use crate::keyword::Keyword;
 use crate::parser::pattern::pattern;
 use crate::parser::{pure_expr, query_expr};
 use crate::space::ws;
-use crate::Error;
+use crate::BareError;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use saplang_ast::{CommonExpr, FuncDef, ObjectDef, ProcExpr, QueryDef};
 
 pub(crate) fn common_expr(
-    expr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, CommonExpr, Error = Error> + '_ {
+    expr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, CommonExpr, Error = BareError> + '_ {
     use CommonExpr::*;
 
     object_def(expr.clone())
@@ -21,8 +22,8 @@ pub(crate) fn common_expr(
 }
 
 fn func_def(
-    expr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, FuncDef, Error = Error> + '_ {
+    expr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, FuncDef, Error = BareError> + '_ {
     Keyword::Fn
         .parser()
         .ignore_then(pattern())
@@ -35,8 +36,8 @@ fn func_def(
 }
 
 fn query_def(
-    expr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, QueryDef, Error = Error> + '_ {
+    expr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, QueryDef, Error = BareError> + '_ {
     Keyword::Query
         .parser()
         .ignore_then(query_expr(expr))
@@ -46,8 +47,8 @@ fn query_def(
 }
 
 fn object_def(
-    expr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, ObjectDef, Error = Error> + '_ {
+    expr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, ObjectDef, Error = BareError> + '_ {
     let innards = object_clause(expr)
         .separated_by(just(';').then(ws().or_not()))
         .try_map(construct_object);
@@ -61,8 +62,8 @@ enum ObjectClause {
 }
 
 fn object_clause(
-    expr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, ObjectClause, Error = Error> + '_ {
+    expr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, ObjectClause, Error = BareError> + '_ {
     use ObjectClause::*;
 
     func_def(expr.clone())
@@ -70,10 +71,7 @@ fn object_clause(
         .or(query_def(expr).map(Query))
 }
 
-fn construct_object(
-    clauses: Vec<ObjectClause>,
-    span: <Error as chumsky::error::Error<char>>::Span,
-) -> Result<ObjectDef, Error> {
+fn construct_object(clauses: Vec<ObjectClause>, span: Span) -> Result<ObjectDef, BareError> {
     let mut query = None;
     let mut func = None;
 
@@ -94,12 +92,12 @@ fn set_clause<T>(
     slot: &mut Option<T>,
     clause: T,
     label: &str,
-    span: <Error as chumsky::error::Error<char>>::Span,
-) -> Result<(), Error> {
+    span: Span,
+) -> Result<(), BareError> {
     if slot.replace(clause).is_none() {
         Ok(())
     } else {
-        Err(Error::custom(
+        Err(BareError::custom(
             span,
             format!("Object may not contain multiple {} clauses", label),
         ))

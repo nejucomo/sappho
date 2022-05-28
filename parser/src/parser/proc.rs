@@ -4,14 +4,14 @@ use crate::parser::procfx::proc_effect;
 use crate::parser::recursive::recursive_expr;
 use crate::parser::universal::universal_expr;
 use crate::space::ws;
-use crate::Error;
+use crate::BareError;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use saplang_ast::ProcExpr;
 
 pub(super) fn proc_expr_def(
-    pexpr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, ProcExpr, Error = Error> + '_ {
+    pexpr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     non_application(pexpr)
         .then_ignore(ws().or_not())
         .repeated()
@@ -25,8 +25,8 @@ pub(super) fn proc_expr_def(
 }
 
 fn non_application(
-    pexpr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, ProcExpr, Error = Error> + '_ {
+    pexpr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     parens_expr(pexpr.clone())
         .or(proc_effect(pexpr.clone()).map(ProcExpr::Effect))
         .or(universal_expr().map(ProcExpr::Universal))
@@ -35,7 +35,7 @@ fn non_application(
 }
 
 fn parens_expr(
-    pexpr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, ProcExpr, Error = Error> + '_ {
+    pexpr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     delimited('(', pexpr, ')')
 }

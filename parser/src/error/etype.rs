@@ -4,18 +4,18 @@ use derive_more::From;
 use std::fmt;
 
 #[derive(Debug, From)]
-pub struct Error(Simple<char>);
+pub struct BareError(Simple<char>);
 
 pub type Span = <Simple<char> as ChumskyError<char>>::Span;
 pub type Label = <Simple<char> as ChumskyError<char>>::Label;
 
-impl Error {
+impl BareError {
     pub fn custom(span: Span, msg: String) -> Self {
-        Error(Simple::custom(span, msg))
+        BareError(Simple::custom(span, msg))
     }
 }
 
-impl ChumskyError<char> for Error {
+impl ChumskyError<char> for BareError {
     type Span = Span;
     type Label = Label;
 
@@ -24,19 +24,19 @@ impl ChumskyError<char> for Error {
         expected: Iter,
         found: Option<char>,
     ) -> Self {
-        Error(Simple::expected_input_found(span, expected, found))
+        BareError(Simple::expected_input_found(span, expected, found))
     }
 
     fn with_label(self, label: Self::Label) -> Self {
-        Error(self.0.with_label(label))
+        BareError(self.0.with_label(label))
     }
 
     fn merge(self, other: Self) -> Self {
-        Error(self.0.merge(other.0))
+        BareError(self.0.merge(other.0))
     }
 }
 
-impl fmt::Display for Error {
+impl fmt::Display for BareError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use chumsky::error::SimpleReason::*;
 

@@ -1,4 +1,4 @@
-use crate::Error;
+use crate::BareError;
 
 use derive_more::From;
 use std::fmt;
@@ -6,7 +6,7 @@ use std::fmt;
 #[derive(Debug, From)]
 pub struct ErrorSet<T>(Vec<T>);
 
-pub type Errors = ErrorSet<Error>;
+pub type Errors = ErrorSet<BareError>;
 
 impl<T> ErrorSet<T> {
     pub fn push(&mut self, error: T) {

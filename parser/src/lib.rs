@@ -6,7 +6,7 @@ mod parser;
 mod restrict;
 mod space;
 
-pub use self::error::{Error, Errors};
+pub use self::error::{BareError, Errors};
 
 pub fn parse(src: &str) -> Result<saplang_ast::PureExpr, Errors> {
     use chumsky::Parser;

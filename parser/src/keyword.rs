@@ -1,5 +1,5 @@
 use crate::space::ws;
-use crate::Error;
+use crate::BareError;
 use chumsky::primitive::just;
 use chumsky::Parser;
 
@@ -27,7 +27,7 @@ impl Keyword {
         }
     }
 
-    pub fn parser(self) -> impl Parser<char, (), Error = Error> {
+    pub fn parser(self) -> impl Parser<char, (), Error = BareError> {
         just(self.as_str()).then_ignore(ws()).ignored()
     }
 }

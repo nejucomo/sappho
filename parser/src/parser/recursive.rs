@@ -2,15 +2,15 @@ use crate::keyword::Keyword;
 use crate::listform::list_form;
 use crate::parser::pattern::pattern;
 use crate::space::ws;
-use crate::Error;
+use crate::BareError;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use saplang_ast::{GenExpr, LetExpr, RecursiveExpr};
 
 pub(crate) fn recursive_expr<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, Error>,
-) -> impl Parser<char, RecursiveExpr<FX>, Error = Error> + 'a {
+    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+) -> impl Parser<char, RecursiveExpr<FX>, Error = BareError> + 'a {
     use RecursiveExpr::*;
 
     list_form(expr.clone())
@@ -19,8 +19,8 @@ pub(crate) fn recursive_expr<'a, FX: 'a>(
 }
 
 fn let_expr<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, Error>,
-) -> impl Parser<char, LetExpr<FX>, Error = Error> + 'a {
+    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+) -> impl Parser<char, LetExpr<FX>, Error = BareError> + 'a {
     Keyword::Let
         .parser()
         .ignore_then(pattern())
