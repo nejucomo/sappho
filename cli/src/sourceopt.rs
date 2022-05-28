@@ -8,6 +8,31 @@ pub enum SourceOption {
     Path(PathBuf),
 }
 
+impl SourceOption {
+    pub fn read(&self) -> std::io::Result<String> {
+        use SourceOption::*;
+
+        match self {
+            Stdin => {
+                use std::io::Read;
+                let mut s = String::new();
+                std::io::stdin().read_to_string(&mut s)?;
+                Ok(s)
+            }
+            Path(p) => std::fs::read_to_string(p),
+        }
+    }
+
+    pub fn path(&self) -> Option<PathBuf> {
+        use SourceOption::*;
+
+        match self {
+            Stdin => None,
+            Path(p) => Some(p.clone()),
+        }
+    }
+}
+
 impl Default for SourceOption {
     fn default() -> Self {
         SourceOption::Stdin

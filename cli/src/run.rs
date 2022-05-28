@@ -1,5 +1,5 @@
-use crate::Options;
+use crate::{Options, Result};
 
-pub fn run() {
-    dbg!(Options::parse());
+pub fn run() -> Result<()> {
+    Options::parse().run()
 }

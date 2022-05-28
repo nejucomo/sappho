@@ -1,4 +1,6 @@
-use crate::SourceOption;
+mod runcmd;
+
+use crate::{Result, SourceOption};
 use clap::{Parser, Subcommand};
 
 /// sappho interpreter
@@ -12,6 +14,12 @@ pub struct Options {
 impl Options {
     pub fn parse() -> Self {
         <Options as Parser>::parse()
+    }
+
+    pub fn run(&self) -> Result<()> {
+        use self::runcmd::RunCommand;
+
+        self.cmd_run(self)
     }
 }
 
