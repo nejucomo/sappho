@@ -15,6 +15,12 @@ impl BareError {
     }
 }
 
+impl BareError {
+    pub fn span(&self) -> Span {
+        self.0.span()
+    }
+}
+
 impl ChumskyError<char> for BareError {
     type Span = Span;
     type Label = Label;
