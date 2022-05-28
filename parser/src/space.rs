@@ -1,4 +1,4 @@
-use crate::BareError;
+use crate::error::BareError;
 use chumsky::primitive::just;
 use chumsky::Parser;
 

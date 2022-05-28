@@ -4,7 +4,7 @@ use crate::parser::procfx::proc_effect;
 use crate::parser::recursive::recursive_expr;
 use crate::parser::universal::universal_expr;
 use crate::space::ws;
-use crate::BareError;
+use crate::error::BareError;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use saplang_ast::ProcExpr;

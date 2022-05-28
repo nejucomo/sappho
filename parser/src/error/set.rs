@@ -1,4 +1,4 @@
-use crate::BareError;
+use crate::error::BareError;
 
 use derive_more::From;
 use std::fmt;

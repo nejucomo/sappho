@@ -1,5 +1,5 @@
+use crate::error::BareError;
 use crate::space::ws;
-use crate::BareError;
 use chumsky::primitive::just;
 use chumsky::Parser;
 

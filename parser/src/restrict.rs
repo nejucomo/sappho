@@ -1,5 +1,5 @@
 use crate::error::Span;
-use crate::BareError;
+use crate::error::BareError;
 use saplang_ast::{
     Application, GenExpr, LetExpr, ProcEffects, PureEffects, QueryEffects, QueryExpr, RecursiveExpr,
 };

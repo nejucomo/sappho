@@ -4,7 +4,7 @@ use crate::keyword::Keyword;
 use crate::parser::pattern::pattern;
 use crate::parser::{pure_expr, query_expr};
 use crate::space::ws;
-use crate::BareError;
+use crate::error::BareError;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
