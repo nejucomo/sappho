@@ -1,8 +1,7 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
+mod options;
+mod run;
+mod sourceopt;
+
+pub use self::options::{Command, Options, ParseOptions};
+pub use self::run::run;
+pub use self::sourceopt::SourceOption;
