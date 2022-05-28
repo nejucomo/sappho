@@ -2,6 +2,7 @@ use crate::error::{BareError, SourcedError};
 
 use derive_more::From;
 use std::fmt;
+use std::path::PathBuf;
 
 #[derive(Debug, From)]
 pub struct ErrorSet<T>(Vec<T>);
@@ -9,11 +10,11 @@ pub struct ErrorSet<T>(Vec<T>);
 pub type Errors = ErrorSet<SourcedError>;
 
 impl Errors {
-    pub fn attach_source(src: &str, bares: Vec<BareError>) -> Self {
+    pub fn attach_source(path: Option<PathBuf>, src: &str, bares: Vec<BareError>) -> Self {
         ErrorSet(
             bares
                 .into_iter()
-                .map(|bare| SourcedError::new(src, bare))
+                .map(|bare| SourcedError::new(path.clone(), src, bare))
                 .collect(),
         )
     }

@@ -4,6 +4,7 @@ use self::error::{Error, Errors, Mismatch, Reason};
 use include_dir::{include_dir, Dir};
 use regex::Regex;
 use saplang_ast::PureExpr;
+use std::path::PathBuf;
 
 static CORPUS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/src/tests/corpus");
 
@@ -19,7 +20,7 @@ fn negatives() {
 
 fn parse_corpus<F, T>(corpusname: &str, parsefunc: F)
 where
-    F: Fn(&str) -> Result<T, Reason>,
+    F: Fn(PathBuf, &str) -> Result<T, Reason>,
     T: ToString,
 {
     if let Some(e) = parse_corpus_result(corpusname, parsefunc).err() {
@@ -29,7 +30,7 @@ where
 
 fn parse_corpus_result<F, T>(corpusname: &str, parsefunc: F) -> Result<(), Errors>
 where
-    F: Fn(&str) -> Result<T, Reason>,
+    F: Fn(PathBuf, &str) -> Result<T, Reason>,
     T: ToString,
 {
     let mut errors = Errors::default();
@@ -63,13 +64,14 @@ fn only_dirs<'a>(d: &Dir<'a>) -> Vec<&'a Dir<'a>> {
 
 fn parse_case<F, T>(casedir: &Dir, parsefunc: F) -> Result<(), Reason>
 where
-    F: Fn(&str) -> Result<T, Reason>,
+    F: Fn(PathBuf, &str) -> Result<T, Reason>,
     T: ToString,
 {
+    let path = casedir.path().join("input");
     let input = file_contents(casedir, "input")?;
     let expectedpat = file_contents(casedir, "expected")?;
     let expected = build_regex(expectedpat)?;
-    match parsefunc(input).map(|v| v.to_string()) {
+    match parsefunc(path, input).map(|v| v.to_string()) {
         Ok(found) if expected.is_match(&found) => Ok(()),
         Ok(found) => Err(Reason::MismatchedOutput(Mismatch { found, expected })),
         Err(reason) => Err(reason),
@@ -89,13 +91,13 @@ fn file_contents<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a str, Reason>
         .and_then(|bytes| Ok(std::str::from_utf8(bytes)?))
 }
 
-fn parse_file(source: &str) -> Result<PureExpr, Reason> {
-    let expr = crate::parse(source)?;
+fn parse_file(path: PathBuf, source: &str) -> Result<PureExpr, Reason> {
+    let expr = crate::parse(Some(path), source)?;
     Ok(expr)
 }
 
-fn parse_file_negative(source: &str) -> Result<crate::Errors, Reason> {
-    match parse_file(source) {
+fn parse_file_negative(path: PathBuf, source: &str) -> Result<crate::Errors, Reason> {
+    match parse_file(path, source) {
         Ok(expr) => Err(Reason::InvalidParse(expr)),
         Err(Reason::Parse(errs)) => Ok(errs),
         Err(e) => Err(e),

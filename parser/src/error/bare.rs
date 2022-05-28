@@ -40,13 +40,9 @@ impl fmt::Display for BareError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use chumsky::error::SimpleReason::*;
 
-        let labeldesc = if let Some(label) = self.0.label() {
-            format!(", while parsing {}", label)
-        } else {
-            "".to_string()
-        };
-
-        write!(f, "at {:?}{}: ", self.0.span(), labeldesc)?;
+        if let Some(label) = self.0.label() {
+            write!(f, "while parsing {} ", label)?
+        }
 
         match self.0.reason() {
             Unexpected => write!(
