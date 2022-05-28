@@ -1,3 +1,3 @@
-fn main() -> sappho_cli::Result<()> {
+fn main() {
     sappho_cli::run()
 }

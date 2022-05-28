@@ -1,4 +1,5 @@
 use derive_more::From;
+use std::fmt;
 
 #[derive(Debug, From)]
 pub enum Error {
@@ -7,3 +8,14 @@ pub enum Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Error::*;
+
+        match self {
+            Std(e) => write!(f, "I/O error: {}", e),
+            Parse(e) => write!(f, "Encountered parse errors:\n{}", e),
+        }
+    }
+}
