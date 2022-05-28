@@ -54,7 +54,7 @@ impl fmt::Display for BareError {
             Unexpected => write!(
                 f,
                 "found {}, expected {}",
-                describe_found(self.0.found().map(|&c| c)),
+                self.0.found().map(debug).unwrap(),
                 comma_separated_or(self.0.expected().filter_map(|&x| x).map(debug)),
             ),
             Unclosed { span, delimiter } => write!(f, "unclosed {:?} at {:?}", delimiter, span),
@@ -68,11 +68,6 @@ where
     T: std::fmt::Debug,
 {
     format!("{:?}", x)
-}
-
-fn describe_found(oc: Option<char>) -> String {
-    oc.map(|c| format!("{:?}", c))
-        .unwrap_or_else(|| "nothing".to_string())
 }
 
 fn comma_separated_or<I>(it: I) -> String
