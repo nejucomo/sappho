@@ -1,4 +1,4 @@
-Error 1/1: Pure expressions cannot contain inquire/evoke effects: Inquire(Universal(Ref("x")))
+Error 1/1: pure expressions cannot contain inquiry effects, e.g. `$…`
 In source "negatives/bare-inquiry/input", line 1:
   $x
   ^^
