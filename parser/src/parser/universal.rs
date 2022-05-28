@@ -1,6 +1,6 @@
 use crate::error::BareError;
 use chumsky::{text, Parser};
-use saplang_ast::{Identifier, Literal, UniversalExpr};
+use sappho_ast::{Identifier, Literal, UniversalExpr};
 use std::str::FromStr;
 
 pub(super) fn universal_expr() -> impl Parser<char, UniversalExpr, Error = BareError> {

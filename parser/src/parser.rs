@@ -10,7 +10,7 @@ use crate::error::BareError;
 use crate::restrict::Restrict;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use saplang_ast::{ProcExpr, PureExpr, QueryExpr};
+use sappho_ast::{ProcExpr, PureExpr, QueryExpr};
 
 pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = BareError> {
     use chumsky::primitive::end;

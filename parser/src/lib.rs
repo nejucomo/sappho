@@ -10,7 +10,7 @@ use std::path::PathBuf;
 
 pub use self::error::Errors;
 
-pub fn parse(path: Option<PathBuf>, src: &str) -> Result<saplang_ast::PureExpr, Errors> {
+pub fn parse(path: Option<PathBuf>, src: &str) -> Result<sappho_ast::PureExpr, Errors> {
     use chumsky::Parser;
 
     self::parser::expression()

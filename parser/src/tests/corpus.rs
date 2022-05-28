@@ -2,7 +2,7 @@ mod error;
 
 use self::error::{Error, Errors, Mismatch, Reason};
 use include_dir::{include_dir, Dir};
-use saplang_ast::PureExpr;
+use sappho_ast::PureExpr;
 use std::path::PathBuf;
 
 static CORPUS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/src/tests/corpus");

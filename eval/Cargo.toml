@@ -1,5 +1,5 @@
 [package]
-name = "saplang-eval"
+name = "sappho-eval"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,13 +8,13 @@ edition = "2021"
 [dependencies]
 derive_more = "0.99"
 
-[dependencies.saplang-ast]
+[dependencies.sappho-ast]
 path = "../ast"
 
-[dependencies.saplang-east]
+[dependencies.sappho-east]
 path = "../east"
 
-[dependencies.saplang-parser]
+[dependencies.sappho-parser]
 path = "../parser"
 
 [dev-dependencies]

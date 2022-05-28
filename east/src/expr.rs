@@ -1,5 +1,5 @@
 use crate::{AstFxFor, FromFx, ObjectDef, RecursiveExpr, UniversalExpr};
-use saplang_ast as ast;
+use sappho_ast as ast;
 
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {

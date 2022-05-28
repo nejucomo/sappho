@@ -1,4 +1,4 @@
-//! This Abstract Syntax Tree corresponds to the textual grammar of `saplang`. Some of the grammar
+//! This Abstract Syntax Tree corresponds to the textual grammar of `sappho`. Some of the grammar
 //! is short-hand convenience for a simpler grammar used in evaluation. Example:
 //!
 //! `fn x -> x` is short-hand for `{ fn x -> x }`.

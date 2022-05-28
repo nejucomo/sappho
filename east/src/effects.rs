@@ -1,8 +1,8 @@
 use crate::GenExpr;
 
-use saplang_ast as ast;
+use sappho_ast as ast;
 
-pub use saplang_ast::PureEffects;
+pub use sappho_ast::PureEffects;
 pub type PureExpr = GenExpr<PureEffects>;
 pub type QueryExpr = GenExpr<QueryEffects>;
 pub type ProcExpr = GenExpr<ProcEffects>;

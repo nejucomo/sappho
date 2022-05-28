@@ -1,7 +1,7 @@
 use super::Eval;
 use crate::scope::ScopeRef;
 use crate::{Result, ValRef};
-use saplang_east::GenExpr;
+use sappho_east::GenExpr;
 
 impl<FX> Eval for GenExpr<FX>
 where

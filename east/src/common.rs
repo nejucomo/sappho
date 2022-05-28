@@ -1,5 +1,5 @@
 use crate::{Pattern, PureExpr, QueryExpr};
-use saplang_ast as ast;
+use sappho_ast as ast;
 use std::rc::Rc;
 
 #[derive(Debug, PartialEq)]

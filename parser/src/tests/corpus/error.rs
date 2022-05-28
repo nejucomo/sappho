@@ -1,6 +1,6 @@
 use crate::error::ErrorSet;
 use derive_more::From;
-use saplang_ast::PureExpr;
+use sappho_ast::PureExpr;
 use std::fmt;
 
 pub type Errors = ErrorSet<Error>;

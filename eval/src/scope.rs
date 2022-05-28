@@ -1,5 +1,5 @@
 use crate::{Result, ValRef};
-use saplang_ast::Identifier;
+use sappho_ast::Identifier;
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;

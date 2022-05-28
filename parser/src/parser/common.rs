@@ -8,7 +8,7 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use saplang_ast::{CommonExpr, FuncDef, ObjectDef, ProcExpr, QueryDef};
+use sappho_ast::{CommonExpr, FuncDef, ObjectDef, ProcExpr, QueryDef};
 
 pub(crate) fn common_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,

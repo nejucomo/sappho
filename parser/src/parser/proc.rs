@@ -7,7 +7,7 @@ use crate::parser::universal::universal_expr;
 use crate::space::ws;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use saplang_ast::ProcExpr;
+use sappho_ast::ProcExpr;
 
 pub(super) fn proc_expr_def(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
