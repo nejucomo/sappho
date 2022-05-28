@@ -1,10 +1,10 @@
 use crate::delimited::delimited;
+use crate::error::BareError;
 use crate::parser::common::common_expr;
 use crate::parser::procfx::proc_effect;
 use crate::parser::recursive::recursive_expr;
 use crate::parser::universal::universal_expr;
 use crate::space::ws;
-use crate::error::BareError;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use saplang_ast::ProcExpr;

@@ -6,8 +6,8 @@ mod recursive;
 mod universal;
 
 use self::proc::proc_expr_def;
-use crate::restrict::Restrict;
 use crate::error::BareError;
+use crate::restrict::Restrict;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use saplang_ast::{ProcExpr, PureExpr, QueryExpr};
