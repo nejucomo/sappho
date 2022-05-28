@@ -25,6 +25,6 @@ use test_case::test_case;
     ; "fn and apply"
 )]
 fn eval(src: &str) -> Value {
-    let vref = crate::eval(src).unwrap();
+    let vref = crate::eval(None, src).unwrap();
     std::rc::Rc::try_unwrap(vref).unwrap()
 }

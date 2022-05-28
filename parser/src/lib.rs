@@ -6,12 +6,16 @@ mod parser;
 mod restrict;
 mod space;
 
-pub use self::error::{Error, Errors};
+use std::path::PathBuf;
 
-pub fn parse(src: &str) -> Result<saplang_ast::PureExpr, Errors> {
+pub use self::error::Errors;
+
+pub fn parse(path: Option<PathBuf>, src: &str) -> Result<saplang_ast::PureExpr, Errors> {
     use chumsky::Parser;
 
-    self::parser::expression().parse(src).map_err(Errors::from)
+    self::parser::expression()
+        .parse(src)
+        .map_err(|bares| Errors::attach_source(path, src, bares))
 }
 
 #[cfg(test)]

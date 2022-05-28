@@ -1,0 +1,4 @@
+Error 1/1: found ']', expected ' ', '!', '$', '(', '[', '\n', 'f', 'l', 'q', or '{'
+In source "negatives/bad-parens/input", line 1:
+  [(]
+    ^

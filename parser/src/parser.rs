@@ -6,13 +6,13 @@ mod recursive;
 mod universal;
 
 use self::proc::proc_expr_def;
+use crate::error::BareError;
 use crate::restrict::Restrict;
-use crate::Error;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use saplang_ast::{ProcExpr, PureExpr, QueryExpr};
 
-pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = Error> {
+pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = BareError> {
     use chumsky::primitive::end;
     use chumsky::recursive::recursive;
 
@@ -22,13 +22,13 @@ pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = Error> {
 }
 
 fn query_expr(
-    proc_expr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, QueryExpr, Error = Error> + '_ {
+    proc_expr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, QueryExpr, Error = BareError> + '_ {
     proc_expr.try_map(QueryExpr::restrict)
 }
 
 fn pure_expr(
-    proc_expr: Recursive<'_, char, ProcExpr, Error>,
-) -> impl Parser<char, PureExpr, Error = Error> + '_ {
+    proc_expr: Recursive<'_, char, ProcExpr, BareError>,
+) -> impl Parser<char, PureExpr, Error = BareError> + '_ {
     proc_expr.try_map(PureExpr::restrict)
 }

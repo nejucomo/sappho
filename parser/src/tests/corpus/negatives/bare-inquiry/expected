@@ -1,2 +1,4 @@
-
-found end of input
+Error 1/1: Pure expressions cannot contain inquire/evoke effects: Inquire(Universal(Ref("x")))
+In source "negatives/bare-inquiry/input", line 1:
+  $x
+  ^^

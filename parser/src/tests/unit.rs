@@ -157,5 +157,5 @@ use test_case::test_case;
     ; "object full fn first"
 )]
 fn positive(input: &str) -> saplang_ast::PureExpr {
-    crate::parse(input).unwrap()
+    crate::parse(None, input).unwrap()
 }
