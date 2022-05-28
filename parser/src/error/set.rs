@@ -1,4 +1,4 @@
-use crate::error::BareError;
+use crate::error::{BareError, SourcedError};
 
 use derive_more::From;
 use std::fmt;
@@ -6,7 +6,18 @@ use std::fmt;
 #[derive(Debug, From)]
 pub struct ErrorSet<T>(Vec<T>);
 
-pub type Errors = ErrorSet<BareError>;
+pub type Errors = ErrorSet<SourcedError>;
+
+impl Errors {
+    pub fn attach_source(src: &str, bares: Vec<BareError>) -> Self {
+        ErrorSet(
+            bares
+                .into_iter()
+                .map(|bare| SourcedError::new(src, bare))
+                .collect(),
+        )
+    }
+}
 
 impl<T> ErrorSet<T> {
     pub fn push(&mut self, error: T) {
