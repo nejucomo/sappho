@@ -1,7 +1,7 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{List, Object, Result, ValRef, Value};
-use saplang_east::{Application, GenExpr, LetExpr, RecursiveExpr};
+use sappho_east::{Application, GenExpr, LetExpr, RecursiveExpr};
 
 impl<FX> Eval for RecursiveExpr<FX>
 where

@@ -1,5 +1,5 @@
 [package]
-name = "saplang-parser"
+name = "sappho-parser"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,7 +9,7 @@ edition = "2021"
 chumsky = "0.8"
 derive_more = "0.99"
 
-[dependencies.saplang-ast]
+[dependencies.sappho-ast]
 path = "../ast"
 
 [dev-dependencies]

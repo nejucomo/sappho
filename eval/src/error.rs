@@ -1,10 +1,10 @@
 use crate::ValRef;
 use derive_more::From;
-use saplang_ast::Identifier;
+use sappho_ast::Identifier;
 
 #[derive(Debug, From)]
 pub enum Error {
-    Parse(saplang_parser::Errors),
+    Parse(sappho_parser::Errors),
     Unbound(Identifier),
     Uncallable(ValRef),
 }

@@ -2,7 +2,7 @@ use crate::{
     Application, FuncClause, GenExpr, LetExpr, ObjectDef, ProcEffects, PureEffects, QueryClause,
     QueryEffects,
 };
-use saplang_ast as ast;
+use sappho_ast as ast;
 
 pub trait FromEffects {
     type ASTEffects;

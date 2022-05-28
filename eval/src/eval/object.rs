@@ -1,7 +1,7 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{Object, Result, ValRef, Value};
-use saplang_east::ObjectDef;
+use sappho_east::ObjectDef;
 
 impl EvalV for ObjectDef {
     fn eval_val(&self, scope: ScopeRef) -> Result<Value> {

@@ -1,5 +1,5 @@
 use crate::{AstFxFor, FromFx, GenExpr, Pattern};
-use saplang_ast as ast;
+use sappho_ast as ast;
 
 #[derive(Debug, PartialEq)]
 pub enum RecursiveExpr<Effects> {

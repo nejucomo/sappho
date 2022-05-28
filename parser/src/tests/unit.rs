@@ -1,4 +1,4 @@
-use saplang_ast::{GenExpr, QueryEffects::Inquire};
+use sappho_ast::{GenExpr, QueryEffects::Inquire};
 use test_case::test_case;
 
 #[test_case("42" => GenExpr::num(42.0) ; "forty-two")]
@@ -156,6 +156,6 @@ use test_case::test_case;
     )
     ; "object full fn first"
 )]
-fn positive(input: &str) -> saplang_ast::PureExpr {
+fn positive(input: &str) -> sappho_ast::PureExpr {
     crate::parse(None, input).unwrap()
 }

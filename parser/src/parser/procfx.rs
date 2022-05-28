@@ -3,7 +3,7 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use saplang_ast::{ProcEffects, ProcExpr};
+use sappho_ast::{ProcEffects, ProcExpr};
 
 pub(crate) fn proc_effect(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,

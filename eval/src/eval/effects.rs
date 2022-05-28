@@ -1,7 +1,7 @@
 use super::Eval;
 use crate::scope::ScopeRef;
 use crate::{Result, ValRef};
-use saplang_east::PureEffects;
+use sappho_east::PureEffects;
 
 impl Eval for PureEffects {
     fn eval(&self, _scope: ScopeRef) -> Result<ValRef> {
