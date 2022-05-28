@@ -99,9 +99,7 @@ fn set_clause<T>(
     if slot.replace(clause).is_none() {
         Ok(())
     } else {
-        use chumsky::error::Simple;
-
-        Err(Simple::custom(
+        Err(Error::custom(
             span,
             format!("Object may not contain multiple {} clauses", label),
         ))

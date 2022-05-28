@@ -1,5 +1,4 @@
 use crate::Error;
-use chumsky::error::Simple;
 use chumsky::{text, Parser};
 use saplang_ast::{Identifier, Literal, UniversalExpr};
 use std::str::FromStr;
@@ -16,7 +15,7 @@ fn reference() -> impl Parser<char, Identifier, Error = Error> {
     text::ident().try_map(|ident, span| {
         for kw in Keyword::iter() {
             if ident == kw.as_str() {
-                return Err(Simple::custom(
+                return Err(Error::custom(
                     span,
                     format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
                 ));
@@ -33,6 +32,6 @@ fn literal() -> impl Parser<char, Literal, Error = Error> {
 
 fn number() -> impl Parser<char, f64, Error = Error> {
     text::digits(10).try_map(|digs: String, span| {
-        f64::from_str(&digs).map_err(|e| Simple::custom(span, e.to_string()))
+        f64::from_str(&digs).map_err(|e| Error::custom(span, e.to_string()))
     })
 }
