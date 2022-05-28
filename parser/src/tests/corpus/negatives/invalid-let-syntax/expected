@@ -1,1 +1,4 @@
-Error 1/1: found '\{' but one of .* was expected
+Error 1/1: found '{', expected ' ' or '\n'
+In source "negatives/invalid-let-syntax/input", line 1:
+  let {
+      ^

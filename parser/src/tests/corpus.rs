@@ -2,7 +2,6 @@ mod error;
 
 use self::error::{Error, Errors, Mismatch, Reason};
 use include_dir::{include_dir, Dir};
-use regex::Regex;
 use saplang_ast::PureExpr;
 use std::path::PathBuf;
 
@@ -69,19 +68,15 @@ where
 {
     let path = casedir.path().join("input");
     let input = file_contents(casedir, "input")?;
-    let expectedpat = file_contents(casedir, "expected")?;
-    let expected = build_regex(expectedpat)?;
+    let expected = file_contents(casedir, "expected")?.trim_end();
     match parsefunc(path, input).map(|v| v.to_string()) {
-        Ok(found) if expected.is_match(&found) => Ok(()),
-        Ok(found) => Err(Reason::MismatchedOutput(Mismatch { found, expected })),
+        Ok(found) if found.trim_end() == expected => Ok(()),
+        Ok(found) => Err(Reason::MismatchedOutput(Mismatch {
+            found: found.trim_end().to_string(),
+            expected: expected.to_string(),
+        })),
         Err(reason) => Err(reason),
     }
-}
-
-fn build_regex(src: &str) -> Result<Regex, regex::Error> {
-    regex::RegexBuilder::new(src.trim_end())
-        .dot_matches_new_line(true)
-        .build()
 }
 
 fn file_contents<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a str, Reason> {

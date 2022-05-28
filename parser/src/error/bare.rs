@@ -55,7 +55,7 @@ impl fmt::Display for BareError {
                 f,
                 "found {}, expected {}",
                 describe_found(self.0.found().map(|&c| c)),
-                comma_separated_or(self.0.expected().map(|&oc| describe_found(oc))),
+                comma_separated_or(self.0.expected().filter_map(|&x| x).map(debug)),
             ),
             Unclosed { span, delimiter } => write!(f, "unclosed {:?} at {:?}", delimiter, span),
             Custom(msg) => write!(f, "{}", msg),
@@ -63,41 +63,39 @@ impl fmt::Display for BareError {
     }
 }
 
+fn debug<T>(x: T) -> String
+where
+    T: std::fmt::Debug,
+{
+    format!("{:?}", x)
+}
+
 fn describe_found(oc: Option<char>) -> String {
     oc.map(|c| format!("{:?}", c))
         .unwrap_or_else(|| "nothing".to_string())
 }
 
-fn comma_separated_or<I>(mut it: I) -> String
+fn comma_separated_or<I>(it: I) -> String
 where
     I: Iterator<Item = String>,
 {
-    let mut s = String::new();
-    if let Some(mut prev) = it.next() {
-        let mut ix = 0;
-        while let Some(x) = it.next() {
-            if ix > 0 {
-                s.push_str(", ");
-            }
-            s.push_str(&prev);
-            prev = x;
-            ix += 1;
-        }
-        if !s.is_empty() {
-            s.push_str(", or ");
-        }
-        s.push_str(&prev);
+    let mut items: Vec<String> = it.collect();
+    items.sort();
+
+    match items.len() {
+        0 => panic!("expected empty set!"),
+        1 => items.into_iter().next().unwrap(),
+        2 => format!("{} or {}", &items[0], &items[1]),
+        p => format!("{}, or {}", items[0..p - 1].join(", "), &items[p - 1]),
     }
-    s
 }
 
 #[cfg(test)]
 mod tests {
     use test_case::test_case;
 
-    #[test_case(&[] => "".to_string())]
     #[test_case(&["a"] => "a".to_string())]
-    #[test_case(&["a", "b"] => "a, or b".to_string())]
+    #[test_case(&["a", "b"] => "a or b".to_string())]
     #[test_case(&["a", "b", "c"] => "a, b, or c".to_string())]
     fn comma_separated_or(xs: &[&str]) -> String {
         super::comma_separated_or(xs.iter().map(|x| x.to_string()))

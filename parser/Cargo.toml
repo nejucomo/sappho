@@ -15,4 +15,3 @@ path = "../ast"
 [dev-dependencies]
 test-case = "2.0"
 include_dir = "0.7"
-regex = "1.5.6"

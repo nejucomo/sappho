@@ -16,12 +16,11 @@ pub enum Reason {
     Parse(crate::Errors),
     InvalidParse(PureExpr),
     MismatchedOutput(Mismatch),
-    InvalidRegex(regex::Error),
 }
 
 #[derive(Debug)]
 pub struct Mismatch {
-    pub expected: regex::Regex,
+    pub expected: String,
     pub found: String,
 }
 
@@ -44,7 +43,6 @@ impl fmt::Display for Reason {
             Parse(x) => write!(f, "parse error: {}", x),
             InvalidParse(x) => write!(f, "unexpected parse: {}", x),
             MismatchedOutput(x) => write!(f, "mismatched output:\n{}", x),
-            InvalidRegex(x) => write!(f, "invalid regex: {}", x),
         }
     }
 }
@@ -53,7 +51,7 @@ impl fmt::Display for Mismatch {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "+ expected:\n{}\n+ found:\n{}\n+ expected debug: {:?}\n+ found debug: {:?}",
+            "+ expected:\n{}\n+ found:\n{}\n+ expected debug: {:?}\n+    found debug: {:?}",
             prefix_lines("| ", self.expected.as_str()),
             prefix_lines("| ", &self.found),
             self.expected.as_str(),
