@@ -1,0 +1,4 @@
+Error 1/1: query expressions cannot contain evoke effects, e.g. `!…`
+In source "negatives/evocation-in-query/input", line 1:
+  query !x
+        ^^

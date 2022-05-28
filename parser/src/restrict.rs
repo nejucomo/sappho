@@ -10,11 +10,16 @@ pub(crate) trait Restrict<S>: Sized {
 
 impl Restrict<ProcEffects> for PureEffects {
     fn restrict(src: ProcEffects, span: Span) -> Result<Self, BareError> {
+        use ProcEffects::*;
+
         Err(BareError::custom(
             span,
             format!(
-                "Pure expressions cannot contain inquire/evoke effects: {:?}",
-                src
+                "pure expressions cannot contain {}",
+                match src {
+                    Inquire(_) => "inquiry effects, e.g. `$…`",
+                    Evoke(_) => "evoke effects, e.g. `!…`",
+                }
             ),
         ))
     }
@@ -28,7 +33,7 @@ impl Restrict<ProcEffects> for QueryEffects {
             }
             ProcEffects::Evoke(_) => Err(BareError::custom(
                 span,
-                format!("Query expressions cannot contain evoke effects: {:?}", src),
+                "query expressions cannot contain evoke effects, e.g. `!…`".to_string(),
             )),
         }
     }
