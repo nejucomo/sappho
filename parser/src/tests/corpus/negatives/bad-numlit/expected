@@ -1,4 +1,4 @@
-Error 1/1: found '-', expected ' ', '!', '$', '(', '[', '\n', 'f', 'l', 'q', or '{'
+Error 1/1: found 't', expected ' ' or '\n'
 In source "negatives/bad-numlit/input", line 1:
   4ty-two
-     ^
+   ^

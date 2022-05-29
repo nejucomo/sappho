@@ -54,7 +54,10 @@ impl fmt::Display for BareError {
             Unexpected => write!(
                 f,
                 "found {}, expected {}",
-                self.0.found().map(debug).unwrap(),
+                self.0
+                    .found()
+                    .map(debug)
+                    .unwrap_or_else(|| "nothing".to_string()),
                 comma_separated_or(self.0.expected().filter_map(|&x| x).map(debug)),
             ),
             Unclosed { span, delimiter } => write!(f, "unclosed {:?} at {:?}", delimiter, span),

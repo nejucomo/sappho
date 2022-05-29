@@ -14,7 +14,7 @@ pub fn parse(path: Option<PathBuf>, src: &str) -> Result<sappho_ast::PureExpr, E
     use chumsky::Parser;
 
     self::parser::expression()
-        .parse(src)
+        .parse(src.trim_end())
         .map_err(|bares| Errors::attach_source(path, src, bares))
 }
 

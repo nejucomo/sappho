@@ -1,0 +1,4 @@
+Error 1/1: found 'x', expected ' ' or '\n'
+In source "negatives/num-letter/input", line 1:
+  7x
+   ^

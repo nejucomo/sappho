@@ -23,13 +23,19 @@ impl fmt::Display for SourcedError {
         let (lix, lspan, lstr) = select_source(&self.source, self.bare.span());
         write!(
             f,
-            "\nIn source {}, line {}:\n  {}\n  {}",
+            "\nIn source {}, line {}:\n  {}{}\n  {}",
             self.path
                 .as_ref()
                 .map(|p| format!("{:?}", p.display()))
                 .unwrap_or_else(|| "<string>".to_string()),
             lix + 1,
             lstr,
+            if lstr.trim_end().len() < lstr.len() {
+                // Show trailing whitespace indicator:
+                "<- end of line"
+            } else {
+                ""
+            },
             make_cursor(lspan),
         )
     }
@@ -37,16 +43,22 @@ impl fmt::Display for SourcedError {
 
 fn select_source(src: &str, span: Span) -> (usize, Span, &str) {
     let mut start = span.start;
+    let mut lastlix = 0;
+    let mut lastline = &src[..0];
+
     for (lix, line) in src.lines().enumerate() {
-        if start > line.len() {
+        if start >= line.len() {
             start -= line.len();
         } else {
             let rawend = start + (span.end - span.start);
             let end = std::cmp::min(rawend, line.len());
             return (lix, start..end, line);
         }
+        lastlix = lix;
+        lastline = line;
     }
-    panic!("internal span tracking failure");
+    assert_eq!(start, 1);
+    (lastlix, lastline.len()..lastline.len() + 1, lastline)
 }
 
 fn make_cursor(lspan: Span) -> String {

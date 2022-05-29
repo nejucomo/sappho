@@ -13,8 +13,7 @@ pub(super) fn proc_expr_def(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     non_application(pexpr)
-        .then_ignore(ws().or_not())
-        .repeated()
+        .separated_by(ws())
         .at_least(1)
         .map(|exprs| {
             exprs
