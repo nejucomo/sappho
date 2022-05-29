@@ -12,26 +12,30 @@ pub(super) fn universal_expr() -> impl Parser<char, UniversalExpr, Error = BareE
 fn reference() -> impl Parser<char, Identifier, Error = BareError> {
     use crate::keyword::Keyword;
 
-    text::ident().try_map(|ident, span| {
-        for kw in Keyword::iter() {
-            if ident == kw.as_str() {
-                return Err(BareError::custom(
-                    span,
-                    format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
-                ));
+    text::ident()
+        .try_map(|ident, span| {
+            for kw in Keyword::iter() {
+                if ident == kw.as_str() {
+                    return Err(BareError::custom(
+                        span,
+                        format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
+                    ));
+                }
             }
-        }
 
-        Ok(ident)
-    })
+            Ok(ident)
+        })
+        .labelled("identifier reference")
 }
 
 fn literal() -> impl Parser<char, Literal, Error = BareError> {
-    number().map(Literal::Num)
+    number().map(Literal::Num).labelled("literal")
 }
 
 fn number() -> impl Parser<char, f64, Error = BareError> {
-    text::digits(10).try_map(|digs: String, span| {
-        f64::from_str(&digs).map_err(|e| BareError::custom(span, e.to_string()))
-    })
+    text::digits(10)
+        .try_map(|digs: String, span| {
+            f64::from_str(&digs).map_err(|e| BareError::custom(span, e.to_string()))
+        })
+        .labelled("number")
 }

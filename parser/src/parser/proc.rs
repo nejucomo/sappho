@@ -15,6 +15,7 @@ pub(super) fn proc_expr_def(
     non_application(pexpr)
         .separated_by(ws())
         .at_least(1)
+        .labelled("expression")
         .map(|exprs| {
             exprs
                 .into_iter()

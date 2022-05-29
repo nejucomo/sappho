@@ -1,4 +1,5 @@
 mod bare;
+mod indent;
 mod set;
 mod sourced;
 

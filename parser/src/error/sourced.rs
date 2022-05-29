@@ -18,25 +18,32 @@ impl SourcedError {
 
 impl fmt::Display for SourcedError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.bare.fmt(f)?;
+        use crate::error::indent::indent;
 
         let (lix, lspan, lstr) = select_source(&self.source, self.bare.span());
         write!(
             f,
-            "\nIn source {}, line {}:\n  {}{}\n  {}",
+            "Error from {}, line {}:\n{}|\n+-> Syntax error: {}\n",
             self.path
                 .as_ref()
                 .map(|p| format!("{:?}", p.display()))
                 .unwrap_or_else(|| "<string>".to_string()),
             lix + 1,
-            lstr,
-            if lstr.trim_end().len() < lstr.len() {
-                // Show trailing whitespace indicator:
-                "<- end of line"
-            } else {
-                ""
-            },
-            make_cursor(lspan),
+            indent(
+                "| ",
+                &format!(
+                    "{}{}\n{}",
+                    lstr,
+                    if lstr.trim_end().len() < lstr.len() {
+                        // Show trailing whitespace indicator:
+                        "<- end of line"
+                    } else {
+                        ""
+                    },
+                    make_cursor(lspan),
+                )
+            ),
+            self.bare,
         )
     }
 }

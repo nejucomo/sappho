@@ -1,4 +1,6 @@
-Error 1/1: pure expressions cannot contain evoke effects, e.g. `!…`
-In source "negatives/bare-evocation/input", line 1:
-  !x
-  ^^
+Error from "negatives/bare-evocation/input", line 1:
+| !x
+| ^^
+|
++-> Syntax error: pure expressions cannot contain evoke effects, e.g. `!…`
+
