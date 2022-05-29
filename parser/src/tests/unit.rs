@@ -157,5 +157,11 @@ use test_case::test_case;
     ; "object full fn first"
 )]
 fn positive(input: &str) -> sappho_ast::PureExpr {
-    crate::parse(None, input).unwrap()
+    match crate::parse(None, input) {
+        Ok(x) => x,
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!()
+        }
+    }
 }
