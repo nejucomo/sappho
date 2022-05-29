@@ -1,0 +1,19 @@
+[package]
+name = "sappho-cli"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+derive_more = "0.99.17"
+
+[dependencies.clap]
+version = "3.1.18"
+features = [
+  "derive",
+  "cargo",
+]
+
+[dependencies.sappho-parser]
+path = "../parser"
