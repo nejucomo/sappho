@@ -53,7 +53,7 @@ impl fmt::Display for BareError {
         match self.0.reason() {
             Unexpected => write!(
                 f,
-                "found {}, expected {}",
+                "unexpected {} while expecting {}",
                 self.0
                     .found()
                     .map(debug)

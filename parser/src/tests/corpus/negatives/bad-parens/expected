@@ -2,5 +2,5 @@ Error from "negatives/bad-parens/input", line 1:
 | [(]
 |   ^
 |
-+-> Syntax error: while parsing parenthetical-expression, found ']', expected ' ', '!', '$', '(', '[', '\n', 'f', 'l', 'q', or '{'
++-> Syntax error: while parsing parenthetical-expression, unexpected ']' while expecting ' ', '!', '$', '(', '[', '\n', 'f', 'l', 'q', or '{'
 
