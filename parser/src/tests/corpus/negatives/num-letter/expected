@@ -2,5 +2,5 @@ Error from "negatives/num-letter/input", line 1:
 | 7x
 |  ^
 |
-+-> Syntax error: found 'x', expected ' ' or '\n'
++-> Syntax error: unexpected 'x' in numeric literal
 

@@ -2,5 +2,5 @@ Error from "negatives/bad-numlit/input", line 1:
 | 4ty-two
 |  ^
 |
-+-> Syntax error: found 't', expected ' ' or '\n'
++-> Syntax error: unexpected 't' in numeric literal
 

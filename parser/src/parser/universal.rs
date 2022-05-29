@@ -33,7 +33,19 @@ fn literal() -> impl Parser<char, Literal, Error = BareError> {
 }
 
 fn number() -> impl Parser<char, f64, Error = BareError> {
+    use chumsky::primitive::filter;
+
+    let disallowed_trailing_char = filter(|&c: &char| c.is_alphabetic() || c.is_control())
+        .try_map(|c, span| -> Result<(), BareError> {
+            Err(BareError::custom(
+                span,
+                format!("unexpected {:?} in numeric literal", c),
+            ))
+        })
+        .or_not();
+
     text::digits(10)
+        .then_ignore(disallowed_trailing_char)
         .try_map(|digs: String, span| {
             f64::from_str(&digs).map_err(|e| BareError::custom(span, e.to_string()))
         })

@@ -2,5 +2,5 @@ Error from "negatives/invalid-let-syntax/input", line 1:
 | let {
 |     ^
 |
-+-> Syntax error: while parsing expression, found '{', expected ' ' or '\n'
++-> Syntax error: while parsing let-expression, found '{', expected ' ' or '\n'
 
