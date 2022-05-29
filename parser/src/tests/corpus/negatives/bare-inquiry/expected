@@ -1,4 +1,6 @@
-Error 1/1: pure expressions cannot contain inquiry effects, e.g. `$…`
-In source "negatives/bare-inquiry/input", line 1:
-  $x
-  ^^
+Error from "negatives/bare-inquiry/input", line 1:
+| $x
+| ^^
+|
++-> Syntax error: pure expressions cannot contain inquiry effects, e.g. `$…`
+

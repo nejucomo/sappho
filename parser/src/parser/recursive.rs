@@ -13,9 +13,15 @@ pub(crate) fn recursive_expr<'a, FX: 'a>(
 ) -> impl Parser<char, RecursiveExpr<FX>, Error = BareError> + 'a {
     use RecursiveExpr::*;
 
-    list_form(expr.clone())
+    list_expr(expr.clone())
         .map(List)
         .or(let_expr(expr).map(Let))
+}
+
+fn list_expr<'a, FX: 'a>(
+    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+) -> impl Parser<char, Vec<GenExpr<FX>>, Error = BareError> + 'a {
+    list_form(expr).labelled("list-expression")
 }
 
 fn let_expr<'a, FX: 'a>(
@@ -34,4 +40,5 @@ fn let_expr<'a, FX: 'a>(
             bindexpr: Box::new(bindexpr),
             tail: Box::new(tail),
         })
+        .labelled("let-expression")
 }

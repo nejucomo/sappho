@@ -36,5 +36,5 @@ fn non_application(
 fn parens_expr(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
-    delimited('(', pexpr, ')')
+    delimited('(', pexpr, ')').labelled("parenthetical-expression")
 }

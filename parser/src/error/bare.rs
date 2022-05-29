@@ -47,13 +47,13 @@ impl fmt::Display for BareError {
         use chumsky::error::SimpleReason::*;
 
         if let Some(label) = self.0.label() {
-            write!(f, "while parsing {} ", label)?
+            write!(f, "while parsing {}, ", label)?;
         }
 
         match self.0.reason() {
             Unexpected => write!(
                 f,
-                "found {}, expected {}",
+                "unexpected {} while expecting {}",
                 self.0
                     .found()
                     .map(debug)

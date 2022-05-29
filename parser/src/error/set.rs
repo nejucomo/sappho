@@ -45,9 +45,8 @@ where
     T: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let tot = self.0.len();
-        for (i, error) in self.0.iter().enumerate() {
-            writeln!(f, "Error {}/{}: {}", i + 1, tot, error)?;
+        for error in self.0.iter() {
+            error.fmt(f)?;
         }
         Ok(())
     }

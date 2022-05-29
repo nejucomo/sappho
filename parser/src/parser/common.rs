@@ -33,6 +33,7 @@ fn func_def(
             binding,
             body: Box::new(body),
         })
+        .labelled("fn definition")
 }
 
 fn query_def(
@@ -44,6 +45,7 @@ fn query_def(
         .map(|body| QueryDef {
             body: Box::new(body),
         })
+        .labelled("query definition")
 }
 
 fn object_def(
@@ -53,7 +55,7 @@ fn object_def(
         .separated_by(just(';').then(ws().or_not()))
         .try_map(construct_object);
 
-    delimited('{', innards, '}')
+    delimited('{', innards, '}').labelled("object definition")
 }
 
 enum ObjectClause {

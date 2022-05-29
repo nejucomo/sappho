@@ -1,4 +1,6 @@
-Error 1/1: found '{', expected ' ' or '\n'
-In source "negatives/invalid-let-syntax/input", line 1:
-  let {
-      ^
+Error from "negatives/invalid-let-syntax/input", line 1:
+| let {
+|     ^
+|
++-> Syntax error: while parsing let-expression, unexpected '{' while expecting ' ' or '\n'
+

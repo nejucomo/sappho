@@ -15,7 +15,7 @@ impl fmt::Display for Error {
 
         match self {
             Std(e) => write!(f, "I/O error: {}", e),
-            Parse(e) => write!(f, "Encountered parse errors:\n{}", e),
+            Parse(e) => e.fmt(f),
         }
     }
 }
