@@ -1,7 +1,7 @@
 mod common;
+mod effect;
 mod pattern;
 mod proc;
-mod procfx;
 mod recursive;
 mod universal;
 

@@ -1,7 +1,7 @@
 use crate::error::BareError;
+use crate::expr::pattern::pattern;
 use crate::keyword::Keyword;
 use crate::listform::list_form;
-use crate::parser::pattern::pattern;
 use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;

@@ -1,0 +1,5 @@
+Error from "negatives/inquiry-space/input", line 1:
+| query $ x
+|        ^
+|
++-> Syntax error: while parsing parenthetical-expression, unexpected ' ' while expecting '!', '$', '(', '[', 'f', 'l', 'q', or '{'

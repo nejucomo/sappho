@@ -1,5 +1,4 @@
 use crate::error::BareError;
-use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
@@ -21,9 +20,5 @@ fn effect<'a, F: 'a>(
 where
     F: Fn(Box<ProcExpr>) -> ProcEffects,
 {
-    just(sym)
-        .then_ignore(ws().or_not())
-        .ignore_then(pexpr)
-        .map(Box::new)
-        .map(f)
+    just(sym).ignore_then(pexpr).map(Box::new).map(f)
 }

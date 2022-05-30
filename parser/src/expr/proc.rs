@@ -1,9 +1,9 @@
 use crate::delimited::delimited;
 use crate::error::BareError;
-use crate::parser::common::common_expr;
-use crate::parser::procfx::proc_effect;
-use crate::parser::recursive::recursive_expr;
-use crate::parser::universal::universal_expr;
+use crate::expr::common::common_expr;
+use crate::expr::effect::proc_effect;
+use crate::expr::recursive::recursive_expr;
+use crate::expr::universal::universal_expr;
 use crate::space::ws;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;

@@ -1,0 +1,29 @@
+Common(
+    Query(
+        QueryDef {
+            body: Effect(
+                Inquire(
+                    Recursive(
+                        Let(
+                            LetExpr {
+                                binding: "x",
+                                bindexpr: Universal(
+                                    Lit(
+                                        Num(
+                                            42.0,
+                                        ),
+                                    ),
+                                ),
+                                tail: Universal(
+                                    Ref(
+                                        "x",
+                                    ),
+                                ),
+                            },
+                        ),
+                    ),
+                ),
+            ),
+        },
+    ),
+)
