@@ -1,0 +1,5 @@
+Error from "negatives/open-square-bracket/input", line 1:
+| [
+|  ^
+|
++-> Syntax error: while parsing list-expression, unexpected end of input while expecting ' ', '!', '$', '(', '[', '\n', ']', 'f', 'l', 'q', or '{'
