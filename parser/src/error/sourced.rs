@@ -64,7 +64,7 @@ fn select_source(src: &str, span: Span) -> (usize, Span, &str) {
         lastlix = lix;
         lastline = line;
     }
-    assert_eq!(start, 1);
+    assert!(start == 0 || start == 1);
     (lastlix, lastline.len()..lastline.len() + 1, lastline)
 }
 
