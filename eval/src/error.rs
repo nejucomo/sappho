@@ -4,7 +4,6 @@ use sappho_ast::Identifier;
 
 #[derive(Debug, From)]
 pub enum Error {
-    Parse(sappho_parser::Errors),
     Unbound(Identifier),
     Uncallable(ValRef),
 }

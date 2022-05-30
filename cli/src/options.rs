@@ -30,6 +30,10 @@ pub enum Command {
     /// Parse an input
     #[clap()]
     Parse(SourceOptions),
+
+    /// Eval an input
+    #[clap()]
+    Eval(SourceOptions),
 }
 
 /// source options

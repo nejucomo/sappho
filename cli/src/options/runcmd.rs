@@ -16,6 +16,7 @@ impl RunCommand for Command {
 
         match self {
             Parse(opts) => cmds::parse(&opts.source),
+            Eval(opts) => cmds::eval(&opts.source),
         }
     }
 }

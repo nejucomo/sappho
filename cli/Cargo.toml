@@ -15,5 +15,8 @@ features = [
   "cargo",
 ]
 
+[dependencies.sappho-eval]
+path = "../eval"
+
 [dependencies.sappho-parser]
 path = "../parser"

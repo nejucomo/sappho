@@ -6,3 +6,11 @@ pub fn parse(srcopt: &SourceOption) -> Result<()> {
     println!("Parsed: {:#?}", x);
     Ok(())
 }
+
+pub fn eval(srcopt: &SourceOption) -> Result<()> {
+    let source = srcopt.read()?;
+    let ast = sappho_parser::parse(srcopt.path(), &source)?;
+    let x = sappho_eval::eval(ast)?;
+    println!("{:#?}", x);
+    Ok(())
+}

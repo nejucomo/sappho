@@ -5,6 +5,7 @@ use std::fmt;
 pub enum Error {
     Std(std::io::Error),
     Parse(sappho_parser::Errors),
+    Eval(sappho_eval::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -16,6 +17,7 @@ impl fmt::Display for Error {
         match self {
             Std(e) => write!(f, "I/O error: {}", e),
             Parse(e) => e.fmt(f),
+            Eval(e) => write!(f, "{:#?}", e),
         }
     }
 }

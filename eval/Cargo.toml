@@ -14,8 +14,8 @@ path = "../ast"
 [dependencies.sappho-east]
 path = "../east"
 
-[dependencies.sappho-parser]
-path = "../parser"
-
 [dev-dependencies]
 test-case = "2.0"
+
+[dev-dependencies.sappho-parser]
+path = "../parser"
