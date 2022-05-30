@@ -41,7 +41,7 @@ impl fmt::Display for Reason {
             StrUtf8(x) => write!(f, "utf8 decode error: {}", x),
             StringUtf8(x) => write!(f, "uft8 decode error: {}", x),
             Parse(x) => write!(f, "parse error: {}", x),
-            InvalidParse(x) => write!(f, "unexpected parse: {}", x),
+            InvalidParse(x) => write!(f, "unexpected parse: {}\n", x),
             MismatchedOutput(x) => write!(f, "mismatched output:\n{}", x),
         }
     }
