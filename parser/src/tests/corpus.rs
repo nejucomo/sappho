@@ -68,13 +68,21 @@ where
 {
     let path = casedir.path().join("input");
     let input = file_contents(casedir, "input")?;
-    let expected = file_contents(casedir, "expected")?.trim_end();
+    let expected = match file_contents(casedir, "expected") {
+        Ok(s) => Ok(s.trim_end()),
+        Err(Reason::MissingFile(_)) => Ok(""),
+        other => other,
+    }?;
+
     match parsefunc(path, input).map(|v| v.to_string()) {
         Ok(found) if found.trim_end() == expected => Ok(()),
+
+        // Allow a missing "expected" file as a dev convenience:
         Ok(found) => Err(Reason::MismatchedOutput(Mismatch {
             found: found.trim_end().to_string(),
             expected: expected.to_string(),
         })),
+
         Err(reason) => Err(reason),
     }
 }
