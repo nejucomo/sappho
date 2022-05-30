@@ -1,8 +1,8 @@
-use crate::Result;
-use std::path::PathBuf;
+use crate::{Result, SourceOption};
 
-pub fn parse(path: Option<PathBuf>, source: &str) -> Result<()> {
-    let x = sappho_parser::parse(path, source)?;
+pub fn parse(srcopt: &SourceOption) -> Result<()> {
+    let source = srcopt.read()?;
+    let x = sappho_parser::parse(srcopt.path(), &source)?;
     println!("Parsed: {:#?}", x);
     Ok(())
 }

@@ -29,13 +29,13 @@ impl Options {
 pub enum Command {
     /// Parse an input
     #[clap()]
-    Parse(ParseOptions),
+    Parse(SourceOptions),
 }
 
-/// parse options
+/// source options
 #[derive(Debug, Parser)]
 #[clap()]
-pub struct ParseOptions {
+pub struct SourceOptions {
     #[clap(default_value_t)]
     source: SourceOption,
 }
