@@ -9,10 +9,11 @@ use self::traits::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{Result, ValRef};
 use sappho_east::PureExpr;
-use std::path::PathBuf;
 
-pub fn eval(path: Option<PathBuf>, src: &str) -> Result<ValRef> {
-    let astexpr = sappho_parser::parse(path, src)?;
-    let expr = PureExpr::from(astexpr);
+pub fn eval<AST>(ast: AST) -> Result<ValRef>
+where
+    PureExpr: From<AST>,
+{
+    let expr = PureExpr::from(ast);
     expr.eval(ScopeRef::default())
 }

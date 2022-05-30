@@ -1,4 +1,4 @@
-use crate::{cmds, Command, Options, ParseOptions, Result};
+use crate::{cmds, Command, Options, Result};
 
 pub trait RunCommand {
     fn cmd_run(&self, options: &Options) -> Result<()>;
@@ -11,18 +11,12 @@ impl RunCommand for Options {
 }
 
 impl RunCommand for Command {
-    fn cmd_run(&self, options: &Options) -> Result<()> {
+    fn cmd_run(&self, _options: &Options) -> Result<()> {
         use Command::*;
 
         match self {
-            Parse(opts) => opts.cmd_run(options),
+            Parse(opts) => cmds::parse(&opts.source),
+            Eval(opts) => cmds::eval(&opts.source),
         }
-    }
-}
-
-impl RunCommand for ParseOptions {
-    fn cmd_run(&self, _options: &Options) -> Result<()> {
-        let source = self.source.read()?;
-        cmds::parse(self.source.path(), &source)
     }
 }
