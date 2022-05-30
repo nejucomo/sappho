@@ -1,7 +1,7 @@
 use crate::delimited::delimited;
 use crate::error::BareError;
 use crate::expr::common::common_expr;
-use crate::expr::procfx::proc_effect;
+use crate::expr::effect::proc_effect;
 use crate::expr::recursive::recursive_expr;
 use crate::expr::universal::universal_expr;
 use crate::space::ws;
