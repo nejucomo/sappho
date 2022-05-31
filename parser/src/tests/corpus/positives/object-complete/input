@@ -1,5 +1,5 @@
 {
-  x: 42;
-  fn x -> x;
-  query $x;
+  x: 42,
+  fn x -> x,
+  query $x
 }

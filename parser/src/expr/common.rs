@@ -54,7 +54,7 @@ fn object_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ObjectDef, Error = BareError> + '_ {
     let innards = object_clause(expr)
-        .separated_by(just(';').then(ws().or_not()))
+        .separated_by(just(',').then(ws().or_not()))
         .allow_trailing();
 
     delimited('{', innards, '}')
