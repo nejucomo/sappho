@@ -6,10 +6,10 @@ use std::str::FromStr;
 pub(super) fn universal_expr() -> impl Parser<char, UniversalExpr, Error = BareError> {
     use UniversalExpr::{Lit, Ref};
 
-    reference().map(Ref).or(literal().map(Lit))
+    identifier().map(Ref).or(literal().map(Lit))
 }
 
-fn reference() -> impl Parser<char, Identifier, Error = BareError> {
+pub(super) fn identifier() -> impl Parser<char, Identifier, Error = BareError> {
     use crate::keyword::Keyword;
 
     text::ident()

@@ -44,6 +44,7 @@ impl<FX> GenExpr<FX> {
                 binding,
                 body: Box::new(body),
             }),
+            attrs: std::collections::HashMap::new(),
         }))
     }
 
