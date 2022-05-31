@@ -294,6 +294,7 @@ name = "sappho-east"
 version = "0.1.0"
 dependencies = [
  "sappho-ast",
+ "sappho-identmap",
 ]
 
 [[package]]

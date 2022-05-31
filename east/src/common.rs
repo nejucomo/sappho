@@ -1,11 +1,13 @@
 use crate::{Pattern, PureExpr, QueryExpr};
 use sappho_ast as ast;
+use sappho_identmap::IdentMap;
 use std::rc::Rc;
 
 #[derive(Debug, PartialEq)]
 pub struct ObjectDef {
     pub query: Option<QueryClause>,
     pub func: Option<FuncClause>,
+    pub attrs: IdentMap<PureExpr>,
 }
 
 impl From<ast::ObjectDef> for ObjectDef {
@@ -13,6 +15,7 @@ impl From<ast::ObjectDef> for ObjectDef {
         ObjectDef {
             query: od.query.map(QueryClause::from),
             func: od.func.map(FuncClause::from),
+            attrs: od.attrs.map_values(PureExpr::from),
         }
     }
 }
@@ -22,6 +25,7 @@ impl From<ast::FuncDef> for ObjectDef {
         ObjectDef {
             query: None,
             func: Some(FuncClause::from(d)),
+            attrs: IdentMap::default(),
         }
     }
 }
@@ -31,6 +35,7 @@ impl From<ast::QueryDef> for ObjectDef {
         ObjectDef {
             query: Some(QueryClause::from(d)),
             func: None,
+            attrs: IdentMap::default(),
         }
     }
 }

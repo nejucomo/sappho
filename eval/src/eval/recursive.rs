@@ -70,7 +70,9 @@ where
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
         match tval.borrow() {
-            Value::Object(Object { func: Some(fnbox) }) => fnbox(aval),
+            Value::Object(Object {
+                func: Some(fnbox), ..
+            }) => fnbox(aval),
             _ => Err(Uncallable(tval)),
         }
     }
