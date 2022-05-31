@@ -10,7 +10,7 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{CommonExpr, FuncDef, Identifier, ObjectDef, ProcExpr, PureExpr, QueryDef};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 pub(crate) fn common_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
@@ -93,7 +93,7 @@ fn attr_def(
 fn construct_object(clauses: Vec<ObjectClause>, span: Span) -> Result<ObjectDef, BareError> {
     let mut query = None;
     let mut func = None;
-    let mut attrs = HashMap::new();
+    let mut attrs = BTreeMap::new();
 
     for clause in clauses.into_iter() {
         use ObjectClause::*;
