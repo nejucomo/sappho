@@ -276,6 +276,7 @@ name = "sappho-ast"
 version = "0.1.0"
 dependencies = [
  "derive_more",
+ "sappho-identmap",
 ]
 
 [[package]]
@@ -293,6 +294,7 @@ name = "sappho-east"
 version = "0.1.0"
 dependencies = [
  "sappho-ast",
+ "sappho-identmap",
 ]
 
 [[package]]
@@ -302,9 +304,14 @@ dependencies = [
  "derive_more",
  "sappho-ast",
  "sappho-east",
+ "sappho-identmap",
  "sappho-parser",
  "test-case",
 ]
+
+[[package]]
+name = "sappho-identmap"
+version = "0.1.0"
 
 [[package]]
 name = "sappho-parser"
@@ -314,6 +321,7 @@ dependencies = [
  "derive_more",
  "include_dir",
  "sappho-ast",
+ "sappho-identmap",
  "test-case",
 ]
 

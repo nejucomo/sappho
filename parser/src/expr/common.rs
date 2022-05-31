@@ -10,7 +10,6 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{CommonExpr, FuncDef, Identifier, ObjectDef, ProcExpr, PureExpr, QueryDef};
-use std::collections::BTreeMap;
 
 pub(crate) fn common_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
@@ -91,9 +90,11 @@ fn attr_def(
 }
 
 fn construct_object(clauses: Vec<ObjectClause>, span: Span) -> Result<ObjectDef, BareError> {
+    use sappho_identmap::{IdentMap, RedefinitionError};
+
     let mut query = None;
     let mut func = None;
-    let mut attrs = BTreeMap::new();
+    let mut attrs = IdentMap::default();
 
     for clause in clauses.into_iter() {
         use ObjectClause::*;
@@ -102,14 +103,9 @@ fn construct_object(clauses: Vec<ObjectClause>, span: Span) -> Result<ObjectDef,
         match clause {
             Query(x) => set_clause(&mut query, x, "query", clspan)?,
             Func(x) => set_clause(&mut func, x, "fn", clspan)?,
-            Attr(id, x) => {
-                if attrs.insert(id.clone(), x).is_some() {
-                    return Err(BareError::custom(
-                        span,
-                        format!("duplicate attribute {:?}", id),
-                    ));
-                }
-            }
+            Attr(id, x) => attrs.define(id, x).map_err(|RedefinitionError(id)| {
+                BareError::custom(clspan, format!("duplicate attribute {:?}", id))
+            })?,
         }
     }
 

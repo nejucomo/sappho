@@ -12,6 +12,9 @@ derive_more = "0.99"
 [dependencies.sappho-ast]
 path = "../ast"
 
+[dependencies.sappho-identmap]
+path = "../identmap"
+
 [dev-dependencies]
 test-case = "2.0"
 include_dir = "0.7"

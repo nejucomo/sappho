@@ -24,15 +24,17 @@ Common(
                     ),
                 },
             ),
-            attrs: {
-                "x": Universal(
-                    Lit(
-                        Num(
-                            42.0,
+            attrs: IdentMap(
+                {
+                    "x": Universal(
+                        Lit(
+                            Num(
+                                42.0,
+                            ),
                         ),
                     ),
-                ),
-            },
+                },
+            ),
         },
     ),
 )

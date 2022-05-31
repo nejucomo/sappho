@@ -3,22 +3,24 @@ Common(
         ObjectDef {
             query: None,
             func: None,
-            attrs: {
-                "a": Universal(
-                    Lit(
-                        Num(
-                            2.0,
+            attrs: IdentMap(
+                {
+                    "a": Universal(
+                        Lit(
+                            Num(
+                                2.0,
+                            ),
                         ),
                     ),
-                ),
-                "b": Universal(
-                    Lit(
-                        Num(
-                            3.0,
+                    "b": Universal(
+                        Lit(
+                            Num(
+                                3.0,
+                            ),
                         ),
                     ),
-                ),
-            },
+                },
+            ),
         },
     ),
 )
