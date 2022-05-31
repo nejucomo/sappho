@@ -1,0 +1,5 @@
+Error from "negatives/duplicate-attrs/input", line 1:
+| {
+| ^
+|
++-> Syntax error: while parsing object definition, duplicate attribute "a"

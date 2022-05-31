@@ -1,0 +1,38 @@
+Common(
+    Object(
+        ObjectDef {
+            query: Some(
+                QueryDef {
+                    body: Effect(
+                        Inquire(
+                            Universal(
+                                Ref(
+                                    "x",
+                                ),
+                            ),
+                        ),
+                    ),
+                },
+            ),
+            func: Some(
+                FuncDef {
+                    binding: "x",
+                    body: Universal(
+                        Ref(
+                            "x",
+                        ),
+                    ),
+                },
+            ),
+            attrs: {
+                "x": Universal(
+                    Lit(
+                        Num(
+                            42.0,
+                        ),
+                    ),
+                ),
+            },
+        },
+    ),
+)

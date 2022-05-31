@@ -1,6 +1,6 @@
 use crate::{Result, ValRef};
 use sappho_ast::Identifier;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -30,7 +30,7 @@ impl Deref for ScopeRef {
     }
 }
 
-type ScopeMap = HashMap<Identifier, ValRef>;
+type ScopeMap = BTreeMap<Identifier, ValRef>;
 
 #[derive(Debug)]
 pub(crate) enum Scope {

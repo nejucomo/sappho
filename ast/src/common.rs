@@ -1,6 +1,7 @@
 //! Common sub-grammars for all effects
 
-use crate::{Pattern, PureExpr, QueryExpr};
+use crate::{Identifier, Pattern, PureExpr, QueryExpr};
+use std::collections::BTreeMap;
 
 #[derive(Debug, PartialEq)]
 pub enum CommonExpr {
@@ -24,4 +25,5 @@ pub struct QueryDef {
 pub struct ObjectDef {
     pub query: Option<QueryDef>,
     pub func: Option<FuncDef>,
+    pub attrs: BTreeMap<Identifier, PureExpr>,
 }

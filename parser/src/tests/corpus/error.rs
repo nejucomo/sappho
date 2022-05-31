@@ -51,7 +51,7 @@ impl fmt::Display for Mismatch {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "+ expected:\n{}\n+ found:\n{}\n+ expected debug: {:?}\n+    found debug: {:?}",
+            "+ expected:\n{}\n+ found:\n{}\n+ expected debug: {:?}\n+    found debug: {:?}\n\n",
             prefix_lines("| ", self.expected.as_str()),
             prefix_lines("| ", &self.found),
             self.expected.as_str(),

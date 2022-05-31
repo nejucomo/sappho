@@ -135,7 +135,7 @@ use test_case::test_case;
     ; "object fn"
 )]
 #[test_case(
-    "{ query x; fn x -> x }" =>
+    "{ query x, fn x -> x }" =>
     GenExpr::object_expr(
         Some(GenExpr::ref_expr("x".to_string())),
         Some((
@@ -143,10 +143,10 @@ use test_case::test_case;
             GenExpr::ref_expr("x".to_string()),
         )),
     )
-    ; "object full query first"
+    ; "object query and fn"
 )]
 #[test_case(
-    "{ fn x -> x; query x }" =>
+    "{ fn x -> x, query x }" =>
     GenExpr::object_expr(
         Some(GenExpr::ref_expr("x".to_string())),
         Some((
@@ -154,7 +154,7 @@ use test_case::test_case;
             GenExpr::ref_expr("x".to_string()),
         )),
     )
-    ; "object full fn first"
+    ; "object fn and query"
 )]
 fn positive(input: &str) -> sappho_ast::PureExpr {
     match crate::parse(None, input) {
