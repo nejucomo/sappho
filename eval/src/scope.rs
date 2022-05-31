@@ -1,6 +1,5 @@
 use crate::{Result, ValRef};
-use sappho_ast::Identifier;
-use std::collections::BTreeMap;
+use sappho_identmap::{IdentMap, IdentRef};
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -14,9 +13,9 @@ impl Default for ScopeRef {
 }
 
 impl ScopeRef {
-    pub(crate) fn extend(&self, ident: &str, bindval: ValRef) -> ScopeRef {
+    pub(crate) fn extend(&self, ident: &IdentRef, bindval: ValRef) -> ScopeRef {
         // TODO: Can we remove the ident copy?
-        let map = ScopeMap::from([(ident.to_string(), bindval)]);
+        let map = IdentMap::from([(ident.to_string(), bindval)]);
         let frame = Scope::Frame(map, self.clone());
         ScopeRef(Rc::new(frame))
     }
@@ -30,23 +29,21 @@ impl Deref for ScopeRef {
     }
 }
 
-type ScopeMap = BTreeMap<Identifier, ValRef>;
-
 #[derive(Debug)]
 pub(crate) enum Scope {
     Empty,
-    Frame(ScopeMap, ScopeRef),
+    Frame(IdentMap<ValRef>, ScopeRef),
 }
 
 impl Scope {
-    pub(crate) fn deref(&self, ident: &str) -> Result<ValRef> {
+    pub(crate) fn deref(&self, ident: &IdentRef) -> Result<ValRef> {
         use crate::Error::Unbound;
 
         self.deref_opt(ident)
             .ok_or_else(|| Unbound(ident.to_string()))
     }
 
-    fn deref_opt(&self, ident: &str) -> Option<ValRef> {
+    fn deref_opt(&self, ident: &IdentRef) -> Option<ValRef> {
         use Scope::*;
 
         match self {

@@ -4,5 +4,6 @@ members = [
   "cli",
   "east",
   "eval",
+  "identmap",
   "parser",
 ]

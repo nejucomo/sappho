@@ -44,7 +44,7 @@ impl<FX> GenExpr<FX> {
                 binding,
                 body: Box::new(body),
             }),
-            attrs: std::collections::BTreeMap::new(),
+            attrs: sappho_identmap::IdentMap::default(),
         }))
     }
 
