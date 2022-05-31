@@ -1,5 +1,6 @@
 //! Subgrammars that are identical in both surface and eval ASTs
-pub type Identifier = String;
+use crate::Identifier;
+
 pub type Pattern = Identifier;
 
 #[derive(Debug, PartialEq)]
