@@ -1,7 +1,7 @@
 mod error;
 
 use self::error::{Error, Errors, Mismatch, Reason};
-use include_dir::{include_dir, Dir};
+use include_dir::{include_dir, Dir, File};
 use sappho_ast::PureExpr;
 use std::path::PathBuf;
 
@@ -39,9 +39,8 @@ where
         .unwrap_or_else(|| panic!("src/tests/corpus/{} not found", corpusname));
 
     for casedir in only_dirs(corpcase) {
-        if let Some(reason) = parse_case(casedir, &parsefunc).err() {
-            let casepath = casedir.path().to_path_buf();
-            errors.push(Error(casepath, reason))
+        if let Some(suberrs) = parse_case(casedir, &parsefunc).err() {
+            errors.extend(suberrs);
         }
     }
 
@@ -61,20 +60,43 @@ fn only_dirs<'a>(d: &Dir<'a>) -> Vec<&'a Dir<'a>> {
     ds
 }
 
-fn parse_case<F, T>(casedir: &Dir, parsefunc: F) -> Result<(), Reason>
+fn parse_case<F, T>(casedir: &Dir, parsefunc: F) -> Result<(), Errors>
 where
     F: Fn(PathBuf, &str) -> Result<T, Reason>,
     T: ToString,
 {
-    let path = casedir.path().join("input");
-    let input = file_contents(casedir, "input")?;
-    let expected = match file_contents(casedir, "expected") {
-        Ok(s) => Ok(s.trim_end()),
-        Err(Reason::MissingFile(_)) => Ok(""),
-        other => other,
-    }?;
+    let mut errors = Errors::default();
 
-    match parsefunc(path, input).map(|v| v.to_string()) {
+    let expected = match file_contents(casedir, "expected") {
+        Ok(x) => x.trim_end(),
+        Err(r) => {
+            errors.push(Error(casedir.path().join("expected"), r));
+            return Err(errors);
+        }
+    };
+
+    for f in casedir.files() {
+        let fpath = f.path();
+        let fname = fpath.strip_prefix(casedir.path()).unwrap();
+        if fname.starts_with("input") {
+            if let Some(reason) = parse_case_input(f, expected, &parsefunc).err() {
+                errors.push(Error(fpath.to_path_buf(), reason))
+            }
+        }
+    }
+
+    errors.into_result()
+}
+
+fn parse_case_input<F, T>(inputfile: &File, expected: &str, parsefunc: F) -> Result<(), Reason>
+where
+    F: Fn(PathBuf, &str) -> Result<T, Reason>,
+    T: ToString,
+{
+    let input = std::str::from_utf8(inputfile.contents())?;
+    let inpath = inputfile.path().to_path_buf();
+
+    match parsefunc(inpath, input).map(|v| v.to_string()) {
         Ok(found) if found.trim_end() == expected => Ok(()),
 
         // Allow a missing "expected" file as a dev convenience:
@@ -88,10 +110,12 @@ where
 }
 
 fn file_contents<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a str, Reason> {
-    d.get_file(d.path().join(fname))
+    let bytes = d
+        .get_file(d.path().join(fname))
         .map(|f| f.contents())
-        .ok_or_else(|| Reason::MissingFile(fname))
-        .and_then(|bytes| Ok(std::str::from_utf8(bytes)?))
+        .unwrap_or(b"");
+    let src = std::str::from_utf8(bytes)?;
+    Ok(src)
 }
 
 fn parse_file(path: PathBuf, source: &str) -> Result<PureExpr, Reason> {
