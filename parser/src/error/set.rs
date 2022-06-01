@@ -1,11 +1,10 @@
 use crate::error::{BareError, SourcedError};
 
-use derive_more::From;
 use std::fmt;
 use std::path::PathBuf;
 
-#[derive(Debug, From)]
-pub struct ErrorSet<T>(Vec<T>);
+#[derive(Debug)]
+pub struct ErrorSet<E>(Vec<E>);
 
 pub type Errors = ErrorSet<SourcedError>;
 
@@ -20,8 +19,18 @@ impl Errors {
     }
 }
 
-impl<T> ErrorSet<T> {
-    pub fn push(&mut self, error: T) {
+impl<E> ErrorSet<E> {
+    pub fn track_error<T>(&mut self, r: Result<T, E>) -> Option<T> {
+        match r {
+            Ok(x) => Some(x),
+            Err(e) => {
+                self.push(e);
+                None
+            }
+        }
+    }
+
+    pub fn push(&mut self, error: E) {
         self.0.push(error)
     }
 
@@ -38,15 +47,34 @@ impl<T> ErrorSet<T> {
     }
 }
 
-impl<T> Default for ErrorSet<T> {
+impl<E> Default for ErrorSet<E> {
     fn default() -> Self {
         ErrorSet(vec![])
     }
 }
 
-impl<T> fmt::Display for ErrorSet<T>
+impl<E> From<E> for ErrorSet<E> {
+    fn from(e: E) -> Self {
+        ErrorSet(vec![e])
+    }
+}
+
+impl<E> FromIterator<Result<(), E>> for ErrorSet<E> {
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = Result<(), E>>,
+    {
+        let mut errors = Self::default();
+        for res in iter {
+            errors.track_error(res);
+        }
+        errors
+    }
+}
+
+impl<E> fmt::Display for ErrorSet<E>
 where
-    T: fmt::Display,
+    E: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for error in self.0.iter() {
