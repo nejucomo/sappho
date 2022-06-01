@@ -66,7 +66,16 @@ where
     T: ToString,
 {
     let expected = file_contents(casedir, "expected")?.trim_end();
+    let inputs = get_testcase_inputs(casedir)?;
 
+    inputs
+        .into_iter()
+        .map(|f| parse_case_input(f, expected, &parsefunc))
+        .collect::<Errors>()
+        .into_result()
+}
+
+fn get_testcase_inputs<'a>(casedir: &'a Dir<'a>) -> Result<Vec<&'a File<'a>>, Error> {
     let mut inputs: Vec<&File> = vec![];
     for f in casedir.files() {
         let fname = f
@@ -79,22 +88,17 @@ where
         if fname.starts_with("input") {
             inputs.push(f);
         } else if fname != "expected" {
-            return Err(Error(f.path().to_path_buf(), Reason::UnexpectedFile).into());
+            return Err(Error(f.path().to_path_buf(), Reason::UnexpectedFile));
         }
     }
 
     if inputs.is_empty() {
-        return Err(Error(
+        Err(Error(
             casedir.path().to_path_buf(),
             Reason::MissingFile("<no 'input*' files for case directory>"),
-        )
-        .into());
+        ))
     } else {
-        inputs
-            .into_iter()
-            .map(|f| parse_case_input(f, expected, &parsefunc))
-            .collect::<Errors>()
-            .into_result()
+        Ok(inputs)
     }
 }
 
