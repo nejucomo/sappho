@@ -65,9 +65,7 @@ where
     F: Fn(PathBuf, &str) -> Result<T, Reason>,
     T: ToString,
 {
-    let expected = file_contents(casedir, "expected")
-        .map_err(|e| Errors::from([e]))?
-        .trim_end();
+    let expected = file_contents(casedir, "expected")?.trim_end();
 
     let mut inputs: Vec<&File> = vec![];
     for f in casedir.files() {
@@ -76,23 +74,21 @@ where
             .file_name()
             .and_then(|os| os.to_str())
             .ok_or(Reason::BadPath)
-            .map_err(|r| Errors::from([Error(f.path().to_path_buf(), r)]))?;
+            .map_err(|r| Error(f.path().to_path_buf(), r))?;
 
         if fname.starts_with("input") {
             inputs.push(f);
         } else if fname != "expected" {
-            return Err(Errors::from([Error(
-                f.path().to_path_buf(),
-                Reason::UnexpectedFile,
-            )]));
+            return Err(Error(f.path().to_path_buf(), Reason::UnexpectedFile).into());
         }
     }
 
     if inputs.is_empty() {
-        return Err(Errors::from([Error(
+        return Err(Error(
             casedir.path().to_path_buf(),
             Reason::MissingFile("<no 'input*' files for case directory>"),
-        )]));
+        )
+        .into());
     } else {
         let mut errors = Errors::default();
 

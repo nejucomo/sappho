@@ -53,12 +53,9 @@ impl<E> Default for ErrorSet<E> {
     }
 }
 
-impl<T, E> From<T> for ErrorSet<E>
-where
-    Vec<E>: From<T>,
-{
-    fn from(x: T) -> Self {
-        ErrorSet(Vec::from(x))
+impl<E> From<E> for ErrorSet<E> {
+    fn from(e: E) -> Self {
+        ErrorSet(vec![e])
     }
 }
 
