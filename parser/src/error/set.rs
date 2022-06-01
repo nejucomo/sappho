@@ -25,6 +25,10 @@ impl<T> ErrorSet<T> {
         self.0.push(error)
     }
 
+    pub fn extend(&mut self, sub: Self) {
+        self.0.extend(sub.0);
+    }
+
     pub fn into_result(self) -> Result<(), Self> {
         if self.0.is_empty() {
             Ok(())
