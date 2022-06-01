@@ -12,6 +12,7 @@ pub struct Error(pub std::path::PathBuf, pub Reason);
 pub enum Reason {
     MissingFile(&'static str),
     BadPath,
+    UnexpectedFile,
     StrUtf8(std::str::Utf8Error),
     StringUtf8(std::string::FromUtf8Error),
     Parse(crate::Errors),
@@ -40,6 +41,7 @@ impl fmt::Display for Reason {
         match self {
             MissingFile(x) => write!(f, "missing file: {}", x),
             BadPath => write!(f, "bad path"),
+            UnexpectedFile => write!(f, "unexpected file"),
             StrUtf8(x) => write!(f, "utf8 decode error: {}", x),
             StringUtf8(x) => write!(f, "uft8 decode error: {}", x),
             Parse(x) => write!(f, "parse error:\n{}", x),

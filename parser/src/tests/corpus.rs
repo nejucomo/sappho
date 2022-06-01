@@ -71,14 +71,20 @@ where
 
     let mut inputs: Vec<&File> = vec![];
     for f in casedir.files() {
-        if f.path()
+        let fname = f
+            .path()
             .file_name()
             .and_then(|os| os.to_str())
             .ok_or(Reason::BadPath)
-            .map(|fname| fname.starts_with("input"))
-            .map_err(|r| Errors::from([Error(f.path().to_path_buf(), r)]))?
-        {
+            .map_err(|r| Errors::from([Error(f.path().to_path_buf(), r)]))?;
+
+        if fname.starts_with("input") {
             inputs.push(f);
+        } else if fname != "expected" {
+            return Err(Errors::from([Error(
+                f.path().to_path_buf(),
+                Reason::UnexpectedFile,
+            )]));
         }
     }
 
