@@ -59,6 +59,19 @@ impl<E> From<E> for ErrorSet<E> {
     }
 }
 
+impl<E> FromIterator<Result<(), E>> for ErrorSet<E> {
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = Result<(), E>>,
+    {
+        let mut errors = Self::default();
+        for res in iter {
+            errors.track_error(res);
+        }
+        errors
+    }
+}
+
 impl<E> fmt::Display for ErrorSet<E>
 where
     E: fmt::Display,

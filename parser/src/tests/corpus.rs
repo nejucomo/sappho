@@ -90,13 +90,11 @@ where
         )
         .into());
     } else {
-        let mut errors = Errors::default();
-
-        for f in inputs {
-            errors.track_error(parse_case_input(f, expected, &parsefunc));
-        }
-
-        errors.into_result()
+        inputs
+            .into_iter()
+            .map(|f| parse_case_input(f, expected, &parsefunc))
+            .collect::<Errors>()
+            .into_result()
     }
 }
 
