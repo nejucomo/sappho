@@ -11,6 +11,7 @@ pub struct Error(pub std::path::PathBuf, pub Reason);
 #[derive(Debug, From)]
 pub enum Reason {
     MissingFile(&'static str),
+    BadPath,
     StrUtf8(std::str::Utf8Error),
     StringUtf8(std::string::FromUtf8Error),
     Parse(crate::Errors),
@@ -28,7 +29,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let Error(path, reason) = self;
 
-        write!(f, "Error in {:?}:\n{}", path.display(), reason)
+        write!(f, "Error in {:?}: {}\n", path.display(), reason)
     }
 }
 
@@ -38,10 +39,11 @@ impl fmt::Display for Reason {
 
         match self {
             MissingFile(x) => write!(f, "missing file: {}", x),
+            BadPath => write!(f, "bad path"),
             StrUtf8(x) => write!(f, "utf8 decode error: {}", x),
             StringUtf8(x) => write!(f, "uft8 decode error: {}", x),
-            Parse(x) => write!(f, "parse error: {}", x),
-            InvalidParse(x) => write!(f, "unexpected parse: {}\n", x),
+            Parse(x) => write!(f, "parse error:\n{}", x),
+            InvalidParse(x) => write!(f, "unexpected parse:\n{}", x),
             MismatchedOutput(x) => write!(f, "mismatched output:\n{}", x),
         }
     }

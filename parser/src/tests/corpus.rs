@@ -65,30 +65,53 @@ where
     F: Fn(PathBuf, &str) -> Result<T, Reason>,
     T: ToString,
 {
-    let mut errors = Errors::default();
+    let expected = file_contents(casedir, "expected")
+        .map_err(|e| Errors::from([e]))?
+        .trim_end();
 
-    let expected = match file_contents(casedir, "expected") {
-        Ok(x) => x.trim_end(),
-        Err(r) => {
-            errors.push(Error(casedir.path().join("expected"), r));
-            return Err(errors);
-        }
-    };
-
+    let mut inputs: Vec<&File> = vec![];
     for f in casedir.files() {
-        let fpath = f.path();
-        let fname = fpath.strip_prefix(casedir.path()).unwrap();
-        if fname.starts_with("input") {
-            if let Some(reason) = parse_case_input(f, expected, &parsefunc).err() {
-                errors.push(Error(fpath.to_path_buf(), reason))
-            }
+        if f.path()
+            .file_name()
+            .and_then(|os| os.to_str())
+            .ok_or(Reason::BadPath)
+            .map(|fname| fname.starts_with("input"))
+            .map_err(|r| Errors::from([Error(f.path().to_path_buf(), r)]))?
+        {
+            inputs.push(f);
         }
     }
 
-    errors.into_result()
+    if inputs.is_empty() {
+        return Err(Errors::from([Error(
+            casedir.path().to_path_buf(),
+            Reason::MissingFile("<no 'input*' files for case directory>"),
+        )]));
+    } else {
+        let mut errors = Errors::default();
+
+        for f in inputs {
+            errors.track_error(parse_case_input(f, expected, &parsefunc));
+        }
+
+        errors.into_result()
+    }
 }
 
-fn parse_case_input<F, T>(inputfile: &File, expected: &str, parsefunc: F) -> Result<(), Reason>
+fn parse_case_input<F, T>(inputfile: &File, expected: &str, parsefunc: F) -> Result<(), Error>
+where
+    F: Fn(PathBuf, &str) -> Result<T, Reason>,
+    T: ToString,
+{
+    parse_case_input_reason(inputfile, expected, &parsefunc)
+        .map_err(|r| Error(inputfile.path().to_path_buf(), r))
+}
+
+fn parse_case_input_reason<F, T>(
+    inputfile: &File,
+    expected: &str,
+    parsefunc: F,
+) -> Result<(), Reason>
 where
     F: Fn(PathBuf, &str) -> Result<T, Reason>,
     T: ToString,
@@ -109,7 +132,11 @@ where
     }
 }
 
-fn file_contents<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a str, Reason> {
+fn file_contents<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a str, Error> {
+    file_contents_to_reason(d, fname).map_err(|r| Error(d.path().join(fname), r))
+}
+
+fn file_contents_to_reason<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a str, Reason> {
     let bytes = d
         .get_file(d.path().join(fname))
         .map(|f| f.contents())
