@@ -314,6 +314,10 @@ name = "sappho-identmap"
 version = "0.1.0"
 
 [[package]]
+name = "sappho-integration-tests"
+version = "0.1.0"
+
+[[package]]
 name = "sappho-parser"
 version = "0.1.0"
 dependencies = [
