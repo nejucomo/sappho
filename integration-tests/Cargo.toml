@@ -5,4 +5,14 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
+[build-dependencies]
+indoc = "1.0.6"
+
+[dev-dependencies]
+derive_more = "0.99.17"
+
+[dev-dependencies.sappho-eval]
+path = "../eval"
+
+[dev-dependencies.sappho-parser]
+path = "../parser"

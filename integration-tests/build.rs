@@ -1,3 +1,4 @@
+use indoc::indoc;
 use std::fs::File;
 use std::path::{Path, PathBuf};
 
@@ -25,7 +26,7 @@ impl<T> WrapPathError<T> for std::io::Result<T> {
 }
 
 fn main() -> Result<()> {
-    println!("cargo:rerun-if-changed=test-cases");
+    println!("cargo:rerun-if-changed=src/test-cases");
     let path = Path::new("src/gentests.rs");
     let mut f = File::create(path).add_error_path(path)?;
     generate_tests(&mut f)?;
@@ -33,7 +34,7 @@ fn main() -> Result<()> {
 }
 
 fn generate_tests(f: &mut File) -> Result<()> {
-    for_each_dir_entry("test-cases", |entry| {
+    for_each_dir_entry("src/test-cases", |entry| {
         let ftype = entry.file_type().add_error_path(&entry.path())?;
         if ftype.is_dir() {
             generate_test_case(f, &entry.path())
@@ -54,19 +55,24 @@ fn generate_test_case_no_path(f: &mut File, casedir: &Path) -> std::io::Result<(
     use std::io::Write;
 
     let testname = file_name(casedir)?;
+    let relcasedir = casedir.strip_prefix("src/").unwrap();
+    let inpath = relcasedir.join("input");
+    let inpathdisp = inpath.display();
     f.write_all(
         format!(
-            r#"
-        #[test]
-        fn {}() {{
-            let input = include_str!("{}");
-            let expected = include_str!("{}");
-            crate::test_eval(input, expected);
-        }}
-    "#,
-            testname,
-            casedir.join("input").display(),
-            casedir.join("expected").display(),
+            indoc! {r#"
+                #[test]
+                fn {}() {{
+                    let inpath = std::path::PathBuf::from("{}");
+                    let input = include_str!("{}");
+                    let expected = include_str!("{}");
+                    crate::test_eval(inpath, input, expected);
+                }}
+            "#},
+            testname.replace('-', "_"),
+            inpathdisp,
+            inpathdisp,
+            relcasedir.join("expected").display(),
         )
         .as_bytes(),
     )
