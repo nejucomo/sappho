@@ -48,10 +48,6 @@ fn generate_tests(f: &mut File) -> Result<()> {
 }
 
 fn generate_test_case(f: &mut File, casedir: &Path) -> Result<()> {
-    generate_test_case_no_path(f, casedir).add_error_path(casedir)
-}
-
-fn generate_test_case_no_path(f: &mut File, casedir: &Path) -> std::io::Result<()> {
     use std::io::Write;
 
     let testname = file_name(casedir)?;
@@ -76,6 +72,7 @@ fn generate_test_case_no_path(f: &mut File, casedir: &Path) -> std::io::Result<(
         )
         .as_bytes(),
     )
+    .add_error_path(casedir)
 }
 
 fn for_each_dir_entry<P, F>(dir: P, mut f: F) -> Result<()>
@@ -91,13 +88,17 @@ where
     Ok(())
 }
 
-fn file_name(path: &Path) -> std::io::Result<&str> {
+fn file_name(path: &Path) -> Result<&str> {
+    file_name_stdio(path).add_error_path(path)
+}
+
+fn file_name_stdio(path: &Path) -> std::io::Result<&str> {
     let osstr = path
         .file_name()
-        .ok_or_else(|| ioerror(format!("No filename: {:?}", path.display())))?;
+        .ok_or_else(|| ioerror("No filename".to_string()))?;
     osstr
         .to_str()
-        .ok_or_else(|| ioerror(format!("Non-utf8 filename: {:?}", path.display())))
+        .ok_or_else(|| ioerror("Non-utf8 filename".to_string()))
 }
 
 fn ioerror(msg: String) -> std::io::Error {
