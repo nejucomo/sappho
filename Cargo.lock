@@ -228,9 +228,9 @@ checksum = "21326818e99cfe6ce1e524c2a805c189a99b5ae555a35d19f9a284b427d86afa"
 
 [[package]]
 name = "pathutil"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84c8830854894b184ae608b8d8fee1274d6aa9057853328331ff8fcf37a2d838"
+checksum = "7011c665ac796f9c2b2f01118fe45ad1ab88b30f89ece270b41741c50fedae1a"
 dependencies = [
  "derive_more",
  "error-annotation",

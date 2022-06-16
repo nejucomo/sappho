@@ -1,5 +1,5 @@
 use indoc::indoc;
-use pathutil::PathExt;
+use pathutil::{FileTypeEnum, PathExt};
 use std::fs::File;
 use std::io::Result;
 use std::path::Path;
@@ -14,17 +14,8 @@ fn main() -> Result<()> {
 
 fn generate_tests(f: &mut File) -> Result<()> {
     for entry in Path::new("src/test-cases").pe_read_dir_entries()? {
-        let ftype = entry.file_type()?;
-        if ftype.is_dir() {
-            generate_test_case(f, &entry.path())?;
-        } else {
-            return Err({
-                use std::io::Error;
-                use std::io::ErrorKind::Other;
-
-                Error::new(Other, format!("unexpected {:?}", ftype))
-            });
-        }
+        entry.metadata()?.require_file_type(FileTypeEnum::Dir)?;
+        generate_test_case(f, &entry.path())?;
     }
 
     Ok(())
