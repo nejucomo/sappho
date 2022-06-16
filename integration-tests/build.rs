@@ -15,19 +15,48 @@ fn main() -> Result<()> {
 fn generate_tests(f: &mut File) -> Result<()> {
     for entry in Path::new("src/test-cases").pe_read_dir_entries()? {
         entry.metadata()?.require_file_type(FileTypeEnum::Dir)?;
-        generate_test_case(f, &entry.path())?;
+        generate_case_tests(f, &entry.path())?;
     }
 
     Ok(())
 }
 
-fn generate_test_case(f: &mut File, casedir: &Path) -> Result<()> {
+fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
+    let casename = casedir.pe_file_name_str()?;
+    let expected = casedir.join("expected");
+    for entry in casedir.pe_read_dir_entries()? {
+        entry.metadata()?.require_file_type(FileTypeEnum::File)?;
+        let path = entry.path();
+        let name = path.pe_file_name_str()?;
+        if name == "input" || name.starts_with("input-") {
+            generate_case_input_test(
+                f,
+                &expected,
+                &path,
+                &format!("{}_{}", casename, name).replace('-', "_"),
+            )?;
+        } else if name != "expected" {
+            use std::io::{Error, ErrorKind::Other};
+            return Err(Error::new(
+                Other,
+                format!("Unexpected file: {:?}", path.display()),
+            ));
+        }
+    }
+
+    Ok(())
+}
+
+fn generate_case_input_test(
+    f: &mut File,
+    expected: &Path,
+    input: &Path,
+    testname: &str,
+) -> Result<()> {
     use std::io::Write;
 
-    let testname = casedir.pe_file_name_str()?;
-    let relcasedir = casedir.pe_strip_prefix("src/")?;
-    let inpath = relcasedir.join("input");
-    let inpathdisp = inpath.display();
+    let exppath = expected.pe_strip_prefix("src/")?;
+    let inpath = input.pe_strip_prefix("src/")?;
     f.write_all(
         format!(
             indoc! {r#"
@@ -39,10 +68,10 @@ fn generate_test_case(f: &mut File, casedir: &Path) -> Result<()> {
                     crate::test_eval(inpath, input, expected);
                 }}
             "#},
-            testname.replace('-', "_"),
-            inpathdisp,
-            inpathdisp,
-            relcasedir.join("expected").display(),
+            testname,
+            inpath.display(),
+            inpath.display(),
+            exppath.display(),
         )
         .as_bytes(),
     )
