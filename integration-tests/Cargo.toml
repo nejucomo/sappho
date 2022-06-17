@@ -7,13 +7,10 @@ edition = "2021"
 
 [build-dependencies]
 indoc = "1.0.6"
-pathutil = "0.1.1"
+pathutil = "0.1.2"
 
 [dev-dependencies]
 derive_more = "0.99.17"
 
-[dev-dependencies.sappho-eval]
-path = "../eval"
-
-[dev-dependencies.sappho-parser]
-path = "../parser"
+[dev-dependencies.sappho-interpreter]
+path = "../interpreter"

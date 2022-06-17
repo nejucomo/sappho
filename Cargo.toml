@@ -6,5 +6,6 @@ members = [
   "eval",
   "identmap",
   "integration-tests",
+  "interpreter",
   "parser",
 ]
