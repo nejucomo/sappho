@@ -32,6 +32,24 @@ impl<F, Q, A> Object<F, Q, A> {
     pub fn is_empty(&self) -> bool {
         self.f.is_none() && self.q.is_none() && self.a.is_empty()
     }
+
+    pub fn transform<TF, FR, TQ, QR, TA, AR>(
+        self,
+        tfunc: TF,
+        tquery: TQ,
+        tattr: TA,
+    ) -> Object<FR, QR, AR>
+    where
+        TF: FnOnce(F) -> FR,
+        TQ: FnOnce(Q) -> QR,
+        TA: Fn(A) -> AR,
+    {
+        Object {
+            f: self.f.map(tfunc),
+            q: self.q.map(tquery),
+            a: self.a.into_map_values(tattr),
+        }
+    }
 }
 
 impl<F, Q, A> fmt::Display for Object<F, Q, A>

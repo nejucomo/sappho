@@ -6,7 +6,6 @@ use std::rc::Rc;
 
 #[derive(Debug, PartialEq)]
 pub struct ObjectDef(ObjectInner);
-
 pub type ObjectInner = Object<FuncClause, QueryClause, PureExpr>;
 
 impl std::ops::Deref for ObjectDef {
@@ -19,11 +18,10 @@ impl std::ops::Deref for ObjectDef {
 
 impl From<ast::ObjectDef> for ObjectDef {
     fn from(od: ast::ObjectDef) -> ObjectDef {
-        ObjectDef(ObjectInner::new(
-            od.func.map(FuncClause::from),
-            od.query.map(QueryClause::from),
-            od.attrs.into_map_values(PureExpr::from),
-        ))
+        ObjectDef(
+            od.unwrap()
+                .transform(FuncClause::from, QueryClause::from, PureExpr::from),
+        )
     }
 }
 
