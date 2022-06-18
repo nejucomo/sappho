@@ -5,7 +5,7 @@ mod effects;
 mod expr;
 mod recursive;
 
-pub use self::common::ObjectDef;
+pub use self::common::{FuncClause, ObjectDef, QueryClause};
 pub use self::effects::{
     AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,
 };

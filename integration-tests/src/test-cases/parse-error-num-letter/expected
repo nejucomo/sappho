@@ -1,0 +1,6 @@
+parse error: from "test-cases/parse-error-num-letter/input", line 1:
+| 7x
+|  ^
+|
++-> Syntax error: unexpected 'x' in numeric literal
+

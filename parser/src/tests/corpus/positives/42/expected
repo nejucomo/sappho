@@ -1,7 +1,0 @@
-Universal(
-    Lit(
-        Num(
-            42.0,
-        ),
-    ),
-)

@@ -1,0 +1,6 @@
+parse error: from "test-cases/parse-error-invalid-let-syntax/input", line 1:
+| let {
+|     ^
+|
++-> Syntax error: while parsing let-expression, unexpected '{' while expecting ' ' or '\n'
+

@@ -1,0 +1,6 @@
+parse error: from "test-cases/parse-error-bad-parens/input", line 1:
+| [(]
+|   ^
+|
++-> Syntax error: while parsing parenthetical-expression, unexpected ']' while expecting ' ', '!', '$', '(', '[', '\n', 'f', 'l', 'q', or '{'
+

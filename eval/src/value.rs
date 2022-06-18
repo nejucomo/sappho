@@ -1,6 +1,6 @@
-use crate::Result;
+use crate::{List, Object};
 use derive_more::From;
-use sappho_identmap::IdentMap;
+use std::fmt;
 use std::rc::Rc;
 
 pub type ValRef = Rc<Value>;
@@ -12,36 +12,14 @@ pub enum Value {
     Object(Object),
 }
 
-#[derive(Debug)]
-pub enum List {
-    Empty,
-    Cell(ValRef, Rc<List>),
-}
+impl fmt::Display for Value {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Value::*;
 
-impl Default for List {
-    fn default() -> List {
-        List::Empty
-    }
-}
-
-impl List {
-    pub fn prepend(self, vref: ValRef) -> List {
-        List::Cell(vref, Rc::new(self))
-    }
-}
-
-pub struct Object {
-    pub func: Option<Box<dyn Fn(ValRef) -> Result<ValRef>>>,
-    pub attrs: IdentMap<ValRef>,
-}
-
-impl std::fmt::Debug for Object {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "<object{} attrs: {:?}>",
-            if self.func.is_some() { " fn" } else { "" },
-            self.attrs.keys().collect::<Vec<&String>>(),
-        )
+        match self {
+            Num(x) => x.fmt(f),
+            List(x) => x.fmt(f),
+            Object(x) => x.fmt(f),
+        }
     }
 }

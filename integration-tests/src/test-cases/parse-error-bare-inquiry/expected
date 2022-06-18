@@ -1,0 +1,6 @@
+parse error: from "test-cases/parse-error-bare-inquiry/input", line 1:
+| $x
+| ^^
+|
++-> Syntax error: pure expressions cannot contain inquiry effects, e.g. `$…`
+

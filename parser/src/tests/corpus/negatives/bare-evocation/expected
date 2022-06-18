@@ -1,6 +1,0 @@
-parse error: from "negatives/bare-evocation/input", line 1:
-| !x
-| ^^
-|
-+-> Syntax error: pure expressions cannot contain evoke effects, e.g. `!…`
-
