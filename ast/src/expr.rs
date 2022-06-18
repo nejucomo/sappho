@@ -36,16 +36,16 @@ impl<FX> GenExpr<FX> {
     }
 
     pub fn object_expr(qdef: Option<QueryExpr>, fdef: Option<(Pattern, PureExpr)>) -> Self {
-        GenExpr::Common(CommonExpr::Object(ObjectDef {
-            query: qdef.map(|body| QueryDef {
-                body: Box::new(body),
-            }),
-            func: fdef.map(|(binding, body)| FuncDef {
+        GenExpr::Common(CommonExpr::Object(ObjectDef::new(
+            fdef.map(|(binding, body)| FuncDef {
                 binding,
                 body: Box::new(body),
             }),
-            attrs: sappho_identmap::IdentMap::default(),
-        }))
+            qdef.map(|body| QueryDef {
+                body: Box::new(body),
+            }),
+            sappho_identmap::IdentMap::default(),
+        )))
     }
 
     pub fn list(exprs: Vec<Self>) -> Self {

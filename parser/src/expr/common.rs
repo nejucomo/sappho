@@ -109,7 +109,7 @@ fn construct_object(clauses: Vec<ObjectClause>, span: Span) -> Result<ObjectDef,
         }
     }
 
-    Ok(ObjectDef { query, func, attrs })
+    Ok(ObjectDef::new(func, query, attrs))
 }
 
 fn set_clause<T>(

@@ -300,6 +300,7 @@ version = "0.1.0"
 dependencies = [
  "derive_more",
  "sappho-identmap",
+ "sappho-object",
 ]
 
 [[package]]
@@ -319,6 +320,7 @@ version = "0.1.0"
 dependencies = [
  "sappho-ast",
  "sappho-identmap",
+ "sappho-object",
 ]
 
 [[package]]
@@ -329,6 +331,7 @@ dependencies = [
  "sappho-ast",
  "sappho-east",
  "sappho-identmap",
+ "sappho-object",
  "sappho-parser",
  "test-case",
 ]
@@ -356,6 +359,13 @@ dependencies = [
  "sappho-eval",
  "sappho-parser",
  "sappho-source",
+]
+
+[[package]]
+name = "sappho-object"
+version = "0.1.0"
+dependencies = [
+ "sappho-identmap",
 ]
 
 [[package]]

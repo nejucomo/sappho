@@ -1,42 +1,47 @@
 use crate::{Pattern, PureExpr, QueryExpr};
 use sappho_ast as ast;
 use sappho_identmap::IdentMap;
+use sappho_object::Object;
 use std::rc::Rc;
 
 #[derive(Debug, PartialEq)]
-pub struct ObjectDef {
-    pub query: Option<QueryClause>,
-    pub func: Option<FuncClause>,
-    pub attrs: IdentMap<PureExpr>,
+pub struct ObjectDef(ObjectInner);
+pub type ObjectInner = Object<FuncClause, QueryClause, PureExpr>;
+
+impl std::ops::Deref for ObjectDef {
+    type Target = ObjectInner;
+
+    fn deref(&self) -> &ObjectInner {
+        &self.0
+    }
 }
 
 impl From<ast::ObjectDef> for ObjectDef {
     fn from(od: ast::ObjectDef) -> ObjectDef {
-        ObjectDef {
-            query: od.query.map(QueryClause::from),
-            func: od.func.map(FuncClause::from),
-            attrs: od.attrs.map_values(PureExpr::from),
-        }
+        ObjectDef(
+            od.unwrap()
+                .transform(FuncClause::from, QueryClause::from, PureExpr::from),
+        )
     }
 }
 
 impl From<ast::FuncDef> for ObjectDef {
     fn from(d: ast::FuncDef) -> ObjectDef {
-        ObjectDef {
-            query: None,
-            func: Some(FuncClause::from(d)),
-            attrs: IdentMap::default(),
-        }
+        ObjectDef(ObjectInner::new(
+            Some(FuncClause::from(d)),
+            None,
+            IdentMap::default(),
+        ))
     }
 }
 
 impl From<ast::QueryDef> for ObjectDef {
     fn from(d: ast::QueryDef) -> ObjectDef {
-        ObjectDef {
-            query: Some(QueryClause::from(d)),
-            func: None,
-            attrs: IdentMap::default(),
-        }
+        ObjectDef(ObjectInner::new(
+            None,
+            Some(QueryClause::from(d)),
+            IdentMap::default(),
+        ))
     }
 }
 

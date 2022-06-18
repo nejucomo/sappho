@@ -10,3 +10,6 @@ path = "../ast"
 
 [dependencies.sappho-identmap]
 path = "../identmap"
+
+[dependencies.sappho-object]
+path = "../object"

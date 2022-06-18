@@ -1,6 +1,6 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
-use crate::{List, Object, Result, ValRef, Value};
+use crate::{List, Result, ValRef, Value};
 use sappho_east::{Application, GenExpr, LetExpr, RecursiveExpr};
 
 impl<FX> Eval for RecursiveExpr<FX>
@@ -70,9 +70,13 @@ where
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
         match tval.borrow() {
-            Value::Object(Object {
-                func: Some(fnbox), ..
-            }) => fnbox(aval),
+            Value::Object(obj) => {
+                if let Some(fnbox) = obj.func() {
+                    fnbox(aval)
+                } else {
+                    Err(Uncallable(tval))
+                }
+            }
             _ => Err(Uncallable(tval)),
         }
     }

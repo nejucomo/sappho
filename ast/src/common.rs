@@ -2,6 +2,7 @@
 
 use crate::{Pattern, PureExpr, QueryExpr};
 use sappho_identmap::IdentMap;
+use sappho_object::Object;
 
 #[derive(Debug, PartialEq)]
 pub enum CommonExpr {
@@ -22,8 +23,23 @@ pub struct QueryDef {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ObjectDef {
-    pub query: Option<QueryDef>,
-    pub func: Option<FuncDef>,
-    pub attrs: IdentMap<PureExpr>,
+pub struct ObjectDef(ObjectInner);
+pub type ObjectInner = Object<FuncDef, QueryDef, PureExpr>;
+
+impl std::ops::Deref for ObjectDef {
+    type Target = ObjectInner;
+
+    fn deref(&self) -> &ObjectInner {
+        &self.0
+    }
+}
+
+impl ObjectDef {
+    pub fn new(func: Option<FuncDef>, query: Option<QueryDef>, attrs: IdentMap<PureExpr>) -> Self {
+        ObjectDef(ObjectInner::new(func, query, attrs))
+    }
+
+    pub fn unwrap(self) -> ObjectInner {
+        self.0
+    }
 }
