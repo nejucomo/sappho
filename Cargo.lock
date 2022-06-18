@@ -359,6 +359,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sappho-object"
+version = "0.1.0"
+dependencies = [
+ "sappho-identmap",
+]
+
+[[package]]
 name = "sappho-parser"
 version = "0.1.0"
 dependencies = [
