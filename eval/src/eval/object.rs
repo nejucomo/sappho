@@ -34,6 +34,6 @@ impl EvalV for ObjectDef {
                 Box::new(move || body.eval(scope.clone()))
             });
 
-        Ok(Value::Object(Object { func, query, attrs }))
+        Ok(Value::Object(Object::new(func, query, attrs)))
     }
 }

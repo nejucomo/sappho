@@ -329,6 +329,7 @@ dependencies = [
  "sappho-ast",
  "sappho-east",
  "sappho-identmap",
+ "sappho-object",
  "sappho-parser",
  "test-case",
 ]

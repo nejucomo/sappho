@@ -15,7 +15,7 @@ impl From<ast::ObjectDef> for ObjectDef {
         ObjectDef {
             query: od.query.map(QueryClause::from),
             func: od.func.map(FuncClause::from),
-            attrs: od.attrs.map_values(PureExpr::from),
+            attrs: od.attrs.into_map_values(PureExpr::from),
         }
     }
 }

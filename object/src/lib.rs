@@ -3,32 +3,34 @@ use std::fmt;
 
 #[derive(Debug)]
 pub struct Object<F, Q, A> {
-    pub func: Option<F>,
-    pub query: Option<Q>,
-    pub attrs: IdentMap<A>,
+    f: Option<F>,
+    q: Option<Q>,
+    a: IdentMap<A>,
 }
 
 impl<F, Q, A> Object<F, Q, A> {
-    pub fn transform<TF, F2, TQ, Q2, TA, A2>(
-        self,
-        tfunc: TF,
-        tquery: TQ,
-        tattr: TA,
-    ) -> Object<F2, Q2, A2>
-    where
-        TF: Fn(F) -> F2,
-        TQ: Fn(Q) -> Q2,
-        TA: Fn(A) -> A2,
-    {
+    pub fn new(func: Option<F>, query: Option<Q>, attrs: IdentMap<A>) -> Self {
         Object {
-            func: self.func.map(tfunc),
-            query: self.query.map(tquery),
-            attrs: self.attrs.map_values(tattr),
+            f: func,
+            q: query,
+            a: attrs,
         }
     }
 
+    pub fn func(&self) -> Option<&F> {
+        self.f.as_ref()
+    }
+
+    pub fn query(&self) -> Option<&Q> {
+        self.q.as_ref()
+    }
+
+    pub fn attrs(&self) -> &IdentMap<A> {
+        &self.a
+    }
+
     pub fn is_empty(&self) -> bool {
-        self.func.is_none() && self.query.is_none() && self.attrs.is_empty()
+        self.f.is_none() && self.q.is_none() && self.a.is_empty()
     }
 }
 
@@ -48,7 +50,7 @@ where
         impl CommaTracker {
             pub fn insert(&mut self, f: &mut fmt::Formatter) -> fmt::Result {
                 if self.0 {
-                    write!(f, ", ")
+                    write!(f, ",")
                 } else {
                     self.0 = true;
                     Ok(())
@@ -59,19 +61,21 @@ where
         let mut ct = CommaTracker(false);
 
         write!(f, "{{")?;
-        if let Some(func) = self.func.as_ref() {
+        if let Some(func) = self.func() {
             ct.insert(f)?;
+            write!(f, " ")?;
             func.fmt(f)?;
         }
 
-        if let Some(query) = self.query.as_ref() {
+        if let Some(query) = self.query() {
             ct.insert(f)?;
+            write!(f, " ")?;
             query.fmt(f)?;
         }
 
-        for (name, attr) in self.attrs.iter() {
+        for (name, attr) in self.attrs().iter() {
             ct.insert(f)?;
-            write!(f, "{}: ", name)?;
+            write!(f, " {}: ", name)?;
             attr.fmt(f)?;
         }
 
