@@ -1,4 +1,4 @@
-use crate::{Result, SourceOption};
+use crate::{ParseFormat, Result, SourceOption};
 
 pub fn eval(source: &SourceOption) -> Result<()> {
     let x = sappho_interpreter::interpret(source)?;
@@ -6,21 +6,12 @@ pub fn eval(source: &SourceOption) -> Result<()> {
     Ok(())
 }
 
-pub fn parse(source: &SourceOption) -> Result<()> {
+pub fn parse<'a>(source: &'a SourceOption, format: &'a ParseFormat) -> Result<'a, ()> {
     let x = sappho_parser::parse(source)?;
-    println!("Parsed: {:#?}", x);
-    Ok(())
-}
-
-pub fn canonicalize(source: &SourceOption) -> Result<()> {
-    let x = sappho_parser::parse(source)?;
-    println!("{}", x);
-    Ok(())
-}
-
-pub fn elemental(source: &SourceOption) -> Result<()> {
-    let x = sappho_parser::parse(source)?;
-    let y = sappho_east::PureExpr::from(x);
-    println!("{}", y);
+    match format {
+        ParseFormat::AST => println!("{:#?}", x),
+        ParseFormat::Canonical => println!("{}", x),
+        ParseFormat::Elemental => println!("{}", sappho_east::PureExpr::from(x)),
+    };
     Ok(())
 }

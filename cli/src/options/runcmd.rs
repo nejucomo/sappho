@@ -16,9 +16,7 @@ impl RunCommand for Command {
 
         match self {
             Eval(opts) => cmds::eval(&opts.source),
-            Parse(opts) => cmds::parse(&opts.source),
-            Canonicalize(opts) => cmds::canonicalize(&opts.source),
-            Elemental(opts) => cmds::elemental(&opts.source),
+            Parse(opts) => cmds::parse(&opts.source.source, &opts.format),
         }
     }
 }

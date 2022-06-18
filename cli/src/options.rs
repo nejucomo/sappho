@@ -1,7 +1,7 @@
 mod runcmd;
 
 use crate::{Result, SourceOption};
-use clap::{Parser, Subcommand};
+use clap::{ArgEnum, Parser, Subcommand};
 
 /// sappho interpreter
 #[derive(Debug, Parser)]
@@ -31,17 +31,9 @@ pub enum Command {
     #[clap()]
     Eval(SourceOptions),
 
-    /// Parse an input and display the internal structure
+    /// Parse an input
     #[clap()]
-    Parse(SourceOptions),
-
-    /// Parse an input and display the canonicalized source
-    #[clap()]
-    Canonicalize(SourceOptions),
-
-    /// Parse an input and display the elemental source
-    #[clap()]
-    Elemental(SourceOptions),
+    Parse(ParseOptions),
 }
 
 /// source options
@@ -50,4 +42,30 @@ pub enum Command {
 pub struct SourceOptions {
     #[clap(default_value_t)]
     source: SourceOption,
+}
+
+/// parse options
+#[derive(Debug, Parser)]
+#[clap()]
+pub struct ParseOptions {
+    /// Select the parse output format
+    #[clap(arg_enum, long, short, default_value = "canonical")]
+    format: ParseFormat,
+
+    #[clap(flatten)]
+    source: SourceOptions,
+}
+
+/// parse output formats
+#[derive(ArgEnum, Clone, Debug)]
+#[clap()]
+pub enum ParseFormat {
+    /// The internal AST representation
+    AST,
+
+    /// The canonicalized source code
+    Canonical,
+
+    /// The elemental source code
+    Elemental,
 }
