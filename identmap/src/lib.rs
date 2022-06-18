@@ -12,6 +12,10 @@ pub struct IdentMap<T>(BTreeMap<Identifier, T>);
 pub struct RedefinitionError(pub Identifier);
 
 impl<T> IdentMap<T> {
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     pub fn define(&mut self, id: Identifier, val: T) -> Result<(), RedefinitionError> {
         // TODO: find a design that doesn't clone?
         match self.0.insert(id.clone(), val) {

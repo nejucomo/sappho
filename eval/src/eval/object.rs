@@ -16,15 +16,24 @@ impl EvalV for ObjectDef {
             .func
             .as_ref()
             .map(|fc| -> Box<dyn Fn(ValRef) -> Result<ValRef>> {
+                let defscope = scope.clone();
                 let binding = fc.binding.clone();
                 let body = fc.body.clone();
 
                 Box::new(move |arg| {
-                    let callscope = scope.extend(&binding, arg);
+                    let callscope = defscope.extend(&binding, arg);
                     body.eval(callscope)
                 })
             });
 
-        Ok(Value::Object(Object { func, attrs }))
+        let query = self
+            .query
+            .as_ref()
+            .map(|qexpr| -> Box<dyn Fn() -> Result<ValRef>> {
+                let body = qexpr.body.clone();
+                Box::new(move || body.eval(scope.clone()))
+            });
+
+        Ok(Value::Object(Object { func, query, attrs }))
     }
 }
