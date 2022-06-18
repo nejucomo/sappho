@@ -24,3 +24,10 @@ impl<'a> LoadSource<'a> for &'a Path {
         Source::load_path(self)
     }
 }
+
+impl<'a> LoadSource<'a> for (&'a Path, &'a str) {
+    fn load(self) -> Result<Source<'a>> {
+        let (path, text) = self;
+        Ok(Source::wrap(path, text))
+    }
+}

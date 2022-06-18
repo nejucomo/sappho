@@ -41,4 +41,11 @@ impl<'a> Source<'a> {
     pub fn text(&self) -> &str {
         self.cowtext.as_ref()
     }
+
+    pub(crate) fn wrap(path: &'a Path, text: &'a str) -> Self {
+        Source {
+            optpath: Some(path),
+            cowtext: Cow::from(text),
+        }
+    }
 }

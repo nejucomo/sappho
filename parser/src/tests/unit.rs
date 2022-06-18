@@ -157,7 +157,7 @@ use test_case::test_case;
     ; "object fn and query"
 )]
 fn positive(input: &str) -> sappho_ast::PureExpr {
-    match crate::parse(None, input) {
+    match crate::parse(input) {
         Ok(x) => x,
         Err(e) => {
             eprintln!("{}", e);
