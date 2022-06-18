@@ -27,13 +27,17 @@ impl Options {
 #[derive(Debug, Subcommand)]
 #[clap()]
 pub enum Command {
-    /// Parse an input
-    #[clap()]
-    Parse(SourceOptions),
-
     /// Eval an input
     #[clap()]
     Eval(SourceOptions),
+
+    /// Parse an input and display the internal structure
+    #[clap()]
+    Parse(SourceOptions),
+
+    /// Parse an input and display the canonicalized source
+    #[clap()]
+    Canonicalize(SourceOptions),
 }
 
 /// source options
