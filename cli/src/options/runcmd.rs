@@ -15,8 +15,8 @@ impl RunCommand for Command {
         use Command::*;
 
         match self {
-            Parse(opts) => cmds::parse(&opts.source),
             Eval(opts) => cmds::eval(&opts.source),
+            Parse(opts) => cmds::parse(&opts.source.source, &opts.format),
         }
     }
 }

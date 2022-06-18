@@ -3,6 +3,7 @@
 use crate::{Pattern, PureExpr, QueryExpr};
 use sappho_identmap::IdentMap;
 use sappho_object::Object;
+use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub enum CommonExpr {
@@ -41,5 +42,35 @@ impl ObjectDef {
 
     pub fn unwrap(self) -> ObjectInner {
         self.0
+    }
+}
+
+impl fmt::Display for CommonExpr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use CommonExpr::*;
+
+        match self {
+            Func(x) => x.fmt(f),
+            Query(x) => x.fmt(f),
+            Object(x) => x.fmt(f),
+        }
+    }
+}
+
+impl fmt::Display for FuncDef {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "fn ")?;
+        self.binding.fmt(f)?;
+        write!(f, " -> ")?;
+        self.body.fmt(f)?;
+        Ok(())
+    }
+}
+
+impl fmt::Display for QueryDef {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "query ")?;
+        self.body.fmt(f)?;
+        Ok(())
     }
 }

@@ -1,6 +1,6 @@
 use crate::GenExpr;
-
 use sappho_ast as ast;
+use std::fmt;
 
 pub use sappho_ast::PureEffects;
 pub type PureExpr = GenExpr<PureEffects>;
@@ -55,6 +55,36 @@ impl FromFx for ProcEffects {
         match astfx {
             ast::ProcEffects::Inquire(x) => Inquire(Box::new(GenExpr::from(*x))),
             ast::ProcEffects::Evoke(x) => Evoke(Box::new(GenExpr::from(*x))),
+        }
+    }
+}
+
+impl fmt::Display for QueryEffects {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use QueryEffects::*;
+
+        match self {
+            Inquire(x) => {
+                write!(f, "$")?;
+                x.fmt(f)
+            }
+        }
+    }
+}
+
+impl fmt::Display for ProcEffects {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use ProcEffects::*;
+
+        match self {
+            Inquire(x) => {
+                write!(f, "$")?;
+                x.fmt(f)
+            }
+            Evoke(x) => {
+                write!(f, "!")?;
+                x.fmt(f)
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 use crate::{AstFxFor, FromFx, GenExpr, Pattern};
 use sappho_ast as ast;
+use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub enum RecursiveExpr<Effects> {
@@ -58,5 +59,62 @@ where
             target: Box::new(GenExpr::from(*app.target)),
             argument: Box::new(GenExpr::from(*app.argument)),
         }
+    }
+}
+
+impl<FX> fmt::Display for RecursiveExpr<FX>
+where
+    FX: fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use RecursiveExpr::*;
+
+        match self {
+            List(x) => {
+                let mut first = true;
+                write!(f, "[")?;
+                for child in x.iter() {
+                    if first {
+                        first = false;
+                    } else {
+                        write!(f, ", ")?;
+                    }
+                    child.fmt(f)?;
+                }
+                write!(f, "]")?;
+                Ok(())
+            }
+            Let(x) => x.fmt(f),
+            Apply(x) => x.fmt(f),
+        }
+    }
+}
+
+impl<FX> fmt::Display for LetExpr<FX>
+where
+    FX: fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "let ")?;
+        self.binding.fmt(f)?;
+        write!(f, " = ")?;
+        self.bindexpr.fmt(f)?;
+        write!(f, "; ")?;
+        self.tail.fmt(f)?;
+        Ok(())
+    }
+}
+
+impl<FX> fmt::Display for Application<FX>
+where
+    FX: fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "(")?;
+        self.target.fmt(f)?;
+        write!(f, " ")?;
+        self.argument.fmt(f)?;
+        write!(f, ")")?;
+        Ok(())
     }
 }
