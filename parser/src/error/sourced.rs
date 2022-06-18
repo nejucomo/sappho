@@ -21,7 +21,7 @@ impl<'a> fmt::Display for SourcedError<'a> {
         let (lix, lspan, lstr) = select_source(self.source.text(), self.bare.span());
         write!(
             f,
-            "Error from {}, line {}:\n{}|\n+-> Syntax error: {}\n",
+            "from {}, line {}:\n{}|\n+-> Syntax error: {}\n",
             self.source
                 .path()
                 .map(|p| format!("{:?}", p.display()))
