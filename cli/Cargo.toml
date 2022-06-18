@@ -15,6 +15,9 @@ features = [
   "cargo",
 ]
 
+[dependencies.sappho-east]
+path = "../east"
+
 [dependencies.sappho-interpreter]
 path = "../interpreter"
 

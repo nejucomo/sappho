@@ -38,6 +38,10 @@ pub enum Command {
     /// Parse an input and display the canonicalized source
     #[clap()]
     Canonicalize(SourceOptions),
+
+    /// Parse an input and display the elemental source
+    #[clap()]
+    Elemental(SourceOptions),
 }
 
 /// source options

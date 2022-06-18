@@ -17,3 +17,10 @@ pub fn canonicalize(source: &SourceOption) -> Result<()> {
     println!("{}", x);
     Ok(())
 }
+
+pub fn elemental(source: &SourceOption) -> Result<()> {
+    let x = sappho_parser::parse(source)?;
+    let y = sappho_east::PureExpr::from(x);
+    println!("{}", y);
+    Ok(())
+}
