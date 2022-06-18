@@ -2,6 +2,7 @@ use crate::{Pattern, PureExpr, QueryExpr};
 use sappho_ast as ast;
 use sappho_identmap::IdentMap;
 use sappho_object::Object;
+use std::fmt;
 use std::rc::Rc;
 
 #[derive(Debug, PartialEq)]
@@ -82,5 +83,23 @@ impl From<ast::QueryDef> for QueryClause {
         QueryClause {
             body: Rc::new(QueryExpr::from(*qd.body)),
         }
+    }
+}
+
+impl fmt::Display for FuncClause {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "fn ")?;
+        self.binding.fmt(f)?;
+        write!(f, " -> ")?;
+        self.body.fmt(f)?;
+        Ok(())
+    }
+}
+
+impl fmt::Display for QueryClause {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "query ")?;
+        self.body.fmt(f)?;
+        Ok(())
     }
 }
