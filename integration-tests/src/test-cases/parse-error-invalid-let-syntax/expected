@@ -1,4 +1,4 @@
-parse error: from "negatives/invalid-let-syntax/input", line 1:
+parse error: from "test-cases/parse-error-invalid-let-syntax/input", line 1:
 | let {
 |     ^
 |

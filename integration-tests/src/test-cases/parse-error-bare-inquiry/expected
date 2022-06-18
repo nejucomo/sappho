@@ -1,4 +1,4 @@
-parse error: from "negatives/bare-inquiry/input", line 1:
+parse error: from "test-cases/parse-error-bare-inquiry/input", line 1:
 | $x
 | ^^
 |

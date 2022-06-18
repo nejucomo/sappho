@@ -7,5 +7,5 @@ pub fn test_eval(inpath: PathBuf, input: &str, expected: &str) {
         Ok(x) => x.to_string(),
         Err(x) => x.to_string(),
     };
-    assert_eq!(expected.trim_end(), &actual);
+    assert_eq!(expected.trim_end(), actual.trim_end());
 }

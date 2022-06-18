@@ -1,4 +1,4 @@
-parse error: from "negatives/num-letter/input", line 1:
+parse error: from "test-cases/parse-error-num-letter/input", line 1:
 | 7x
 |  ^
 |

@@ -1,4 +1,4 @@
-parse error: from "negatives/bare-evocation/input", line 1:
+parse error: from "test-cases/parse-error-bare-evocation/input", line 1:
 | !x
 | ^^
 |

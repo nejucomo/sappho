@@ -1,4 +1,4 @@
-parse error: from "negatives/inquiry-space/input", line 1:
+parse error: from "test-cases/parse-error-inquiry-space/input", line 1:
 | query $ x
 |        ^
 |
