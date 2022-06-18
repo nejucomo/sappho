@@ -1,8 +1,23 @@
+use std::fmt;
+
 #[derive(Debug, derive_more::From)]
-pub enum Error {
-    Stdio(std::io::Error),
-    Parse(sappho_parser::Errors),
+pub enum Error<'a> {
+    LoadParse(sappho_parser::LoadParseError<'a>),
     Eval(sappho_eval::Error),
 }
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<'a, T> = std::result::Result<T, Error<'a>>;
+
+impl<'a> fmt::Display for Error<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Error::*;
+
+        match self {
+            LoadParse(e) => e.fmt(f),
+            Eval(e) => {
+                write!(f, "eval error: ")?;
+                e.fmt(f)
+            }
+        }
+    }
+}

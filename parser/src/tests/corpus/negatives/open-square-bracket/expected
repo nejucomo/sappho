@@ -1,4 +1,4 @@
-Error from "negatives/open-square-bracket/input", line 1:
+parse error: from "negatives/open-square-bracket/input", line 1:
 | [
 |  ^
 |

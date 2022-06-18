@@ -1,4 +1,4 @@
-Error from "negatives/bad-parens/input", line 1:
+parse error: from "negatives/bad-parens/input", line 1:
 | [(]
 |   ^
 |

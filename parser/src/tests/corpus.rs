@@ -3,7 +3,7 @@ mod error;
 use self::error::{Error, Errors, Mismatch, Reason};
 use include_dir::{include_dir, Dir, File};
 use sappho_ast::PureExpr;
-use std::path::PathBuf;
+use std::path::Path;
 
 static CORPUS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/src/tests/corpus");
 
@@ -19,7 +19,7 @@ fn negatives() {
 
 fn parse_corpus<F, T>(corpusname: &str, parsefunc: F)
 where
-    F: Fn(PathBuf, &str) -> Result<T, Reason>,
+    F: Fn(&'static Path, &'static str) -> Result<T, Reason>,
     T: ToString,
 {
     if let Some(e) = parse_corpus_result(corpusname, parsefunc).err() {
@@ -29,7 +29,7 @@ where
 
 fn parse_corpus_result<F, T>(corpusname: &str, parsefunc: F) -> Result<(), Errors>
 where
-    F: Fn(PathBuf, &str) -> Result<T, Reason>,
+    F: Fn(&'static Path, &'static str) -> Result<T, Reason>,
     T: ToString,
 {
     let mut errors = Errors::default();
@@ -60,9 +60,9 @@ fn only_dirs<'a>(d: &Dir<'a>) -> Vec<&'a Dir<'a>> {
     ds
 }
 
-fn parse_case<F, T>(casedir: &Dir, parsefunc: F) -> Result<(), Errors>
+fn parse_case<F, T>(casedir: &'static Dir, parsefunc: F) -> Result<(), Errors>
 where
-    F: Fn(PathBuf, &str) -> Result<T, Reason>,
+    F: Fn(&'static Path, &'static str) -> Result<T, Reason>,
     T: ToString,
 {
     let expected = file_contents(casedir, "expected")?.trim_end();
@@ -102,9 +102,13 @@ fn get_testcase_inputs<'a>(casedir: &'a Dir<'a>) -> Result<Vec<&'a File<'a>>, Er
     }
 }
 
-fn parse_case_input<F, T>(inputfile: &File, expected: &str, parsefunc: F) -> Result<(), Error>
+fn parse_case_input<F, T>(
+    inputfile: &'static File,
+    expected: &str,
+    parsefunc: F,
+) -> Result<(), Error>
 where
-    F: Fn(PathBuf, &str) -> Result<T, Reason>,
+    F: Fn(&'static Path, &'static str) -> Result<T, Reason>,
     T: ToString,
 {
     parse_case_input_reason(inputfile, expected, &parsefunc)
@@ -112,16 +116,16 @@ where
 }
 
 fn parse_case_input_reason<F, T>(
-    inputfile: &File,
+    inputfile: &'static File,
     expected: &str,
     parsefunc: F,
 ) -> Result<(), Reason>
 where
-    F: Fn(PathBuf, &str) -> Result<T, Reason>,
+    F: Fn(&'static Path, &'static str) -> Result<T, Reason>,
     T: ToString,
 {
-    let input = std::str::from_utf8(inputfile.contents())?;
-    let inpath = inputfile.path().to_path_buf();
+    let input: &'static str = std::str::from_utf8(inputfile.contents())?;
+    let inpath = inputfile.path();
 
     match parsefunc(inpath, input).map(|v| v.to_string()) {
         Ok(found) if found.trim_end() == expected => Ok(()),
@@ -149,15 +153,18 @@ fn file_contents_to_reason<'a>(d: &'a Dir, fname: &'static str) -> Result<&'a st
     Ok(src)
 }
 
-fn parse_file(path: PathBuf, source: &str) -> Result<PureExpr, Reason> {
-    let expr = crate::parse(Some(path), source)?;
+fn parse_file(path: &'static Path, source: &'static str) -> Result<PureExpr, Reason> {
+    let expr = crate::parse((path, source))?;
     Ok(expr)
 }
 
-fn parse_file_negative(path: PathBuf, source: &str) -> Result<crate::Errors, Reason> {
+fn parse_file_negative(
+    path: &'static Path,
+    source: &'static str,
+) -> Result<crate::LoadParseError<'static>, Reason> {
     match parse_file(path, source) {
         Ok(expr) => Err(Reason::InvalidParse(expr)),
-        Err(Reason::Parse(errs)) => Ok(errs),
+        Err(Reason::Parse(e)) => Ok(e),
         Err(e) => Err(e),
     }
 }

@@ -1,4 +1,4 @@
-Error from "negatives/evocation-in-query/input", line 1:
+parse error: from "negatives/evocation-in-query/input", line 1:
 | query !x
 |       ^^
 |

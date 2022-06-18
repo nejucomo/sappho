@@ -1,31 +1,29 @@
 use crate::error::{BareError, Span};
+use sappho_source::Source;
 use std::fmt;
-use std::path::PathBuf;
 
 #[derive(Debug)]
-pub struct SourcedError {
-    path: Option<PathBuf>,
-    source: String,
+pub struct SourcedError<'a> {
+    source: Source<'a>,
     bare: BareError,
 }
 
-impl SourcedError {
-    pub fn new(path: Option<PathBuf>, source: &str, bare: BareError) -> Self {
-        let source = source.to_string();
-        SourcedError { path, source, bare }
+impl<'a> SourcedError<'a> {
+    pub fn new(source: Source<'a>, bare: BareError) -> Self {
+        SourcedError { source, bare }
     }
 }
 
-impl fmt::Display for SourcedError {
+impl<'a> fmt::Display for SourcedError<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use crate::error::indent::indent;
 
-        let (lix, lspan, lstr) = select_source(&self.source, self.bare.span());
+        let (lix, lspan, lstr) = select_source(self.source.text(), self.bare.span());
         write!(
             f,
-            "Error from {}, line {}:\n{}|\n+-> Syntax error: {}\n",
-            self.path
-                .as_ref()
+            "from {}, line {}:\n{}|\n+-> Syntax error: {}\n",
+            self.source
+                .path()
                 .map(|p| format!("{:?}", p.display()))
                 .unwrap_or_else(|| "<string>".to_string()),
             lix + 1,

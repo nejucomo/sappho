@@ -15,7 +15,7 @@ pub enum Reason {
     UnexpectedFile,
     StrUtf8(std::str::Utf8Error),
     StringUtf8(std::string::FromUtf8Error),
-    Parse(crate::Errors),
+    Parse(crate::LoadParseError<'static>),
     InvalidParse(PureExpr),
     MismatchedOutput(Mismatch),
 }

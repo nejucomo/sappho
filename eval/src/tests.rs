@@ -25,7 +25,7 @@ use test_case::test_case;
     ; "fn and apply"
 )]
 fn eval(src: &str) -> Value {
-    let ast = sappho_parser::parse(None, src).unwrap();
+    let ast = sappho_parser::parse(src).unwrap();
     let vref = crate::eval(ast).unwrap();
     std::rc::Rc::try_unwrap(vref).unwrap()
 }
