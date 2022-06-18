@@ -3,6 +3,7 @@ use std::io::Result;
 use std::path::Path;
 
 /// A `Source` refers to the textual source code and tracks the [Path] it came from (if any).
+#[derive(Clone, Debug)]
 pub struct Source<'a> {
     optpath: Option<&'a Path>,
     cowtext: Cow<'a, str>,

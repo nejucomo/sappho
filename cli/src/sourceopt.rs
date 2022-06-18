@@ -1,3 +1,4 @@
+use sappho_source::{LoadSource, Source};
 use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -7,28 +8,18 @@ pub enum SourceOption {
     Stdin,
     Path(PathBuf),
 }
+use SourceOption::*;
 
-impl SourceOption {
-    pub fn read(&self) -> std::io::Result<String> {
-        use SourceOption::*;
-
+impl<'a> LoadSource<'a> for &'a SourceOption {
+    fn load(self) -> std::io::Result<Source<'a>> {
         match self {
             Stdin => {
                 use std::io::Read;
                 let mut s = String::new();
                 std::io::stdin().read_to_string(&mut s)?;
-                Ok(s)
+                s.load()
             }
-            Path(p) => std::fs::read_to_string(p),
-        }
-    }
-
-    pub fn path(&self) -> Option<PathBuf> {
-        use SourceOption::*;
-
-        match self {
-            Stdin => None,
-            Path(p) => Some(p.clone()),
+            Path(p) => p.as_path().load(),
         }
     }
 }
@@ -41,8 +32,6 @@ impl Default for SourceOption {
 
 impl fmt::Display for SourceOption {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use SourceOption::*;
-
         match self {
             Stdin => write!(f, "-"),
             Path(p) => write!(f, "{}", p.display()),

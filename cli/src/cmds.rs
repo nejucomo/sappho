@@ -1,16 +1,13 @@
 use crate::{Result, SourceOption};
 
-pub fn parse(srcopt: &SourceOption) -> Result<()> {
-    let source = srcopt.read()?;
-    let x = sappho_parser::parse(srcopt.path(), &source)?;
+pub fn parse(source: &SourceOption) -> Result<()> {
+    let x = sappho_parser::parse(source)?;
     println!("Parsed: {:#?}", x);
     Ok(())
 }
 
-pub fn eval(srcopt: &SourceOption) -> Result<()> {
-    let source = srcopt.read()?;
-    let ast = sappho_parser::parse(srcopt.path(), &source)?;
-    let x = sappho_eval::eval(ast)?;
+pub fn eval(source: &SourceOption) -> Result<()> {
+    let x = sappho_interpreter::interpret(source)?;
     println!("{:#?}", x);
     Ok(())
 }

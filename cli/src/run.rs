@@ -1,12 +1,9 @@
-use crate::{Options, Result};
+use crate::Options;
 
 pub fn run() {
-    if let Some(e) = run_result().err() {
+    let opt = Options::parse();
+    if let Some(e) = opt.run().err() {
         eprintln!("{}", e);
         std::process::exit(1);
     }
-}
-
-pub fn run_result() -> Result<()> {
-    Options::parse().run()
 }

@@ -308,8 +308,9 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "derive_more",
- "sappho-eval",
+ "sappho-interpreter",
  "sappho-parser",
+ "sappho-source",
 ]
 
 [[package]]
@@ -354,6 +355,7 @@ dependencies = [
  "pathutil",
  "sappho-eval",
  "sappho-parser",
+ "sappho-source",
 ]
 
 [[package]]
@@ -365,7 +367,15 @@ dependencies = [
  "include_dir",
  "sappho-ast",
  "sappho-identmap",
+ "sappho-source",
  "test-case",
+]
+
+[[package]]
+name = "sappho-source"
+version = "0.1.0"
+dependencies = [
+ "pathutil",
 ]
 
 [[package]]

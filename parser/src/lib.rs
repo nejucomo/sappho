@@ -6,16 +6,22 @@ mod listform;
 mod restrict;
 mod space;
 
-use std::path::PathBuf;
+use crate::error::Errors;
+use sappho_source::LoadSource;
 
-pub use self::error::Errors;
+pub use self::error::LoadParseError;
 
-pub fn parse(path: Option<PathBuf>, src: &str) -> Result<sappho_ast::PureExpr, Errors> {
+pub fn parse<'a, S>(sourceloader: S) -> Result<sappho_ast::PureExpr, LoadParseError<'a>>
+where
+    S: LoadSource<'a>,
+{
     use chumsky::Parser;
 
+    let source = sourceloader.load()?;
+
     self::expr::expression()
-        .parse(src.trim_end())
-        .map_err(|bares| Errors::attach_source(path, src, bares))
+        .parse(source.text().trim_end())
+        .map_err(|bares| LoadParseError::Parse(Errors::attach_source(source, bares)))
 }
 
 #[cfg(test)]

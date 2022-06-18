@@ -14,3 +14,6 @@ path = "../eval"
 
 [dependencies.sappho-parser]
 path = "../parser"
+
+[dependencies.sappho-source]
+path = "../source"
