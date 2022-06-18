@@ -1,4 +1,4 @@
-Error from "negatives/duplicate-attrs/input", line 1:
+parse error: from "negatives/duplicate-attrs/input", line 1:
 | {
 | ^
 |
