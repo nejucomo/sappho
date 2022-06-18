@@ -1,7 +1,7 @@
 use sappho_identmap::IdentMap;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Object<F, Q, A> {
     f: Option<F>,
     q: Option<Q>,

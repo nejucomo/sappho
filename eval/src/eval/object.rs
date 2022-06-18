@@ -7,14 +7,13 @@ use sappho_identmap::IdentMap;
 impl EvalV for ObjectDef {
     fn eval_val(&self, scope: ScopeRef) -> Result<Value> {
         let mut attrs = IdentMap::default();
-        for (id, attrexpr) in self.attrs.iter() {
+        for (id, attrexpr) in self.attrs().iter() {
             let v = attrexpr.eval(scope.clone())?;
             attrs.define(id.clone(), v).unwrap();
         }
 
         let func = self
-            .func
-            .as_ref()
+            .func()
             .map(|fc| -> Box<dyn Fn(ValRef) -> Result<ValRef>> {
                 let defscope = scope.clone();
                 let binding = fc.binding.clone();
@@ -27,8 +26,7 @@ impl EvalV for ObjectDef {
             });
 
         let query = self
-            .query
-            .as_ref()
+            .query()
             .map(|qexpr| -> Box<dyn Fn() -> Result<ValRef>> {
                 let body = qexpr.body.clone();
                 Box::new(move || body.eval(scope.clone()))
