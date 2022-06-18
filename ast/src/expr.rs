@@ -4,6 +4,7 @@ use crate::{
     Application, CommonExpr, FuncDef, Identifier, LetExpr, Literal, ObjectDef, Pattern, PureExpr,
     QueryDef, QueryExpr, RecursiveExpr, UniversalExpr,
 };
+use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {
@@ -72,11 +73,18 @@ impl<FX> GenExpr<FX> {
     }
 }
 
-impl<FX> std::fmt::Display for GenExpr<FX>
+impl<FX> fmt::Display for GenExpr<FX>
 where
-    FX: std::fmt::Debug,
+    FX: fmt::Display,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:#?}", self)
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use GenExpr::*;
+
+        match self {
+            Universal(x) => x.fmt(f),
+            Common(x) => x.fmt(f),
+            Recursive(x) => x.fmt(f),
+            Effect(x) => x.fmt(f),
+        }
     }
 }
