@@ -92,10 +92,10 @@ where
         use std::borrow::Borrow;
 
         let Lookup { target, field } = self;
-        let tval = target.eval(scope.clone())?;
+        let tval = target.eval(scope)?;
         match tval.borrow() {
             Value::Object(obj) => {
-                if let Some(v) = obj.attrs().get(&field) {
+                if let Some(v) = obj.attrs().get(field) {
                     Ok(v.clone())
                 } else {
                     Err(MissingField(tval, field.clone()))

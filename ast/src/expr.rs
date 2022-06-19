@@ -1,8 +1,8 @@
 //! Top-level expression type `GenExpr`, generic over [crate::effects]
 
 use crate::{
-    Application, CommonExpr, FuncDef, Identifier, LetExpr, Literal, ObjectDef, Pattern, PureExpr,
-    QueryDef, QueryExpr, RecursiveExpr, UniversalExpr,
+    Application, CommonExpr, FuncDef, Identifier, LetExpr, Literal, Lookup, ObjectDef, Pattern,
+    PureExpr, QueryDef, QueryExpr, RecursiveExpr, UniversalExpr,
 };
 use std::fmt;
 
@@ -65,6 +65,13 @@ impl<FX> GenExpr<FX> {
         GenExpr::Recursive(RecursiveExpr::Apply(Application {
             target: Box::new(target),
             argument: Box::new(argument),
+        }))
+    }
+
+    pub fn lookup(target: Self, field: Identifier) -> Self {
+        GenExpr::Recursive(RecursiveExpr::Lookup(Lookup {
+            target: Box::new(target),
+            field,
         }))
     }
 

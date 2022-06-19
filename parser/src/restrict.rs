@@ -111,7 +111,7 @@ where
 {
     fn restrict(src: Lookup<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(Lookup {
-            target: Box::new(GenExpr::<FXD>::restrict(*src.target, span.clone())?),
+            target: Box::new(GenExpr::<FXD>::restrict(*src.target, span)?),
             field: src.field,
         })
     }

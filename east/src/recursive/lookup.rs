@@ -17,7 +17,7 @@ where
 
         Lookup {
             target: Box::new(GenExpr::from(*target)),
-            field: field,
+            field,
         }
     }
 }
@@ -27,9 +27,8 @@ where
     FX: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "(")?;
         self.target.fmt(f)?;
-        write!(f, ").{}", self.field)?;
+        write!(f, ".{}", self.field)?;
         Ok(())
     }
 }
