@@ -8,6 +8,13 @@ pub struct Object<F, Q, A> {
     a: IdentMap<A>,
 }
 
+#[derive(Debug, PartialEq)]
+pub enum Monolithic<F, Q, A> {
+    Func(F),
+    Query(Q),
+    Attrs(A),
+}
+
 impl<F, Q, A> Object<F, Q, A> {
     pub fn new(func: Option<F>, query: Option<Q>, attrs: IdentMap<A>) -> Self {
         Object {
@@ -27,6 +34,24 @@ impl<F, Q, A> Object<F, Q, A> {
 
     pub fn attrs(&self) -> &IdentMap<A> {
         &self.a
+    }
+
+    pub fn monolithic(&self) -> Option<Monolithic<&F, &Q, &IdentMap<A>>> {
+        if let Some(f) = self.func() {
+            if self.q.is_none() && self.a.is_empty() {
+                Some(Monolithic::Func(f))
+            } else {
+                None
+            }
+        } else if let Some(q) = self.query() {
+            if self.f.is_none() && self.a.is_empty() {
+                Some(Monolithic::Query(q))
+            } else {
+                None
+            }
+        } else {
+            Some(Monolithic::Attrs(self.attrs()))
+        }
     }
 
     pub fn is_empty(&self) -> bool {
