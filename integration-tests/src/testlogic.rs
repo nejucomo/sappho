@@ -19,8 +19,10 @@ pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
     let ast = parse((inpath.as_path(), input)).unwrap();
     let actual = if style == "canonical" {
         ast.to_string()
-    } else {
+    } else if style == "elemental" {
         PureExpr::from(ast).to_string()
+    } else {
+        panic!("Unknown unparse style {:?}", style);
     };
 
     check_equal(actual, expected);
