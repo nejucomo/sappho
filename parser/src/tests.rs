@@ -156,6 +156,69 @@ use test_case::test_case;
     )
     ; "object fn and query"
 )]
+#[test_case(
+    "x.a" =>
+    GenExpr::lookup(
+        GenExpr::ref_expr("x".to_string()),
+        "a".to_string(),
+    )
+    ; "x dot a"
+)]
+#[test_case(
+    "x.a.b" =>
+    GenExpr::lookup(
+        GenExpr::lookup(
+            GenExpr::ref_expr("x".to_string()),
+            "a".to_string(),
+        ),
+        "b".to_string(),
+    )
+    ; "x dot a dot b"
+)]
+#[test_case(
+    "f x.a" =>
+    GenExpr::application(
+        GenExpr::ref_expr("f".to_string()),
+        GenExpr::lookup(
+            GenExpr::ref_expr("x".to_string()),
+            "a".to_string(),
+        ),
+    )
+    ; "f applied to the a of x"
+)]
+#[test_case(
+    "f (x.a)" =>
+    GenExpr::application(
+        GenExpr::ref_expr("f".to_string()),
+        GenExpr::lookup(
+            GenExpr::ref_expr("x".to_string()),
+            "a".to_string(),
+        ),
+    )
+    ; "f applied to the a of x with disambiguating parentheses"
+)]
+#[test_case(
+    "f (x).a" =>
+    GenExpr::application(
+        GenExpr::ref_expr("f".to_string()),
+        GenExpr::lookup(
+            GenExpr::ref_expr("x".to_string()),
+            "a".to_string(),
+        ),
+    )
+    ; "f applied to the a of x with confusing parentheses"
+)]
+#[test_case(
+    "(f x).a" =>
+    GenExpr::lookup(
+        GenExpr::application(
+            GenExpr::ref_expr("f".to_string()),
+            GenExpr::ref_expr("x".to_string()),
+        ),
+        "a".to_string(),
+    )
+    ; "the a of f applied to x with disambiguating parentheses"
+)]
 fn positive(input: &str) -> sappho_ast::PureExpr {
     match crate::parse(input) {
         Ok(x) => x,
