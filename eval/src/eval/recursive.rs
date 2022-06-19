@@ -1,7 +1,7 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{List, Result, ValRef, Value};
-use sappho_east::{Application, GenExpr, LetExpr, Lookup, RecursiveExpr};
+use sappho_east::{Application, GenExpr, LetExpr, ListForm, Lookup, RecursiveExpr};
 
 impl<FX> Eval for RecursiveExpr<FX>
 where
@@ -19,12 +19,12 @@ where
     }
 }
 
-impl<FX> EvalV for Vec<GenExpr<FX>>
+impl<FX> EvalV for ListForm<GenExpr<FX>>
 where
     FX: Eval,
 {
     fn eval_val(&self, scope: ScopeRef) -> Result<Value> {
-        eval_list_slice(&self[..], scope).map(Value::from)
+        eval_list_slice(self.as_ref(), scope).map(Value::from)
     }
 }
 

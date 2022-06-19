@@ -9,6 +9,21 @@ impl<T> ListForm<T> {
     }
 }
 
+impl<T> AsRef<[T]> for ListForm<T> {
+    fn as_ref(&self) -> &[T] {
+        self.0.as_ref()
+    }
+}
+
+impl<T> FromIterator<T> for ListForm<T> {
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = T>,
+    {
+        ListForm(iter.into_iter().collect())
+    }
+}
+
 impl<T> IntoIterator for ListForm<T> {
     type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
     type Item = T;
