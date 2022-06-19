@@ -88,20 +88,20 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
-        use crate::Error::MissingField;
+        use crate::Error::MissingAttr;
         use std::borrow::Borrow;
 
-        let Lookup { target, field } = self;
+        let Lookup { target, attr } = self;
         let tval = target.eval(scope)?;
         match tval.borrow() {
             Value::Object(obj) => {
-                if let Some(v) = obj.attrs().get(field) {
+                if let Some(v) = obj.attrs().get(attr) {
                     Ok(v.clone())
                 } else {
-                    Err(MissingField(tval, field.clone()))
+                    Err(MissingAttr(tval, attr.clone()))
                 }
             }
-            _ => Err(MissingField(tval, field.clone())),
+            _ => Err(MissingAttr(tval, attr.clone())),
         }
     }
 }

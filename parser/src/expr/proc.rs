@@ -27,11 +27,11 @@ fn non_application(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     non_app_non_lookup(pexpr)
-        .then(field_lookup().repeated())
+        .then(attr_lookup().repeated())
         .map(|(x, lookups)| lookups.into_iter().fold(x, ProcExpr::lookup))
 }
 
-fn field_lookup() -> impl Parser<char, Identifier, Error = BareError> {
+fn attr_lookup() -> impl Parser<char, Identifier, Error = BareError> {
     use crate::expr::universal::identifier;
     use chumsky::primitive::just;
 

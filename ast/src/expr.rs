@@ -68,10 +68,10 @@ impl<FX> GenExpr<FX> {
         }))
     }
 
-    pub fn lookup(target: Self, field: Identifier) -> Self {
+    pub fn lookup(target: Self, attr: Identifier) -> Self {
         GenExpr::Recursive(RecursiveExpr::Lookup(Lookup {
             target: Box::new(target),
-            field,
+            attr,
         }))
     }
 
