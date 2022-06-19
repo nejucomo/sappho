@@ -8,7 +8,8 @@ pub fn test_eval(inpath: PathBuf, input: &str, expected: &str) {
         Ok(x) => x.to_string(),
         Err(x) => x.to_string(),
     };
-    assert_eq!(expected.trim_end(), actual.trim_end());
+
+    check_equal(actual, expected);
 }
 
 pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
@@ -22,5 +23,15 @@ pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
         PureExpr::from(ast).to_string()
     };
 
-    assert_eq!(expected.trim_end(), actual.trim_end());
+    check_equal(actual, expected);
+}
+
+fn check_equal(expected: String, actual: &str) {
+    if expected.trim_end() != actual.trim_end() {
+        panic!(
+            "Mismatched expectation:\nExpected:\n  {}\nActual:\n  {}\n",
+            expected.replace('\n', "\n  "),
+            actual.replace('\n', "\n  ")
+        );
+    }
 }
