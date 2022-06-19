@@ -1,6 +1,12 @@
-use crate::{AstFxFor, FromFx, GenExpr, Pattern};
+mod apply;
+mod letexpr;
+
+use crate::{AstFxFor, FromFx, GenExpr};
 use sappho_ast as ast;
 use std::fmt;
+
+pub use self::apply::Application;
+pub use self::letexpr::LetExpr;
 
 #[derive(Debug, PartialEq)]
 pub enum RecursiveExpr<Effects> {
@@ -20,44 +26,6 @@ where
             ast::RecursiveExpr::List(x) => List(x.into_iter().map(GenExpr::from).collect()),
             ast::RecursiveExpr::Let(x) => Let(LetExpr::from(x)),
             ast::RecursiveExpr::Apply(x) => Apply(Application::from(x)),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct LetExpr<Effects> {
-    pub binding: Pattern,
-    pub bindexpr: Box<GenExpr<Effects>>,
-    pub tail: Box<GenExpr<Effects>>,
-}
-
-impl<FX> From<ast::LetExpr<AstFxFor<FX>>> for LetExpr<FX>
-where
-    FX: FromFx,
-{
-    fn from(re: ast::LetExpr<AstFxFor<FX>>) -> Self {
-        LetExpr {
-            binding: re.binding,
-            bindexpr: Box::new(GenExpr::from(*re.bindexpr)),
-            tail: Box::new(GenExpr::from(*re.tail)),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Application<Effects> {
-    pub target: Box<GenExpr<Effects>>,
-    pub argument: Box<GenExpr<Effects>>,
-}
-
-impl<FX> From<ast::Application<AstFxFor<FX>>> for Application<FX>
-where
-    FX: FromFx,
-{
-    fn from(app: ast::Application<AstFxFor<FX>>) -> Self {
-        Application {
-            target: Box::new(GenExpr::from(*app.target)),
-            argument: Box::new(GenExpr::from(*app.argument)),
         }
     }
 }
@@ -87,34 +55,5 @@ where
             Let(x) => x.fmt(f),
             Apply(x) => x.fmt(f),
         }
-    }
-}
-
-impl<FX> fmt::Display for LetExpr<FX>
-where
-    FX: fmt::Display,
-{
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "let ")?;
-        self.binding.fmt(f)?;
-        write!(f, " = ")?;
-        self.bindexpr.fmt(f)?;
-        write!(f, "; ")?;
-        self.tail.fmt(f)?;
-        Ok(())
-    }
-}
-
-impl<FX> fmt::Display for Application<FX>
-where
-    FX: fmt::Display,
-{
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "(")?;
-        self.target.fmt(f)?;
-        write!(f, " ")?;
-        self.argument.fmt(f)?;
-        write!(f, ")")?;
-        Ok(())
     }
 }
