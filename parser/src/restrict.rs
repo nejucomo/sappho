@@ -1,8 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    Application, GenExpr, LetExpr, Lookup, ProcEffects, PureEffects, QueryEffects, QueryExpr,
-    RecursiveExpr,
+    Application, GenExpr, LetExpr, ListForm, Lookup, ProcEffects, PureEffects, QueryEffects,
+    QueryExpr, RecursiveExpr,
 };
 
 pub(crate) trait Restrict<S>: Sized {
@@ -65,14 +65,11 @@ where
         use RecursiveExpr::*;
 
         match src {
-            List(x) => {
-                let mut v = vec![];
-                for subx in x.into_iter() {
-                    let suby = GenExpr::<FXD>::restrict(subx, span.clone())?;
-                    v.push(suby);
-                }
-                Ok(List(v))
-            }
+            List(x) => Ok(List(
+                x.into_iter()
+                    .map(|subx| GenExpr::<FXD>::restrict(subx, span.clone()))
+                    .collect::<Result<ListForm<_>, BareError>>()?,
+            )),
             Let(x) => LetExpr::restrict(x, span).map(Let),
             Apply(x) => Application::restrict(x, span).map(Apply),
             Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),

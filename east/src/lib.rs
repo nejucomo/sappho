@@ -11,4 +11,4 @@ pub use self::effects::{
 };
 pub use self::expr::GenExpr;
 pub use self::recursive::{Application, LetExpr, Lookup, RecursiveExpr};
-pub use sappho_ast::{Identifier, Literal, Pattern, UniversalExpr};
+pub use sappho_ast::{Identifier, ListForm, Literal, Pattern, UniversalExpr};

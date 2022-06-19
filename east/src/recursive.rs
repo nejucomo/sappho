@@ -9,10 +9,11 @@ use std::fmt;
 pub use self::apply::Application;
 pub use self::letexpr::LetExpr;
 pub use self::lookup::Lookup;
+pub use ast::ListForm;
 
 #[derive(Debug, PartialEq)]
 pub enum RecursiveExpr<Effects> {
-    List(Vec<GenExpr<Effects>>),
+    List(ListForm<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Apply(Application<Effects>),
     Lookup(Lookup<Effects>),
@@ -43,20 +44,7 @@ where
         use RecursiveExpr::*;
 
         match self {
-            List(x) => {
-                let mut first = true;
-                write!(f, "[")?;
-                for child in x.iter() {
-                    if first {
-                        first = false;
-                    } else {
-                        write!(f, ", ")?;
-                    }
-                    child.fmt(f)?;
-                }
-                write!(f, "]")?;
-                Ok(())
-            }
+            List(x) => x.fmt(f),
             Let(x) => x.fmt(f),
             Apply(x) => x.fmt(f),
             Lookup(x) => x.fmt(f),
