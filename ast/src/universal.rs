@@ -1,7 +1,11 @@
 //! Subgrammars that are identical in both surface and eval ASTs
 
+mod lit;
+
 use crate::Identifier;
 use std::fmt;
+
+pub use self::lit::Literal;
 
 pub type Pattern = Identifier;
 
@@ -9,11 +13,6 @@ pub type Pattern = Identifier;
 pub enum UniversalExpr {
     Lit(Literal),
     Ref(Identifier),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Literal {
-    Num(f64),
 }
 
 impl From<f64> for UniversalExpr {
@@ -35,16 +34,6 @@ impl fmt::Display for UniversalExpr {
         match self {
             Lit(x) => x.fmt(f),
             Ref(x) => x.fmt(f),
-        }
-    }
-}
-
-impl fmt::Display for Literal {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use Literal::*;
-
-        match self {
-            Num(x) => x.fmt(f),
         }
     }
 }

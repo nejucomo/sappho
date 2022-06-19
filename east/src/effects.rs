@@ -1,90 +1,9 @@
-use crate::GenExpr;
-use sappho_ast as ast;
-use std::fmt;
+mod fromfx;
+mod proc;
+mod pure;
+mod query;
 
-pub use sappho_ast::PureEffects;
-pub type PureExpr = GenExpr<PureEffects>;
-pub type QueryExpr = GenExpr<QueryEffects>;
-pub type ProcExpr = GenExpr<ProcEffects>;
-
-#[derive(Debug, PartialEq)]
-pub enum QueryEffects {
-    Inquire(Box<GenExpr<QueryEffects>>),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum ProcEffects {
-    Inquire(Box<GenExpr<ProcEffects>>),
-    Evoke(Box<GenExpr<ProcEffects>>),
-}
-
-pub trait FromFx {
-    type AstFx;
-
-    fn from_fx(astfx: Self::AstFx) -> Self;
-}
-
-pub type AstFxFor<FX> = <FX as FromFx>::AstFx;
-
-impl FromFx for PureEffects {
-    type AstFx = Self;
-
-    fn from_fx(astfx: Self) -> Self {
-        astfx
-    }
-}
-
-impl FromFx for QueryEffects {
-    type AstFx = ast::QueryEffects;
-
-    fn from_fx(astfx: ast::QueryEffects) -> Self {
-        use QueryEffects::Inquire;
-
-        match astfx {
-            ast::QueryEffects::Inquire(x) => Inquire(Box::new(GenExpr::from(*x))),
-        }
-    }
-}
-
-impl FromFx for ProcEffects {
-    type AstFx = ast::ProcEffects;
-
-    fn from_fx(astfx: ast::ProcEffects) -> Self {
-        use ProcEffects::{Evoke, Inquire};
-
-        match astfx {
-            ast::ProcEffects::Inquire(x) => Inquire(Box::new(GenExpr::from(*x))),
-            ast::ProcEffects::Evoke(x) => Evoke(Box::new(GenExpr::from(*x))),
-        }
-    }
-}
-
-impl fmt::Display for QueryEffects {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use QueryEffects::*;
-
-        match self {
-            Inquire(x) => {
-                write!(f, "$")?;
-                x.fmt(f)
-            }
-        }
-    }
-}
-
-impl fmt::Display for ProcEffects {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use ProcEffects::*;
-
-        match self {
-            Inquire(x) => {
-                write!(f, "$")?;
-                x.fmt(f)
-            }
-            Evoke(x) => {
-                write!(f, "!")?;
-                x.fmt(f)
-            }
-        }
-    }
-}
+pub use self::fromfx::{AstFxFor, FromFx};
+pub use self::proc::{ProcEffects, ProcExpr};
+pub use self::pure::{PureEffects, PureExpr};
+pub use self::query::{QueryEffects, QueryExpr};
