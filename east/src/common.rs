@@ -1,9 +1,13 @@
-use crate::{Pattern, PureExpr, QueryExpr};
+mod func;
+mod query;
+
+use crate::PureExpr;
 use sappho_ast as ast;
 use sappho_identmap::IdentMap;
 use sappho_object::Object;
-use std::fmt;
-use std::rc::Rc;
+
+pub use self::func::FuncClause;
+pub use self::query::QueryClause;
 
 #[derive(Debug, PartialEq)]
 pub struct ObjectDef(ObjectInner);
@@ -55,51 +59,5 @@ impl From<ast::CommonExpr> for ObjectDef {
             Query(x) => ObjectDef::from(x),
             Object(x) => ObjectDef::from(x),
         }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct FuncClause {
-    pub binding: Pattern,
-    pub body: Rc<PureExpr>,
-}
-
-impl From<ast::FuncDef> for FuncClause {
-    fn from(fd: ast::FuncDef) -> FuncClause {
-        FuncClause {
-            binding: fd.binding,
-            body: Rc::new(PureExpr::from(*fd.body)),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct QueryClause {
-    pub body: Rc<QueryExpr>,
-}
-
-impl From<ast::QueryDef> for QueryClause {
-    fn from(qd: ast::QueryDef) -> QueryClause {
-        QueryClause {
-            body: Rc::new(QueryExpr::from(*qd.body)),
-        }
-    }
-}
-
-impl fmt::Display for FuncClause {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "fn ")?;
-        self.binding.fmt(f)?;
-        write!(f, " -> ")?;
-        self.body.fmt(f)?;
-        Ok(())
-    }
-}
-
-impl fmt::Display for QueryClause {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "query ")?;
-        self.body.fmt(f)?;
-        Ok(())
     }
 }
