@@ -1,7 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    Application, GenExpr, LetExpr, ProcEffects, PureEffects, QueryEffects, QueryExpr, RecursiveExpr,
+    Application, GenExpr, LetExpr, Lookup, ProcEffects, PureEffects, QueryEffects, QueryExpr,
+    RecursiveExpr,
 };
 
 pub(crate) trait Restrict<S>: Sized {
@@ -60,6 +61,7 @@ where
     FXD: Restrict<FXS>,
 {
     fn restrict(src: RecursiveExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        use sappho_ast::Lookup as LookupExpr;
         use RecursiveExpr::*;
 
         match src {
@@ -73,6 +75,7 @@ where
             }
             Let(x) => LetExpr::restrict(x, span).map(Let),
             Apply(x) => Application::restrict(x, span).map(Apply),
+            Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),
         }
     }
 }
@@ -98,6 +101,18 @@ where
         Ok(Application {
             target: Box::new(GenExpr::<FXD>::restrict(*src.target, span.clone())?),
             argument: Box::new(GenExpr::<FXD>::restrict(*src.argument, span)?),
+        })
+    }
+}
+
+impl<FXS, FXD> Restrict<Lookup<FXS>> for Lookup<FXD>
+where
+    FXD: Restrict<FXS>,
+{
+    fn restrict(src: Lookup<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(Lookup {
+            target: Box::new(GenExpr::<FXD>::restrict(*src.target, span)?),
+            attr: src.attr,
         })
     }
 }

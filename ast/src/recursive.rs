@@ -6,18 +6,21 @@
 
 mod apply;
 mod letexpr;
+mod lookup;
 
 use crate::GenExpr;
 use std::fmt;
 
 pub use self::apply::Application;
 pub use self::letexpr::LetExpr;
+pub use self::lookup::Lookup;
 
 #[derive(Debug, PartialEq)]
 pub enum RecursiveExpr<Effects> {
     List(Vec<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Apply(Application<Effects>),
+    Lookup(Lookup<Effects>),
 }
 
 impl<FX> fmt::Display for RecursiveExpr<FX>
@@ -44,6 +47,7 @@ where
             }
             Let(x) => x.fmt(f),
             Apply(x) => x.fmt(f),
+            Lookup(x) => x.fmt(f),
         }
     }
 }

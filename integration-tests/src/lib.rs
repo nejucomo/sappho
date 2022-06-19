@@ -3,10 +3,10 @@
 mod gentests;
 
 #[cfg(test)]
-mod testlogic;
+mod logic;
 
 #[cfg(test)]
-use self::testlogic::test_eval;
+use self::logic::test_eval;
 
 #[cfg(test)]
-use self::testlogic::test_unparse;
+use self::logic::test_unparse;
