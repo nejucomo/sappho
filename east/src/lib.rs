@@ -10,5 +10,5 @@ pub use self::effects::{
     AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,
 };
 pub use self::expr::GenExpr;
-pub use self::recursive::{Application, LetExpr, RecursiveExpr};
+pub use self::recursive::{Application, LetExpr, Lookup, RecursiveExpr};
 pub use sappho_ast::{Identifier, Literal, Pattern, UniversalExpr};

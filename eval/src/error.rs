@@ -7,6 +7,7 @@ use std::fmt;
 pub enum Error {
     Unbound(Identifier),
     Uncallable(ValRef),
+    MissingField(ValRef, Identifier),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -18,6 +19,7 @@ impl fmt::Display for Error {
         match self {
             Unbound(id) => write!(f, "unbound {:?}", id),
             Uncallable(v) => write!(f, "not callable {:?}", v),
+            MissingField(v, name) => write!(f, "missing field {:?}.{}", v, name),
         }
     }
 }

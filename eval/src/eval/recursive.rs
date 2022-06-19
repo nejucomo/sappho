@@ -1,7 +1,7 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{List, Result, ValRef, Value};
-use sappho_east::{Application, GenExpr, LetExpr, RecursiveExpr};
+use sappho_east::{Application, GenExpr, LetExpr, Lookup, RecursiveExpr};
 
 impl<FX> Eval for RecursiveExpr<FX>
 where
@@ -14,6 +14,7 @@ where
             List(x) => x.eval(scope),
             Let(x) => x.eval(scope),
             Apply(x) => x.eval(scope),
+            Lookup(x) => x.eval(scope),
         }
     }
 }
@@ -78,6 +79,29 @@ where
                 }
             }
             _ => Err(Uncallable(tval)),
+        }
+    }
+}
+
+impl<FX> Eval for Lookup<FX>
+where
+    FX: Eval,
+{
+    fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
+        use crate::Error::MissingField;
+        use std::borrow::Borrow;
+
+        let Lookup { target, field } = self;
+        let tval = target.eval(scope.clone())?;
+        match tval.borrow() {
+            Value::Object(obj) => {
+                if let Some(v) = obj.attrs().get(&field) {
+                    Ok(v.clone())
+                } else {
+                    Err(MissingField(tval, field.clone()))
+                }
+            }
+            _ => Err(MissingField(tval, field.clone())),
         }
     }
 }
