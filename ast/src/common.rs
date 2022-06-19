@@ -74,3 +74,19 @@ impl fmt::Display for QueryDef {
         Ok(())
     }
 }
+
+impl fmt::Display for ObjectDef {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if let Some(m) = self.0.monolithic() {
+            use sappho_object::Monolithic::*;
+
+            match m {
+                Func(func) => func.fmt(f),
+                Query(query) => query.fmt(f),
+                _ => self.0.fmt(f),
+            }
+        } else {
+            self.0.fmt(f)
+        }
+    }
+}
