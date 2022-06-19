@@ -348,7 +348,9 @@ dependencies = [
  "derive_more",
  "indoc",
  "pathutil",
+ "sappho-east",
  "sappho-interpreter",
+ "sappho-parser",
 ]
 
 [[package]]

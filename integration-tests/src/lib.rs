@@ -7,3 +7,6 @@ mod testlogic;
 
 #[cfg(test)]
 use self::testlogic::test_eval;
+
+#[cfg(test)]
+use self::testlogic::test_unparse;
