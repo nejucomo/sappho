@@ -73,20 +73,16 @@ where
 {
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
         use crate::Error::Uncallable;
-        use std::borrow::Borrow;
+        use crate::Object;
 
         let ApplicationExpr { target, argument } = self;
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
-        match tval.borrow() {
-            Value::Object(obj) => {
-                if let Some(func) = obj.func() {
-                    func.apply(&aval)
-                } else {
-                    Err(Uncallable(tval))
-                }
-            }
-            _ => Err(Uncallable(tval)),
+        let obj: &Object = tval.coerce()?;
+        if let Some(func) = obj.func() {
+            func.apply(&aval)
+        } else {
+            Err(Uncallable(tval))
         }
     }
 }

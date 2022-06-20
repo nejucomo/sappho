@@ -1,4 +1,4 @@
-use crate::Value;
+use crate::{Coerce, Result, Value};
 use std::borrow::Borrow;
 use std::fmt;
 use std::ops::Deref;
@@ -6,6 +6,18 @@ use std::rc::Rc;
 
 #[derive(Clone, Debug)]
 pub struct ValRef(Rc<Value>);
+
+impl ValRef {
+    pub fn coerce<T>(&self) -> Result<&T>
+    where
+        T: Coerce,
+    {
+        use crate::Error::CoercionFailure;
+
+        T::coerce_from_value(&self.0)
+            .ok_or_else(|| CoercionFailure(self.clone(), std::any::type_name::<Self>()))
+    }
+}
 
 impl Deref for ValRef {
     type Target = Value;

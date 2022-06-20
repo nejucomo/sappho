@@ -1,4 +1,5 @@
 mod bind;
+mod coerce;
 mod error;
 mod eval;
 mod func;
@@ -10,6 +11,7 @@ mod valref;
 mod value;
 
 pub(crate) use self::bind::bind;
+pub use self::coerce::Coerce;
 pub use self::error::{Error, Result};
 pub use self::eval::eval;
 pub use self::func::Func;
