@@ -6,6 +6,7 @@ use crate::{
 };
 use std::fmt;
 
+/// The general top-level expression for all effects.
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {
     Lit(Literal),

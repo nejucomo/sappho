@@ -3,6 +3,7 @@ use sappho_identmap::IdentMap;
 use sappho_object::Object;
 use std::fmt;
 
+/// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Debug, PartialEq)]
 pub struct ObjectDef(ObjectInner);
 pub type ObjectInner = Object<FuncDef, QueryDef, PureExpr>;
