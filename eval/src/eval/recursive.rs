@@ -80,8 +80,8 @@ where
         let aval = argument.eval(scope)?;
         match tval.borrow() {
             Value::Object(obj) => {
-                if let Some(fnbox) = obj.func() {
-                    fnbox(aval)
+                if let Some(func) = obj.func() {
+                    func.apply(&aval)
                 } else {
                     Err(Uncallable(tval))
                 }

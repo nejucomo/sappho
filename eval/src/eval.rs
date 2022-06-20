@@ -4,7 +4,8 @@ mod object;
 mod recursive;
 mod traits;
 
-use self::traits::{Eval, EvalV};
+pub(crate) use self::traits::Eval;
+use self::traits::EvalV;
 use crate::scope::ScopeRef;
 use crate::{Result, ValRef};
 use sappho_east::PureExpr;
