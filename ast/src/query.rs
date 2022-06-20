@@ -1,8 +1,10 @@
 use crate::QueryExpr;
 use std::fmt;
 
+/// A query definition, ie `query $x`.
 #[derive(Debug, PartialEq)]
 pub struct QueryDef {
+    /// The [QueryExpr] definition, ie the `$x` in `query $x`.
     pub body: Box<QueryExpr>,
 }
 

@@ -49,15 +49,3 @@ impl From<ast::QueryDef> for ObjectDef {
         ))
     }
 }
-
-impl From<ast::CommonExpr> for ObjectDef {
-    fn from(x: ast::CommonExpr) -> Self {
-        use ast::CommonExpr::*;
-
-        match x {
-            Func(x) => ObjectDef::from(x),
-            Query(x) => ObjectDef::from(x),
-            Object(x) => ObjectDef::from(x),
-        }
-    }
-}

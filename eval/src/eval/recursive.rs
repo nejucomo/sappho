@@ -1,23 +1,7 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{List, Result, ValRef, Value};
-use sappho_east::{Application, GenExpr, LetExpr, ListForm, Lookup, RecursiveExpr};
-
-impl<FX> Eval for RecursiveExpr<FX>
-where
-    FX: Eval,
-{
-    fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
-        use RecursiveExpr::*;
-
-        match self {
-            List(x) => x.eval(scope),
-            Let(x) => x.eval(scope),
-            Apply(x) => x.eval(scope),
-            Lookup(x) => x.eval(scope),
-        }
-    }
-}
+use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr};
 
 impl<FX> EvalV for ListForm<GenExpr<FX>>
 where
@@ -59,7 +43,7 @@ where
     }
 }
 
-impl<FX> Eval for Application<FX>
+impl<FX> Eval for ApplicationExpr<FX>
 where
     FX: Eval,
 {
@@ -67,7 +51,7 @@ where
         use crate::Error::Uncallable;
         use std::borrow::Borrow;
 
-        let Application { target, argument } = self;
+        let ApplicationExpr { target, argument } = self;
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
         match tval.borrow() {
@@ -83,7 +67,7 @@ where
     }
 }
 
-impl<FX> Eval for Lookup<FX>
+impl<FX> Eval for LookupExpr<FX>
 where
     FX: Eval,
 {
@@ -91,7 +75,7 @@ where
         use crate::Error::MissingAttr;
         use std::borrow::Borrow;
 
-        let Lookup { target, attr } = self;
+        let LookupExpr { target, attr } = self;
         let tval = target.eval(scope)?;
         match tval.borrow() {
             Value::Object(obj) => {

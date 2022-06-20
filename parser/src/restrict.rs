@@ -1,8 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    Application, GenExpr, LetExpr, ListForm, Lookup, ProcEffects, PureEffects, QueryEffects,
-    QueryExpr, RecursiveExpr,
+    ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, ProcEffects, PureEffects,
+    QueryEffects, QueryExpr,
 };
 
 pub(crate) trait Restrict<S>: Sized {
@@ -48,31 +48,20 @@ where
         use GenExpr::*;
 
         match src {
-            Universal(x) => Ok(Universal(x)),
-            Common(x) => Ok(Common(x)),
-            Recursive(x) => RecursiveExpr::restrict(x, span).map(Recursive),
-            Effect(x) => FXD::restrict(x, span).map(Effect),
-        }
-    }
-}
-
-impl<FXS, FXD> Restrict<RecursiveExpr<FXS>> for RecursiveExpr<FXD>
-where
-    FXD: Restrict<FXS>,
-{
-    fn restrict(src: RecursiveExpr<FXS>, span: Span) -> Result<Self, BareError> {
-        use sappho_ast::Lookup as LookupExpr;
-        use RecursiveExpr::*;
-
-        match src {
+            Lit(x) => Ok(Lit(x)),
+            Ref(x) => Ok(Ref(x)),
+            Func(x) => Ok(Func(x)),
+            Query(x) => Ok(Query(x)),
+            Object(x) => Ok(Object(x)),
             List(x) => Ok(List(
                 x.into_iter()
                     .map(|subx| GenExpr::<FXD>::restrict(subx, span.clone()))
                     .collect::<Result<ListForm<_>, BareError>>()?,
             )),
             Let(x) => LetExpr::restrict(x, span).map(Let),
-            Apply(x) => Application::restrict(x, span).map(Apply),
+            Application(x) => ApplicationExpr::restrict(x, span).map(Application),
             Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),
+            Effect(x) => FXD::restrict(x, span).map(Effect),
         }
     }
 }
@@ -90,24 +79,24 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<Application<FXS>> for Application<FXD>
+impl<FXS, FXD> Restrict<ApplicationExpr<FXS>> for ApplicationExpr<FXD>
 where
     FXD: Restrict<FXS>,
 {
-    fn restrict(src: Application<FXS>, span: Span) -> Result<Self, BareError> {
-        Ok(Application {
+    fn restrict(src: ApplicationExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(ApplicationExpr {
             target: Box::new(GenExpr::<FXD>::restrict(*src.target, span.clone())?),
             argument: Box::new(GenExpr::<FXD>::restrict(*src.argument, span)?),
         })
     }
 }
 
-impl<FXS, FXD> Restrict<Lookup<FXS>> for Lookup<FXD>
+impl<FXS, FXD> Restrict<LookupExpr<FXS>> for LookupExpr<FXD>
 where
     FXD: Restrict<FXS>,
 {
-    fn restrict(src: Lookup<FXS>, span: Span) -> Result<Self, BareError> {
-        Ok(Lookup {
+    fn restrict(src: LookupExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(LookupExpr {
             target: Box::new(GenExpr::<FXD>::restrict(*src.target, span)?),
             attr: src.attr,
         })

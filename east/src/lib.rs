@@ -1,14 +1,18 @@
 //! The Eval Abstract Syntax Tree (east) is a subset of [`sappho-ast`] for evaluation
 
-mod common;
+mod application;
 mod effects;
 mod expr;
-mod recursive;
+mod letexpr;
+mod lookup;
+mod object;
 
-pub use self::common::{FuncClause, ObjectDef, QueryClause};
+pub use self::application::ApplicationExpr;
 pub use self::effects::{
     AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,
 };
 pub use self::expr::GenExpr;
-pub use self::recursive::{Application, LetExpr, Lookup, RecursiveExpr};
-pub use sappho_ast::{Identifier, ListForm, Literal, Pattern, UniversalExpr};
+pub use self::letexpr::LetExpr;
+pub use self::lookup::LookupExpr;
+pub use self::object::{FuncClause, ObjectDef, QueryClause};
+pub use sappho_ast::{Identifier, ListForm, Literal, Pattern};

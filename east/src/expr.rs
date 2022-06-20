@@ -1,24 +1,40 @@
-use crate::{AstFxFor, FromFx, ObjectDef, RecursiveExpr, UniversalExpr};
-use sappho_ast as ast;
+use crate::{
+    ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, ListForm, Literal, LookupExpr,
+    ObjectDef,
+};
+use sappho_ast::GenExpr as AGE;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub enum GenExpr<Effects> {
-    Universal(UniversalExpr),
-    Common(ObjectDef),
-    Recursive(RecursiveExpr<Effects>),
+    Lit(Literal),
+    Ref(Identifier),
+    Object(ObjectDef),
+    List(ListForm<GenExpr<Effects>>),
+    Let(LetExpr<Effects>),
+    Application(ApplicationExpr<Effects>),
+    Lookup(LookupExpr<Effects>),
     Effect(Effects),
 }
 
-impl<FX: FromFx> From<ast::GenExpr<AstFxFor<FX>>> for GenExpr<FX> {
-    fn from(x: ast::GenExpr<AstFxFor<FX>>) -> Self {
+impl<FX> From<AGE<AstFxFor<FX>>> for GenExpr<FX>
+where
+    FX: FromFx,
+{
+    fn from(x: AGE<AstFxFor<FX>>) -> Self {
         use GenExpr::*;
 
         match x {
-            ast::GenExpr::Universal(x) => Universal(x),
-            ast::GenExpr::Common(x) => Common(ObjectDef::from(x)),
-            ast::GenExpr::Recursive(x) => Recursive(RecursiveExpr::from(x)),
-            ast::GenExpr::Effect(x) => Effect(FX::from_fx(x)),
+            AGE::Lit(x) => Lit(x),
+            AGE::Ref(x) => Ref(x),
+            AGE::Func(x) => Object(ObjectDef::from(x)),
+            AGE::Query(x) => Object(ObjectDef::from(x)),
+            AGE::Object(x) => Object(ObjectDef::from(x)),
+            AGE::List(x) => List(x.into_iter().map(GenExpr::from).collect()),
+            AGE::Let(x) => Let(LetExpr::from(x)),
+            AGE::Application(x) => Application(ApplicationExpr::from(x)),
+            AGE::Lookup(x) => Lookup(LookupExpr::from(x)),
+            AGE::Effect(x) => Effect(FX::from_fx(x)),
         }
     }
 }
@@ -31,9 +47,13 @@ where
         use GenExpr::*;
 
         match self {
-            Universal(x) => x.fmt(f),
-            Common(x) => x.fmt(f),
-            Recursive(x) => x.fmt(f),
+            Lit(x) => x.fmt(f),
+            Ref(x) => x.fmt(f),
+            Object(x) => x.fmt(f),
+            List(x) => x.fmt(f),
+            Let(x) => x.fmt(f),
+            Application(x) => x.fmt(f),
+            Lookup(x) => x.fmt(f),
             Effect(x) => x.fmt(f),
         }
     }

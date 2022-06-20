@@ -1,8 +1,10 @@
 use crate::GenExpr;
 use std::fmt;
 
+/// Pure expressions without side-effects.
 pub type PureExpr = GenExpr<PureEffects>;
 
+/// Pure effects cannot be instantiated, because pure expressions have no side effects.
 #[derive(Debug, PartialEq)]
 pub enum PureEffects {}
 

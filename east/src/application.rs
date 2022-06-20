@@ -3,24 +3,24 @@ use sappho_ast as ast;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
-pub struct Application<Effects> {
+pub struct ApplicationExpr<Effects> {
     pub target: Box<GenExpr<Effects>>,
     pub argument: Box<GenExpr<Effects>>,
 }
 
-impl<FX> From<ast::Application<AstFxFor<FX>>> for Application<FX>
+impl<FX> From<ast::ApplicationExpr<AstFxFor<FX>>> for ApplicationExpr<FX>
 where
     FX: FromFx,
 {
-    fn from(app: ast::Application<AstFxFor<FX>>) -> Self {
-        Application {
+    fn from(app: ast::ApplicationExpr<AstFxFor<FX>>) -> Self {
+        ApplicationExpr {
             target: Box::new(GenExpr::from(*app.target)),
             argument: Box::new(GenExpr::from(*app.argument)),
         }
     }
 }
 
-impl<FX> fmt::Display for Application<FX>
+impl<FX> fmt::Display for ApplicationExpr<FX>
 where
     FX: fmt::Display,
 {
