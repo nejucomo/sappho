@@ -1,4 +1,4 @@
-use crate::{Coerce, List, Object};
+use crate::{Coerce, Func, List, Object};
 use derive_more::From;
 use std::fmt;
 
@@ -25,6 +25,12 @@ impl Coerce for Object {
             Object(x) => Some(x),
             _ => None,
         }
+    }
+}
+
+impl Coerce for Func {
+    fn coerce_from_value(v: &Value) -> Option<&Func> {
+        Object::coerce_from_value(v).and_then(|obj| obj.func())
     }
 }
 

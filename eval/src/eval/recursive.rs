@@ -72,18 +72,13 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
-        use crate::Error::Uncallable;
-        use crate::Object;
+        use crate::Func;
 
         let ApplicationExpr { target, argument } = self;
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
-        let obj: &Object = tval.coerce()?;
-        if let Some(func) = obj.func() {
-            func.apply(&aval)
-        } else {
-            Err(Uncallable(tval))
-        }
+        let func: &Func = tval.coerce()?;
+        func.apply(&aval)
     }
 }
 

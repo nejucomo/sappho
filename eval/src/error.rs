@@ -6,7 +6,6 @@ use std::fmt;
 #[derive(Debug, From)]
 pub enum Error {
     Unbound(Identifier),
-    Uncallable(ValRef),
     MissingAttr(ValRef, Identifier),
     Mismatch(ValRef, Vec<Pattern>),
     CoercionFailure(ValRef, &'static str),
@@ -20,7 +19,6 @@ impl fmt::Display for Error {
 
         match self {
             Unbound(id) => write!(f, "unbound {:?}", id),
-            Uncallable(v) => write!(f, "not callable {}", v),
             MissingAttr(v, name) => write!(f, "missing attr {}.{}", v, name),
             Mismatch(v, pats) => {
                 write!(
