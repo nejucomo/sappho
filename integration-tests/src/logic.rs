@@ -9,7 +9,7 @@ pub fn test_eval(inpath: PathBuf, input: &str, expected: &str) {
         Err(x) => x.to_string(),
     };
 
-    check_equal(actual, expected);
+    check_equal(expected, actual);
 }
 
 pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
@@ -25,10 +25,10 @@ pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
         panic!("Unknown unparse style {:?}", style);
     };
 
-    check_equal(actual, expected);
+    check_equal(expected, actual);
 }
 
-fn check_equal(expected: String, actual: &str) {
+fn check_equal(expected: &str, actual: String) {
     if expected.trim_end() != actual.trim_end() {
         panic!(
             "Mismatched expectation:\nExpected:\n  {}\nActual:\n  {}\n",

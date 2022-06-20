@@ -1,3 +1,4 @@
+mod bind;
 mod error;
 mod eval;
 mod list;
@@ -5,6 +6,7 @@ mod object;
 mod scope;
 mod value;
 
+pub(crate) use self::bind::bind;
 pub use self::error::{Error, Result};
 pub use self::eval::eval;
 pub use self::list::List;

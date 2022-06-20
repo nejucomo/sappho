@@ -1,7 +1,8 @@
 use super::{Eval, EvalV};
+use crate::bind;
 use crate::scope::ScopeRef;
 use crate::{List, Result, ValRef, Value};
-use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr};
+use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, MatchExpr};
 
 impl<FX> EvalV for ListForm<GenExpr<FX>>
 where
@@ -40,6 +41,29 @@ where
         let subscope = scope.extend(binding, bindval);
 
         tail.eval(subscope)
+    }
+}
+
+impl<FX> Eval for MatchExpr<FX>
+where
+    FX: Eval,
+{
+    fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
+        use crate::Error::Mismatch;
+
+        let MatchExpr { target, clauses } = &self;
+
+        let tval = target.eval(scope.clone())?;
+        for clause in clauses {
+            if let Some(matchscope) = bind(&clause.pattern, &tval, scope.clone()) {
+                return clause.body.eval(matchscope);
+            }
+        }
+
+        Err(Mismatch(
+            tval,
+            clauses.iter().map(|c| c.pattern.clone()).collect(),
+        ))
     }
 }
 

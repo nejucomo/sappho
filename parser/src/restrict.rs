@@ -1,8 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, ProcEffects, PureEffects,
-    QueryEffects, QueryExpr,
+    ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, MatchClause, MatchExpr, ProcEffects,
+    PureEffects, QueryEffects, QueryExpr,
 };
 
 pub(crate) trait Restrict<S>: Sized {
@@ -59,6 +59,7 @@ where
                     .collect::<Result<ListForm<_>, BareError>>()?,
             )),
             Let(x) => LetExpr::restrict(x, span).map(Let),
+            Match(x) => MatchExpr::restrict(x, span).map(Match),
             Application(x) => ApplicationExpr::restrict(x, span).map(Application),
             Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),
             Effect(x) => FXD::restrict(x, span).map(Effect),
@@ -75,6 +76,34 @@ where
             binding: src.binding,
             bindexpr: Box::new(GenExpr::<FXD>::restrict(*src.bindexpr, span.clone())?),
             tail: Box::new(GenExpr::<FXD>::restrict(*src.tail, span)?),
+        })
+    }
+}
+
+impl<FXS, FXD> Restrict<MatchExpr<FXS>> for MatchExpr<FXD>
+where
+    FXD: Restrict<FXS>,
+{
+    fn restrict(src: MatchExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(MatchExpr {
+            target: Box::new(GenExpr::<FXD>::restrict(*src.target, span.clone())?),
+            clauses: src
+                .clauses
+                .into_iter()
+                .map(|c| MatchClause::restrict(c, span.clone()))
+                .collect::<Result<Vec<_>, BareError>>()?,
+        })
+    }
+}
+
+impl<FXS, FXD> Restrict<MatchClause<FXS>> for MatchClause<FXD>
+where
+    FXD: Restrict<FXS>,
+{
+    fn restrict(src: MatchClause<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(MatchClause {
+            pattern: src.pattern,
+            body: Box::new(GenExpr::<FXD>::restrict(*src.body, span)?),
         })
     }
 }
