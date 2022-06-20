@@ -1,6 +1,6 @@
 use crate::ValRef;
 use derive_more::From;
-use sappho_ast::Identifier;
+use sappho_east::{Identifier, Pattern};
 use std::fmt;
 
 #[derive(Debug, From)]
@@ -8,6 +8,7 @@ pub enum Error {
     Unbound(Identifier),
     Uncallable(ValRef),
     MissingAttr(ValRef, Identifier),
+    Mismatch(ValRef, Vec<Pattern>),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -18,8 +19,19 @@ impl fmt::Display for Error {
 
         match self {
             Unbound(id) => write!(f, "unbound {:?}", id),
-            Uncallable(v) => write!(f, "not callable {:?}", v),
-            MissingAttr(v, name) => write!(f, "missing attr {:?}.{}", v, name),
+            Uncallable(v) => write!(f, "not callable {}", v),
+            MissingAttr(v, name) => write!(f, "missing attr {}.{}", v, name),
+            Mismatch(v, pats) => {
+                write!(
+                    f,
+                    "value {} does not match any of these patterns: {}",
+                    v,
+                    pats.iter()
+                        .map(|p| p.to_string())
+                        .collect::<Vec<String>>()
+                        .join(", ")
+                )
+            }
         }
     }
 }
