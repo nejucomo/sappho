@@ -43,9 +43,9 @@ fn non_app_non_lookup(
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     parens_expr(pexpr.clone())
         .or(proc_effect(pexpr.clone()).map(ProcExpr::Effect))
-        .or(universal_expr().map(ProcExpr::Universal))
-        .or(common_expr(pexpr.clone()).map(ProcExpr::Common))
-        .or(recursive_expr(pexpr).map(ProcExpr::Recursive))
+        .or(universal_expr())
+        .or(common_expr(pexpr.clone()))
+        .or(recursive_expr(pexpr))
 }
 
 fn parens_expr(

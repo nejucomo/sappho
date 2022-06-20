@@ -2,7 +2,7 @@ use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
     Application, GenExpr, LetExpr, ListForm, Lookup, ProcEffects, PureEffects, QueryEffects,
-    QueryExpr, RecursiveExpr,
+    QueryExpr,
 };
 
 pub(crate) trait Restrict<S>: Sized {
@@ -45,26 +45,15 @@ where
     FXD: Restrict<FXS>,
 {
     fn restrict(src: GenExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        use sappho_ast::Lookup as LookupExpr;
         use GenExpr::*;
 
         match src {
-            Universal(x) => Ok(Universal(x)),
-            Common(x) => Ok(Common(x)),
-            Recursive(x) => RecursiveExpr::restrict(x, span).map(Recursive),
-            Effect(x) => FXD::restrict(x, span).map(Effect),
-        }
-    }
-}
-
-impl<FXS, FXD> Restrict<RecursiveExpr<FXS>> for RecursiveExpr<FXD>
-where
-    FXD: Restrict<FXS>,
-{
-    fn restrict(src: RecursiveExpr<FXS>, span: Span) -> Result<Self, BareError> {
-        use sappho_ast::Lookup as LookupExpr;
-        use RecursiveExpr::*;
-
-        match src {
+            Lit(x) => Ok(Lit(x)),
+            Ref(x) => Ok(Ref(x)),
+            Func(x) => Ok(Func(x)),
+            Query(x) => Ok(Query(x)),
+            Object(x) => Ok(Object(x)),
             List(x) => Ok(List(
                 x.into_iter()
                     .map(|subx| GenExpr::<FXD>::restrict(subx, span.clone()))
@@ -73,6 +62,7 @@ where
             Let(x) => LetExpr::restrict(x, span).map(Let),
             Apply(x) => Application::restrict(x, span).map(Apply),
             Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),
+            Effect(x) => FXD::restrict(x, span).map(Effect),
         }
     }
 }

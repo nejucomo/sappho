@@ -6,12 +6,12 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{GenExpr, LetExpr, ListForm, RecursiveExpr};
+use sappho_ast::{GenExpr, LetExpr, ListForm};
 
 pub(crate) fn recursive_expr<'a, FX: 'a>(
     expr: Recursive<'a, char, GenExpr<FX>, BareError>,
-) -> impl Parser<char, RecursiveExpr<FX>, Error = BareError> + 'a {
-    use RecursiveExpr::*;
+) -> impl Parser<char, GenExpr<FX>, Error = BareError> + 'a {
+    use GenExpr::*;
 
     list_expr(expr.clone())
         .map(List)
