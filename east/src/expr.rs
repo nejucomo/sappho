@@ -1,6 +1,6 @@
 use crate::{
     ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, ListForm, Literal, LookupExpr,
-    ObjectDef,
+    MatchExpr, ObjectDef,
 };
 use sappho_ast::GenExpr as AGE;
 use std::fmt;
@@ -12,6 +12,7 @@ pub enum GenExpr<Effects> {
     Object(ObjectDef),
     List(ListForm<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
+    Match(MatchExpr<Effects>),
     Application(ApplicationExpr<Effects>),
     Lookup(LookupExpr<Effects>),
     Effect(Effects),
@@ -32,6 +33,7 @@ where
             AGE::Object(x) => Object(ObjectDef::from(x)),
             AGE::List(x) => List(x.into_iter().map(GenExpr::from).collect()),
             AGE::Let(x) => Let(LetExpr::from(x)),
+            AGE::Match(x) => Match(MatchExpr::from(x)),
             AGE::Application(x) => Application(ApplicationExpr::from(x)),
             AGE::Lookup(x) => Lookup(LookupExpr::from(x)),
             AGE::Effect(x) => Effect(FX::from_fx(x)),
@@ -52,6 +54,7 @@ where
             Object(x) => x.fmt(f),
             List(x) => x.fmt(f),
             Let(x) => x.fmt(f),
+            Match(x) => x.fmt(f),
             Application(x) => x.fmt(f),
             Lookup(x) => x.fmt(f),
             Effect(x) => x.fmt(f),
