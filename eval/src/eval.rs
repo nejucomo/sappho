@@ -3,7 +3,6 @@ mod expr;
 mod object;
 mod recursive;
 mod traits;
-mod universal;
 
 use self::traits::{Eval, EvalV};
 use crate::scope::ScopeRef;
