@@ -3,19 +3,27 @@
 //!
 //! `fn x -> x` is short-hand for `{ fn x -> x }`.
 
-mod common;
+mod application;
 mod effects;
 mod expr;
+mod func;
+mod letexpr;
 mod listform;
 mod literal;
-mod recursive;
+mod lookup;
+mod object;
+mod query;
 
 pub type Pattern = Identifier;
 
-pub use self::common::{FuncDef, ObjectDef, QueryDef};
+pub use self::application::Application;
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
+pub use self::func::FuncDef;
+pub use self::letexpr::LetExpr;
 pub use self::listform::ListForm;
 pub use self::literal::Literal;
-pub use self::recursive::{Application, LetExpr, Lookup};
+pub use self::lookup::Lookup;
+pub use self::object::ObjectDef;
+pub use self::query::QueryDef;
 pub use sappho_identmap::Identifier;
