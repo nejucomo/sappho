@@ -3,11 +3,12 @@ use sappho_identmap::IdentMap;
 use std::fmt;
 
 pub struct Object(Inner);
-
 type Inner = sappho_object::Object<Func, Query, ValRef>;
 
+pub(crate) type Attrs = IdentMap<ValRef>;
+
 impl Object {
-    pub fn new(func: Option<Func>, query: Option<Query>, attrs: IdentMap<ValRef>) -> Self {
+    pub fn new(func: Option<Func>, query: Option<Query>, attrs: Attrs) -> Self {
         Object(Inner::new(func, query, attrs))
     }
 }
