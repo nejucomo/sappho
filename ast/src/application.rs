@@ -2,12 +2,12 @@ use crate::GenExpr;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
-pub struct Application<Effects> {
+pub struct ApplicationExpr<Effects> {
     pub target: Box<GenExpr<Effects>>,
     pub argument: Box<GenExpr<Effects>>,
 }
 
-impl<FX> fmt::Display for Application<FX>
+impl<FX> fmt::Display for ApplicationExpr<FX>
 where
     FX: fmt::Display,
 {

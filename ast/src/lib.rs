@@ -16,7 +16,7 @@ mod query;
 
 pub type Pattern = Identifier;
 
-pub use self::application::Application;
+pub use self::application::ApplicationExpr;
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
 pub use self::func::FuncDef;

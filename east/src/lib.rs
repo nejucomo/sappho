@@ -7,7 +7,7 @@ mod letexpr;
 mod lookup;
 mod object;
 
-pub use self::application::Application;
+pub use self::application::ApplicationExpr;
 pub use self::effects::{
     AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,
 };

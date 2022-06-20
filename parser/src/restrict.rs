@@ -1,7 +1,7 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    Application, GenExpr, LetExpr, ListForm, Lookup, ProcEffects, PureEffects, QueryEffects,
+    ApplicationExpr, GenExpr, LetExpr, ListForm, Lookup, ProcEffects, PureEffects, QueryEffects,
     QueryExpr,
 };
 
@@ -60,7 +60,7 @@ where
                     .collect::<Result<ListForm<_>, BareError>>()?,
             )),
             Let(x) => LetExpr::restrict(x, span).map(Let),
-            Apply(x) => Application::restrict(x, span).map(Apply),
+            Apply(x) => ApplicationExpr::restrict(x, span).map(Apply),
             Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),
             Effect(x) => FXD::restrict(x, span).map(Effect),
         }
@@ -80,12 +80,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<Application<FXS>> for Application<FXD>
+impl<FXS, FXD> Restrict<ApplicationExpr<FXS>> for ApplicationExpr<FXD>
 where
     FXD: Restrict<FXS>,
 {
-    fn restrict(src: Application<FXS>, span: Span) -> Result<Self, BareError> {
-        Ok(Application {
+    fn restrict(src: ApplicationExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(ApplicationExpr {
             target: Box::new(GenExpr::<FXD>::restrict(*src.target, span.clone())?),
             argument: Box::new(GenExpr::<FXD>::restrict(*src.argument, span)?),
         })

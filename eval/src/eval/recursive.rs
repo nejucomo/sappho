@@ -1,7 +1,7 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{List, Result, ValRef, Value};
-use sappho_east::{Application, GenExpr, LetExpr, ListForm, Lookup};
+use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, Lookup};
 
 impl<FX> EvalV for ListForm<GenExpr<FX>>
 where
@@ -43,7 +43,7 @@ where
     }
 }
 
-impl<FX> Eval for Application<FX>
+impl<FX> Eval for ApplicationExpr<FX>
 where
     FX: Eval,
 {
@@ -51,7 +51,7 @@ where
         use crate::Error::Uncallable;
         use std::borrow::Borrow;
 
-        let Application { target, argument } = self;
+        let ApplicationExpr { target, argument } = self;
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
         match tval.borrow() {
