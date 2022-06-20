@@ -2,12 +2,12 @@ use crate::{GenExpr, Identifier};
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
-pub struct Lookup<Effects> {
+pub struct LookupExpr<Effects> {
     pub target: Box<GenExpr<Effects>>,
     pub attr: Identifier,
 }
 
-impl<FX> fmt::Display for Lookup<FX>
+impl<FX> fmt::Display for LookupExpr<FX>
 where
     FX: fmt::Display,
 {

@@ -23,7 +23,7 @@ pub use self::func::FuncDef;
 pub use self::letexpr::LetExpr;
 pub use self::listform::ListForm;
 pub use self::literal::Literal;
-pub use self::lookup::Lookup;
+pub use self::lookup::LookupExpr;
 pub use self::object::ObjectDef;
 pub use self::query::QueryDef;
 pub use sappho_identmap::Identifier;

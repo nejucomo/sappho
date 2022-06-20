@@ -1,8 +1,8 @@
 //! Top-level expression type `GenExpr`, generic over [crate::effects]
 
 use crate::{
-    ApplicationExpr, FuncDef, Identifier, LetExpr, ListForm, Literal, Lookup, ObjectDef, Pattern,
-    PureExpr, QueryDef, QueryExpr,
+    ApplicationExpr, FuncDef, Identifier, LetExpr, ListForm, Literal, LookupExpr, ObjectDef,
+    Pattern, PureExpr, QueryDef, QueryExpr,
 };
 use std::fmt;
 
@@ -16,7 +16,7 @@ pub enum GenExpr<Effects> {
     List(ListForm<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Application(ApplicationExpr<Effects>),
-    Lookup(Lookup<Effects>),
+    Lookup(LookupExpr<Effects>),
     Effect(Effects),
 }
 
@@ -75,7 +75,7 @@ impl<FX> GenExpr<FX> {
     }
 
     pub fn lookup(target: Self, attr: Identifier) -> Self {
-        GenExpr::Lookup(Lookup {
+        GenExpr::Lookup(LookupExpr {
             target: Box::new(target),
             attr,
         })

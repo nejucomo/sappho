@@ -1,7 +1,7 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
 use crate::{List, Result, ValRef, Value};
-use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, Lookup};
+use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr};
 
 impl<FX> EvalV for ListForm<GenExpr<FX>>
 where
@@ -67,7 +67,7 @@ where
     }
 }
 
-impl<FX> Eval for Lookup<FX>
+impl<FX> Eval for LookupExpr<FX>
 where
     FX: Eval,
 {
@@ -75,7 +75,7 @@ where
         use crate::Error::MissingAttr;
         use std::borrow::Borrow;
 
-        let Lookup { target, attr } = self;
+        let LookupExpr { target, attr } = self;
         let tval = target.eval(scope)?;
         match tval.borrow() {
             Value::Object(obj) => {

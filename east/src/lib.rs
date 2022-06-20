@@ -13,6 +13,6 @@ pub use self::effects::{
 };
 pub use self::expr::GenExpr;
 pub use self::letexpr::LetExpr;
-pub use self::lookup::Lookup;
+pub use self::lookup::LookupExpr;
 pub use self::object::{FuncClause, ObjectDef, QueryClause};
 pub use sappho_ast::{Identifier, ListForm, Literal, Pattern};

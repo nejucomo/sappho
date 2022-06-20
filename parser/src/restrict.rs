@@ -1,8 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    ApplicationExpr, GenExpr, LetExpr, ListForm, Lookup, ProcEffects, PureEffects, QueryEffects,
-    QueryExpr,
+    ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, ProcEffects, PureEffects,
+    QueryEffects, QueryExpr,
 };
 
 pub(crate) trait Restrict<S>: Sized {
@@ -45,7 +45,6 @@ where
     FXD: Restrict<FXS>,
 {
     fn restrict(src: GenExpr<FXS>, span: Span) -> Result<Self, BareError> {
-        use sappho_ast::Lookup as LookupExpr;
         use GenExpr::*;
 
         match src {
@@ -92,12 +91,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<Lookup<FXS>> for Lookup<FXD>
+impl<FXS, FXD> Restrict<LookupExpr<FXS>> for LookupExpr<FXD>
 where
     FXD: Restrict<FXS>,
 {
-    fn restrict(src: Lookup<FXS>, span: Span) -> Result<Self, BareError> {
-        Ok(Lookup {
+    fn restrict(src: LookupExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(LookupExpr {
             target: Box::new(GenExpr::<FXD>::restrict(*src.target, span)?),
             attr: src.attr,
         })

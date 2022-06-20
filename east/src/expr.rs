@@ -1,5 +1,6 @@
 use crate::{
-    ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, ListForm, Literal, Lookup, ObjectDef,
+    ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, ListForm, Literal, LookupExpr,
+    ObjectDef,
 };
 use sappho_ast::GenExpr as AGE;
 use std::fmt;
@@ -12,7 +13,7 @@ pub enum GenExpr<Effects> {
     List(ListForm<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Application(ApplicationExpr<Effects>),
-    Lookup(Lookup<Effects>),
+    Lookup(LookupExpr<Effects>),
     Effect(Effects),
 }
 
@@ -21,19 +22,19 @@ where
     FX: FromFx,
 {
     fn from(x: AGE<AstFxFor<FX>>) -> Self {
-        use GenExpr as EGE;
+        use GenExpr::*;
 
         match x {
-            AGE::Lit(x) => EGE::Lit(x),
-            AGE::Ref(x) => EGE::Ref(x),
-            AGE::Func(x) => EGE::Object(ObjectDef::from(x)),
-            AGE::Query(x) => EGE::Object(ObjectDef::from(x)),
-            AGE::Object(x) => EGE::Object(ObjectDef::from(x)),
-            AGE::List(x) => EGE::List(x.into_iter().map(GenExpr::from).collect()),
-            AGE::Let(x) => EGE::Let(LetExpr::from(x)),
-            AGE::Application(x) => EGE::Application(ApplicationExpr::from(x)),
-            AGE::Lookup(x) => EGE::Lookup(Lookup::from(x)),
-            AGE::Effect(x) => EGE::Effect(FX::from_fx(x)),
+            AGE::Lit(x) => Lit(x),
+            AGE::Ref(x) => Ref(x),
+            AGE::Func(x) => Object(ObjectDef::from(x)),
+            AGE::Query(x) => Object(ObjectDef::from(x)),
+            AGE::Object(x) => Object(ObjectDef::from(x)),
+            AGE::List(x) => List(x.into_iter().map(GenExpr::from).collect()),
+            AGE::Let(x) => Let(LetExpr::from(x)),
+            AGE::Application(x) => Application(ApplicationExpr::from(x)),
+            AGE::Lookup(x) => Lookup(LookupExpr::from(x)),
+            AGE::Effect(x) => Effect(FX::from_fx(x)),
         }
     }
 }
