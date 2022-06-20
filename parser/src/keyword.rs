@@ -7,6 +7,7 @@ use chumsky::Parser;
 pub enum Keyword {
     Fn,
     Let,
+    Match,
     Proc,
     Query,
 }
@@ -22,6 +23,7 @@ impl Keyword {
         match self {
             Fn => "fn",
             Let => "let",
+            Match => "match",
             Proc => "proc",
             Query => "query",
         }
@@ -44,7 +46,8 @@ impl Iterator for Iter {
 
             match kw {
                 Fn => Some(Let),
-                Let => Some(Proc),
+                Let => Some(Match),
+                Match => Some(Proc),
                 Proc => Some(Query),
                 Query => None,
             }
