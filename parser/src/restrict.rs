@@ -60,7 +60,7 @@ where
                     .collect::<Result<ListForm<_>, BareError>>()?,
             )),
             Let(x) => LetExpr::restrict(x, span).map(Let),
-            Apply(x) => ApplicationExpr::restrict(x, span).map(Apply),
+            Application(x) => ApplicationExpr::restrict(x, span).map(Application),
             Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),
             Effect(x) => FXD::restrict(x, span).map(Effect),
         }

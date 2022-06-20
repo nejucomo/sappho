@@ -15,7 +15,7 @@ pub enum GenExpr<Effects> {
     Object(ObjectDef),
     List(ListForm<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
-    Apply(ApplicationExpr<Effects>),
+    Application(ApplicationExpr<Effects>),
     Lookup(Lookup<Effects>),
     Effect(Effects),
 }
@@ -68,7 +68,7 @@ impl<FX> GenExpr<FX> {
     }
 
     pub fn application(target: Self, argument: Self) -> Self {
-        GenExpr::Apply(ApplicationExpr {
+        GenExpr::Application(ApplicationExpr {
             target: Box::new(target),
             argument: Box::new(argument),
         })
@@ -101,7 +101,7 @@ where
             Object(x) => x.fmt(f),
             List(x) => x.fmt(f),
             Let(x) => x.fmt(f),
-            Apply(x) => x.fmt(f),
+            Application(x) => x.fmt(f),
             Lookup(x) => x.fmt(f),
             Effect(x) => x.fmt(f),
         }

@@ -16,7 +16,7 @@ where
             Object(x) => x.eval(scope),
             List(x) => x.eval(scope),
             Let(x) => x.eval(scope),
-            Apply(x) => x.eval(scope),
+            Application(x) => x.eval(scope),
             Lookup(x) => x.eval(scope),
             Effect(x) => x.eval(scope),
         }

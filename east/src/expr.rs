@@ -11,7 +11,7 @@ pub enum GenExpr<Effects> {
     Object(ObjectDef),
     List(ListForm<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
-    Apply(ApplicationExpr<Effects>),
+    Application(ApplicationExpr<Effects>),
     Lookup(Lookup<Effects>),
     Effect(Effects),
 }
@@ -31,7 +31,7 @@ where
             AGE::Object(x) => EGE::Object(ObjectDef::from(x)),
             AGE::List(x) => EGE::List(x.into_iter().map(GenExpr::from).collect()),
             AGE::Let(x) => EGE::Let(LetExpr::from(x)),
-            AGE::Apply(x) => EGE::Apply(ApplicationExpr::from(x)),
+            AGE::Application(x) => EGE::Application(ApplicationExpr::from(x)),
             AGE::Lookup(x) => EGE::Lookup(Lookup::from(x)),
             AGE::Effect(x) => EGE::Effect(FX::from_fx(x)),
         }
@@ -51,7 +51,7 @@ where
             Object(x) => x.fmt(f),
             List(x) => x.fmt(f),
             Let(x) => x.fmt(f),
-            Apply(x) => x.fmt(f),
+            Application(x) => x.fmt(f),
             Lookup(x) => x.fmt(f),
             Effect(x) => x.fmt(f),
         }
