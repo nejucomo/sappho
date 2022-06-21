@@ -14,8 +14,7 @@ where
         } = &self;
 
         let bindval = bindexpr.eval(scope)?;
-        let subscope = scope.extend(binding, bindval);
-
+        let subscope = scope.bind(binding, &bindval)?;
         tail.eval(&subscope)
     }
 }

@@ -5,14 +5,14 @@ use std::rc::Rc;
 
 #[derive(Debug, PartialEq)]
 pub struct FuncClause {
-    pub binding: Pattern,
+    pub binding: Rc<Pattern>,
     pub body: Rc<PureExpr>,
 }
 
 impl From<ast::FuncDef> for FuncClause {
     fn from(fd: ast::FuncDef) -> FuncClause {
         FuncClause {
-            binding: fd.binding,
+            binding: Rc::new(fd.binding),
             body: Rc::new(PureExpr::from(*fd.body)),
         }
     }

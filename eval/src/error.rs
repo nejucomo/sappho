@@ -1,6 +1,6 @@
 use derive_more::From;
 use sappho_east::{Identifier, Pattern};
-use sappho_value::{CoercionFailure, Unbound, ValRef};
+use sappho_value::{BindFailure, CoercionFailure, Unbound, ValRef};
 use std::fmt;
 
 /// An evaluation error.
@@ -10,6 +10,7 @@ pub enum Error {
     MissingAttr(ValRef, Identifier),
     Mismatch(ValRef, Vec<Pattern>),
     CoercionFailure(CoercionFailure),
+    BindFailure(BindFailure),
 }
 
 /// An alias for a [std::result::Result] with the eval [Error] type.
@@ -34,6 +35,7 @@ impl fmt::Display for Error {
                 )
             }
             CoercionFailure(x) => x.fmt(f),
+            BindFailure(x) => x.fmt(f),
         }
     }
 }

@@ -1,7 +1,7 @@
 use crate::{Identifier, Literal};
 use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Pattern {
     Bind(Identifier),
     LitEq(Literal),

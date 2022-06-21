@@ -1,4 +1,4 @@
-use crate::{bind, Eval, Result};
+use crate::{Eval, Result};
 use sappho_east::MatchExpr;
 use sappho_value::{ScopeRef, ValRef};
 
@@ -13,7 +13,7 @@ where
 
         let tval = target.eval(scope)?;
         for clause in clauses {
-            if let Some(matchscope) = bind(&clause.pattern, &tval, scope) {
+            if let Ok(matchscope) = scope.bind(&clause.pattern, &tval) {
                 return clause.body.eval(&matchscope);
             }
         }
