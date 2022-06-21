@@ -9,6 +9,10 @@ pub(crate) trait EvalV {
     fn eval_val(&self, scope: &ScopeRef) -> Result<Value>;
 }
 
+pub(crate) trait EvalThunk {
+    fn eval_thunk(&self) -> Result<ValRef>;
+}
+
 impl<T> Eval for T
 where
     T: EvalV,

@@ -7,13 +7,13 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
+        use crate::EvalThunk;
         use sappho_value::Func;
 
         let ApplicationExpr { target, argument } = self;
         let tval = target.eval(scope)?;
         let aval = argument.eval(scope)?;
         let func: &Func = tval.coerce()?;
-        let (expr, boundscope) = func.bind_arg(&aval);
-        expr.eval(&boundscope)
+        func.bind_arg(&aval).eval_thunk()
     }
 }

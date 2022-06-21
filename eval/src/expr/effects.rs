@@ -11,7 +11,14 @@ impl Eval for PureEffects {
 impl Eval for QueryEffects {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         match self {
-            QueryEffects::Inquire(qexpr) => qexpr.eval(scope),
+            QueryEffects::Inquire(qexpr) => {
+                use crate::EvalThunk;
+                use sappho_value::Query;
+
+                let v = qexpr.eval(scope)?;
+                let q: &Query = v.coerce()?;
+                q.as_thunk().eval_thunk()
+            }
         }
     }
 }
