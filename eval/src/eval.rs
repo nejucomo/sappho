@@ -1,15 +1,11 @@
-mod effects;
-mod expr;
-mod object;
-mod recursive;
-mod traits;
-
-pub(crate) use self::traits::Eval;
-use self::traits::EvalV;
-use crate::Result;
+use crate::{Eval, Result, ValRef};
 use sappho_east::PureExpr;
-use sappho_value::{ScopeRef, ValRef};
+use sappho_value::ScopeRef;
 
+/// Evaluate an `AST` into a [ValRef] or an [Error](crate::Error).
+///
+/// `AST` can be anything that converts to [sappho_east::PureExpr], including
+/// `sappho_ast::PureExpr` which is the output of `sappho_parser::parse`.
 pub fn eval<AST>(ast: AST) -> Result<ValRef>
 where
     PureExpr: From<AST>,

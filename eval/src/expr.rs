@@ -1,7 +1,15 @@
-use super::{Eval, EvalV};
-use crate::Result;
-use sappho_east::{GenExpr, Literal};
-use sappho_value::{ScopeRef, ValRef, Value};
+mod application;
+mod effects;
+mod letexpr;
+mod listform;
+mod literal;
+mod lookup;
+mod matchexpr;
+mod object;
+
+use crate::{Eval, Result};
+use sappho_east::GenExpr;
+use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for GenExpr<FX>
 where
@@ -24,13 +32,5 @@ where
             Lookup(x) => x.eval(scope),
             Effect(x) => x.eval(scope),
         }
-    }
-}
-
-impl EvalV for Literal {
-    fn eval_val(&self, _scope: &ScopeRef) -> Result<Value> {
-        Ok(match self {
-            Literal::Num(f) => Value::Num(*f),
-        })
     }
 }
