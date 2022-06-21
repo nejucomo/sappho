@@ -1,10 +1,7 @@
 mod bind;
-mod effects;
 mod error;
 mod eval;
 mod expr;
-mod object;
-mod recursive;
 mod traits;
 
 pub use self::error::{Error, Result};
