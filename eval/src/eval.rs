@@ -1,12 +1,4 @@
-mod effects;
-mod expr;
-mod object;
-mod recursive;
-mod traits;
-
-pub(crate) use self::traits::Eval;
-use self::traits::EvalV;
-use crate::Result;
+use crate::{Eval, Result};
 use sappho_east::PureExpr;
 use sappho_value::{ScopeRef, ValRef};
 

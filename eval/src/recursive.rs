@@ -1,5 +1,4 @@
-use super::{Eval, EvalV};
-use crate::{bind, Result};
+use crate::{bind, Eval, EvalV, Result};
 use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, MatchExpr};
 use sappho_value::{List, ScopeRef, ValRef, Value};
 

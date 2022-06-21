@@ -1,5 +1,4 @@
-use super::{Eval, EvalV};
-use crate::Result;
+use crate::{Eval, EvalV, Result};
 use sappho_east::ObjectDef;
 use sappho_value::{Attrs, Func, Object, Query, ScopeRef, Value};
 

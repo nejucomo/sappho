@@ -1,5 +1,4 @@
-use super::Eval;
-use crate::Result;
+use crate::{Eval, Result};
 use sappho_east::{PureEffects, QueryEffects};
 use sappho_value::{ScopeRef, ValRef};
 

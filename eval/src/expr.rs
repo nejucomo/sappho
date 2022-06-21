@@ -1,5 +1,4 @@
-use super::{Eval, EvalV};
-use crate::Result;
+use crate::{Eval, EvalV, Result};
 use sappho_east::{GenExpr, Literal};
 use sappho_value::{ScopeRef, ValRef, Value};
 
