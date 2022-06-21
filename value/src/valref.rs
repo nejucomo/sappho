@@ -45,11 +45,3 @@ impl fmt::Display for ValRef {
         self.deref().fmt(f)
     }
 }
-
-#[cfg(test)]
-impl ValRef {
-    /// If Self is the only holder of the value, return it, otherwise panic.
-    pub fn unwrap(self) -> Value {
-        Rc::try_unwrap(self.0).unwrap()
-    }
-}
