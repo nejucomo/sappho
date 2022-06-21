@@ -1,0 +1,15 @@
+[package]
+name = "sappho-value"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.sappho-east]
+path = "../east"
+
+[dependencies.sappho-identmap]
+path = "../identmap"
+
+[dependencies.sappho-object]
+path = "../object"

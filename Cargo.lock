@@ -392,6 +392,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sappho-value"
+version = "0.1.0"
+dependencies = [
+ "sappho-east",
+ "sappho-identmap",
+ "sappho-object",
+]
+
+[[package]]
 name = "semver"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"

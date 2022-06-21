@@ -5,7 +5,7 @@ use std::fmt;
 pub struct Object(Inner);
 type Inner = sappho_object::Object<Func, Query, ValRef>;
 
-pub(crate) type Attrs = IdentMap<ValRef>;
+pub type Attrs = IdentMap<ValRef>;
 
 impl Object {
     pub fn new(func: Option<Func>, query: Option<Query>, attrs: Attrs) -> Self {

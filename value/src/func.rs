@@ -1,6 +1,5 @@
-use crate::eval::Eval;
-use crate::scope::ScopeRef;
-use crate::{Result, ValRef};
+use crate::ScopeRef;
+use crate::ValRef;
 use sappho_east::{FuncClause, Pattern, PureExpr};
 use std::rc::Rc;
 
@@ -11,7 +10,7 @@ pub struct Func {
 }
 
 impl Func {
-    pub(crate) fn new(fc: &FuncClause, defscope: &ScopeRef) -> Self {
+    pub fn new(fc: &FuncClause, defscope: &ScopeRef) -> Self {
         Func {
             binding: fc.binding.clone(),
             body: fc.body.clone(),
@@ -19,8 +18,9 @@ impl Func {
         }
     }
 
-    pub fn apply(&self, arg: &ValRef) -> Result<ValRef> {
+    // FIXME: introduce generic `Thunk` for eval.
+    pub fn bind_arg(&self, arg: &ValRef) -> (&PureExpr, ScopeRef) {
         let callscope = self.defscope.extend(&self.binding, arg.clone());
-        self.body.eval(&callscope)
+        (&self.body, callscope)
     }
 }
