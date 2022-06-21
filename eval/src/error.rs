@@ -3,6 +3,7 @@ use sappho_east::{Identifier, Pattern};
 use sappho_value::{CoercionFailure, Unbound, ValRef};
 use std::fmt;
 
+/// An evaluation error.
 #[derive(Debug, From)]
 pub enum Error {
     Unbound(Unbound),
@@ -11,6 +12,7 @@ pub enum Error {
     CoercionFailure(CoercionFailure),
 }
 
+/// An alias for a [std::result::Result] with the eval [Error] type.
 pub type Result<T> = std::result::Result<T, Error>;
 
 impl fmt::Display for Error {
