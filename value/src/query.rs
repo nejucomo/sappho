@@ -1,5 +1,5 @@
-use crate::ScopeRef;
-use sappho_east::{QueryClause, QueryExpr};
+use crate::{GenThunk, ScopeRef};
+use sappho_east::{QueryClause, QueryEffects, QueryExpr};
 use std::rc::Rc;
 
 pub struct Query {
@@ -15,8 +15,7 @@ impl Query {
         }
     }
 
-    // FIXME: introduce generic `Thunk` for eval.
-    pub fn peek(&self) -> (&QueryExpr, &ScopeRef) {
-        (&self.body, &self.defscope)
+    pub fn as_thunk(&self) -> GenThunk<QueryEffects> {
+        GenThunk::new(&self.body, self.defscope.clone())
     }
 }

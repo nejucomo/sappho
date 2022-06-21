@@ -1,6 +1,6 @@
 mod failure;
 
-use crate::{Attrs, Func, Object, Value};
+use crate::{Attrs, Func, Object, Query, Value};
 
 pub use self::failure::CoercionFailure;
 
@@ -29,6 +29,12 @@ impl Coerce for Object {
 impl Coerce for Func {
     fn coerce_from_value(v: &Value) -> Option<&Func> {
         Object::coerce_from_value(v).and_then(|obj| obj.func())
+    }
+}
+
+impl Coerce for Query {
+    fn coerce_from_value(v: &Value) -> Option<&Query> {
+        Object::coerce_from_value(v).and_then(|obj| obj.query())
     }
 }
 

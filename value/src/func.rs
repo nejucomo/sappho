@@ -1,6 +1,5 @@
-use crate::ScopeRef;
-use crate::ValRef;
-use sappho_east::{FuncClause, Pattern, PureExpr};
+use crate::{GenThunk, ScopeRef, ValRef};
+use sappho_east::{FuncClause, Pattern, PureEffects, PureExpr};
 use std::rc::Rc;
 
 pub struct Func {
@@ -18,9 +17,8 @@ impl Func {
         }
     }
 
-    // FIXME: introduce generic `Thunk` for eval.
-    pub fn bind_arg(&self, arg: &ValRef) -> (&PureExpr, ScopeRef) {
+    pub fn bind_arg(&self, arg: &ValRef) -> GenThunk<PureEffects> {
         let callscope = self.defscope.extend(&self.binding, arg.clone());
-        (&self.body, callscope)
+        GenThunk::new(&self.body, callscope)
     }
 }
