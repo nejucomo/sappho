@@ -11,16 +11,16 @@ pub struct Func {
 }
 
 impl Func {
-    pub(crate) fn new(fc: &FuncClause, defscope: ScopeRef) -> Self {
+    pub(crate) fn new(fc: &FuncClause, defscope: &ScopeRef) -> Self {
         Func {
             binding: fc.binding.clone(),
             body: fc.body.clone(),
-            defscope,
+            defscope: defscope.clone(),
         }
     }
 
     pub fn apply(&self, arg: &ValRef) -> Result<ValRef> {
         let callscope = self.defscope.extend(&self.binding, arg.clone());
-        self.body.eval(callscope)
+        self.body.eval(&callscope)
     }
 }

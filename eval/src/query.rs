@@ -10,14 +10,14 @@ pub struct Query {
 }
 
 impl Query {
-    pub(crate) fn new(qc: &QueryClause, defscope: ScopeRef) -> Self {
+    pub(crate) fn new(qc: &QueryClause, defscope: &ScopeRef) -> Self {
         Query {
             body: qc.body.clone(),
-            defscope,
+            defscope: defscope.clone(),
         }
     }
 
     pub fn query(&self) -> Result<ValRef> {
-        self.body.eval(self.defscope.clone())
+        self.body.eval(&self.defscope)
     }
 }

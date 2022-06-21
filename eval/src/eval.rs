@@ -15,5 +15,5 @@ where
     PureExpr: From<AST>,
 {
     let expr = PureExpr::from(ast);
-    expr.eval(ScopeRef::default())
+    expr.eval(&ScopeRef::default())
 }
