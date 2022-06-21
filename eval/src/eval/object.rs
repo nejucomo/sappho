@@ -1,6 +1,6 @@
 use super::{Eval, EvalV};
 use crate::scope::ScopeRef;
-use crate::{Object, Result, ValRef, Value};
+use crate::{Func, Object, Query, Result, Value};
 use sappho_east::ObjectDef;
 use sappho_identmap::IdentMap;
 
@@ -12,25 +12,8 @@ impl EvalV for ObjectDef {
             attrs.define(id.clone(), v).unwrap();
         }
 
-        let func = self
-            .func()
-            .map(|fc| -> Box<dyn Fn(ValRef) -> Result<ValRef>> {
-                let defscope = scope.clone();
-                let binding = fc.binding.clone();
-                let body = fc.body.clone();
-
-                Box::new(move |arg| {
-                    let callscope = defscope.extend(&binding, arg);
-                    body.eval(callscope)
-                })
-            });
-
-        let query = self
-            .query()
-            .map(|qexpr| -> Box<dyn Fn() -> Result<ValRef>> {
-                let body = qexpr.body.clone();
-                Box::new(move || body.eval(scope.clone()))
-            });
+        let func = self.func().map(|fc| Func::new(fc, scope.clone()));
+        let query = self.query().map(|qc| Query::new(qc, scope.clone()));
 
         Ok(Value::Object(Object::new(func, query, attrs)))
     }

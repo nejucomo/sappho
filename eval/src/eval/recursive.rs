@@ -72,22 +72,13 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
-        use crate::Error::Uncallable;
-        use std::borrow::Borrow;
+        use crate::Func;
 
         let ApplicationExpr { target, argument } = self;
         let tval = target.eval(scope.clone())?;
         let aval = argument.eval(scope)?;
-        match tval.borrow() {
-            Value::Object(obj) => {
-                if let Some(fnbox) = obj.func() {
-                    fnbox(aval)
-                } else {
-                    Err(Uncallable(tval))
-                }
-            }
-            _ => Err(Uncallable(tval)),
-        }
+        let func: &Func = tval.coerce()?;
+        func.apply(&aval)
     }
 }
 
@@ -96,20 +87,15 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
+        use crate::Attrs;
         use crate::Error::MissingAttr;
-        use std::borrow::Borrow;
 
         let LookupExpr { target, attr } = self;
         let tval = target.eval(scope)?;
-        match tval.borrow() {
-            Value::Object(obj) => {
-                if let Some(v) = obj.attrs().get(attr) {
-                    Ok(v.clone())
-                } else {
-                    Err(MissingAttr(tval, attr.clone()))
-                }
-            }
-            _ => Err(MissingAttr(tval, attr.clone())),
-        }
+        let attrs: &Attrs = tval.coerce()?;
+        attrs
+            .get(attr)
+            .cloned()
+            .ok_or_else(|| MissingAttr(tval, attr.clone()))
     }
 }

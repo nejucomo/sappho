@@ -1,9 +1,6 @@
 use crate::{List, Object};
 use derive_more::From;
 use std::fmt;
-use std::rc::Rc;
-
-pub type ValRef = Rc<Value>;
 
 #[derive(Debug, From)]
 pub enum Value {

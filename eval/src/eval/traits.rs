@@ -1,11 +1,11 @@
 use crate::scope::ScopeRef;
 use crate::{Result, ValRef, Value};
 
-pub(super) trait Eval {
+pub(crate) trait Eval {
     fn eval(&self, scope: ScopeRef) -> Result<ValRef>;
 }
 
-pub(super) trait EvalV {
+pub(crate) trait EvalV {
     fn eval_val(&self, scope: ScopeRef) -> Result<Value>;
 }
 
