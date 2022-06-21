@@ -1,8 +1,7 @@
 use crate::{List, Object};
-use derive_more::From;
 use std::fmt;
 
-#[derive(Debug, From)]
+#[derive(Debug, derive_more::From)]
 pub enum Value {
     Num(f64),
     List(List),

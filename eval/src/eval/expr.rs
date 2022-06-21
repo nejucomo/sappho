@@ -1,7 +1,7 @@
 use super::{Eval, EvalV};
-use crate::scope::ScopeRef;
-use crate::{Result, ValRef, Value};
+use crate::Result;
 use sappho_east::{GenExpr, Literal};
+use sappho_value::{ScopeRef, ValRef, Value};
 
 impl<FX> Eval for GenExpr<FX>
 where
@@ -12,7 +12,10 @@ where
 
         match &self {
             Lit(x) => x.eval(scope),
-            Ref(x) => scope.deref(x),
+            Ref(x) => {
+                let v = scope.deref(x)?;
+                Ok(v)
+            }
             Object(x) => x.eval(scope),
             List(x) => x.eval(scope),
             Let(x) => x.eval(scope),

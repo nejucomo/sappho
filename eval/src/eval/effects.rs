@@ -1,7 +1,7 @@
 use super::Eval;
-use crate::scope::ScopeRef;
-use crate::{Result, ValRef};
+use crate::Result;
 use sappho_east::{PureEffects, QueryEffects};
+use sappho_value::{ScopeRef, ValRef};
 
 impl Eval for PureEffects {
     fn eval(&self, _scope: &ScopeRef) -> Result<ValRef> {

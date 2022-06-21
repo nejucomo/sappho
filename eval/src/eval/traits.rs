@@ -1,5 +1,5 @@
-use crate::scope::ScopeRef;
-use crate::{Result, ValRef, Value};
+use crate::Result;
+use sappho_value::{ScopeRef, ValRef, Value};
 
 pub(crate) trait Eval {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef>;

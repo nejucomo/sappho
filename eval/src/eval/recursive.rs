@@ -1,8 +1,7 @@
 use super::{Eval, EvalV};
-use crate::bind;
-use crate::scope::ScopeRef;
-use crate::{List, Result, ValRef, Value};
+use crate::{bind, Result};
 use sappho_east::{ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, MatchExpr};
+use sappho_value::{List, ScopeRef, ValRef, Value};
 
 impl<FX> EvalV for ListForm<GenExpr<FX>>
 where
@@ -72,13 +71,14 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        use crate::Func;
+        use sappho_value::Func;
 
         let ApplicationExpr { target, argument } = self;
         let tval = target.eval(scope)?;
         let aval = argument.eval(scope)?;
         let func: &Func = tval.coerce()?;
-        func.apply(&aval)
+        let (expr, boundscope) = func.bind_arg(&aval);
+        expr.eval(&boundscope)
     }
 }
 
@@ -87,8 +87,8 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        use crate::Attrs;
         use crate::Error::MissingAttr;
+        use sappho_value::Attrs;
 
         let LookupExpr { target, attr } = self;
         let tval = target.eval(scope)?;

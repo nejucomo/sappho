@@ -1,12 +1,11 @@
 use super::{Eval, EvalV};
-use crate::scope::ScopeRef;
-use crate::{Func, Object, Query, Result, Value};
+use crate::Result;
 use sappho_east::ObjectDef;
-use sappho_identmap::IdentMap;
+use sappho_value::{Attrs, Func, Object, Query, ScopeRef, Value};
 
 impl EvalV for ObjectDef {
     fn eval_val(&self, scope: &ScopeRef) -> Result<Value> {
-        let mut attrs = IdentMap::default();
+        let mut attrs = Attrs::default();
         for (id, attrexpr) in self.attrs().iter() {
             let v = attrexpr.eval(scope)?;
             attrs.define(id.clone(), v).unwrap();

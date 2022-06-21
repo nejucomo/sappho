@@ -1,4 +1,4 @@
-use crate::{Coerce, Result, Value};
+use crate::{Coerce, CoercionFailure, Value};
 use std::borrow::Borrow;
 use std::fmt;
 use std::ops::Deref;
@@ -8,14 +8,11 @@ use std::rc::Rc;
 pub struct ValRef(Rc<Value>);
 
 impl ValRef {
-    pub fn coerce<T>(&self) -> Result<&T>
+    pub fn coerce<T>(&self) -> Result<&T, CoercionFailure>
     where
         T: Coerce,
     {
-        use crate::Error::CoercionFailure;
-
-        T::coerce_from_value(&self.0)
-            .ok_or_else(|| CoercionFailure(self.clone(), std::any::type_name::<Self>()))
+        T::coerce_from_value(&self.0).ok_or_else(|| CoercionFailure::new::<T>(self))
     }
 }
 
@@ -46,13 +43,5 @@ impl fmt::Display for ValRef {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // BUG: Why doesn't `Deref` automatically enable `Display`?
         self.deref().fmt(f)
-    }
-}
-
-#[cfg(test)]
-impl ValRef {
-    /// If Self is the only holder of the value, return it, otherwise panic.
-    pub fn unwrap(self) -> Value {
-        Rc::try_unwrap(self.0).unwrap()
     }
 }
