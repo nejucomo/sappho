@@ -14,11 +14,8 @@ path = "../ast"
 [dependencies.sappho-east]
 path = "../east"
 
-[dependencies.sappho-identmap]
-path = "../identmap"
-
-[dependencies.sappho-object]
-path = "../object"
+[dependencies.sappho-value]
+path = "../value"
 
 [dev-dependencies]
 test-case = "2.0"

@@ -1,8 +1,8 @@
-mod error;
+mod failure;
 
 use crate::{Attrs, Func, Object, Value};
 
-pub use self::error::CoercionFailure;
+pub use self::failure::CoercionFailure;
 
 pub trait Coerce {
     fn coerce_from_value(v: &Value) -> Option<&Self>;

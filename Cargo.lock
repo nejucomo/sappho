@@ -331,9 +331,8 @@ dependencies = [
  "derive_more",
  "sappho-ast",
  "sappho-east",
- "sappho-identmap",
- "sappho-object",
  "sappho-parser",
+ "sappho-value",
  "test-case",
 ]
 
@@ -395,6 +394,7 @@ dependencies = [
 name = "sappho-value"
 version = "0.1.0"
 dependencies = [
+ "derive_more",
  "sappho-east",
  "sappho-identmap",
  "sappho-object",

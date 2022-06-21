@@ -6,9 +6,9 @@ mod traits;
 
 pub(crate) use self::traits::Eval;
 use self::traits::EvalV;
-use crate::scope::ScopeRef;
-use crate::{Result, ValRef};
+use crate::Result;
 use sappho_east::PureExpr;
+use sappho_value::{ScopeRef, ValRef};
 
 pub fn eval<AST>(ast: AST) -> Result<ValRef>
 where

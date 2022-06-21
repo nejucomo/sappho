@@ -1,6 +1,5 @@
-use crate::scope::ScopeRef;
-use crate::ValRef;
 use sappho_east::Pattern;
+use sappho_value::{ScopeRef, ValRef};
 
 /// Attempt to bind `value` to `pattern` and on success return a new scope. A `None` result means
 /// the pattern does not match.

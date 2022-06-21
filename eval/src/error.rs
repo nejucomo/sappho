@@ -1,14 +1,14 @@
-use crate::ValRef;
 use derive_more::From;
 use sappho_east::{Identifier, Pattern};
+use sappho_value::{CoercionFailure, Unbound, ValRef};
 use std::fmt;
 
 #[derive(Debug, From)]
 pub enum Error {
-    Unbound(Identifier),
+    Unbound(Unbound),
     MissingAttr(ValRef, Identifier),
     Mismatch(ValRef, Vec<Pattern>),
-    CoercionFailure(ValRef, &'static str),
+    CoercionFailure(CoercionFailure),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -18,7 +18,7 @@ impl fmt::Display for Error {
         use Error::*;
 
         match self {
-            Unbound(id) => write!(f, "unbound {:?}", id),
+            Unbound(x) => x.fmt(f),
             MissingAttr(v, name) => write!(f, "missing attr {}.{}", v, name),
             Mismatch(v, pats) => {
                 write!(
@@ -31,7 +31,7 @@ impl fmt::Display for Error {
                         .join(", ")
                 )
             }
-            CoercionFailure(v, typename) => write!(f, "Could not coerce {} to {}", v, typename),
+            CoercionFailure(x) => x.fmt(f),
         }
     }
 }

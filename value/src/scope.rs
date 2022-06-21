@@ -1,7 +1,29 @@
-mod error;
-mod scope;
 mod scoperef;
+mod unbound;
 
-pub use self::error::Unbound;
-pub use self::scope::Scope;
 pub use self::scoperef::ScopeRef;
+pub use self::unbound::Unbound;
+
+use crate::{Attrs, ValRef};
+use sappho_identmap::IdentRef;
+
+#[derive(Debug)]
+pub enum Scope {
+    Empty,
+    Frame(Attrs, ScopeRef),
+}
+
+impl Scope {
+    pub fn deref(&self, ident: &IdentRef) -> Result<ValRef, Unbound> {
+        self.deref_opt(ident).ok_or_else(|| Unbound::new(ident))
+    }
+
+    fn deref_opt(&self, ident: &IdentRef) -> Option<ValRef> {
+        use Scope::*;
+
+        match self {
+            Empty => None,
+            Frame(map, lower) => map.get(ident).cloned().or_else(|| lower.deref_opt(ident)),
+        }
+    }
+}
