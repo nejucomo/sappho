@@ -7,7 +7,7 @@ impl<FX> Eval for GenExpr<FX>
 where
     FX: Eval,
 {
-    fn eval(&self, scope: ScopeRef) -> Result<ValRef> {
+    fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use GenExpr::*;
 
         match &self {
@@ -25,7 +25,7 @@ where
 }
 
 impl EvalV for Literal {
-    fn eval_val(&self, _scope: ScopeRef) -> Result<Value> {
+    fn eval_val(&self, _scope: &ScopeRef) -> Result<Value> {
         Ok(match self {
             Literal::Num(f) => Value::Num(*f),
         })
