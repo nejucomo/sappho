@@ -4,20 +4,18 @@ use sappho_east::{Identifier, Literal, Pattern, UnpackPattern};
 /// Attempt to bind `value` to `pattern` into new [Attrs] on success.
 pub(super) fn bind_attrs(pattern: &Pattern, value: &ValRef) -> Result<Attrs, BindFailure> {
     let mut attrs = Attrs::default();
-    bind_to_attrs(&mut attrs, pattern, value).map_err(|r| BindFailure::new(pattern, value, r))?;
+    bind_to_attrs(&mut attrs, pattern, value)?;
     Ok(attrs)
 }
 
-fn bind_to_attrs(
-    attrs: &mut Attrs,
-    pattern: &Pattern,
-    value: &ValRef,
-) -> Result<(), BindFailureReason> {
+fn bind_to_attrs(attrs: &mut Attrs, pattern: &Pattern, value: &ValRef) -> Result<(), BindFailure> {
     use Pattern::*;
 
+    let into_bf = |r| BindFailure::new(pattern, value, r);
+
     match pattern {
-        Bind(ident) => bind_bind(attrs, ident, value),
-        LitEq(lit) => bind_lit_eq(lit, value),
+        Bind(ident) => bind_bind(attrs, ident, value).map_err(into_bf),
+        LitEq(lit) => bind_lit_eq(lit, value).map_err(into_bf),
         Unpack(unpack) => bind_unpack(attrs, unpack, value),
     }
 }
@@ -46,7 +44,40 @@ fn bind_unpack(
     newscope: &mut Attrs,
     unpack: &UnpackPattern,
     value: &ValRef,
-) -> Result<(), BindFailureReason> {
+) -> Result<(), BindFailure> {
+    bind_unpack_inner(newscope, unpack, value).map_err(|e| match e {
+        Failure(bf) => bf,
+        Reason(r) => BindFailure::new(&Pattern::Unpack(unpack.clone()), value, r),
+    })
+}
+
+// Used to propagate inner BindFailures:
+enum InnerFailure {
+    Failure(BindFailure),
+    Reason(BindFailureReason),
+}
+use InnerFailure::*;
+
+impl From<BindFailure> for InnerFailure {
+    fn from(bf: BindFailure) -> InnerFailure {
+        Failure(bf)
+    }
+}
+
+impl<T> From<T> for InnerFailure
+where
+    BindFailureReason: From<T>,
+{
+    fn from(x: T) -> InnerFailure {
+        Reason(x.into())
+    }
+}
+
+fn bind_unpack_inner(
+    newscope: &mut Attrs,
+    unpack: &UnpackPattern,
+    value: &ValRef,
+) -> Result<(), InnerFailure> {
     use BindFailureReason::MissingAttr;
 
     let srcattrs: &Attrs = value.coerce()?;
