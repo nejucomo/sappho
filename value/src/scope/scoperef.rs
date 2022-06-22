@@ -7,7 +7,7 @@ use sappho_east::Pattern;
 use std::ops::Deref;
 use std::rc::Rc;
 
-pub use self::bindfailure::BindFailure;
+pub use self::bindfailure::{BindFailure, BindFailureReason};
 
 #[derive(Clone, Debug)]
 pub struct ScopeRef(Rc<Scope>);
@@ -20,8 +20,7 @@ impl Default for ScopeRef {
 
 impl ScopeRef {
     pub fn bind(&self, pattern: &Pattern, val: &ValRef) -> Result<ScopeRef, BindFailure> {
-        let attrs = bind_attrs(pattern, val).ok_or_else(|| BindFailure::new(pattern, val))?;
-
+        let attrs = bind_attrs(pattern, val)?;
         Ok(self.extend(attrs))
     }
 

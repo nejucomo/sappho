@@ -1,11 +1,12 @@
 //! Provide deterministic mapping from identifiers to values
 
 use std::collections::BTreeMap;
+use std::fmt;
 
 pub type Identifier = String;
 pub type IdentRef = str;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct IdentMap<T>(BTreeMap<Identifier, T>);
 
 #[derive(Debug)]
@@ -82,5 +83,29 @@ impl<T> IntoIterator for IdentMap<T> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
+    }
+}
+
+impl<T> fmt::Display for IdentMap<T>
+where
+    T: fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.0.is_empty() {
+            write!(f, "{{}}")
+        } else {
+            write!(f, "{{ ")?;
+            let mut first = true;
+            for (ident, v) in self.0.iter() {
+                if first {
+                    first = false;
+                } else {
+                    write!(f, ", ")?;
+                }
+                write!(f, "{}: ", ident)?;
+                v.fmt(f)?;
+            }
+            write!(f, " }}")
+        }
     }
 }
