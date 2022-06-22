@@ -77,6 +77,18 @@ where
     }
 }
 
+impl<T> FromIterator<(Identifier, T)> for IdentMap<T>
+where
+    BTreeMap<Identifier, T>: FromIterator<(Identifier, T)>,
+{
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = (Identifier, T)>,
+    {
+        IdentMap(BTreeMap::from_iter(iter))
+    }
+}
+
 impl<T> IntoIterator for IdentMap<T> {
     type Item = (Identifier, T);
     type IntoIter = <BTreeMap<Identifier, T> as IntoIterator>::IntoIter;

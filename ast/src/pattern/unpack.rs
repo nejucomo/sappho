@@ -1,10 +1,22 @@
 use crate::Pattern;
-use sappho_identmap::IdentMap;
+use sappho_identmap::{IdentMap, Identifier};
 use std::fmt;
 use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct UnpackPattern(IdentMap<Pattern>);
+
+impl FromIterator<(Identifier, Pattern)> for UnpackPattern
+where
+    IdentMap<Pattern>: FromIterator<(Identifier, Pattern)>,
+{
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = (Identifier, Pattern)>,
+    {
+        UnpackPattern(IdentMap::from_iter(iter))
+    }
+}
 
 impl Deref for UnpackPattern {
     type Target = IdentMap<Pattern>;
