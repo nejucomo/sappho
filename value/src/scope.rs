@@ -1,7 +1,7 @@
 mod scoperef;
 mod unbound;
 
-pub use self::scoperef::ScopeRef;
+pub use self::scoperef::{BindFailure, ScopeRef};
 pub use self::unbound::Unbound;
 
 use crate::{Attrs, ValRef};

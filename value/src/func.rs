@@ -1,9 +1,9 @@
-use crate::{GenThunk, ScopeRef, ValRef};
+use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 use sappho_east::{FuncClause, Pattern, PureEffects, PureExpr};
 use std::rc::Rc;
 
 pub struct Func {
-    binding: Pattern,
+    binding: Rc<Pattern>,
     body: Rc<PureExpr>,
     defscope: ScopeRef,
 }
@@ -17,8 +17,8 @@ impl Func {
         }
     }
 
-    pub fn bind_arg(&self, arg: &ValRef) -> GenThunk<PureEffects> {
-        let callscope = self.defscope.extend(&self.binding, arg.clone());
-        GenThunk::new(&self.body, callscope)
+    pub fn bind_arg(&self, arg: &ValRef) -> Result<GenThunk<PureEffects>, BindFailure> {
+        let callscope = self.defscope.bind(&self.binding, arg)?;
+        Ok(GenThunk::new(&self.body, callscope))
     }
 }

@@ -14,6 +14,7 @@ where
         let tval = target.eval(scope)?;
         let aval = argument.eval(scope)?;
         let func: &Func = tval.coerce()?;
-        func.bind_arg(&aval).eval_thunk()
+        let thunk = func.bind_arg(&aval)?;
+        thunk.eval_thunk()
     }
 }

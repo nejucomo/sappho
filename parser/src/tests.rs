@@ -1,4 +1,4 @@
-use sappho_ast::{GenExpr, QueryEffects::Inquire};
+use sappho_ast::{GenExpr, Pattern::Bind, QueryEffects::Inquire};
 use test_case::test_case;
 
 #[test_case("42" => GenExpr::num(42.0) ; "forty-two")]
@@ -41,7 +41,7 @@ use test_case::test_case;
 #[test_case(
     "let x = 42; x" =>
     GenExpr::let_expr(
-        "x".to_string(),
+        Bind("x".to_string()),
         GenExpr::num(42.0),
         GenExpr::ref_expr("x".to_string()),
     )
@@ -50,7 +50,7 @@ use test_case::test_case;
 #[test_case(
     "let x = 42;\nx" =>
     GenExpr::let_expr(
-        "x".to_string(),
+        Bind("x".to_string()),
         GenExpr::num(42.0),
         GenExpr::ref_expr("x".to_string()),
     )
@@ -59,7 +59,7 @@ use test_case::test_case;
 #[test_case(
     "fn x -> x" =>
     GenExpr::func_expr((
-        "x".to_string(),
+        Bind("x".to_string()),
         GenExpr::ref_expr("x".to_string()),
     ))
     ; "identify fn"
@@ -128,7 +128,7 @@ use test_case::test_case;
     GenExpr::object_expr(
         None,
         Some((
-            "x".to_string(),
+            Bind("x".to_string()),
             GenExpr::ref_expr("x".to_string()),
         )),
     )
@@ -139,7 +139,7 @@ use test_case::test_case;
     GenExpr::object_expr(
         Some(GenExpr::ref_expr("x".to_string())),
         Some((
-            "x".to_string(),
+            Bind("x".to_string()),
             GenExpr::ref_expr("x".to_string()),
         )),
     )
@@ -150,7 +150,7 @@ use test_case::test_case;
     GenExpr::object_expr(
         Some(GenExpr::ref_expr("x".to_string())),
         Some((
-            "x".to_string(),
+            Bind("x".to_string()),
             GenExpr::ref_expr("x".to_string()),
         )),
     )

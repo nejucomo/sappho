@@ -28,7 +28,7 @@ pub(super) fn identifier() -> impl Parser<char, Identifier, Error = BareError> {
         .labelled("identifier reference")
 }
 
-fn literal() -> impl Parser<char, Literal, Error = BareError> {
+pub(super) fn literal() -> impl Parser<char, Literal, Error = BareError> {
     number().map(Literal::Num).labelled("literal")
 }
 

@@ -1,7 +1,13 @@
+mod bind;
+mod bindfailure;
+
+use self::bind::bind_attrs;
 use crate::{Attrs, Scope, ValRef};
-use sappho_identmap::IdentRef;
+use sappho_east::Pattern;
 use std::ops::Deref;
 use std::rc::Rc;
+
+pub use self::bindfailure::BindFailure;
 
 #[derive(Clone, Debug)]
 pub struct ScopeRef(Rc<Scope>);
@@ -13,10 +19,14 @@ impl Default for ScopeRef {
 }
 
 impl ScopeRef {
-    pub fn extend(&self, ident: &IdentRef, bindval: ValRef) -> ScopeRef {
-        // TODO: Can we remove the ident copy?
-        let map = Attrs::from([(ident.to_string(), bindval)]);
-        let frame = Scope::Frame(map, self.clone());
+    pub fn bind(&self, pattern: &Pattern, val: &ValRef) -> Result<ScopeRef, BindFailure> {
+        let attrs = bind_attrs(pattern, val).ok_or_else(|| BindFailure::new(pattern, val))?;
+
+        Ok(self.extend(attrs))
+    }
+
+    fn extend(&self, attrs: Attrs) -> ScopeRef {
+        let frame = Scope::Frame(attrs, self.clone());
         ScopeRef(Rc::new(frame))
     }
 }

@@ -18,10 +18,8 @@ mod literal;
 mod lookup;
 mod matchexpr;
 mod object;
+mod pattern;
 mod query;
-
-/// A binding pattern such as in a `let` or `fn` expression.
-pub type Pattern = Identifier;
 
 /// An identifier such as the name of the argument and reference in `fn x -> x`.
 pub type Identifier = sappho_identmap::Identifier;
@@ -36,4 +34,5 @@ pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::ObjectDef;
+pub use self::pattern::Pattern;
 pub use self::query::QueryDef;
