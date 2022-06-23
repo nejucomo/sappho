@@ -1,6 +1,5 @@
-parse error: from "test-cases/parse-error-invalid-let-syntax/input", line 1:
-| let {
+parse error: from "test-cases/parse-error-invalid-let-syntax/input", line 2:
+|   f = fn x -> x;
 |     ^
 |
-+-> Syntax error: while parsing let-expression, unexpected '{' while expecting ' ' or '\n'
-
++-> Syntax error: while parsing pattern, unexpected ' ' while expecting ':'

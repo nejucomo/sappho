@@ -34,5 +34,5 @@ pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::ObjectDef;
-pub use self::pattern::Pattern;
+pub use self::pattern::{Pattern, UnpackPattern};
 pub use self::query::QueryDef;

@@ -1,0 +1,1 @@
+let maprec = fn rec -> fn f -> fn list -> match list { {} -> {}, { head: h, tail: t } -> { head: (f h), tail: ((rec f) t) } }; let map = (maprec maprec); ((map fn x -> { thingy: x }) { head: 2, tail: { head: 3, tail: { head: 5, tail: {} } } })

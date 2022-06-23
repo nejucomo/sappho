@@ -13,7 +13,7 @@ pub use self::func::Func;
 pub use self::list::List;
 pub use self::object::{Attrs, Object};
 pub use self::query::Query;
-pub use self::scope::{BindFailure, Scope, ScopeRef, Unbound};
+pub use self::scope::{BindFailure, BindFailureReason, Scope, ScopeRef, Unbound};
 pub use self::thunk::GenThunk;
 pub use self::valref::ValRef;
 pub use self::value::Value;
