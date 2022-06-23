@@ -1,1 +1,1 @@
-{ head: …, tail: … }
+{ head: { thingy: 2 }, tail: { fn list -> match list { {} -> {}, { head: h, tail: t } -> { head: (f h), tail: ((rec f) t) } } } }

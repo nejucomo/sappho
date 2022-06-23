@@ -3,4 +3,3 @@ parse error: from "test-cases/parse-error-bare-evocation/input", line 1:
 | ^^
 |
 +-> Syntax error: pure expressions cannot contain evoke effects, e.g. `!…`
-
