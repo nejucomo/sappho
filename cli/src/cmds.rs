@@ -2,7 +2,7 @@ use crate::{ParseFormat, Result, SourceOption};
 
 pub fn eval(source: &SourceOption) -> Result<()> {
     let x = sappho_interpreter::interpret(source)?;
-    println!("{:#?}", x);
+    println!("{}", x);
     Ok(())
 }
 

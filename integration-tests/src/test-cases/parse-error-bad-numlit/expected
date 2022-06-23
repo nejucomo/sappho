@@ -3,4 +3,3 @@ parse error: from "test-cases/parse-error-bad-numlit/input", line 1:
 |  ^
 |
 +-> Syntax error: unexpected 't' in numeric literal
-

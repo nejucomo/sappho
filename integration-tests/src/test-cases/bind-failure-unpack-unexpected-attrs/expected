@@ -1,1 +1,1 @@
-eval error: value { a: …, b: …, c: … } does not match pattern { a: x }: unexpected attrs b, c
+eval error: value { a: 2, b: 3, c: 5 } does not match pattern { a: x }: unexpected attrs b, c

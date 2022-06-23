@@ -1,1 +1,1 @@
-{ fn … -> …, query …, x: … }
+{ fn x -> x, query $x, x: 42 }
