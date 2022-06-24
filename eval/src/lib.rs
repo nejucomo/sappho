@@ -14,4 +14,4 @@ pub use self::eval::eval;
 /// A gc-aware reference to a value. See [sappho_value] crate for more detail.
 pub use sappho_value::ValRef;
 
-pub(crate) use self::traits::{trace_eval, Eval, EvalThunk, EvalV};
+pub(crate) use self::traits::{Eval, EvalThunk, EvalV};

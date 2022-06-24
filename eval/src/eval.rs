@@ -1,4 +1,4 @@
-use crate::{trace_eval, Result, ValRef};
+use crate::{Eval, Result, ValRef};
 use sappho_east::PureExpr;
 use sappho_value::ScopeRef;
 
@@ -11,5 +11,5 @@ where
     PureExpr: From<AST>,
 {
     let expr = PureExpr::from(ast);
-    trace_eval(&expr, &ScopeRef::default())
+    expr.eval(&ScopeRef::default())
 }
