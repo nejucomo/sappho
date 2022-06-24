@@ -1,11 +1,11 @@
 use crate::Result;
 use sappho_value::{ScopeRef, ValRef, Value};
 
-pub(crate) trait Eval {
+pub(crate) trait Eval: std::fmt::Display {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef>;
 }
 
-pub(crate) trait EvalV {
+pub(crate) trait EvalV: std::fmt::Display {
     fn eval_val(&self, scope: &ScopeRef) -> Result<Value>;
 }
 

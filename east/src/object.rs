@@ -5,6 +5,7 @@ use crate::PureExpr;
 use sappho_ast as ast;
 use sappho_identmap::IdentMap;
 use sappho_object::Object;
+use std::fmt;
 
 pub use self::func::FuncClause;
 pub use self::query::QueryClause;
@@ -47,5 +48,11 @@ impl From<ast::QueryDef> for ObjectDef {
             Some(QueryClause::from(d)),
             IdentMap::default(),
         ))
+    }
+}
+
+impl fmt::Display for ObjectDef {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.0.fmt(f)
     }
 }
