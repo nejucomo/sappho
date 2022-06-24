@@ -1,5 +1,6 @@
 mod cmds;
 mod error;
+mod log;
 mod options;
 mod run;
 mod sourceopt;
