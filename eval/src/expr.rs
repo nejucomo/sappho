@@ -16,7 +16,7 @@ where
     FX: Eval + std::fmt::Display,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        log::debug!("Evaluating:\n  From: {}\n  ...", self);
+        log::debug!("Evaluating:\n  From: {}\n  ...\n", self);
         let r = eval_expr(self, scope);
         log::debug!(
             "Evaluated:\n  From: {}\n  To: {}\n",
