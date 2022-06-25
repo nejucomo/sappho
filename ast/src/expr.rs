@@ -62,9 +62,13 @@ impl<FX> GenExpr<FX> {
     }
 
     pub fn let_expr(binding: Pattern, bindexpr: Self, tail: Self) -> Self {
+        use crate::LetClause;
+
         GenExpr::Let(LetExpr {
-            binding,
-            bindexpr: Box::new(bindexpr),
+            clauses: vec![LetClause {
+                binding,
+                bindexpr: Box::new(bindexpr),
+            }],
             tail: Box::new(tail),
         })
     }
