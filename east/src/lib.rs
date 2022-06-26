@@ -13,7 +13,7 @@ pub use self::effects::{
     AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,
 };
 pub use self::expr::GenExpr;
-pub use self::letexpr::LetExpr;
+pub use self::letexpr::{LetClause, LetExpr};
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::{FuncClause, ObjectDef, QueryClause};

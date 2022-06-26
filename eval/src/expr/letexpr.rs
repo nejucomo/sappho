@@ -7,14 +7,15 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        let LetExpr {
-            binding,
-            bindexpr,
-            tail,
-        } = &self;
+        let subscope =
+            self.clauses
+                .iter()
+                .try_fold(scope.clone(), |sc, clause| -> Result<ScopeRef> {
+                    let bindval = clause.bindexpr.eval(&sc)?;
+                    let subscope = sc.bind(&clause.binding, &bindval)?;
+                    Ok(subscope)
+                })?;
 
-        let bindval = bindexpr.eval(scope)?;
-        let subscope = scope.bind(binding, &bindval)?;
-        tail.eval(&subscope)
+        self.tail.eval(&subscope)
     }
 }

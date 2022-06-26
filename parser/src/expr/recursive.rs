@@ -6,7 +6,7 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{GenExpr, LetExpr, ListForm, MatchClause, MatchExpr};
+use sappho_ast::{GenExpr, LetClause, LetExpr, ListForm, MatchClause, MatchExpr};
 
 pub(crate) fn recursive_expr<'a, FX: 'a>(
     expr: Recursive<'a, char, GenExpr<FX>, BareError>,
@@ -28,20 +28,31 @@ fn list_expr<'a, FX: 'a>(
 fn let_expr<'a, FX: 'a>(
     expr: Recursive<'a, char, GenExpr<FX>, BareError>,
 ) -> impl Parser<char, LetExpr<FX>, Error = BareError> + 'a {
+    let_clause(expr.clone())
+        .then_ignore(ws())
+        .repeated()
+        .at_least(1)
+        .then(expr)
+        .map(|(clauses, tail)| LetExpr {
+            clauses,
+            tail: Box::new(tail),
+        })
+        .labelled("let-expression")
+}
+
+fn let_clause<'a, FX: 'a>(
+    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+) -> impl Parser<char, LetClause<FX>, Error = BareError> + 'a {
     Keyword::Let
         .parser()
         .ignore_then(pattern())
         .then_ignore(just('=').delimited_by(ws(), ws()))
         .then(expr.clone())
         .then_ignore(just(';'))
-        .then_ignore(ws())
-        .then(expr)
-        .map(|((binding, bindexpr), tail)| LetExpr {
+        .map(|(binding, bindexpr)| LetClause {
             binding,
             bindexpr: Box::new(bindexpr),
-            tail: Box::new(tail),
         })
-        .labelled("let-expression")
 }
 
 fn match_expr<'a, FX: 'a>(

@@ -1,8 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    ApplicationExpr, GenExpr, LetExpr, ListForm, LookupExpr, MatchClause, MatchExpr, ProcEffects,
-    PureEffects, QueryEffects, QueryExpr,
+    ApplicationExpr, GenExpr, LetClause, LetExpr, ListForm, LookupExpr, MatchClause, MatchExpr,
+    ProcEffects, PureEffects, QueryEffects, QueryExpr,
 };
 
 pub(crate) trait Restrict<S>: Sized {
@@ -72,10 +72,25 @@ where
     FXD: Restrict<FXS>,
 {
     fn restrict(src: LetExpr<FXS>, span: Span) -> Result<Self, BareError> {
-        Ok(LetExpr {
+        let clauses: Vec<LetClause<FXD>> = src
+            .clauses
+            .into_iter()
+            .map(|lc| LetClause::<FXD>::restrict(lc, span.clone()))
+            .collect::<Result<_, BareError>>()?;
+        let tail = Box::new(GenExpr::<FXD>::restrict(*src.tail, span)?);
+
+        Ok(LetExpr { clauses, tail })
+    }
+}
+
+impl<FXS, FXD> Restrict<LetClause<FXS>> for LetClause<FXD>
+where
+    FXD: Restrict<FXS>,
+{
+    fn restrict(src: LetClause<FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(LetClause {
             binding: src.binding,
-            bindexpr: Box::new(GenExpr::<FXD>::restrict(*src.bindexpr, span.clone())?),
-            tail: Box::new(GenExpr::<FXD>::restrict(*src.tail, span)?),
+            bindexpr: Box::new(GenExpr::<FXD>::restrict(*src.bindexpr, span)?),
         })
     }
 }

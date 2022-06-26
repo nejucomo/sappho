@@ -28,7 +28,7 @@ pub use self::application::ApplicationExpr;
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
 pub use self::func::FuncDef;
-pub use self::letexpr::LetExpr;
+pub use self::letexpr::{LetClause, LetExpr};
 pub use self::listform::ListForm;
 pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;

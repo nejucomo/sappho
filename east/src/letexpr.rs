@@ -1,11 +1,14 @@
-use crate::{AstFxFor, FromFx, GenExpr, Pattern};
+mod clause;
+
+use crate::{AstFxFor, FromFx, GenExpr};
 use sappho_ast as ast;
 use std::fmt;
 
+pub use self::clause::LetClause;
+
 #[derive(Debug, PartialEq)]
 pub struct LetExpr<Effects> {
-    pub binding: Pattern,
-    pub bindexpr: Box<GenExpr<Effects>>,
+    pub clauses: Vec<LetClause<Effects>>,
     pub tail: Box<GenExpr<Effects>>,
 }
 
@@ -14,11 +17,10 @@ where
     FX: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "let ")?;
-        self.binding.fmt(f)?;
-        write!(f, " = ")?;
-        self.bindexpr.fmt(f)?;
-        write!(f, "; ")?;
+        for clause in self.clauses.iter() {
+            clause.fmt(f)?;
+            writeln!(f, ";")?;
+        }
         self.tail.fmt(f)?;
         Ok(())
     }
@@ -28,11 +30,10 @@ impl<FX> From<ast::LetExpr<AstFxFor<FX>>> for LetExpr<FX>
 where
     FX: FromFx,
 {
-    fn from(re: ast::LetExpr<AstFxFor<FX>>) -> Self {
+    fn from(le: ast::LetExpr<AstFxFor<FX>>) -> Self {
         LetExpr {
-            binding: re.binding,
-            bindexpr: Box::new(GenExpr::from(*re.bindexpr)),
-            tail: Box::new(GenExpr::from(*re.tail)),
+            clauses: le.clauses.into_iter().map(LetClause::from).collect(),
+            tail: Box::new(GenExpr::from(*le.tail)),
         }
     }
 }
