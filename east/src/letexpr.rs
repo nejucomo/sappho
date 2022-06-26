@@ -19,7 +19,7 @@ where
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for clause in self.clauses.iter() {
             clause.fmt(f)?;
-            write!(f, ";\n")?;
+            writeln!(f, ";")?;
         }
         self.tail.fmt(f)?;
         Ok(())

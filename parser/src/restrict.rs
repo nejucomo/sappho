@@ -90,7 +90,7 @@ where
     fn restrict(src: LetClause<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(LetClause {
             binding: src.binding,
-            bindexpr: Box::new(GenExpr::<FXD>::restrict(*src.bindexpr, span.clone())?),
+            bindexpr: Box::new(GenExpr::<FXD>::restrict(*src.bindexpr, span)?),
         })
     }
 }
