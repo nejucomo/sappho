@@ -11,5 +11,8 @@ derive_more = "0.99"
 [dependencies.sappho-identmap]
 path = "../identmap"
 
+[dependencies.sappho-gast]
+path = "../gast"
+
 [dependencies.sappho-object]
 path = "../object"

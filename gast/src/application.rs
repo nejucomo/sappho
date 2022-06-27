@@ -1,19 +1,18 @@
-use crate::GenExpr;
 use std::fmt;
 
 /// Function application, ie `f x`.
 #[derive(Debug, PartialEq)]
-pub struct ApplicationExpr<Effects> {
+pub struct ApplicationExpr<Expr> {
     /// The target of application, ie `f` in `f x`.
-    pub target: Box<GenExpr<Effects>>,
+    pub target: Box<Expr>,
 
     /// The argument of application, ie `x` in `f x`.
-    pub argument: Box<GenExpr<Effects>>,
+    pub argument: Box<Expr>,
 }
 
-impl<FX> fmt::Display for ApplicationExpr<FX>
+impl<Expr> fmt::Display for ApplicationExpr<Expr>
 where
-    FX: fmt::Display,
+    Expr: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "(")?;

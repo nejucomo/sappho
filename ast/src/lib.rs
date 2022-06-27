@@ -8,7 +8,6 @@
 //! expression type over all effects, [GenExpr]. The three bespoke effects are [PureEffects],
 //! [QueryEffects], and [ProcEffects].
 
-mod application;
 mod effects;
 mod expr;
 mod func;
@@ -23,8 +22,8 @@ mod query;
 
 /// An identifier such as the name of the argument and reference in `fn x -> x`.
 pub type Identifier = sappho_identmap::Identifier;
+pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<GenExpr<FX>>;
 
-pub use self::application::ApplicationExpr;
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
 pub use self::func::FuncDef;
