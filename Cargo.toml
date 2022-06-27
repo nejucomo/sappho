@@ -4,6 +4,7 @@ members = [
   "cli",
   "east",
   "eval",
+  "gast",
   "identmap",
   "integration-tests",
   "interpreter",
