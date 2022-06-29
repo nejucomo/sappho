@@ -5,6 +5,7 @@ mod literal;
 mod lookup;
 mod matchexpr;
 mod pattern;
+mod query;
 
 pub use self::application::ApplicationExpr;
 pub use self::letexpr::{LetClause, LetExpr};
@@ -13,6 +14,7 @@ pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::pattern::{Pattern, UnpackPattern};
+pub use self::query::QueryDef;
 
 /// An identifier such as the name of the argument and reference in `fn x -> x`.
 pub type Identifier = sappho_identmap::Identifier;

@@ -12,7 +12,6 @@ mod effects;
 mod expr;
 mod func;
 mod object;
-mod query;
 
 pub use sappho_gast::{Identifier, Literal};
 pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<GenExpr<FX>>;
@@ -21,9 +20,9 @@ pub type LetClause<FX> = sappho_gast::LetClause<GenExpr<FX>>;
 pub type LookupExpr<FX> = sappho_gast::LookupExpr<GenExpr<FX>>;
 pub type MatchExpr<FX> = sappho_gast::MatchExpr<GenExpr<FX>>;
 pub type MatchClause<FX> = sappho_gast::MatchClause<GenExpr<FX>>;
+pub type QueryDef = sappho_gast::QueryDef<QueryExpr>;
 
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
 pub use self::func::FuncDef;
 pub use self::object::ObjectDef;
-pub use self::query::QueryDef;
