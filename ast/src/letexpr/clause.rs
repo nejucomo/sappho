@@ -1,4 +1,5 @@
-use crate::{GenExpr, Pattern};
+use crate::GenExpr;
+use sappho_gast::Pattern;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]

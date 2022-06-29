@@ -16,7 +16,6 @@ mod listform;
 mod lookup;
 mod matchexpr;
 mod object;
-mod pattern;
 mod query;
 
 pub use sappho_gast::{Identifier, Literal};
@@ -30,5 +29,4 @@ pub use self::listform::ListForm;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::ObjectDef;
-pub use self::pattern::{Pattern, UnpackPattern};
 pub use self::query::QueryDef;

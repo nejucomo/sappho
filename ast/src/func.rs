@@ -1,4 +1,5 @@
-use crate::{Pattern, PureExpr};
+use crate::PureExpr;
+use sappho_gast::Pattern;
 use std::fmt;
 
 /// A function definition expression, ie `fn x -> x`.

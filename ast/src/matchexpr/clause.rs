@@ -1,4 +1,5 @@
-use crate::{GenExpr, Pattern};
+use crate::GenExpr;
+use sappho_gast::Pattern;
 use std::fmt;
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.

@@ -1,4 +1,5 @@
-use sappho_ast::{GenExpr, Pattern::Bind, QueryEffects::Inquire};
+use sappho_ast::{GenExpr, QueryEffects::Inquire};
+use sappho_gast::Pattern::Bind;
 use test_case::test_case;
 
 #[test_case("42" => GenExpr::num(42.0) ; "forty-two")]

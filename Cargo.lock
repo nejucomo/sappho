@@ -347,6 +347,7 @@ name = "sappho-east"
 version = "0.1.0"
 dependencies = [
  "sappho-ast",
+ "sappho-gast",
  "sappho-identmap",
  "sappho-object",
 ]
@@ -413,6 +414,7 @@ dependencies = [
  "derive_more",
  "include_dir",
  "sappho-ast",
+ "sappho-gast",
  "sappho-identmap",
  "sappho-source",
  "test-case",

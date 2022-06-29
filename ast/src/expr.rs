@@ -2,8 +2,9 @@
 
 use crate::{
     ApplicationExpr, FuncDef, Identifier, LetExpr, ListForm, Literal, LookupExpr, MatchExpr,
-    ObjectDef, Pattern, PureExpr, QueryDef, QueryExpr,
+    ObjectDef, PureExpr, QueryDef, QueryExpr,
 };
+use sappho_gast::Pattern;
 use std::fmt;
 
 /// The general top-level expression for all effects.

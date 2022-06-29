@@ -17,4 +17,5 @@ pub use self::letexpr::{LetClause, LetExpr};
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::{FuncClause, ObjectDef, QueryClause};
-pub use sappho_ast::{Identifier, ListForm, Literal, Pattern, UnpackPattern};
+pub use sappho_ast::{Identifier, ListForm, Literal};
+pub use sappho_gast::{Pattern, UnpackPattern};
