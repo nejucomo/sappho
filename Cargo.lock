@@ -369,6 +369,7 @@ dependencies = [
 name = "sappho-gast"
 version = "0.1.0"
 dependencies = [
+ "derive_more",
  "sappho-identmap",
 ]
 

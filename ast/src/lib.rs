@@ -11,7 +11,6 @@
 mod effects;
 mod expr;
 mod func;
-mod listform;
 mod lookup;
 mod matchexpr;
 mod object;
@@ -25,7 +24,6 @@ pub type LetClause<FX> = sappho_gast::LetClause<GenExpr<FX>>;
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
 pub use self::func::FuncDef;
-pub use self::listform::ListForm;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::ObjectDef;

@@ -1,10 +1,10 @@
 //! Top-level expression type `GenExpr`, generic over [crate::effects]
 
 use crate::{
-    ApplicationExpr, FuncDef, Identifier, LetExpr, ListForm, Literal, LookupExpr, MatchExpr,
-    ObjectDef, PureExpr, QueryDef, QueryExpr,
+    ApplicationExpr, FuncDef, Identifier, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
+    PureExpr, QueryDef, QueryExpr,
 };
-use sappho_gast::Pattern;
+use sappho_gast::{ListForm, Pattern};
 use std::fmt;
 
 /// The general top-level expression for all effects.

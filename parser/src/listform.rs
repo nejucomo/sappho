@@ -3,7 +3,7 @@ use crate::error::BareError;
 use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::Parser;
-use sappho_ast::ListForm;
+use sappho_gast::ListForm;
 
 pub(crate) fn list_form<P, O>(item: P) -> impl Parser<char, ListForm<O>, Error = BareError>
 where
