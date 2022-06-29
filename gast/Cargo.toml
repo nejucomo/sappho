@@ -10,3 +10,6 @@ derive_more = "0.99.17"
 
 [dependencies.sappho-identmap]
 path = "../identmap"
+
+[dependencies.sappho-object]
+path = "../object"
