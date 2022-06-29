@@ -367,6 +367,9 @@ dependencies = [
 [[package]]
 name = "sappho-gast"
 version = "0.1.0"
+dependencies = [
+ "sappho-identmap",
+]
 
 [[package]]
 name = "sappho-identmap"

@@ -13,15 +13,13 @@ mod expr;
 mod func;
 mod letexpr;
 mod listform;
-mod literal;
 mod lookup;
 mod matchexpr;
 mod object;
 mod pattern;
 mod query;
 
-/// An identifier such as the name of the argument and reference in `fn x -> x`.
-pub type Identifier = sappho_identmap::Identifier;
+pub use sappho_gast::{Identifier, Literal};
 pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<GenExpr<FX>>;
 
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
@@ -29,7 +27,6 @@ pub use self::expr::GenExpr;
 pub use self::func::FuncDef;
 pub use self::letexpr::{LetClause, LetExpr};
 pub use self::listform::ListForm;
-pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::ObjectDef;
