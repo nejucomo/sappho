@@ -11,7 +11,6 @@
 mod effects;
 mod expr;
 mod func;
-mod letexpr;
 mod listform;
 mod lookup;
 mod matchexpr;
@@ -20,11 +19,12 @@ mod query;
 
 pub use sappho_gast::{Identifier, Literal};
 pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<GenExpr<FX>>;
+pub type LetExpr<FX> = sappho_gast::LetExpr<GenExpr<FX>>;
+pub type LetClause<FX> = sappho_gast::LetClause<GenExpr<FX>>;
 
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
 pub use self::func::FuncDef;
-pub use self::letexpr::{LetClause, LetExpr};
 pub use self::listform::ListForm;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};

@@ -1,8 +1,10 @@
 mod application;
+mod letexpr;
 mod literal;
 mod pattern;
 
 pub use self::application::ApplicationExpr;
+pub use self::letexpr::{LetClause, LetExpr};
 pub use self::literal::Literal;
 pub use self::pattern::{Pattern, UnpackPattern};
 

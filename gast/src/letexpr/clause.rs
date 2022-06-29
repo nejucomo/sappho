@@ -1,19 +1,18 @@
-use crate::GenExpr;
-use sappho_gast::Pattern;
+use crate::Pattern;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
-pub struct LetClause<Effects> {
+pub struct LetClause<Expr> {
     /// The binding pattern, ie: the first `x` in `let x = 42; f x`.
     pub binding: Pattern,
 
     /// The expression to bind, ie: `42` in `let x = 42; f x`.
-    pub bindexpr: Box<GenExpr<Effects>>,
+    pub bindexpr: Box<Expr>,
 }
 
-impl<FX> fmt::Display for LetClause<FX>
+impl<X> fmt::Display for LetClause<X>
 where
-    FX: fmt::Display,
+    X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "let ")?;

@@ -1,23 +1,22 @@
 mod clause;
 
-use crate::GenExpr;
 use std::fmt;
 
 pub use self::clause::LetClause;
 
 /// A `let` expression for local definitions, ie: `let x = 42; f x`.
 #[derive(Debug, PartialEq)]
-pub struct LetExpr<Effects> {
+pub struct LetExpr<Expr> {
     /// The let clauses:
-    pub clauses: Vec<LetClause<Effects>>,
+    pub clauses: Vec<LetClause<Expr>>,
 
     /// The expression to evaluate with the binding in-scope, ie: `f x` in `let x = 42; f x`.
-    pub tail: Box<GenExpr<Effects>>,
+    pub tail: Box<Expr>,
 }
 
-impl<FX> fmt::Display for LetExpr<FX>
+impl<X> fmt::Display for LetExpr<X>
 where
-    FX: fmt::Display,
+    X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for clause in self.clauses.iter() {
