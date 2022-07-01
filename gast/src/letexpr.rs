@@ -5,7 +5,7 @@ use std::fmt;
 pub use self::clause::LetClause;
 
 /// A `let` expression for local definitions, ie: `let x = 42; f x`.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, derive_new::new)]
 pub struct LetExpr<Expr> {
     /// The let clauses:
     pub clauses: Vec<LetClause<Expr>>,

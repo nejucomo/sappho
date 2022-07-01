@@ -2,7 +2,7 @@ use crate::Identifier;
 use std::fmt;
 
 /// An attribute lookup expression, ie: `x.foo`.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, derive_new::new)]
 pub struct LookupExpr<Expr> {
     /// The target expression of the lookup, ie `x` in `x.foo`.
     pub target: Box<Expr>,

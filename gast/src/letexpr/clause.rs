@@ -1,7 +1,7 @@
 use crate::Pattern;
 use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, derive_new::new)]
 pub struct LetClause<Expr> {
     /// The binding pattern, ie: the first `x` in `let x = 42; f x`.
     pub binding: Pattern,

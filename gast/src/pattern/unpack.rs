@@ -3,7 +3,7 @@ use sappho_identmap::{IdentMap, Identifier};
 use std::fmt;
 use std::ops::Deref;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub struct UnpackPattern(IdentMap<Pattern>);
 
 impl FromIterator<(Identifier, Pattern)> for UnpackPattern

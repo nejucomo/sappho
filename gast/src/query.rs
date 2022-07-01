@@ -1,7 +1,7 @@
 use std::fmt;
 
 /// A query definition, ie `query $x`.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, derive_new::new)]
 pub struct QueryDef<QueryExpr> {
     /// The [QueryExpr] definition, ie the `$x` in `query $x`.
     pub body: Box<QueryExpr>,

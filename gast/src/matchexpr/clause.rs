@@ -2,7 +2,7 @@ use crate::Pattern;
 use std::fmt;
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, derive_new::new)]
 pub struct MatchClause<Expr> {
     /// The binding pattern, ie `3` in `3 -> 0` and the first `y` in `y -> y`.
     pub pattern: Pattern,

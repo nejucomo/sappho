@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 derive_more = "0.99.17"
+derive-new = "0.5.9"
 
 [dependencies.sappho-identmap]
 path = "../identmap"

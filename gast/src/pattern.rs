@@ -5,7 +5,7 @@ use std::fmt;
 
 pub use self::unpack::UnpackPattern;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum Pattern {
     Bind(Identifier),
     LitEq(Literal),

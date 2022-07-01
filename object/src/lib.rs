@@ -1,7 +1,8 @@
+use derive_new::new;
 use sappho_identmap::IdentMap;
 use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
     f: Option<F>,
     q: Option<Q>,
@@ -16,14 +17,6 @@ pub enum Monolithic<F, Q, A> {
 }
 
 impl<F, Q, A> Object<F, Q, A> {
-    pub fn new(func: Option<F>, query: Option<Q>, attrs: IdentMap<A>) -> Self {
-        Object {
-            f: func,
-            q: query,
-            a: attrs,
-        }
-    }
-
     pub fn func(&self) -> Option<&F> {
         self.f.as_ref()
     }
