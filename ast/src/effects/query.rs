@@ -11,6 +11,12 @@ pub enum QueryEffects {
     Inquire(Box<GenExpr<QueryEffects>>),
 }
 
+impl From<QueryEffects> for QueryExpr {
+    fn from(x: QueryEffects) -> Self {
+        GenExpr::Effect(x)
+    }
+}
+
 impl fmt::Display for QueryEffects {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use QueryEffects::*;
