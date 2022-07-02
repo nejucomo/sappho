@@ -39,16 +39,10 @@ where
     T: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut first = true;
+        use sappho_fmtutil::fmt_comma_sep;
+
         write!(f, "[")?;
-        for child in self.iter() {
-            if first {
-                first = false;
-            } else {
-                write!(f, ", ")?;
-            }
-            child.fmt(f)?;
-        }
+        fmt_comma_sep(&self.0, f)?;
         write!(f, "]")?;
         Ok(())
     }

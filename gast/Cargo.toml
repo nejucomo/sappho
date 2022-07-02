@@ -9,6 +9,9 @@ edition = "2021"
 derive_more = "0.99.17"
 derive-new = "0.5.9"
 
+[dependencies.sappho-fmtutil]
+path = "../fmtutil"
+
 [dependencies.sappho-identmap]
 path = "../identmap"
 
