@@ -370,6 +370,7 @@ dependencies = [
  "log",
  "sappho-ast",
  "sappho-east",
+ "sappho-fmtutil",
  "sappho-parser",
  "sappho-value",
  "test-case",

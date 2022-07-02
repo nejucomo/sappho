@@ -15,6 +15,9 @@ path = "../ast"
 [dependencies.sappho-east]
 path = "../east"
 
+[dependencies.sappho-fmtutil]
+path = "../fmtutil"
+
 [dependencies.sappho-value]
 path = "../value"
 
