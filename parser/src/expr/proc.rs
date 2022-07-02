@@ -18,7 +18,11 @@ pub(super) fn proc_expr_def(
         .map(|exprs| {
             exprs
                 .into_iter()
-                .reduce(ProcExpr::application)
+                .reduce(|t, a| {
+                    use sappho_gast::ApplicationExpr;
+
+                    ApplicationExpr::new(Box::new(t), Box::new(a)).into()
+                })
                 .expect(".at_least(1) postcondition failed.")
         })
 }
@@ -28,7 +32,13 @@ fn non_application(
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     non_app_non_lookup(pexpr)
         .then(attr_lookup().repeated())
-        .map(|(x, lookups)| lookups.into_iter().fold(x, ProcExpr::lookup))
+        .map(|(x, lookups)| {
+            lookups.into_iter().fold(x, |x, attr| {
+                use sappho_gast::LookupExpr;
+
+                LookupExpr::new(Box::new(x), attr).into()
+            })
+        })
 }
 
 fn attr_lookup() -> impl Parser<char, Identifier, Error = BareError> {

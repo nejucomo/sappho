@@ -6,7 +6,8 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{GenExpr, LetClause, LetExpr, ListForm, MatchClause, MatchExpr};
+use sappho_ast::{GenExpr, LetClause, LetExpr, MatchClause, MatchExpr};
+use sappho_gast::ListForm;
 
 pub(crate) fn recursive_expr<'a, FX: 'a>(
     expr: Recursive<'a, char, GenExpr<FX>, BareError>,

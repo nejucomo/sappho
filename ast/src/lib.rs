@@ -8,31 +8,19 @@
 //! expression type over all effects, [GenExpr]. The three bespoke effects are [PureEffects],
 //! [QueryEffects], and [ProcEffects].
 
-mod application;
 mod effects;
 mod expr;
-mod func;
-mod letexpr;
-mod listform;
-mod literal;
-mod lookup;
-mod matchexpr;
-mod object;
-mod pattern;
-mod query;
 
-/// An identifier such as the name of the argument and reference in `fn x -> x`.
-pub type Identifier = sappho_identmap::Identifier;
+pub use sappho_gast::{Identifier, Literal};
+pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<GenExpr<FX>>;
+pub type LetExpr<FX> = sappho_gast::LetExpr<GenExpr<FX>>;
+pub type LetClause<FX> = sappho_gast::LetClause<GenExpr<FX>>;
+pub type LookupExpr<FX> = sappho_gast::LookupExpr<GenExpr<FX>>;
+pub type MatchExpr<FX> = sappho_gast::MatchExpr<GenExpr<FX>>;
+pub type MatchClause<FX> = sappho_gast::MatchClause<GenExpr<FX>>;
+pub type QueryDef = sappho_gast::QueryDef<QueryExpr>;
+pub type FuncDef = sappho_gast::FuncDef<PureExpr>;
+pub type ObjectDef = sappho_gast::ObjectDef<PureExpr, QueryExpr>;
 
-pub use self::application::ApplicationExpr;
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
-pub use self::func::FuncDef;
-pub use self::letexpr::{LetClause, LetExpr};
-pub use self::listform::ListForm;
-pub use self::literal::Literal;
-pub use self::lookup::LookupExpr;
-pub use self::matchexpr::{MatchClause, MatchExpr};
-pub use self::object::ObjectDef;
-pub use self::pattern::{Pattern, UnpackPattern};
-pub use self::query::QueryDef;

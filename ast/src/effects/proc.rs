@@ -15,6 +15,12 @@ pub enum ProcEffects {
     Evoke(Box<GenExpr<ProcEffects>>),
 }
 
+impl From<ProcEffects> for ProcExpr {
+    fn from(x: ProcEffects) -> Self {
+        GenExpr::Effect(x)
+    }
+}
+
 impl fmt::Display for ProcEffects {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use ProcEffects::*;

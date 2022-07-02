@@ -1,7 +1,8 @@
+use derive_new::new;
 use sappho_identmap::IdentMap;
 use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
     f: Option<F>,
     q: Option<Q>,
@@ -9,19 +10,24 @@ pub struct Object<F, Q, A> {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Monolithic<F, Q, A> {
+pub enum Unbundled<F, Q, A> {
+    Bundled(Object<F, Q, A>),
     Func(F),
     Query(Q),
-    Attrs(A),
+    Attrs(IdentMap<A>),
 }
 
 impl<F, Q, A> Object<F, Q, A> {
-    pub fn new(func: Option<F>, query: Option<Q>, attrs: IdentMap<A>) -> Self {
-        Object {
-            f: func,
-            q: query,
-            a: attrs,
-        }
+    pub fn new_func(func: F) -> Self {
+        Self::new(Some(func), None, IdentMap::default())
+    }
+
+    pub fn new_query(query: Q) -> Self {
+        Self::new(None, Some(query), IdentMap::default())
+    }
+
+    pub fn new_attrs(attrs: IdentMap<A>) -> Self {
+        Self::new(None, None, attrs)
     }
 
     pub fn func(&self) -> Option<&F> {
@@ -36,21 +42,29 @@ impl<F, Q, A> Object<F, Q, A> {
         &self.a
     }
 
-    pub fn monolithic(&self) -> Option<Monolithic<&F, &Q, &IdentMap<A>>> {
-        if let Some(f) = self.func() {
-            if self.q.is_none() && self.a.is_empty() {
-                Some(Monolithic::Func(f))
-            } else {
-                None
-            }
-        } else if let Some(q) = self.query() {
-            if self.f.is_none() && self.a.is_empty() {
-                Some(Monolithic::Query(q))
-            } else {
-                None
-            }
-        } else {
-            Some(Monolithic::Attrs(self.attrs()))
+    pub fn unbundle(self) -> Unbundled<F, Q, A> {
+        use Unbundled::*;
+
+        match self {
+            Object {
+                f: None,
+                q: None,
+                a,
+            } => Attrs(a),
+
+            Object {
+                f: Some(f),
+                q: None,
+                a,
+            } if a.is_empty() => Func(f),
+
+            Object {
+                f: None,
+                q: Some(q),
+                a,
+            } if a.is_empty() => Query(q),
+
+            bundle => Bundled(bundle),
         }
     }
 

@@ -8,6 +8,9 @@ edition = "2021"
 [dependencies.sappho-ast]
 path = "../ast"
 
+[dependencies.sappho-gast]
+path = "../gast"
+
 [dependencies.sappho-identmap]
 path = "../identmap"
 

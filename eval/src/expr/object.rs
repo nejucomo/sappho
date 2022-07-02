@@ -13,6 +13,6 @@ impl EvalV for ObjectDef {
         let func = self.func().map(|fc| Func::new(fc, scope));
         let query = self.query().map(|qc| Query::new(qc, scope));
 
-        Ok(Value::Object(Object::new(func, query, attrs)))
+        Ok(Value::Object(Box::new(Object::new(func, query, attrs))))
     }
 }

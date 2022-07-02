@@ -123,6 +123,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
 
 [[package]]
+name = "derive-new"
+version = "0.5.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3418329ca0ad70234b9735dc4ceed10af4df60eff9c8e7b06cb5e520d92c3535"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "derive_more"
 version = "0.99.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -322,7 +333,7 @@ dependencies = [
 name = "sappho-ast"
 version = "0.1.0"
 dependencies = [
- "derive_more",
+ "sappho-gast",
  "sappho-identmap",
  "sappho-object",
 ]
@@ -334,6 +345,7 @@ dependencies = [
  "clap",
  "derive_more",
  "log",
+ "sappho-ast",
  "sappho-east",
  "sappho-interpreter",
  "sappho-parser",
@@ -346,6 +358,7 @@ name = "sappho-east"
 version = "0.1.0"
 dependencies = [
  "sappho-ast",
+ "sappho-gast",
  "sappho-identmap",
  "sappho-object",
 ]
@@ -364,6 +377,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sappho-gast"
+version = "0.1.0"
+dependencies = [
+ "derive-new",
+ "derive_more",
+ "sappho-identmap",
+ "sappho-object",
+]
+
+[[package]]
 name = "sappho-identmap"
 version = "0.1.0"
 
@@ -374,6 +397,7 @@ dependencies = [
  "derive_more",
  "indoc",
  "pathutil",
+ "sappho-ast",
  "sappho-east",
  "sappho-interpreter",
  "sappho-parser",
@@ -394,6 +418,7 @@ dependencies = [
 name = "sappho-object"
 version = "0.1.0"
 dependencies = [
+ "derive-new",
  "sappho-identmap",
 ]
 
@@ -405,6 +430,7 @@ dependencies = [
  "derive_more",
  "include_dir",
  "sappho-ast",
+ "sappho-gast",
  "sappho-identmap",
  "sappho-source",
  "test-case",

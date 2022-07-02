@@ -5,7 +5,7 @@ use std::fmt;
 pub enum Value {
     Num(f64),
     List(List),
-    Object(Object),
+    Object(Box<Object>),
 }
 
 impl fmt::Display for Value {

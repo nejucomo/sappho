@@ -1,23 +1,38 @@
 mod clause;
 
-use crate::GenExpr;
 use std::fmt;
 
 pub use self::clause::MatchClause;
 
 /// A `match` expression, ie: `match x { 3 -> 0, y -> y }`.
-#[derive(Debug, PartialEq)]
-pub struct MatchExpr<Effects> {
+#[derive(Clone, Debug, PartialEq, derive_new::new)]
+pub struct MatchExpr<Expr> {
     /// The match target, ie: `x` in `match x { 3 -> 0, y -> y }`.
-    pub target: Box<GenExpr<Effects>>,
+    pub target: Box<Expr>,
 
     /// The match clauses, ie: `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
-    pub clauses: Vec<MatchClause<Effects>>,
+    pub clauses: Vec<MatchClause<Expr>>,
 }
 
-impl<FX> fmt::Display for MatchExpr<FX>
+impl<X> MatchExpr<X> {
+    pub fn transform_into<Y>(self) -> MatchExpr<Y>
+    where
+        Y: From<X>,
+    {
+        MatchExpr {
+            target: Box::new(Y::from(*self.target)),
+            clauses: self
+                .clauses
+                .into_iter()
+                .map(|c| c.transform_into())
+                .collect(),
+        }
+    }
+}
+
+impl<X> fmt::Display for MatchExpr<X>
 where
-    FX: fmt::Display,
+    X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "match ")?;

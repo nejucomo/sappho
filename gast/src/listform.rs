@@ -1,7 +1,7 @@
 use std::fmt;
 
 /// A general structure for a sequence of items, such as a list expression, ie `[x, 42, y]`.
-#[derive(Debug, PartialEq, derive_more::From)]
+#[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub struct ListForm<T>(Vec<T>);
 
 impl<T> ListForm<T> {

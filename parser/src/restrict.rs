@@ -1,9 +1,10 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    ApplicationExpr, GenExpr, LetClause, LetExpr, ListForm, LookupExpr, MatchClause, MatchExpr,
-    ProcEffects, PureEffects, QueryEffects, QueryExpr,
+    ApplicationExpr, GenExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr, ProcEffects,
+    PureEffects, QueryEffects, QueryExpr,
 };
+use sappho_gast::ListForm;
 
 pub(crate) trait Restrict<S>: Sized {
     fn restrict(src: S, span: Span) -> Result<Self, BareError>;

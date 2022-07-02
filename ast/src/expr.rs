@@ -1,9 +1,10 @@
 //! Top-level expression type `GenExpr`, generic over [crate::effects]
 
 use crate::{
-    ApplicationExpr, FuncDef, Identifier, LetExpr, ListForm, Literal, LookupExpr, MatchExpr,
-    ObjectDef, Pattern, PureExpr, QueryDef, QueryExpr,
+    ApplicationExpr, FuncDef, Identifier, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
+    QueryDef,
 };
+use sappho_gast::ListForm;
 use std::fmt;
 
 /// The general top-level expression for all effects.
@@ -22,73 +23,66 @@ pub enum GenExpr<Effects> {
     Effect(Effects),
 }
 
-impl<FX> GenExpr<FX> {
-    pub fn num(f: f64) -> Self {
-        GenExpr::Lit(Literal::Num(f))
+impl<FX> From<Literal> for GenExpr<FX> {
+    fn from(x: Literal) -> Self {
+        GenExpr::Lit(x)
     }
+}
 
-    pub fn ref_expr(ident: Identifier) -> Self {
-        GenExpr::Ref(ident)
+impl<FX> From<Identifier> for GenExpr<FX> {
+    fn from(x: Identifier) -> Self {
+        GenExpr::Ref(x)
     }
+}
 
-    pub fn query_expr(body: QueryExpr) -> Self {
-        GenExpr::Query(QueryDef {
-            body: Box::new(body),
-        })
+impl<FX> From<FuncDef> for GenExpr<FX> {
+    fn from(x: FuncDef) -> Self {
+        GenExpr::Func(x)
     }
+}
 
-    pub fn func_expr((binding, body): (Pattern, PureExpr)) -> Self {
-        GenExpr::Func(FuncDef {
-            binding,
-            body: Box::new(body),
-        })
+impl<FX> From<QueryDef> for GenExpr<FX> {
+    fn from(x: QueryDef) -> Self {
+        GenExpr::Query(x)
     }
+}
 
-    pub fn object_expr(qdef: Option<QueryExpr>, fdef: Option<(Pattern, PureExpr)>) -> Self {
-        GenExpr::Object(ObjectDef::new(
-            fdef.map(|(binding, body)| FuncDef {
-                binding,
-                body: Box::new(body),
-            }),
-            qdef.map(|body| QueryDef {
-                body: Box::new(body),
-            }),
-            sappho_identmap::IdentMap::default(),
-        ))
+impl<FX> From<ObjectDef> for GenExpr<FX> {
+    fn from(x: ObjectDef) -> Self {
+        GenExpr::Object(x)
     }
+}
 
-    pub fn list(exprs: Vec<Self>) -> Self {
-        GenExpr::List(ListForm::from(exprs))
+impl<FX> FromIterator<GenExpr<FX>> for GenExpr<FX> {
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = GenExpr<FX>>,
+    {
+        GenExpr::List(iter.into_iter().collect())
     }
+}
 
-    pub fn let_expr(binding: Pattern, bindexpr: Self, tail: Self) -> Self {
-        use crate::LetClause;
-
-        GenExpr::Let(LetExpr {
-            clauses: vec![LetClause {
-                binding,
-                bindexpr: Box::new(bindexpr),
-            }],
-            tail: Box::new(tail),
-        })
+impl<FX> From<LetExpr<FX>> for GenExpr<FX> {
+    fn from(x: LetExpr<FX>) -> Self {
+        GenExpr::Let(x)
     }
+}
 
-    pub fn application(target: Self, argument: Self) -> Self {
-        GenExpr::Application(ApplicationExpr {
-            target: Box::new(target),
-            argument: Box::new(argument),
-        })
+impl<FX> From<MatchExpr<FX>> for GenExpr<FX> {
+    fn from(x: MatchExpr<FX>) -> Self {
+        GenExpr::Match(x)
     }
+}
 
-    pub fn lookup(target: Self, attr: Identifier) -> Self {
-        GenExpr::Lookup(LookupExpr {
-            target: Box::new(target),
-            attr,
-        })
+impl<FX> From<ApplicationExpr<FX>> for GenExpr<FX> {
+    fn from(x: ApplicationExpr<FX>) -> Self {
+        GenExpr::Application(x)
     }
+}
 
-    pub fn effect(effect: FX) -> Self {
-        GenExpr::Effect(effect)
+impl<FX> From<LookupExpr<FX>> for GenExpr<FX> {
+    fn from(x: LookupExpr<FX>) -> Self {
+        GenExpr::Lookup(x)
     }
 }
 

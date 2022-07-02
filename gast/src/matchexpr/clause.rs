@@ -1,32 +1,31 @@
-use crate::{AstFxFor, FromFx, GenExpr, Pattern};
-use sappho_ast as ast;
+use crate::Pattern;
 use std::fmt;
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
-#[derive(Debug, PartialEq)]
-pub struct MatchClause<Effects> {
+#[derive(Clone, Debug, PartialEq, derive_new::new)]
+pub struct MatchClause<Expr> {
     /// The binding pattern, ie `3` in `3 -> 0` and the first `y` in `y -> y`.
     pub pattern: Pattern,
 
     /// The match body expression, ie `0` in `3 -> 0` and the second `y` in `y -> y`.
-    pub body: Box<GenExpr<Effects>>,
+    pub body: Box<Expr>,
 }
 
-impl<FX> From<ast::MatchClause<AstFxFor<FX>>> for MatchClause<FX>
-where
-    FX: FromFx,
-{
-    fn from(amc: ast::MatchClause<AstFxFor<FX>>) -> Self {
+impl<X> MatchClause<X> {
+    pub fn transform_into<Y>(self) -> MatchClause<Y>
+    where
+        Y: From<X>,
+    {
         MatchClause {
-            pattern: amc.pattern,
-            body: Box::new(GenExpr::from(*amc.body)),
+            pattern: self.pattern,
+            body: Box::new(Y::from(*self.body)),
         }
     }
 }
 
-impl<FX> fmt::Display for MatchClause<FX>
+impl<X> fmt::Display for MatchClause<X>
 where
-    FX: fmt::Display,
+    X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.pattern.fmt(f)?;
