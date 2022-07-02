@@ -41,6 +41,27 @@ where
     }
 }
 
+impl<FX> From<GenExpr<AstFxFor<FX>>> for ast::GenExpr<FX>
+where
+    FX: FromFx,
+{
+    fn from(x: GenExpr<AstFxFor<FX>>) -> Self {
+        use GenExpr::*;
+
+        match x {
+            Lit(x) => ast::GenExpr::Lit(x),
+            Ref(x) => ast::GenExpr::Ref(x),
+            Object(x) => ast::GenExpr::Object(x.transform_into()),
+            List(x) => ast::GenExpr::List(x.into_iter().map(ast::GenExpr::from).collect()),
+            Let(x) => ast::GenExpr::Let(x.transform_into()),
+            Match(x) => ast::GenExpr::Match(x.transform_into()),
+            Application(x) => ast::GenExpr::Application(x.transform_into()),
+            Lookup(x) => ast::GenExpr::Lookup(x.transform_into()),
+            Effect(x) => ast::GenExpr::Effect(FX::from_fx(x)),
+        }
+    }
+}
+
 impl<FX> fmt::Display for GenExpr<FX>
 where
     FX: fmt::Display,

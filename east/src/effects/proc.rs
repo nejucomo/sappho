@@ -23,6 +23,19 @@ impl FromFx for ProcEffects {
     }
 }
 
+impl FromFx for ast::ProcEffects {
+    type AstFx = ProcEffects;
+
+    fn from_fx(astfx: ProcEffects) -> Self {
+        use ProcEffects::{Evoke, Inquire};
+
+        match astfx {
+            Inquire(x) => ast::ProcEffects::Inquire(Box::new(ast::GenExpr::from(*x))),
+            Evoke(x) => ast::ProcEffects::Evoke(Box::new(ast::GenExpr::from(*x))),
+        }
+    }
+}
+
 impl fmt::Display for ProcEffects {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use ProcEffects::*;
