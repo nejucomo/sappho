@@ -17,6 +17,14 @@ pub enum Monolithic<F, Q, A> {
 }
 
 impl<F, Q, A> Object<F, Q, A> {
+    pub fn new_func(func: F) -> Self {
+        Self::new(Some(func), None, IdentMap::default())
+    }
+
+    pub fn new_query(query: Q) -> Self {
+        Self::new(None, Some(query), IdentMap::default())
+    }
+
     pub fn func(&self) -> Option<&F> {
         self.f.as_ref()
     }

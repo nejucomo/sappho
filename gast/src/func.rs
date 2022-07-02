@@ -11,6 +11,18 @@ pub struct FuncDef<PureExpr> {
     pub body: Box<PureExpr>,
 }
 
+impl<X> FuncDef<X> {
+    pub fn transform_into<Y>(self) -> FuncDef<Y>
+    where
+        Y: From<X>,
+    {
+        FuncDef {
+            binding: self.binding,
+            body: Box::new(Y::from(*self.body)),
+        }
+    }
+}
+
 impl<X> fmt::Display for FuncDef<X>
 where
     X: fmt::Display,

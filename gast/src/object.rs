@@ -22,6 +22,26 @@ impl<P, Q> ObjectDef<P, Q> {
         ObjectDef(ObjectInner::new(func, query, attrs))
     }
 
+    pub fn new_func(func: FuncDef<P>) -> Self {
+        ObjectDef(ObjectInner::new_func(func))
+    }
+
+    pub fn new_query(query: QueryDef<Q>) -> Self {
+        ObjectDef(ObjectInner::new_query(query))
+    }
+
+    pub fn transform_into<P2, Q2>(self) -> ObjectDef<P2, Q2>
+    where
+        P2: From<P>,
+        Q2: From<Q>,
+    {
+        ObjectDef(self.0.transform(
+            |func| func.transform_into(),
+            |query| query.transform_into(),
+            P2::from,
+        ))
+    }
+
     pub fn unwrap(self) -> ObjectInner<P, Q> {
         self.0
     }

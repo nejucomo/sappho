@@ -11,6 +11,18 @@ pub struct LookupExpr<Expr> {
     pub attr: Identifier,
 }
 
+impl<X> LookupExpr<X> {
+    pub fn transform_into<Y>(self) -> LookupExpr<Y>
+    where
+        Y: From<X>,
+    {
+        LookupExpr {
+            target: Box::new(Y::from(*self.target)),
+            attr: self.attr,
+        }
+    }
+}
+
 impl<X> fmt::Display for LookupExpr<X>
 where
     X: fmt::Display,

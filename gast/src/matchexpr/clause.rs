@@ -11,6 +11,18 @@ pub struct MatchClause<Expr> {
     pub body: Box<Expr>,
 }
 
+impl<X> MatchClause<X> {
+    pub fn transform_into<Y>(self) -> MatchClause<Y>
+    where
+        Y: From<X>,
+    {
+        MatchClause {
+            pattern: self.pattern,
+            body: Box::new(Y::from(*self.body)),
+        }
+    }
+}
+
 impl<X> fmt::Display for MatchClause<X>
 where
     X: fmt::Display,

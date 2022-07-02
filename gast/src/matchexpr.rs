@@ -14,6 +14,22 @@ pub struct MatchExpr<Expr> {
     pub clauses: Vec<MatchClause<Expr>>,
 }
 
+impl<X> MatchExpr<X> {
+    pub fn transform_into<Y>(self) -> MatchExpr<Y>
+    where
+        Y: From<X>,
+    {
+        MatchExpr {
+            target: Box::new(Y::from(*self.target)),
+            clauses: self
+                .clauses
+                .into_iter()
+                .map(|c| c.transform_into())
+                .collect(),
+        }
+    }
+}
+
 impl<X> fmt::Display for MatchExpr<X>
 where
     X: fmt::Display,

@@ -10,6 +10,18 @@ pub struct ApplicationExpr<Expr> {
     pub argument: Box<Expr>,
 }
 
+impl<X> ApplicationExpr<X> {
+    pub fn transform_into<Y>(self) -> ApplicationExpr<Y>
+    where
+        Y: From<X>,
+    {
+        ApplicationExpr {
+            target: Box::new(Y::from(*self.target)),
+            argument: Box::new(Y::from(*self.argument)),
+        }
+    }
+}
+
 impl<Expr> fmt::Display for ApplicationExpr<Expr>
 where
     Expr: fmt::Display,

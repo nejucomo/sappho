@@ -10,6 +10,18 @@ pub struct LetClause<Expr> {
     pub bindexpr: Box<Expr>,
 }
 
+impl<X> LetClause<X> {
+    pub fn transform_into<Y>(self) -> LetClause<Y>
+    where
+        Y: From<X>,
+    {
+        LetClause {
+            binding: self.binding,
+            bindexpr: Box::new(Y::from(*self.bindexpr)),
+        }
+    }
+}
+
 impl<X> fmt::Display for LetClause<X>
 where
     X: fmt::Display,

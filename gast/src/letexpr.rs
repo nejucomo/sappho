@@ -14,6 +14,22 @@ pub struct LetExpr<Expr> {
     pub tail: Box<Expr>,
 }
 
+impl<X> LetExpr<X> {
+    pub fn transform_into<Y>(self) -> LetExpr<Y>
+    where
+        Y: From<X>,
+    {
+        LetExpr {
+            clauses: self
+                .clauses
+                .into_iter()
+                .map(|c| c.transform_into())
+                .collect(),
+            tail: Box::new(Y::from(*self.tail)),
+        }
+    }
+}
+
 impl<X> fmt::Display for LetExpr<X>
 where
     X: fmt::Display,

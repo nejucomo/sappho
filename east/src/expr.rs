@@ -2,7 +2,7 @@ use crate::{
     ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, ListForm, Literal, LookupExpr,
     MatchExpr, ObjectDef,
 };
-use sappho_ast::GenExpr as AGE;
+use sappho_ast as ast;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
@@ -18,25 +18,25 @@ pub enum GenExpr<Effects> {
     Effect(Effects),
 }
 
-impl<FX> From<AGE<AstFxFor<FX>>> for GenExpr<FX>
+impl<FX> From<ast::GenExpr<AstFxFor<FX>>> for GenExpr<FX>
 where
     FX: FromFx,
 {
-    fn from(x: AGE<AstFxFor<FX>>) -> Self {
+    fn from(x: ast::GenExpr<AstFxFor<FX>>) -> Self {
         use GenExpr::*;
 
         match x {
-            AGE::Lit(x) => Lit(x),
-            AGE::Ref(x) => Ref(x),
-            AGE::Func(x) => Object(ObjectDef::from(x)),
-            AGE::Query(x) => Object(ObjectDef::from(x)),
-            AGE::Object(x) => Object(ObjectDef::from(x)),
-            AGE::List(x) => List(x.into_iter().map(GenExpr::from).collect()),
-            AGE::Let(x) => Let(LetExpr::from(x)),
-            AGE::Match(x) => Match(MatchExpr::from(x)),
-            AGE::Application(x) => Application(ApplicationExpr::from(x)),
-            AGE::Lookup(x) => Lookup(LookupExpr::from(x)),
-            AGE::Effect(x) => Effect(FX::from_fx(x)),
+            ast::GenExpr::Lit(x) => Lit(x),
+            ast::GenExpr::Ref(x) => Ref(x),
+            ast::GenExpr::Func(x) => ast::GenExpr::from(ast::ObjectDef::new_func(x)).into(),
+            ast::GenExpr::Query(x) => ast::GenExpr::from(ast::ObjectDef::new_query(x)).into(),
+            ast::GenExpr::Object(x) => Object(x.transform_into()),
+            ast::GenExpr::List(x) => List(x.into_iter().map(GenExpr::from).collect()),
+            ast::GenExpr::Let(x) => Let(x.transform_into()),
+            ast::GenExpr::Match(x) => Match(x.transform_into()),
+            ast::GenExpr::Application(x) => Application(x.transform_into()),
+            ast::GenExpr::Lookup(x) => Lookup(x.transform_into()),
+            ast::GenExpr::Effect(x) => Effect(FX::from_fx(x)),
         }
     }
 }

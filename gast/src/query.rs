@@ -7,6 +7,17 @@ pub struct QueryDef<QueryExpr> {
     pub body: Box<QueryExpr>,
 }
 
+impl<X> QueryDef<X> {
+    pub fn transform_into<Y>(self) -> QueryDef<Y>
+    where
+        Y: From<X>,
+    {
+        QueryDef {
+            body: Box::new(Y::from(*self.body)),
+        }
+    }
+}
+
 impl<X> fmt::Display for QueryDef<X>
 where
     X: fmt::Display,
