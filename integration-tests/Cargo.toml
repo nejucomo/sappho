@@ -12,6 +12,9 @@ pathutil = "0.1.2"
 [dev-dependencies]
 derive_more = "0.99.17"
 
+[dev-dependencies.sappho-ast]
+path = "../ast"
+
 [dev-dependencies.sappho-east]
 path = "../east"
 

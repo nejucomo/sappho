@@ -63,6 +63,9 @@ pub enum ParseFormat {
     /// The internal AST representation
     AST,
 
+    /// Direct unparse
+    Direct,
+
     /// The canonicalized source code
     Canonical,
 

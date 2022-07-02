@@ -13,14 +13,15 @@ pub fn test_eval(inpath: PathBuf, input: &str, expected: &str) {
 }
 
 pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
-    use sappho_east::PureExpr;
+    use sappho_ast::PureExpr as APE;
+    use sappho_east::PureExpr as EPE;
     use sappho_parser::parse;
 
     let ast = parse((inpath.as_path(), input)).unwrap();
     let actual = if style == "canonical" {
-        ast.to_string()
+        APE::from(EPE::from(ast)).to_string()
     } else if style == "elemental" {
-        PureExpr::from(ast).to_string()
+        EPE::from(ast).to_string()
     } else {
         panic!("Unknown unparse style {:?}", style);
     };

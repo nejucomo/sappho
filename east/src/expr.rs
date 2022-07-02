@@ -51,7 +51,15 @@ where
         match x {
             Lit(x) => ast::GenExpr::Lit(x),
             Ref(x) => ast::GenExpr::Ref(x),
-            Object(x) => ast::GenExpr::Object(x.transform_into()),
+            Object(x) => {
+                use ast::GenExpr::{Func, Object, Query};
+                use sappho_gast::Unbundled as U;
+                match x.unbundle() {
+                    U::Bundled(obj) => Object(obj.transform_into()),
+                    U::Func(f) => Func(f.transform_into()),
+                    U::Query(q) => Query(q.transform_into()),
+                }
+            }
             List(x) => ast::GenExpr::List(x.into_iter().map(ast::GenExpr::from).collect()),
             Let(x) => ast::GenExpr::Let(x.transform_into()),
             Match(x) => ast::GenExpr::Match(x.transform_into()),

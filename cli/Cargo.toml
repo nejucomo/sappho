@@ -17,6 +17,9 @@ features = [
   "cargo",
 ]
 
+[dependencies.sappho-ast]
+path = "../ast"
+
 [dependencies.sappho-east]
 path = "../east"
 

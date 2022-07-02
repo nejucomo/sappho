@@ -7,11 +7,16 @@ pub fn eval(source: &SourceOption) -> Result<()> {
 }
 
 pub fn parse<'a>(source: &'a SourceOption, format: &'a ParseFormat) -> Result<'a, ()> {
+    use sappho_ast::PureExpr as APE;
+    use sappho_east::PureExpr as EPE;
+    use ParseFormat::*;
+
     let x = sappho_parser::parse(source)?;
     match format {
-        ParseFormat::AST => println!("{:#?}", x),
-        ParseFormat::Canonical => println!("{}", x),
-        ParseFormat::Elemental => println!("{}", sappho_east::PureExpr::from(x)),
+        AST => println!("{:#?}", x),
+        Direct => println!("{}", x),
+        Canonical => println!("{}", APE::from(EPE::from(x))),
+        Elemental => println!("{}", EPE::from(x)),
     };
     Ok(())
 }

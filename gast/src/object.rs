@@ -9,6 +9,13 @@ pub struct ObjectDef<PureExpr, QueryExpr>(ObjectInner<PureExpr, QueryExpr>);
 pub type ObjectInner<PureExpr, QueryExpr> =
     Object<FuncDef<PureExpr>, QueryDef<QueryExpr>, PureExpr>;
 
+#[derive(Debug)]
+pub enum Unbundled<P, Q> {
+    Bundled(ObjectDef<P, Q>),
+    Func(FuncDef<P>),
+    Query(QueryDef<Q>),
+}
+
 impl<P, Q> std::ops::Deref for ObjectDef<P, Q> {
     type Target = ObjectInner<P, Q>;
 
@@ -30,6 +37,10 @@ impl<P, Q> ObjectDef<P, Q> {
         ObjectDef(ObjectInner::new_query(query))
     }
 
+    pub fn new_attrs(attrs: IdentMap<P>) -> Self {
+        ObjectDef(ObjectInner::new_attrs(attrs))
+    }
+
     pub fn transform_into<P2, Q2>(self) -> ObjectDef<P2, Q2>
     where
         P2: From<P>,
@@ -42,8 +53,16 @@ impl<P, Q> ObjectDef<P, Q> {
         ))
     }
 
-    pub fn unwrap(self) -> ObjectInner<P, Q> {
-        self.0
+    pub fn unbundle(self) -> Unbundled<P, Q> {
+        use sappho_object::Unbundled as OU;
+        use Unbundled::*;
+
+        match self.0.unbundle() {
+            OU::Bundled(inner) => Bundled(ObjectDef(inner)),
+            OU::Func(f) => Func(f),
+            OU::Query(q) => Query(q),
+            OU::Attrs(a) => Bundled(ObjectDef::new_attrs(a)),
+        }
     }
 }
 
