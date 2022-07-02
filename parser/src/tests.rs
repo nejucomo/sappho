@@ -1,111 +1,179 @@
-use sappho_ast::{GenExpr, QueryEffects::Inquire};
-use sappho_gast::Pattern::Bind;
+use sappho_ast::{
+    FuncDef,
+    GenExpr::{self, Effect},
+    PureExpr, QueryDef,
+    QueryEffects::Inquire,
+    QueryExpr,
+};
+use sappho_gast::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef, Pattern};
 use test_case::test_case;
 
-#[test_case("42" => GenExpr::num(42.0) ; "forty-two")]
-#[test_case("42\n" => GenExpr::num(42.0) ; "forty-two newline")]
-#[test_case("bob" => GenExpr::ref_expr("bob".to_string()) ; "ref bob")]
-#[test_case("bob  \n   " => GenExpr::ref_expr("bob".to_string()) ; "ref bob newline")]
-#[test_case("[]" => GenExpr::list(vec![]) ; "tight empty list")]
-#[test_case("[\n]" => GenExpr::list(vec![]) ; "multiline empty list")]
-#[test_case("[ ] " => GenExpr::list(vec![]) ; "space empty list")]
+fn num(f: f64) -> PureExpr {
+    sappho_gast::Literal::Num(f).into()
+}
+
+fn refexpr<FX>(s: &str) -> GenExpr<FX> {
+    s.to_string().into()
+}
+
+fn bind(s: &str) -> Pattern {
+    Pattern::Bind(s.to_string())
+}
+
+fn list<T>(xs: T) -> PureExpr
+where
+    T: IntoIterator<Item = PureExpr>,
+{
+    GenExpr::from_iter(xs)
+}
+
+fn let_expr(clauses: Vec<(Pattern, PureExpr)>, bindexpr: PureExpr) -> PureExpr {
+    LetExpr::new(
+        clauses
+            .into_iter()
+            .map(|(p, x)| LetClause::new(p, Box::new(x)))
+            .collect(),
+        Box::new(bindexpr),
+    )
+    .into()
+}
+
+fn func_def(p: Pattern, x: PureExpr) -> FuncDef {
+    FuncDef::new(p, Box::new(x))
+}
+
+fn func_def_expr(p: Pattern, x: PureExpr) -> PureExpr {
+    func_def(p, x).into()
+}
+
+fn query_def(x: QueryExpr) -> QueryDef {
+    QueryDef::new(Box::new(x))
+}
+
+fn query_def_expr(x: QueryExpr) -> PureExpr {
+    query_def(x).into()
+}
+
+fn object_def(f: Option<FuncDef>, q: Option<QueryDef>) -> PureExpr {
+    ObjectDef::new(f, q, Default::default()).into()
+}
+
+fn app_expr(t: PureExpr, a: PureExpr) -> PureExpr {
+    ApplicationExpr::new(Box::new(t), Box::new(a)).into()
+}
+
+fn lookup(t: PureExpr, attr: &str) -> PureExpr {
+    LookupExpr::new(Box::new(t), attr.to_string()).into()
+}
+
+#[test_case("42" => num(42.0) ; "forty-two")]
+#[test_case("42\n" => num(42.0) ; "forty-two newline")]
+#[test_case("bob" => refexpr("bob") ; "ref bob")]
+#[test_case("bob  \n   " => refexpr("bob") ; "ref bob newline")]
+#[test_case("[]" => list(vec![]) ; "tight empty list")]
+#[test_case("[\n]" => list(vec![]) ; "multiline empty list")]
+#[test_case("[ ] " => list(vec![]) ; "space empty list")]
 #[test_case(
     "[42]" =>
-    GenExpr::list(vec![
-        GenExpr::num(42.0)
+    list(vec![
+        num(42.0)
     ])
     ; "tight singleton list"
 )]
 #[test_case(
     "[\n  42\n]" =>
-    GenExpr::list(vec![
-        GenExpr::num(42.0)
+    list(vec![
+        num(42.0)
     ])
     ; "multiline singleton list"
 )]
 #[test_case(
     "[42,bob]" =>
-    GenExpr::list(vec![
-        GenExpr::num(42.0),
-        GenExpr::ref_expr("bob".to_string()),
+    list(vec![
+        num(42.0),
+        refexpr("bob"),
     ])
     ; "tight pair list"
 )]
 #[test_case(
     "[42, bob]" =>
-    GenExpr::list(vec![
-        GenExpr::num(42.0),
-        GenExpr::ref_expr("bob".to_string()),
+    list(vec![
+        num(42.0),
+        refexpr("bob"),
     ])
     ; "natural pair list"
 )]
 #[test_case(
     "let x = 42; x" =>
-    GenExpr::let_expr(
-        Bind("x".to_string()),
-        GenExpr::num(42.0),
-        GenExpr::ref_expr("x".to_string()),
+    let_expr(
+        vec![(
+            bind("x"),
+            num(42.0),
+        )],
+        refexpr("x"),
     )
     ; "let x x space"
 )]
 #[test_case(
     "let x = 42;\nx" =>
-    GenExpr::let_expr(
-        Bind("x".to_string()),
-        GenExpr::num(42.0),
-        GenExpr::ref_expr("x".to_string()),
+    let_expr(
+        vec![(
+            bind("x"),
+            num(42.0),
+        )],
+        refexpr("x"),
     )
     ; "let x x newline"
 )]
 #[test_case(
     "fn x -> x" =>
-    GenExpr::func_expr((
-        Bind("x".to_string()),
-        GenExpr::ref_expr("x".to_string()),
-    ))
+    func_def_expr(
+        bind("x"),
+        refexpr("x"),
+    )
     ; "identify fn"
 )]
 #[test_case(
     "f x" =>
-    GenExpr::application(
-        GenExpr::ref_expr("f".to_string()),
-        GenExpr::ref_expr("x".to_string()),
+    app_expr(
+        refexpr("f"),
+        refexpr("x"),
     )
     ; "application"
 )]
 #[test_case(
     "f x y" =>
-    GenExpr::application(
-        GenExpr::application(
-            GenExpr::ref_expr("f".to_string()),
-            GenExpr::ref_expr("x".to_string()),
+    app_expr(
+        app_expr(
+            refexpr("f"),
+            refexpr("x"),
         ),
-        GenExpr::ref_expr("y".to_string()),
+        refexpr("y"),
     )
-    ; "subsequent application"
+    ; "subsequent app_expr"
 )]
 #[test_case(
     "g (f x)" =>
-    GenExpr::application(
-        GenExpr::ref_expr("g".to_string()),
-        GenExpr::application(
-            GenExpr::ref_expr("f".to_string()),
-            GenExpr::ref_expr("x".to_string()),
+    app_expr(
+        refexpr("g"),
+        app_expr(
+            refexpr("f"),
+            refexpr("x"),
         ),
     )
-    ; "rightwards application"
+    ; "rightwards app_expr"
 )]
 #[test_case(
     "query x" =>
-    GenExpr::query_expr(GenExpr::ref_expr("x".to_string()))
+    query_def_expr(refexpr("x"))
     ; "query x"
 )]
 #[test_case(
     "query $x" =>
-    GenExpr::query_expr(
-        GenExpr::effect(
+    query_def_expr(
+        Effect(
             Inquire(
-                Box::new(GenExpr::ref_expr("x".to_string()))
+                Box::new(refexpr("x"))
             )
         )
     )
@@ -113,114 +181,114 @@ use test_case::test_case;
 )]
 #[test_case(
     "{}" =>
-    GenExpr::object_expr(None, None)
+    object_def(None, None)
     ; "empty object"
 )]
 #[test_case(
     "{ query x }" =>
-    GenExpr::object_expr(
-        Some(GenExpr::ref_expr("x".to_string())),
+    object_def(
         None,
+        Some(query_def(refexpr("x"))),
     )
     ; "object query"
 )]
 #[test_case(
     "{ fn x -> x }" =>
-    GenExpr::object_expr(
-        None,
-        Some((
-            Bind("x".to_string()),
-            GenExpr::ref_expr("x".to_string()),
+    object_def(
+        Some(func_def(
+            bind("x"),
+            refexpr("x"),
         )),
+        None,
     )
     ; "object fn"
 )]
 #[test_case(
     "{ query x, fn x -> x }" =>
-    GenExpr::object_expr(
-        Some(GenExpr::ref_expr("x".to_string())),
-        Some((
-            Bind("x".to_string()),
-            GenExpr::ref_expr("x".to_string()),
+    object_def(
+        Some(func_def(
+            bind("x"),
+            refexpr("x"),
         )),
+        Some(query_def(refexpr("x"))),
     )
     ; "object query and fn"
 )]
 #[test_case(
     "{ fn x -> x, query x }" =>
-    GenExpr::object_expr(
-        Some(GenExpr::ref_expr("x".to_string())),
-        Some((
-            Bind("x".to_string()),
-            GenExpr::ref_expr("x".to_string()),
+    object_def(
+        Some(func_def(
+            bind("x"),
+            refexpr("x"),
         )),
+        Some(query_def(refexpr("x"))),
     )
     ; "object fn and query"
 )]
 #[test_case(
     "x.a" =>
-    GenExpr::lookup(
-        GenExpr::ref_expr("x".to_string()),
-        "a".to_string(),
+    lookup(
+        refexpr("x"),
+        "a",
     )
     ; "x dot a"
 )]
 #[test_case(
     "x.a.b" =>
-    GenExpr::lookup(
-        GenExpr::lookup(
-            GenExpr::ref_expr("x".to_string()),
-            "a".to_string(),
+    lookup(
+        lookup(
+            refexpr("x"),
+            "a",
         ),
-        "b".to_string(),
+        "b",
     )
     ; "x dot a dot b"
 )]
 #[test_case(
     "f x.a" =>
-    GenExpr::application(
-        GenExpr::ref_expr("f".to_string()),
-        GenExpr::lookup(
-            GenExpr::ref_expr("x".to_string()),
-            "a".to_string(),
+    app_expr(
+        refexpr("f"),
+        lookup(
+            refexpr("x"),
+            "a",
         ),
     )
     ; "f applied to the a of x"
 )]
 #[test_case(
     "f (x.a)" =>
-    GenExpr::application(
-        GenExpr::ref_expr("f".to_string()),
-        GenExpr::lookup(
-            GenExpr::ref_expr("x".to_string()),
-            "a".to_string(),
+    app_expr(
+        refexpr("f"),
+        lookup(
+            refexpr("x"),
+            "a",
         ),
     )
     ; "f applied to the a of x with disambiguating parentheses"
 )]
 #[test_case(
     "f (x).a" =>
-    GenExpr::application(
-        GenExpr::ref_expr("f".to_string()),
-        GenExpr::lookup(
-            GenExpr::ref_expr("x".to_string()),
-            "a".to_string(),
+    app_expr(
+        refexpr("f"),
+        lookup(
+            refexpr("x"),
+            "a",
         ),
     )
     ; "f applied to the a of x with confusing parentheses"
 )]
 #[test_case(
     "(f x).a" =>
-    GenExpr::lookup(
-        GenExpr::application(
-            GenExpr::ref_expr("f".to_string()),
-            GenExpr::ref_expr("x".to_string()),
+    lookup(
+        app_expr(
+            refexpr("f"),
+            refexpr("x"),
         ),
-        "a".to_string(),
+        "a",
     )
     ; "the a of f applied to x with disambiguating parentheses"
 )]
-fn positive(input: &str) -> sappho_ast::PureExpr {
+fn positive(input: &str) -> PureExpr {
     match crate::parse(input) {
         Ok(x) => x,
         Err(e) => {
