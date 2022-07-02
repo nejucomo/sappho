@@ -4,7 +4,7 @@ use std::fmt;
 
 pub type ProcExpr = GenExpr<ProcEffects>;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ProcEffects {
     Inquire(Box<GenExpr<ProcEffects>>),
     Evoke(Box<GenExpr<ProcEffects>>),

@@ -1,7 +1,7 @@
 use std::fmt;
 
 /// Function application, ie `f x`.
-#[derive(Debug, PartialEq, derive_new::new)]
+#[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct ApplicationExpr<Expr> {
     /// The target of application, ie `f` in `f x`.
     pub target: Box<Expr>,

@@ -5,7 +5,7 @@ use crate::{
 use sappho_ast as ast;
 use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum GenExpr<Effects> {
     Lit(Literal),
     Ref(Identifier),

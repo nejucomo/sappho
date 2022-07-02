@@ -4,7 +4,7 @@ use std::fmt;
 
 pub type QueryExpr = GenExpr<QueryEffects>;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum QueryEffects {
     Inquire(Box<GenExpr<QueryEffects>>),
 }

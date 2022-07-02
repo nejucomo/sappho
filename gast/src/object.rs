@@ -4,7 +4,7 @@ use sappho_object::Object;
 use std::fmt;
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ObjectDef<PureExpr, QueryExpr>(ObjectInner<PureExpr, QueryExpr>);
 pub type ObjectInner<PureExpr, QueryExpr> =
     Object<FuncDef<PureExpr>, QueryDef<QueryExpr>, PureExpr>;

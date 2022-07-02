@@ -5,7 +5,7 @@ use std::fmt;
 pub type PureExpr = GenExpr<PureEffects>;
 
 /// Pure effects cannot be instantiated, because pure expressions have no side effects.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum PureEffects {}
 
 impl fmt::Display for PureEffects {

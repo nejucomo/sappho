@@ -2,7 +2,7 @@ use derive_new::new;
 use sappho_identmap::IdentMap;
 use std::fmt;
 
-#[derive(Debug, PartialEq, new)]
+#[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
     f: Option<F>,
     q: Option<Q>,
