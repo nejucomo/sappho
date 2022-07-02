@@ -1,7 +1,7 @@
 use crate::{Eval, EvalThunk, Result};
 use sappho_value::{GenThunk, ValRef};
 
-impl<'a, FX> EvalThunk for GenThunk<'a, FX>
+impl<FX> EvalThunk for GenThunk<FX>
 where
     FX: Eval,
 {
