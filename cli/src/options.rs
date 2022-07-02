@@ -69,6 +69,6 @@ pub enum ParseFormat {
     /// The canonicalized source code
     Canonical,
 
-    /// The elemental source code
-    Elemental,
+    /// The reduced source code
+    Reduced,
 }
