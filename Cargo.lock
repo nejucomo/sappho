@@ -345,11 +345,10 @@ dependencies = [
  "clap",
  "derive_more",
  "log",
- "sappho-ast",
- "sappho-east",
  "sappho-interpreter",
  "sappho-parser",
  "sappho-source",
+ "sappho-transform",
  "simplelog",
 ]
 
@@ -397,10 +396,9 @@ dependencies = [
  "derive_more",
  "indoc",
  "pathutil",
- "sappho-ast",
- "sappho-east",
  "sappho-interpreter",
  "sappho-parser",
+ "sappho-transform",
 ]
 
 [[package]]
@@ -441,6 +439,14 @@ name = "sappho-source"
 version = "0.1.0"
 dependencies = [
  "pathutil",
+]
+
+[[package]]
+name = "sappho-transform"
+version = "0.1.0"
+dependencies = [
+ "sappho-ast",
+ "sappho-east",
 ]
 
 [[package]]

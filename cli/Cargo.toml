@@ -17,12 +17,6 @@ features = [
   "cargo",
 ]
 
-[dependencies.sappho-ast]
-path = "../ast"
-
-[dependencies.sappho-east]
-path = "../east"
-
 [dependencies.sappho-interpreter]
 path = "../interpreter"
 
@@ -31,3 +25,6 @@ path = "../parser"
 
 [dependencies.sappho-source]
 path = "../source"
+
+[dependencies.sappho-transform]
+path = "../transform"
