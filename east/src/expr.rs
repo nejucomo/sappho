@@ -1,5 +1,5 @@
 use crate::{
-    ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, ListForm, Literal, LookupExpr,
+    ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, ListExpr, Literal, LookupExpr,
     MatchExpr, ObjectDef,
 };
 use sappho_ast as ast;
@@ -10,7 +10,7 @@ pub enum GenExpr<Effects> {
     Lit(Literal),
     Ref(Identifier),
     Object(ObjectDef),
-    List(ListForm<GenExpr<Effects>>),
+    List(ListExpr<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Match(MatchExpr<Effects>),
     Application(ApplicationExpr<Effects>),

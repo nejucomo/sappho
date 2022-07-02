@@ -1,8 +1,8 @@
 use crate::{Eval, EvalV, Result};
-use sappho_east::{GenExpr, ListForm};
+use sappho_east::{GenExpr, ListExpr};
 use sappho_value::{List, ScopeRef, Value};
 
-impl<FX> EvalV for ListForm<GenExpr<FX>>
+impl<FX> EvalV for ListExpr<GenExpr<FX>>
 where
     FX: Eval,
 {
