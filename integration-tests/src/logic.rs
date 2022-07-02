@@ -19,7 +19,7 @@ pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
     let ast = parse((inpath.as_path(), input)).unwrap();
     let actual = if style == "canonical" {
         canonicalize(ast).to_string()
-    } else if style == "elemental" {
+    } else if style == "reduced" {
         reduce(ast).to_string()
     } else {
         panic!("Unknown unparse style {:?}", style);

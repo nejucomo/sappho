@@ -25,7 +25,7 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
     let casename = casedir.pe_file_name_str()?;
     let expected = casedir.join("expected");
     let mut has_canonical = false;
-    let mut has_elemental = false;
+    let mut has_reduced = false;
     let mut inputs = vec![];
     for entry in casedir.pe_read_dir_entries()? {
         entry.metadata()?.require_file_type(FileTypeEnum::File)?;
@@ -37,8 +37,8 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
 
             if name == "input-canonical" {
                 has_canonical = true;
-            } else if name == "input-elemental" {
-                has_elemental = true;
+            } else if name == "input-reduced" {
+                has_reduced = true;
             }
 
             inputs.push((inputcasename, path));
@@ -51,13 +51,13 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
         }
     }
 
-    if has_canonical && has_elemental {
+    if has_canonical && has_reduced {
         for (icname, inpath) in inputs.iter() {
             generate_unparse_case(f, casedir, inpath, icname, "canonical")?;
-            generate_unparse_case(f, casedir, inpath, icname, "elemental")?;
+            generate_unparse_case(f, casedir, inpath, icname, "reduced")?;
         }
         Ok(())
-    } else if !has_canonical && !has_elemental {
+    } else if !has_canonical && !has_reduced {
         Ok(())
     } else {
         use std::io::{Error, ErrorKind::Other};
@@ -65,7 +65,7 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
         Err(Error::new(
             Other,
             format!(
-                "Inconsistent 'input-canonical' vs 'input-elemental' in {:?}",
+                "Inconsistent 'input-canonical' vs 'input-reduced' in {:?}",
                 casedir.display()
             ),
         ))

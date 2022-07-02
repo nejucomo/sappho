@@ -15,7 +15,7 @@ pub fn parse<'a>(source: &'a SourceOption, format: &'a ParseFormat) -> Result<'a
         AST => println!("{:#?}", x),
         Direct => println!("{}", x),
         Canonical => println!("{}", canonicalize(x)),
-        Elemental => println!("{}", reduce(x)),
+        Reduced => println!("{}", reduce(x)),
     };
     Ok(())
 }
