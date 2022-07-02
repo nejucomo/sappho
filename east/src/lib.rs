@@ -3,7 +3,7 @@
 mod effects;
 mod expr;
 
-pub use sappho_gast::{Identifier, ListForm, Literal, Pattern, UnpackPattern};
+pub use sappho_gast::{Identifier, ListExpr, Literal, Pattern, UnpackPattern};
 pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<GenExpr<FX>>;
 pub type LetExpr<FX> = sappho_gast::LetExpr<GenExpr<FX>>;
 pub type LetClause<FX> = sappho_gast::LetClause<GenExpr<FX>>;

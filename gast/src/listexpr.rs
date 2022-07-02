@@ -2,30 +2,30 @@ use std::fmt;
 
 /// A general structure for a sequence of items, such as a list expression, ie `[x, 42, y]`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
-pub struct ListForm<T>(Vec<T>);
+pub struct ListExpr<T>(Vec<T>);
 
-impl<T> ListForm<T> {
+impl<T> ListExpr<T> {
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         self.0.iter()
     }
 }
 
-impl<T> AsRef<[T]> for ListForm<T> {
+impl<T> AsRef<[T]> for ListExpr<T> {
     fn as_ref(&self) -> &[T] {
         self.0.as_ref()
     }
 }
 
-impl<T> FromIterator<T> for ListForm<T> {
+impl<T> FromIterator<T> for ListExpr<T> {
     fn from_iter<I>(iter: I) -> Self
     where
         I: IntoIterator<Item = T>,
     {
-        ListForm(iter.into_iter().collect())
+        ListExpr(iter.into_iter().collect())
     }
 }
 
-impl<T> IntoIterator for ListForm<T> {
+impl<T> IntoIterator for ListExpr<T> {
     type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
     type Item = T;
 
@@ -34,7 +34,7 @@ impl<T> IntoIterator for ListForm<T> {
     }
 }
 
-impl<T> fmt::Display for ListForm<T>
+impl<T> fmt::Display for ListExpr<T>
 where
     T: fmt::Display,
 {
