@@ -106,17 +106,10 @@ where
         if self.0.is_empty() {
             write!(f, "{{}}")
         } else {
+            use sappho_fmtutil::fmt_comma_sep;
+
             write!(f, "{{ ")?;
-            let mut first = true;
-            for (ident, v) in self.0.iter() {
-                if first {
-                    first = false;
-                } else {
-                    write!(f, ", ")?;
-                }
-                write!(f, "{}: ", ident)?;
-                v.fmt(f)?;
-            }
+            fmt_comma_sep(self.0.iter().map(|(n, a)| format!("{}: {}", n, a)), f)?;
             write!(f, " }}")
         }
     }

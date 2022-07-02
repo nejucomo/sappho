@@ -370,10 +370,15 @@ dependencies = [
  "log",
  "sappho-ast",
  "sappho-east",
+ "sappho-fmtutil",
  "sappho-parser",
  "sappho-value",
  "test-case",
 ]
+
+[[package]]
+name = "sappho-fmtutil"
+version = "0.1.0"
 
 [[package]]
 name = "sappho-gast"
@@ -381,6 +386,7 @@ version = "0.1.0"
 dependencies = [
  "derive-new",
  "derive_more",
+ "sappho-fmtutil",
  "sappho-identmap",
  "sappho-object",
 ]
@@ -388,6 +394,9 @@ dependencies = [
 [[package]]
 name = "sappho-identmap"
 version = "0.1.0"
+dependencies = [
+ "sappho-fmtutil",
+]
 
 [[package]]
 name = "sappho-integration-tests"
@@ -455,6 +464,7 @@ version = "0.1.0"
 dependencies = [
  "derive_more",
  "sappho-east",
+ "sappho-fmtutil",
  "sappho-identmap",
  "sappho-object",
 ]

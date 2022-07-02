@@ -35,18 +35,12 @@ where
     X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use sappho_fmtutil::fmt_comma_sep;
+
         write!(f, "match ")?;
         self.target.fmt(f)?;
         write!(f, " {{ ")?;
-        let mut first = true;
-        for clause in self.clauses.iter() {
-            if first {
-                first = false;
-            } else {
-                write!(f, ", ")?;
-            }
-            clause.fmt(f)?;
-        }
+        fmt_comma_sep(&self.clauses, f)?;
         write!(f, " }}")?;
         Ok(())
     }

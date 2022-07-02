@@ -51,16 +51,10 @@ impl Iterator for ListIter {
 
 impl fmt::Display for List {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut first = true;
+        use sappho_fmtutil::fmt_comma_sep;
+
         write!(f, "[")?;
-        for v in self.clone() {
-            if first {
-                first = false;
-            } else {
-                write!(f, ", ")?;
-            }
-            v.fmt(f)?;
-        }
+        fmt_comma_sep(self.clone(), f)?;
         write!(f, "]")?;
         Ok(())
     }

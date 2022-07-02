@@ -24,15 +24,10 @@ impl fmt::Display for Error {
             Unbound(x) => x.fmt(f),
             MissingAttr(v, name) => write!(f, "missing attr {}.{}", v, name),
             Mismatch(v, pats) => {
-                write!(
-                    f,
-                    "value {} does not match any of these patterns: {}",
-                    v,
-                    pats.iter()
-                        .map(|p| p.to_string())
-                        .collect::<Vec<String>>()
-                        .join(", ")
-                )
+                use sappho_fmtutil::fmt_comma_sep;
+
+                write!(f, "value {} does not match any of these patterns: ", v)?;
+                fmt_comma_sep(pats, f)
             }
             CoercionFailure(x) => x.fmt(f),
             BindFailure(x) => x.fmt(f),
