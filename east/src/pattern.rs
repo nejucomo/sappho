@@ -51,7 +51,16 @@ impl From<Pattern> for ast::Pattern {
         match p {
             Bind(x) => ast::Pattern::Bind(x),
             LitEq(x) => ast::Pattern::LitEq(x),
-            Unpack(x) => ast::Pattern::Unpack(x.into()),
+            Unpack(x) => x
+                .as_list_pattern()
+                .map(|(pats, tailbind)| {
+                    ast::ListPattern::new(
+                        pats.into_iter().map(|p| ast::Pattern::from(p.clone())),
+                        tailbind.map(|s| s.to_string()),
+                    )
+                    .into()
+                })
+                .unwrap_or_else(|| ast::Pattern::Unpack(x.into())),
         }
     }
 }

@@ -1,4 +1,4 @@
-use crate::{Pattern, UnpackPattern};
+use crate::{Literal, Pattern, UnpackPattern};
 use sappho_ast as ast;
 use test_case::test_case;
 
@@ -47,11 +47,60 @@ fn cons_pat(head: &str, tail: Pattern) -> Pattern {
         ),
     )
 )]
-fn transform_list_pattern<const K: usize>(body: [&str; K], tail: Option<&str>) -> Pattern {
+fn ast_to_east<const K: usize>(body: [&str; K], tail: Option<&str>) -> Pattern {
     use ast::Pattern::Bind;
 
     Pattern::from(ast::ListPattern::new(
         body.map(|s| Bind(s.to_string())),
         tail.map(|s| s.to_string()),
     ))
+}
+
+fn alp_new<'a, I>(bindpats: I, tailbind: Option<&str>) -> ast::Pattern
+where
+    I: IntoIterator<Item = &'a str>,
+{
+    ast::ListPattern::new(
+        bindpats
+            .into_iter()
+            .map(|s| ast::Pattern::Bind(s.to_string())),
+        tailbind.map(|s| s.to_string()),
+    )
+    .into()
+}
+
+#[test_case(
+    unpack_empty()
+    => alp_new([], None)
+)]
+#[test_case(
+    cons_pat(
+        "a",
+        cons_pat(
+            "b",
+            bind("t"),
+        ),
+    )
+    => alp_new(["a", "b"], Some("t"))
+)]
+#[test_case(
+    cons_pat(
+        "a",
+        Pattern::LitEq(Literal::Num(42.0)),
+    )
+    => ast::Pattern::Unpack(
+        ast::UnpackPattern::from_iter([
+            (
+                "head".to_string(),
+                ast::Pattern::Bind("a".to_string()),
+            ),
+            (
+                "tail".to_string(),
+                ast::Pattern::LitEq(ast::Literal::Num(42.0)),
+            )
+        ]),
+    )
+)]
+fn east_to_ast(p: Pattern) -> ast::Pattern {
+    p.into()
 }
