@@ -2,7 +2,7 @@ use crate::error::BareError;
 use crate::expr::universal::literal;
 use chumsky::recursive::Recursive;
 use chumsky::{text, Parser};
-use sappho_gast::{Pattern, UnpackPattern};
+use sappho_ast::{Pattern, UnpackPattern};
 
 pub(crate) fn pattern() -> impl Parser<char, Pattern, Error = BareError> {
     chumsky::recursive::recursive(pattern_rec)
