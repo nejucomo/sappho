@@ -80,26 +80,26 @@ fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
 #[test_case("42\n" => num(42.0) ; "forty-two newline")]
 #[test_case("bob" => refexpr("bob") ; "ref bob")]
 #[test_case("bob  \n   " => refexpr("bob") ; "ref bob newline")]
-#[test_case("[]" => list(vec![]) ; "tight empty list")]
-#[test_case("[\n]" => list(vec![]) ; "multiline empty list")]
-#[test_case("[ ] " => list(vec![]) ; "space empty list")]
+#[test_case("[]" => list([]) ; "tight empty list")]
+#[test_case("[\n]" => list([]) ; "multiline empty list")]
+#[test_case("[ ] " => list([]) ; "space empty list")]
 #[test_case(
     "[42]" =>
-    list(vec![
+    list([
         num(42.0)
     ])
     ; "tight singleton list"
 )]
 #[test_case(
     "[\n  42\n]" =>
-    list(vec![
+    list([
         num(42.0)
     ])
     ; "multiline singleton list"
 )]
 #[test_case(
     "[42,bob]" =>
-    list(vec![
+    list([
         num(42.0),
         refexpr("bob"),
     ])
@@ -107,7 +107,7 @@ fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
 )]
 #[test_case(
     "[42, bob]" =>
-    list(vec![
+    list([
         num(42.0),
         refexpr("bob"),
     ])
