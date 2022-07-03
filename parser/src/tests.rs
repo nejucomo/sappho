@@ -1,11 +1,12 @@
 use sappho_ast::{
     FuncDef,
     GenExpr::{self, Effect},
-    PureExpr, QueryDef,
+    ListPattern, Pattern, PureExpr, QueryDef,
     QueryEffects::Inquire,
     QueryExpr,
 };
-use sappho_gast::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef, Pattern};
+use sappho_gast::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
+use sappho_identmap::IdentMap;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
@@ -27,7 +28,7 @@ where
     GenExpr::from_iter(xs)
 }
 
-fn let_expr(clauses: Vec<(Pattern, PureExpr)>, bindexpr: PureExpr) -> PureExpr {
+fn let_expr<const K: usize>(clauses: [(Pattern, PureExpr); K], bindexpr: PureExpr) -> PureExpr {
     LetExpr::new(
         clauses
             .into_iter()
@@ -58,6 +59,11 @@ fn object_def(f: Option<FuncDef>, q: Option<QueryDef>) -> PureExpr {
     ObjectDef::new(f, q, Default::default()).into()
 }
 
+fn attrs_def<const K: usize>(attrs: [(&str, PureExpr); K]) -> PureExpr {
+    let stringattrs = attrs.into_iter().map(|(s, x)| (s.to_string(), x));
+    ObjectDef::new(None, None, IdentMap::from_iter(stringattrs)).into()
+}
+
 fn app_expr(t: PureExpr, a: PureExpr) -> PureExpr {
     ApplicationExpr::new(Box::new(t), Box::new(a)).into()
 }
@@ -66,30 +72,34 @@ fn lookup(t: PureExpr, attr: &str) -> PureExpr {
     LookupExpr::new(Box::new(t), attr.to_string()).into()
 }
 
+fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
+    Pattern::List(ListPattern::from_iter(pats))
+}
+
 #[test_case("42" => num(42.0) ; "forty-two")]
 #[test_case("42\n" => num(42.0) ; "forty-two newline")]
 #[test_case("bob" => refexpr("bob") ; "ref bob")]
 #[test_case("bob  \n   " => refexpr("bob") ; "ref bob newline")]
-#[test_case("[]" => list(vec![]) ; "tight empty list")]
-#[test_case("[\n]" => list(vec![]) ; "multiline empty list")]
-#[test_case("[ ] " => list(vec![]) ; "space empty list")]
+#[test_case("[]" => list([]) ; "tight empty list")]
+#[test_case("[\n]" => list([]) ; "multiline empty list")]
+#[test_case("[ ] " => list([]) ; "space empty list")]
 #[test_case(
     "[42]" =>
-    list(vec![
+    list([
         num(42.0)
     ])
     ; "tight singleton list"
 )]
 #[test_case(
     "[\n  42\n]" =>
-    list(vec![
+    list([
         num(42.0)
     ])
     ; "multiline singleton list"
 )]
 #[test_case(
     "[42,bob]" =>
-    list(vec![
+    list([
         num(42.0),
         refexpr("bob"),
     ])
@@ -97,7 +107,7 @@ fn lookup(t: PureExpr, attr: &str) -> PureExpr {
 )]
 #[test_case(
     "[42, bob]" =>
-    list(vec![
+    list([
         num(42.0),
         refexpr("bob"),
     ])
@@ -106,7 +116,7 @@ fn lookup(t: PureExpr, attr: &str) -> PureExpr {
 #[test_case(
     "let x = 42; x" =>
     let_expr(
-        vec![(
+        [(
             bind("x"),
             num(42.0),
         )],
@@ -117,7 +127,7 @@ fn lookup(t: PureExpr, attr: &str) -> PureExpr {
 #[test_case(
     "let x = 42;\nx" =>
     let_expr(
-        vec![(
+        [(
             bind("x"),
             num(42.0),
         )],
@@ -181,7 +191,7 @@ fn lookup(t: PureExpr, attr: &str) -> PureExpr {
 )]
 #[test_case(
     "{}" =>
-    object_def(None, None)
+    attrs_def([])
     ; "empty object"
 )]
 #[test_case(
@@ -287,6 +297,51 @@ fn lookup(t: PureExpr, attr: &str) -> PureExpr {
         "a",
     )
     ; "the a of f applied to x with disambiguating parentheses"
+)]
+#[test_case(
+    "let [] = {}; 42" =>
+    let_expr(
+        [(
+            list_pat([]),
+            attrs_def([]),
+        )],
+        num(42.0),
+    )
+    ; "let list empty"
+)]
+#[test_case(
+    "let [x] = {head: 42, tail: {}}; x" =>
+    let_expr(
+        [(
+            list_pat([bind("x")]),
+            attrs_def([
+                ("head", num(42.0)),
+                ("tail", attrs_def([])),
+            ]),
+        )],
+        refexpr("x"),
+    )
+    ; "let list singleton"
+)]
+#[test_case(
+    "let [x, y] = {head: 2, tail: {head: 3, tail: {}}}; {a: x, b: y}" =>
+    let_expr(
+        [(
+            list_pat([bind("x"), bind("y")]),
+            attrs_def([
+                ("head", num(2.0)),
+                ("tail", attrs_def([
+                    ("head", num(3.0)),
+                    ("tail", attrs_def([])),
+                ]))
+            ]),
+        )],
+        attrs_def([
+            ("a", refexpr("x")),
+            ("b", refexpr("y")),
+        ]),
+    )
+    ; "let list pair"
 )]
 fn positive(input: &str) -> PureExpr {
     match crate::parse(input) {

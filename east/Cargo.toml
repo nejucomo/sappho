@@ -5,6 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[dependencies]
+derive_more = "0.99.17"
+
 [dependencies.sappho-ast]
 path = "../ast"
 
@@ -16,3 +19,6 @@ path = "../identmap"
 
 [dependencies.sappho-object]
 path = "../object"
+
+[dev-dependencies]
+test-case = "2.0"

@@ -6,21 +6,22 @@ pub use self::clause::MatchClause;
 
 /// A `match` expression, ie: `match x { 3 -> 0, y -> y }`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
-pub struct MatchExpr<Expr> {
+pub struct MatchExpr<Pattern, Expr> {
     /// The match target, ie: `x` in `match x { 3 -> 0, y -> y }`.
     pub target: Box<Expr>,
 
     /// The match clauses, ie: `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
-    pub clauses: Vec<MatchClause<Expr>>,
+    pub clauses: Vec<MatchClause<Pattern, Expr>>,
 }
 
-impl<X> MatchExpr<X> {
-    pub fn transform_into<Y>(self) -> MatchExpr<Y>
+impl<P, X> MatchExpr<P, X> {
+    pub fn transform_into<PD, XD>(self) -> MatchExpr<PD, XD>
     where
-        Y: From<X>,
+        PD: From<P>,
+        XD: From<X>,
     {
         MatchExpr {
-            target: Box::new(Y::from(*self.target)),
+            target: Box::new(XD::from(*self.target)),
             clauses: self
                 .clauses
                 .into_iter()
@@ -30,8 +31,9 @@ impl<X> MatchExpr<X> {
     }
 }
 
-impl<X> fmt::Display for MatchExpr<X>
+impl<P, X> fmt::Display for MatchExpr<P, X>
 where
+    P: fmt::Display,
     X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

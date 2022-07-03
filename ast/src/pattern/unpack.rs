@@ -6,6 +6,12 @@ use std::ops::Deref;
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub struct UnpackPattern(IdentMap<Pattern>);
 
+impl UnpackPattern {
+    pub fn unwrap(self) -> IdentMap<Pattern> {
+        self.0
+    }
+}
+
 impl FromIterator<(Identifier, Pattern)> for UnpackPattern
 where
     IdentMap<Pattern>: FromIterator<(Identifier, Pattern)>,

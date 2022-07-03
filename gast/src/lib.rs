@@ -6,7 +6,6 @@ mod literal;
 mod lookup;
 mod matchexpr;
 mod object;
-mod pattern;
 mod query;
 
 pub use self::application::ApplicationExpr;
@@ -17,7 +16,6 @@ pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::{ObjectDef, Unbundled};
-pub use self::pattern::{Pattern, UnpackPattern};
 pub use self::query::QueryDef;
 
 /// An identifier such as the name of the argument and reference in `fn x -> x`.
