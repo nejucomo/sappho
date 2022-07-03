@@ -1,11 +1,11 @@
 use sappho_ast::{
     FuncDef,
     GenExpr::{self, Effect},
-    PureExpr, QueryDef,
+    Pattern, PureExpr, QueryDef,
     QueryEffects::Inquire,
     QueryExpr,
 };
-use sappho_gast::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef, Pattern};
+use sappho_gast::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
