@@ -1,10 +1,23 @@
 use crate::Pattern;
+use sappho_ast as ast;
 use sappho_identmap::{IdentMap, Identifier};
 use std::fmt;
 use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub struct UnpackPattern(IdentMap<Pattern>);
+
+impl From<ast::UnpackPattern> for UnpackPattern {
+    fn from(aup: ast::UnpackPattern) -> Self {
+        UnpackPattern::from(aup.unwrap().into_map_values(Pattern::from))
+    }
+}
+
+impl From<UnpackPattern> for ast::UnpackPattern {
+    fn from(eup: UnpackPattern) -> Self {
+        ast::UnpackPattern::from(eup.0.into_map_values(ast::Pattern::from))
+    }
+}
 
 impl FromIterator<(Identifier, Pattern)> for UnpackPattern
 where

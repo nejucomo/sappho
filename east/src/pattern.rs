@@ -1,6 +1,7 @@
 mod unpack;
 
 use crate::{Identifier, Literal};
+use sappho_ast as ast;
 use std::fmt;
 
 pub use self::unpack::UnpackPattern;
@@ -10,6 +11,30 @@ pub enum Pattern {
     Bind(Identifier),
     LitEq(Literal),
     Unpack(UnpackPattern),
+}
+
+impl From<ast::Pattern> for Pattern {
+    fn from(ap: ast::Pattern) -> Self {
+        use Pattern::*;
+
+        match ap {
+            ast::Pattern::Bind(x) => Bind(x),
+            ast::Pattern::LitEq(x) => LitEq(x),
+            ast::Pattern::Unpack(x) => Unpack(x.into()),
+        }
+    }
+}
+
+impl From<Pattern> for ast::Pattern {
+    fn from(p: Pattern) -> Self {
+        use Pattern::*;
+
+        match p {
+            Bind(x) => ast::Pattern::Bind(x),
+            LitEq(x) => ast::Pattern::LitEq(x),
+            Unpack(x) => ast::Pattern::Unpack(x.into()),
+        }
+    }
 }
 
 impl fmt::Display for Pattern {
