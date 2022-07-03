@@ -1,8 +1,7 @@
-use crate::Pattern;
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
-pub struct LetClause<Expr> {
+pub struct LetClause<Pattern, Expr> {
     /// The binding pattern, ie: the first `x` in `let x = 42; f x`.
     pub binding: Pattern,
 
@@ -10,20 +9,22 @@ pub struct LetClause<Expr> {
     pub bindexpr: Box<Expr>,
 }
 
-impl<X> LetClause<X> {
-    pub fn transform_into<Y>(self) -> LetClause<Y>
+impl<P, X> LetClause<P, X> {
+    pub fn transform_into<PD, XD>(self) -> LetClause<PD, XD>
     where
-        Y: From<X>,
+        PD: From<P>,
+        XD: From<X>,
     {
         LetClause {
-            binding: self.binding,
-            bindexpr: Box::new(Y::from(*self.bindexpr)),
+            binding: PD::from(self.binding),
+            bindexpr: Box::new(XD::from(*self.bindexpr)),
         }
     }
 }
 
-impl<X> fmt::Display for LetClause<X>
+impl<P, X> fmt::Display for LetClause<P, X>
 where
+    P: fmt::Display,
     X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

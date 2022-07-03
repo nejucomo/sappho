@@ -1,9 +1,8 @@
-use crate::Pattern;
 use std::fmt;
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
-pub struct MatchClause<Expr> {
+pub struct MatchClause<Pattern, Expr> {
     /// The binding pattern, ie `3` in `3 -> 0` and the first `y` in `y -> y`.
     pub pattern: Pattern,
 
@@ -11,20 +10,22 @@ pub struct MatchClause<Expr> {
     pub body: Box<Expr>,
 }
 
-impl<X> MatchClause<X> {
-    pub fn transform_into<Y>(self) -> MatchClause<Y>
+impl<P, X> MatchClause<P, X> {
+    pub fn transform_into<PD, XD>(self) -> MatchClause<PD, XD>
     where
-        Y: From<X>,
+        PD: From<P>,
+        XD: From<X>,
     {
         MatchClause {
-            pattern: self.pattern,
-            body: Box::new(Y::from(*self.body)),
+            pattern: PD::from(self.pattern),
+            body: Box::new(XD::from(*self.body)),
         }
     }
 }
 
-impl<X> fmt::Display for MatchClause<X>
+impl<P, X> fmt::Display for MatchClause<P, X>
 where
+    P: fmt::Display,
     X: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
