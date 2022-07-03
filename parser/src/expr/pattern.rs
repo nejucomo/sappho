@@ -47,11 +47,26 @@ fn list_pattern(
     use crate::space::ws;
     use chumsky::primitive::just;
 
+    let tailmatch = || just("..").ignore_then(text::ident());
+    let nonempty_body = pat.separated_by(just(',').then(ws().or_not())).at_least(1);
+
+    let nonempty_opt_tail = nonempty_body
+        .then(
+            just(',')
+                .then_ignore(ws())
+                .ignore_then(tailmatch())
+                .or_not(),
+        )
+        .map(|(pats, tail)| ListPattern::new(pats, tail));
+
     delimited(
         '[',
-        pat.separated_by(just(',').then(ws().or_not()))
-            .allow_trailing(),
+        tailmatch()
+            .map(|b| ListPattern::new([], Some(b)))
+            .or(nonempty_opt_tail)
+            .or_not()
+            .map(|opt| opt.unwrap_or_else(|| ListPattern::new([], None))),
         ']',
     )
-    .map(ListPattern::from_iter)
+    .labelled("list-pattern")
 }

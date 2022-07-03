@@ -19,15 +19,6 @@ impl ListPattern {
     }
 }
 
-impl FromIterator<Pattern> for ListPattern {
-    fn from_iter<I>(iter: I) -> Self
-    where
-        I: IntoIterator<Item = Pattern>,
-    {
-        ListPattern::new(iter, None)
-    }
-}
-
 impl fmt::Display for ListPattern {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use sappho_fmtutil::fmt_comma_sep;

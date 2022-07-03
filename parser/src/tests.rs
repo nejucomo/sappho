@@ -72,8 +72,8 @@ fn lookup(t: PureExpr, attr: &str) -> PureExpr {
     LookupExpr::new(Box::new(t), attr.to_string()).into()
 }
 
-fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
-    Pattern::List(ListPattern::from_iter(pats))
+fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&str>) -> Pattern {
+    Pattern::List(ListPattern::new(pats, tail.map(|s| s.to_string())))
 }
 
 #[test_case("42" => num(42.0) ; "forty-two")]
@@ -302,7 +302,7 @@ fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
     "let [] = {}; 42" =>
     let_expr(
         [(
-            list_pat([]),
+            list_pat([], None),
             attrs_def([]),
         )],
         num(42.0),
@@ -313,7 +313,7 @@ fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
     "let [x] = {head: 42, tail: {}}; x" =>
     let_expr(
         [(
-            list_pat([bind("x")]),
+            list_pat([bind("x")], None),
             attrs_def([
                 ("head", num(42.0)),
                 ("tail", attrs_def([])),
@@ -327,7 +327,7 @@ fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
     "let [x, y] = {head: 2, tail: {head: 3, tail: {}}}; {a: x, b: y}" =>
     let_expr(
         [(
-            list_pat([bind("x"), bind("y")]),
+            list_pat([bind("x"), bind("y")], None),
             attrs_def([
                 ("head", num(2.0)),
                 ("tail", attrs_def([
@@ -342,6 +342,31 @@ fn list_pat<const K: usize>(pats: [Pattern; K]) -> Pattern {
         ]),
     )
     ; "let list pair"
+)]
+#[test_case(
+    "let [..t] = 42; t" =>
+    let_expr(
+        [(
+            list_pat([], Some("t")),
+            num(42.0),
+        )],
+        refexpr("t"),
+    )
+    ; "let list tail"
+)]
+#[test_case(
+    "let [h, ..t] = 42; {head: h, tail: t}" =>
+    let_expr(
+        [(
+            list_pat([bind("h")], Some("t")),
+            num(42.0),
+        )],
+        attrs_def([
+            ("head", refexpr("h")),
+            ("tail", refexpr("t")),
+        ]),
+    )
+    ; "let list singleton and tail"
 )]
 fn positive(input: &str) -> PureExpr {
     match crate::parse(input) {
