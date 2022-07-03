@@ -17,6 +17,10 @@ impl<T> IdentMap<T> {
         self.0.is_empty()
     }
 
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
     pub fn define(&mut self, id: Identifier, val: T) -> Result<(), RedefinitionError> {
         // TODO: find a design that doesn't clone?
         match self.0.insert(id.clone(), val) {

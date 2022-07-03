@@ -21,8 +21,26 @@ impl From<ast::Pattern> for Pattern {
             ast::Pattern::Bind(x) => Bind(x),
             ast::Pattern::LitEq(x) => LitEq(x),
             ast::Pattern::Unpack(x) => Unpack(x.into()),
-            ast::Pattern::List(x) => Unpack(UnpackPattern::from(x)),
+            ast::Pattern::List(x) => x.into(),
         }
+    }
+}
+
+impl From<ast::ListPattern> for Pattern {
+    fn from(alp: ast::ListPattern) -> Pattern {
+        use Pattern::Unpack;
+
+        let tailpat = alp
+            .tail
+            .map(Pattern::Bind)
+            .unwrap_or_else(|| Unpack(UnpackPattern::default()));
+
+        alp.body.into_iter().rev().fold(tailpat, |tail, head| {
+            Unpack(UnpackPattern::from_iter([
+                ("head".to_string(), Pattern::from(head)),
+                ("tail".to_string(), tail),
+            ]))
+        })
     }
 }
 
@@ -33,7 +51,16 @@ impl From<Pattern> for ast::Pattern {
         match p {
             Bind(x) => ast::Pattern::Bind(x),
             LitEq(x) => ast::Pattern::LitEq(x),
-            Unpack(x) => ast::Pattern::Unpack(x.into()),
+            Unpack(x) => x
+                .as_list_pattern()
+                .map(|(pats, tailbind)| {
+                    ast::ListPattern::new(
+                        pats.into_iter().map(|p| ast::Pattern::from(p.clone())),
+                        tailbind.map(|s| s.to_string()),
+                    )
+                    .into()
+                })
+                .unwrap_or_else(|| ast::Pattern::Unpack(x.into())),
         }
     }
 }
