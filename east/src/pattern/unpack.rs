@@ -4,7 +4,7 @@ use sappho_identmap::{IdentMap, Identifier};
 use std::fmt;
 use std::ops::Deref;
 
-#[derive(Clone, Debug, PartialEq, derive_more::From)]
+#[derive(Clone, Debug, Default, PartialEq, derive_more::From)]
 pub struct UnpackPattern(IdentMap<Pattern>);
 
 impl From<ast::UnpackPattern> for UnpackPattern {
@@ -16,6 +16,19 @@ impl From<ast::UnpackPattern> for UnpackPattern {
 impl From<UnpackPattern> for ast::UnpackPattern {
     fn from(eup: UnpackPattern) -> Self {
         ast::UnpackPattern::from(eup.0.into_map_values(ast::Pattern::from))
+    }
+}
+
+impl From<ast::ListPattern> for UnpackPattern {
+    fn from(alp: ast::ListPattern) -> Self {
+        alp.into_iter()
+            .rev()
+            .fold(UnpackPattern::default(), |tail, head| {
+                UnpackPattern::from_iter([
+                    ("head".to_string(), Pattern::from(head)),
+                    ("tail".to_string(), Pattern::Unpack(tail)),
+                ])
+            })
     }
 }
 

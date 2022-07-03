@@ -25,4 +25,4 @@ pub type ObjectDef = sappho_gast::ObjectDef<Pattern, PureExpr, QueryExpr>;
 
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;
-pub use self::pattern::{Pattern, UnpackPattern};
+pub use self::pattern::{ListPattern, Pattern, UnpackPattern};

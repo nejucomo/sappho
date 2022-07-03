@@ -21,6 +21,7 @@ impl From<ast::Pattern> for Pattern {
             ast::Pattern::Bind(x) => Bind(x),
             ast::Pattern::LitEq(x) => LitEq(x),
             ast::Pattern::Unpack(x) => Unpack(x.into()),
+            ast::Pattern::List(x) => Unpack(UnpackPattern::from(x)),
         }
     }
 }
@@ -48,3 +49,6 @@ impl fmt::Display for Pattern {
         }
     }
 }
+
+#[cfg(test)]
+mod tests;

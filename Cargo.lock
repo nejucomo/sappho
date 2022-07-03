@@ -334,6 +334,7 @@ name = "sappho-ast"
 version = "0.1.0"
 dependencies = [
  "derive_more",
+ "sappho-fmtutil",
  "sappho-gast",
  "sappho-identmap",
  "sappho-object",
@@ -362,6 +363,7 @@ dependencies = [
  "sappho-gast",
  "sappho-identmap",
  "sappho-object",
+ "test-case",
 ]
 
 [[package]]
