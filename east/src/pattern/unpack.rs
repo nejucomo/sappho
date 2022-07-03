@@ -19,19 +19,6 @@ impl From<UnpackPattern> for ast::UnpackPattern {
     }
 }
 
-impl From<ast::ListPattern> for UnpackPattern {
-    fn from(alp: ast::ListPattern) -> Self {
-        alp.into_iter()
-            .rev()
-            .fold(UnpackPattern::default(), |tail, head| {
-                UnpackPattern::from_iter([
-                    ("head".to_string(), Pattern::from(head)),
-                    ("tail".to_string(), Pattern::Unpack(tail)),
-                ])
-            })
-    }
-}
-
 impl FromIterator<(Identifier, Pattern)> for UnpackPattern
 where
     IdentMap<Pattern>: FromIterator<(Identifier, Pattern)>,

@@ -21,8 +21,26 @@ impl From<ast::Pattern> for Pattern {
             ast::Pattern::Bind(x) => Bind(x),
             ast::Pattern::LitEq(x) => LitEq(x),
             ast::Pattern::Unpack(x) => Unpack(x.into()),
-            ast::Pattern::List(x) => Unpack(UnpackPattern::from(x)),
+            ast::Pattern::List(x) => x.into(),
         }
+    }
+}
+
+impl From<ast::ListPattern> for Pattern {
+    fn from(alp: ast::ListPattern) -> Pattern {
+        use Pattern::Unpack;
+
+        let tailpat = alp
+            .tail
+            .map(Pattern::Bind)
+            .unwrap_or_else(|| Unpack(UnpackPattern::default()));
+
+        alp.body.into_iter().rev().fold(tailpat, |tail, head| {
+            Unpack(UnpackPattern::from_iter([
+                ("head".to_string(), Pattern::from(head)),
+                ("tail".to_string(), tail),
+            ]))
+        })
     }
 }
 
