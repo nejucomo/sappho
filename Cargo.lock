@@ -333,6 +333,7 @@ dependencies = [
 name = "sappho-ast"
 version = "0.1.0"
 dependencies = [
+ "derive_more",
  "sappho-gast",
  "sappho-identmap",
  "sappho-object",
@@ -356,6 +357,7 @@ dependencies = [
 name = "sappho-east"
 version = "0.1.0"
 dependencies = [
+ "derive_more",
  "sappho-ast",
  "sappho-gast",
  "sappho-identmap",
