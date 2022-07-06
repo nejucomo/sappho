@@ -2,6 +2,7 @@ mod unpack;
 
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use std::fmt;
 
 pub use self::unpack::UnpackPattern;
@@ -52,13 +53,23 @@ impl From<Pattern> for ast::Pattern {
             Bind(x) => ast::Pattern::Bind(x),
             LitEq(x) => ast::Pattern::LitEq(x),
             Unpack(x) => x
-                .as_list_pattern()
-                .map(|(pats, tailbind)| {
-                    ast::ListPattern::new(
-                        pats.into_iter().map(|p| ast::Pattern::from(p.clone())),
-                        tailbind.map(|s| s.to_string()),
+                .as_list_form()
+                .and_then(|(pats, tailpat)| {
+                    let tailbind = match tailpat {
+                        Some(Bind(b)) => Some(b.to_string()),
+                        None => None,
+                        Some(_) => {
+                            // Non-empty, non-Bind tails disallowed:
+                            return None;
+                        }
+                    };
+                    Some(
+                        ast::ListPattern::new(
+                            pats.into_iter().map(|p| ast::Pattern::from(p.clone())),
+                            tailbind,
+                        )
+                        .into(),
                     )
-                    .into()
                 })
                 .unwrap_or_else(|| ast::Pattern::Unpack(x.into())),
         }
@@ -73,6 +84,17 @@ impl fmt::Display for Pattern {
             Bind(x) => x.fmt(f),
             LitEq(x) => x.fmt(f),
             Unpack(x) => x.fmt(f),
+        }
+    }
+}
+
+impl TryIntoIdentMap<Pattern> for Pattern {
+    fn try_into_identmap(&self) -> Option<&IdentMap<Pattern>> {
+        use std::ops::Deref;
+
+        match self {
+            Pattern::Unpack(up) => Some(up.deref()),
+            _ => None,
         }
     }
 }
