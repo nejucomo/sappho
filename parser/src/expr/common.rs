@@ -9,7 +9,7 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{FuncDef, GenExpr, Identifier, ObjectDef, ProcExpr, PureExpr, QueryDef};
+use sappho_ast::{FuncDef, GenExpr, Identifier, ObjectDef, ProcEffects, ProcExpr, QueryDef};
 
 pub(crate) fn common_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
@@ -51,7 +51,7 @@ fn query_def(
 
 fn object_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ObjectDef, Error = BareError> + '_ {
+) -> impl Parser<char, ObjectDef<ProcEffects>, Error = BareError> + '_ {
     let innards = object_clause(expr)
         .separated_by(just(',').then(ws().or_not()))
         .allow_trailing();
@@ -62,7 +62,7 @@ fn object_def(
 }
 
 enum ObjectClause {
-    Attr(Identifier, PureExpr),
+    Attr(Identifier, ProcExpr),
     Func(FuncDef),
     Query(QueryDef),
 }
@@ -80,16 +80,19 @@ fn object_clause(
 
 fn attr_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, (Identifier, PureExpr), Error = BareError> + '_ {
+) -> impl Parser<char, (Identifier, ProcExpr), Error = BareError> + '_ {
     identifier()
         .then_ignore(ws().or_not())
         .then_ignore(just(':'))
         .then_ignore(ws().or_not())
-        .then(pure_expr(expr))
+        .then(expr)
         .labelled("attribute definition")
 }
 
-fn construct_object(clauses: Vec<ObjectClause>, span: Span) -> Result<ObjectDef, BareError> {
+fn construct_object(
+    clauses: Vec<ObjectClause>,
+    span: Span,
+) -> Result<ObjectDef<ProcEffects>, BareError> {
     use sappho_identmap::{IdentMap, RedefinitionError};
 
     let mut query = None;

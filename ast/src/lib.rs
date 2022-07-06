@@ -21,7 +21,7 @@ pub type MatchExpr<FX> = sappho_gast::MatchExpr<Pattern, GenExpr<FX>>;
 pub type MatchClause<FX> = sappho_gast::MatchClause<Pattern, GenExpr<FX>>;
 pub type QueryDef = sappho_gast::QueryDef<QueryExpr>;
 pub type FuncDef = sappho_gast::FuncDef<Pattern, PureExpr>;
-pub type ObjectDef = sappho_gast::ObjectDef<Pattern, PureExpr, QueryExpr>;
+pub type ObjectDef<FX> = sappho_gast::ObjectDef<Pattern, PureExpr, QueryExpr, GenExpr<FX>>;
 
 pub use self::effects::{ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr};
 pub use self::expr::GenExpr;

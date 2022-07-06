@@ -5,30 +5,38 @@ use std::fmt;
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Clone, Debug, PartialEq)]
-pub struct ObjectDef<Pattern, PureExpr, QueryExpr>(ObjectInner<Pattern, PureExpr, QueryExpr>);
-pub type ObjectInner<Pattern, PureExpr, QueryExpr> =
-    Object<FuncDef<Pattern, PureExpr>, QueryDef<QueryExpr>, PureExpr>;
+pub struct ObjectDef<Pattern, PureExpr, QueryExpr, Expr>(
+    ObjectInner<Pattern, PureExpr, QueryExpr, Expr>,
+);
+pub type ObjectInner<Pattern, PureExpr, QueryExpr, Expr> =
+    Object<FuncDef<Pattern, PureExpr>, QueryDef<QueryExpr>, Expr>;
 
 #[derive(Debug)]
-pub enum Unbundled<P, X, Q> {
-    Bundled(ObjectDef<P, X, Q>),
+pub enum Unbundled<P, X, Q, G> {
+    Bundled(ObjectDef<P, X, Q, G>),
     Func(FuncDef<P, X>),
     Query(QueryDef<Q>),
 }
 
-impl<P, X, Q> std::ops::Deref for ObjectDef<P, X, Q> {
-    type Target = ObjectInner<P, X, Q>;
+impl<P, X, Q, G> std::ops::Deref for ObjectDef<P, X, Q, G> {
+    type Target = ObjectInner<P, X, Q, G>;
 
-    fn deref(&self) -> &ObjectInner<P, X, Q> {
+    fn deref(&self) -> &ObjectInner<P, X, Q, G> {
         &self.0
     }
 }
 
-impl<P, X, Q> ObjectDef<P, X, Q> {
+impl<P, X, Q, G> Default for ObjectDef<P, X, Q, G> {
+    fn default() -> Self {
+        ObjectDef(ObjectInner::default())
+    }
+}
+
+impl<P, X, Q, G> ObjectDef<P, X, Q, G> {
     pub fn new(
         func: Option<FuncDef<P, X>>,
         query: Option<QueryDef<Q>>,
-        attrs: IdentMap<X>,
+        attrs: IdentMap<G>,
     ) -> Self {
         ObjectDef(ObjectInner::new(func, query, attrs))
     }
@@ -41,24 +49,32 @@ impl<P, X, Q> ObjectDef<P, X, Q> {
         ObjectDef(ObjectInner::new_query(query))
     }
 
-    pub fn new_attrs(attrs: IdentMap<X>) -> Self {
+    pub fn new_attrs<T>(attrs: T) -> Self
+    where
+        T: Into<IdentMap<G>>,
+    {
         ObjectDef(ObjectInner::new_attrs(attrs))
     }
 
-    pub fn transform_into<PD, PX, QD>(self) -> ObjectDef<PD, PX, QD>
+    pub fn transform_into<PD, XD, QD, GD>(self) -> ObjectDef<PD, XD, QD, GD>
     where
         PD: From<P>,
-        PX: From<X>,
+        XD: From<X>,
         QD: From<Q>,
+        GD: From<G>,
     {
         ObjectDef(self.0.transform(
             |func| func.transform_into(),
             |query| query.transform_into(),
-            PX::from,
+            GD::from,
         ))
     }
 
-    pub fn unbundle(self) -> Unbundled<P, X, Q> {
+    pub fn unwrap(self) -> (Option<FuncDef<P, X>>, Option<QueryDef<Q>>, IdentMap<G>) {
+        self.0.unwrap()
+    }
+
+    pub fn unbundle(self) -> Unbundled<P, X, Q, G> {
         use sappho_object::Unbundled as OU;
         use Unbundled::*;
 
@@ -71,11 +87,12 @@ impl<P, X, Q> ObjectDef<P, X, Q> {
     }
 }
 
-impl<P, X, Q> fmt::Display for ObjectDef<P, X, Q>
+impl<P, X, Q, G> fmt::Display for ObjectDef<P, X, Q, G>
 where
     P: fmt::Display,
     X: fmt::Display,
     Q: fmt::Display,
+    G: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.0.fmt(f)

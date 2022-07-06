@@ -14,7 +14,7 @@ pub enum GenExpr<Effects> {
     Ref(Identifier),
     Func(FuncDef),
     Query(QueryDef),
-    Object(ObjectDef),
+    Object(ObjectDef<Effects>),
     List(ListExpr<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Match(MatchExpr<Effects>),
@@ -47,8 +47,8 @@ impl<FX> From<QueryDef> for GenExpr<FX> {
     }
 }
 
-impl<FX> From<ObjectDef> for GenExpr<FX> {
-    fn from(x: ObjectDef) -> Self {
+impl<FX> From<ObjectDef<FX>> for GenExpr<FX> {
+    fn from(x: ObjectDef<FX>) -> Self {
         GenExpr::Object(x)
     }
 }

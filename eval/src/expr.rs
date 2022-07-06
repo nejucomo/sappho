@@ -1,7 +1,6 @@
 mod application;
 mod effects;
 mod letexpr;
-mod listexpr;
 mod literal;
 mod lookup;
 mod matchexpr;
@@ -43,7 +42,6 @@ where
             Ok(v)
         }
         Object(x) => x.eval(scope),
-        List(x) => x.eval(scope),
         Let(x) => x.eval(scope),
         Match(x) => x.eval(scope),
         Application(x) => x.eval(scope),

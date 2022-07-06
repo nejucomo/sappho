@@ -17,6 +17,12 @@ pub enum Unbundled<F, Q, A> {
     Attrs(IdentMap<A>),
 }
 
+impl<F, Q, A> Default for Object<F, Q, A> {
+    fn default() -> Self {
+        Object::new(None, None, IdentMap::default())
+    }
+}
+
 impl<F, Q, A> Object<F, Q, A> {
     pub fn new_func(func: F) -> Self {
         Self::new(Some(func), None, IdentMap::default())
@@ -26,8 +32,11 @@ impl<F, Q, A> Object<F, Q, A> {
         Self::new(None, Some(query), IdentMap::default())
     }
 
-    pub fn new_attrs(attrs: IdentMap<A>) -> Self {
-        Self::new(None, None, attrs)
+    pub fn new_attrs<T>(attrs: T) -> Self
+    where
+        T: Into<IdentMap<A>>,
+    {
+        Self::new(None, None, attrs.into())
     }
 
     pub fn func(&self) -> Option<&F> {
@@ -40,6 +49,11 @@ impl<F, Q, A> Object<F, Q, A> {
 
     pub fn attrs(&self) -> &IdentMap<A> {
         &self.a
+    }
+
+    pub fn unwrap(self) -> (Option<F>, Option<Q>, IdentMap<A>) {
+        let Object { f, q, a } = self;
+        (f, q, a)
     }
 
     pub fn unbundle(self) -> Unbundled<F, Q, A> {
