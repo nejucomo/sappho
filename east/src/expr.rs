@@ -3,6 +3,7 @@ use crate::{
     ObjectDef,
 };
 use sappho_ast as ast;
+use sappho_gast as gast;
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -30,22 +31,31 @@ where
             ast::GenExpr::Func(x) => ast::GenExpr::from(ast::ObjectDef::new_func(x)).into(),
             ast::GenExpr::Query(x) => ast::GenExpr::from(ast::ObjectDef::new_query(x)).into(),
             ast::GenExpr::Object(x) => Object(x.transform_into()),
-            ast::GenExpr::List(x) => {
-                x.into_iter()
-                    .rev()
-                    .fold(Object(ObjectDef::default()), |tail, astexpr| {
-                        Object(ObjectDef::new_attrs([
-                            ("head".to_string(), GenExpr::from(astexpr)),
-                            ("tail".to_string(), tail),
-                        ]))
-                    })
-            }
+            ast::GenExpr::List(x) => x.into(),
             ast::GenExpr::Let(x) => Let(x.transform_into()),
             ast::GenExpr::Match(x) => Match(x.transform_into()),
             ast::GenExpr::Application(x) => Application(x.transform_into()),
             ast::GenExpr::Lookup(x) => Lookup(x.transform_into()),
             ast::GenExpr::Effect(x) => Effect(FX::from_fx(x)),
         }
+    }
+}
+
+impl<FX> From<gast::ListExpr<ast::GenExpr<AstFxFor<FX>>>> for GenExpr<FX>
+where
+    FX: FromFx,
+{
+    fn from(x: gast::ListExpr<ast::GenExpr<AstFxFor<FX>>>) -> Self {
+        use GenExpr::Object;
+
+        x.into_iter()
+            .rev()
+            .fold(Object(ObjectDef::default()), |tail, astexpr| {
+                Object(ObjectDef::new_attrs([
+                    ("head".to_string(), GenExpr::from(astexpr)),
+                    ("tail".to_string(), tail),
+                ]))
+            })
     }
 }
 
