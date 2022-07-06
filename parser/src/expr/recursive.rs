@@ -7,7 +7,7 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{GenExpr, LetClause, LetExpr, MatchClause, MatchExpr};
-use sappho_gast::ListExpr;
+use sappho_gast::ListForm;
 
 pub(crate) fn recursive_expr<'a, FX: 'a>(
     expr: Recursive<'a, char, GenExpr<FX>, BareError>,
@@ -22,7 +22,7 @@ pub(crate) fn recursive_expr<'a, FX: 'a>(
 
 fn list_expr<'a, FX: 'a>(
     expr: Recursive<'a, char, GenExpr<FX>, BareError>,
-) -> impl Parser<char, ListExpr<GenExpr<FX>>, Error = BareError> + 'a {
+) -> impl Parser<char, ListForm<GenExpr<FX>>, Error = BareError> + 'a {
     list_form(expr).labelled("list-expression")
 }
 

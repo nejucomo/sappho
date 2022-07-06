@@ -4,7 +4,7 @@ use sappho_ast::{
     ApplicationExpr, GenExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr, ProcEffects,
     PureEffects, QueryEffects, QueryExpr,
 };
-use sappho_gast::ListExpr;
+use sappho_gast::ListForm;
 
 pub(crate) trait Restrict<S>: Sized {
     fn restrict(src: S, span: Span) -> Result<Self, BareError>;
@@ -68,7 +68,7 @@ where
             List(x) => Ok(List(
                 x.into_iter()
                     .map(|subx| GenExpr::<FXD>::restrict(subx, span.clone()))
-                    .collect::<Result<ListExpr<_>, BareError>>()?,
+                    .collect::<Result<ListForm<_>, BareError>>()?,
             )),
             Let(x) => LetExpr::restrict(x, span).map(Let),
             Match(x) => MatchExpr::restrict(x, span).map(Match),

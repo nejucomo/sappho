@@ -41,11 +41,11 @@ where
     }
 }
 
-impl<FX> From<gast::ListExpr<ast::GenExpr<AstFxFor<FX>>>> for GenExpr<FX>
+impl<FX> From<gast::ListForm<ast::GenExpr<AstFxFor<FX>>>> for GenExpr<FX>
 where
     FX: FromFx,
 {
-    fn from(x: gast::ListExpr<ast::GenExpr<AstFxFor<FX>>>) -> Self {
+    fn from(x: gast::ListForm<ast::GenExpr<AstFxFor<FX>>>) -> Self {
         use GenExpr::Object;
 
         x.into_iter()

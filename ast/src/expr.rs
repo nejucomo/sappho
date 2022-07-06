@@ -4,7 +4,7 @@ use crate::{
     ApplicationExpr, FuncDef, Identifier, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
     QueryDef,
 };
-use sappho_gast::ListExpr;
+use sappho_gast::ListForm;
 use std::fmt;
 
 /// The general top-level expression for all effects.
@@ -15,7 +15,7 @@ pub enum GenExpr<Effects> {
     Func(FuncDef),
     Query(QueryDef),
     Object(ObjectDef<Effects>),
-    List(ListExpr<GenExpr<Effects>>),
+    List(ListForm<GenExpr<Effects>>),
     Let(LetExpr<Effects>),
     Match(MatchExpr<Effects>),
     Application(ApplicationExpr<Effects>),
