@@ -401,6 +401,7 @@ name = "sappho-identmap"
 version = "0.1.0"
 dependencies = [
  "sappho-fmtutil",
+ "sappho-listform",
 ]
 
 [[package]]

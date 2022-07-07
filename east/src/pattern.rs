@@ -56,22 +56,19 @@ impl From<Pattern> for ast::Pattern {
             LitEq(x) => ast::Pattern::LitEq(x),
             Unpack(x) => x
                 .as_list_form()
-                .and_then(|(pats, tailpat)| {
-                    let tailbind = match tailpat {
-                        Some(Bind(b)) => Some(b.to_string()),
-                        None => None,
-                        Some(_) => {
-                            // Non-empty, non-Bind tails disallowed:
-                            return None;
-                        }
-                    };
-                    Some(
-                        ast::ListPattern::new(
-                            pats.into_iter().map(|p| ast::Pattern::from(p.clone())),
-                            tailbind,
-                        )
-                        .into(),
-                    )
+                .and_then(|listform| {
+                    listform
+                        .map_elems(|p| ast::Pattern::from(p.clone()))
+                        .map_tail(|t| match t {
+                            Bind(b) => Ok(b.to_string()),
+                            _ => {
+                                // Non-empty, non-Bind tails disallowed:
+                                Err(())
+                            }
+                        })
+                        .transpose_tail()
+                        .ok()
+                        .map(ast::Pattern::List)
                 })
                 .unwrap_or_else(|| ast::Pattern::Unpack(x.into())),
         }

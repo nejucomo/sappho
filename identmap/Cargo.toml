@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies.sappho-fmtutil]
 path = "../fmtutil"
+
+[dependencies.sappho-listform]
+path = "../listform"
