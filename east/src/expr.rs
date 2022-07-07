@@ -3,6 +3,7 @@ use crate::{
     ObjectDef,
 };
 use sappho_ast as ast;
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -66,6 +67,7 @@ where
 impl<FX> From<GenExpr<AstFxFor<FX>>> for ast::GenExpr<FX>
 where
     FX: FromFx,
+    AstFxFor<FX>: Clone,
 {
     fn from(x: GenExpr<AstFxFor<FX>>) -> Self {
         use GenExpr::*;
@@ -73,20 +75,45 @@ where
         match x {
             Lit(x) => ast::GenExpr::Lit(x),
             Ref(x) => ast::GenExpr::Ref(x),
-            Object(x) => {
-                use ast::GenExpr::{Func, Object, Query};
-                use sappho_gast::Unbundled as U;
-                match x.unbundle() {
-                    U::Bundled(obj) => Object(obj.transform_into()),
-                    U::Func(f) => Func(f.transform_into()),
-                    U::Query(q) => Query(q.transform_into()),
-                }
-            }
+            Object(x) => objdef_to_ast_expr(x),
             Let(x) => ast::GenExpr::Let(x.transform_into()),
             Match(x) => ast::GenExpr::Match(x.transform_into()),
             Application(x) => ast::GenExpr::Application(x.transform_into()),
             Lookup(x) => ast::GenExpr::Lookup(x.transform_into()),
             Effect(x) => ast::GenExpr::Effect(FX::from_fx(x)),
+        }
+    }
+}
+
+fn objdef_to_ast_expr<FX>(objdef: ObjectDef<AstFxFor<FX>>) -> ast::GenExpr<FX>
+where
+    FX: FromFx,
+    AstFxFor<FX>: Clone,
+{
+    use ast::GenExpr::{Func, List, Object, Query};
+    use sappho_gast::Unbundled as U;
+
+    match objdef.unbundle() {
+        U::Bundled(obj) => Object(ObjectDef::from(obj).transform_into()),
+        U::Func(f) => Func(f.transform_into()),
+        U::Query(q) => Query(q.transform_into()),
+        U::Attrs(a) => a
+            .as_list_form()
+            .map(|(heads, tail)| {
+                List(ast::ListExpr::new(
+                    heads.into_iter().map(|x| ast::GenExpr::from(x.clone())),
+                    tail.map(|x| Box::new(ast::GenExpr::from(x.clone()))),
+                ))
+            })
+            .unwrap_or_else(|| Object(ObjectDef::new_attrs(a).transform_into())),
+    }
+}
+
+impl<FX> TryIntoIdentMap<GenExpr<FX>> for GenExpr<FX> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<GenExpr<FX>>> {
+        match self {
+            GenExpr::Object(od) => od.try_into_identmap(),
+            _ => None,
         }
     }
 }

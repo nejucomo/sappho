@@ -1,10 +1,10 @@
 use crate::{FuncDef, QueryDef};
-use sappho_identmap::IdentMap;
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
 use std::fmt;
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub struct ObjectDef<Pattern, PureExpr, QueryExpr, Expr>(
     ObjectInner<Pattern, PureExpr, QueryExpr, Expr>,
 );
@@ -16,6 +16,7 @@ pub enum Unbundled<P, X, Q, G> {
     Bundled(ObjectDef<P, X, Q, G>),
     Func(FuncDef<P, X>),
     Query(QueryDef<Q>),
+    Attrs(IdentMap<G>),
 }
 
 impl<P, X, Q, G> std::ops::Deref for ObjectDef<P, X, Q, G> {
@@ -78,7 +79,7 @@ impl<P, X, Q, G> ObjectDef<P, X, Q, G> {
             OU::Bundled(inner) => Bundled(ObjectDef(inner)),
             OU::Func(f) => Func(f),
             OU::Query(q) => Query(q),
-            OU::Attrs(a) => Bundled(ObjectDef::new_attrs(a)),
+            OU::Attrs(a) => Attrs(a),
         }
     }
 
@@ -87,6 +88,12 @@ impl<P, X, Q, G> ObjectDef<P, X, Q, G> {
         F: Fn(G) -> Result<DG, E>,
     {
         self.0.into_try_map_values(tattr).map(ObjectDef)
+    }
+}
+
+impl<P, X, Q, G> TryIntoIdentMap<G> for ObjectDef<P, X, Q, G> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<G>> {
+        self.0.try_into_identmap()
     }
 }
 

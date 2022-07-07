@@ -1,5 +1,5 @@
 use derive_new::new;
-use sappho_identmap::IdentMap;
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, new)]
@@ -109,6 +109,12 @@ impl<F, Q, A> Object<F, Q, A> {
             dsta.define(aname, dx).unwrap();
         }
         Ok(Object::new(self.f, self.q, dsta))
+    }
+}
+
+impl<F, Q, A> TryIntoIdentMap<A> for Object<F, Q, A> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<A>> {
+        Some(self.attrs())
     }
 }
 
