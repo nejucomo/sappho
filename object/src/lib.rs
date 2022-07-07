@@ -1,5 +1,5 @@
 use derive_new::new;
-use sappho_identmap::IdentMap;
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, new)]
@@ -17,6 +17,12 @@ pub enum Unbundled<F, Q, A> {
     Attrs(IdentMap<A>),
 }
 
+impl<F, Q, A> Default for Object<F, Q, A> {
+    fn default() -> Self {
+        Object::new(None, None, IdentMap::default())
+    }
+}
+
 impl<F, Q, A> Object<F, Q, A> {
     pub fn new_func(func: F) -> Self {
         Self::new(Some(func), None, IdentMap::default())
@@ -26,8 +32,11 @@ impl<F, Q, A> Object<F, Q, A> {
         Self::new(None, Some(query), IdentMap::default())
     }
 
-    pub fn new_attrs(attrs: IdentMap<A>) -> Self {
-        Self::new(None, None, attrs)
+    pub fn new_attrs<T>(attrs: T) -> Self
+    where
+        T: Into<IdentMap<A>>,
+    {
+        Self::new(None, None, attrs.into())
     }
 
     pub fn func(&self) -> Option<&F> {
@@ -88,6 +97,24 @@ impl<F, Q, A> Object<F, Q, A> {
             q: self.q.map(tquery),
             a: self.a.into_map_values(tattr),
         }
+    }
+
+    pub fn into_try_map_values<TA, DA, E>(self, tattr: TA) -> Result<Object<F, Q, DA>, E>
+    where
+        TA: Fn(A) -> Result<DA, E>,
+    {
+        let mut dsta = IdentMap::default();
+        for (aname, x) in self.a {
+            let dx = tattr(x)?;
+            dsta.define(aname, dx).unwrap();
+        }
+        Ok(Object::new(self.f, self.q, dsta))
+    }
+}
+
+impl<F, Q, A> TryIntoIdentMap<A> for Object<F, Q, A> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<A>> {
+        Some(self.attrs())
     }
 }
 

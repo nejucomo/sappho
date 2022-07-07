@@ -1,5 +1,9 @@
 //! Provide deterministic mapping from identifiers to values
 
+mod tryinto;
+
+pub use self::tryinto::TryIntoIdentMap;
+
 use std::collections::BTreeMap;
 use std::fmt;
 
@@ -63,6 +67,39 @@ impl<T> IdentMap<T> {
         }
 
         out
+    }
+}
+
+impl<T> IdentMap<T>
+where
+    T: TryIntoIdentMap<T>,
+{
+    pub fn as_list_form(&self) -> Option<(Vec<&T>, Option<&T>)> {
+        self.try_as_list_form().ok()
+    }
+
+    fn try_as_list_form(&self) -> Result<(Vec<&T>, Option<&T>), ()> {
+        fn get<'a, T>(idmap: &'a IdentMap<T>, attr: &IdentRef) -> Result<&'a T, ()> {
+            idmap.get(attr).ok_or(())
+        }
+
+        let mut ts = vec![];
+        let mut idmap = self;
+        loop {
+            if idmap.is_empty() {
+                return Ok((ts, None));
+            } else if idmap.len() != 2 {
+                return Err(());
+            }
+
+            ts.push(get(idmap, "head")?);
+            let tail = get(idmap, "tail")?;
+            if let Some(tailmap) = tail.try_into_identmap() {
+                idmap = tailmap;
+            } else {
+                return Ok((ts, Some(tail)));
+            }
+        }
     }
 }
 

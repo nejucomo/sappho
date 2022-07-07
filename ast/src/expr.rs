@@ -1,10 +1,9 @@
 //! Top-level expression type `GenExpr`, generic over [crate::effects]
 
 use crate::{
-    ApplicationExpr, FuncDef, Identifier, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
-    QueryDef,
+    ApplicationExpr, FuncDef, Identifier, LetExpr, ListExpr, Literal, LookupExpr, MatchExpr,
+    ObjectDef, QueryDef,
 };
-use sappho_gast::ListExpr;
 use std::fmt;
 
 /// The general top-level expression for all effects.
@@ -14,8 +13,8 @@ pub enum GenExpr<Effects> {
     Ref(Identifier),
     Func(FuncDef),
     Query(QueryDef),
-    Object(ObjectDef),
-    List(ListExpr<GenExpr<Effects>>),
+    Object(ObjectDef<Effects>),
+    List(ListExpr<Effects>),
     Let(LetExpr<Effects>),
     Match(MatchExpr<Effects>),
     Application(ApplicationExpr<Effects>),
@@ -47,8 +46,8 @@ impl<FX> From<QueryDef> for GenExpr<FX> {
     }
 }
 
-impl<FX> From<ObjectDef> for GenExpr<FX> {
-    fn from(x: ObjectDef) -> Self {
+impl<FX> From<ObjectDef<FX>> for GenExpr<FX> {
+    fn from(x: ObjectDef<FX>) -> Self {
         GenExpr::Object(x)
     }
 }
@@ -58,7 +57,7 @@ impl<FX> FromIterator<GenExpr<FX>> for GenExpr<FX> {
     where
         T: IntoIterator<Item = GenExpr<FX>>,
     {
-        GenExpr::List(iter.into_iter().collect())
+        GenExpr::List(ListExpr::new(iter, None))
     }
 }
 

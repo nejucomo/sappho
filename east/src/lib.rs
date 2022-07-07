@@ -4,7 +4,7 @@ mod effects;
 mod expr;
 mod pattern;
 
-pub use sappho_gast::{Identifier, ListExpr, Literal};
+pub use sappho_gast::{Identifier, Literal};
 pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<GenExpr<FX>>;
 pub type LetExpr<FX> = sappho_gast::LetExpr<Pattern, GenExpr<FX>>;
 pub type LetClause<FX> = sappho_gast::LetClause<Pattern, GenExpr<FX>>;
@@ -13,7 +13,7 @@ pub type MatchExpr<FX> = sappho_gast::MatchExpr<Pattern, GenExpr<FX>>;
 pub type MatchClause<FX> = sappho_gast::MatchClause<Pattern, GenExpr<FX>>;
 pub type QueryClause = sappho_gast::QueryDef<QueryExpr>;
 pub type FuncClause = sappho_gast::FuncDef<Pattern, PureExpr>;
-pub type ObjectDef = sappho_gast::ObjectDef<Pattern, PureExpr, QueryExpr>;
+pub type ObjectDef<FX> = sappho_gast::ObjectDef<Pattern, PureExpr, QueryExpr, GenExpr<FX>>;
 
 pub use self::effects::{
     AstFxFor, FromFx, ProcEffects, ProcExpr, PureEffects, PureExpr, QueryEffects, QueryExpr,

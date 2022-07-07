@@ -17,3 +17,6 @@ path = "../identmap"
 
 [dependencies.sappho-object]
 path = "../object"
+
+[dev-dependencies]
+test-case = "2.0"

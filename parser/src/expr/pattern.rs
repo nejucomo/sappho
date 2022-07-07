@@ -43,30 +43,7 @@ fn unpack_attrs(
 fn list_pattern(
     pat: Recursive<'_, char, Pattern, BareError>,
 ) -> impl Parser<char, ListPattern, Error = BareError> + '_ {
-    use crate::delimited::delimited;
-    use crate::space::ws;
-    use chumsky::primitive::just;
+    use crate::listform::list_form;
 
-    let tailmatch = || just("..").ignore_then(text::ident());
-    let nonempty_body = pat.separated_by(just(',').then(ws().or_not())).at_least(1);
-
-    let nonempty_opt_tail = nonempty_body
-        .then(
-            just(',')
-                .then_ignore(ws())
-                .ignore_then(tailmatch())
-                .or_not(),
-        )
-        .map(|(pats, tail)| ListPattern::new(pats, tail));
-
-    delimited(
-        '[',
-        tailmatch()
-            .map(|b| ListPattern::new([], Some(b)))
-            .or(nonempty_opt_tail)
-            .or_not()
-            .map(|opt| opt.unwrap_or_else(|| ListPattern::new([], None))),
-        ']',
-    )
-    .labelled("list-pattern")
+    list_form(pat, text::ident()).labelled("list-pattern")
 }

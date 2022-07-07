@@ -4,7 +4,6 @@ use sappho_ast::{
     ApplicationExpr, GenExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr, ProcEffects,
     PureEffects, QueryEffects, QueryExpr,
 };
-use sappho_gast::ListExpr;
 
 pub(crate) trait Restrict<S>: Sized {
     fn restrict(src: S, span: Span) -> Result<Self, BareError>;
@@ -53,12 +52,16 @@ where
             Ref(x) => Ok(Ref(x)),
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
-            Object(x) => Ok(Object(x)),
-            List(x) => Ok(List(
-                x.into_iter()
-                    .map(|subx| GenExpr::<FXD>::restrict(subx, span.clone()))
-                    .collect::<Result<ListExpr<_>, BareError>>()?,
-            )),
+            Object(x) => x
+                .into_try_map_values(|expr| GenExpr::<FXD>::restrict(expr, span.clone()))
+                .map(Object),
+            List(x) => {
+                let tailspan = span.clone();
+                Ok(List(x.try_map(
+                    move |elem| GenExpr::<FXD>::restrict(elem, span.clone()),
+                    move |tail| GenExpr::<FXD>::restrict(*tail, tailspan).map(Box::new),
+                )?))
+            }
             Let(x) => LetExpr::restrict(x, span).map(Let),
             Match(x) => MatchExpr::restrict(x, span).map(Match),
             Application(x) => ApplicationExpr::restrict(x, span).map(Application),
