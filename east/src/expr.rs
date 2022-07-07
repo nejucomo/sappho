@@ -3,7 +3,6 @@ use crate::{
     ObjectDef,
 };
 use sappho_ast as ast;
-use sappho_gast as gast;
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -41,21 +40,26 @@ where
     }
 }
 
-impl<FX> From<gast::ListForm<ast::GenExpr<AstFxFor<FX>>>> for GenExpr<FX>
+impl<FX> From<ast::ListExpr<AstFxFor<FX>>> for GenExpr<FX>
 where
     FX: FromFx,
 {
-    fn from(x: gast::ListForm<ast::GenExpr<AstFxFor<FX>>>) -> Self {
+    fn from(x: ast::ListExpr<AstFxFor<FX>>) -> Self {
         use GenExpr::Object;
 
-        x.into_iter()
-            .rev()
-            .fold(Object(ObjectDef::default()), |tail, astexpr| {
+        x.into_reverse_fold(
+            |opttail| {
+                opttail
+                    .map(|x| GenExpr::from(*x))
+                    .unwrap_or_else(|| Object(ObjectDef::default()))
+            },
+            |tail, head| {
                 Object(ObjectDef::new_attrs([
-                    ("head".to_string(), GenExpr::from(astexpr)),
+                    ("head".to_string(), GenExpr::from(head)),
                     ("tail".to_string(), tail),
                 ]))
-            })
+            },
+        )
     }
 }
 

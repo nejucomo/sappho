@@ -31,17 +31,19 @@ impl From<ast::ListPattern> for Pattern {
     fn from(alp: ast::ListPattern) -> Pattern {
         use Pattern::Unpack;
 
-        let tailpat = alp
-            .tail
-            .map(Pattern::Bind)
-            .unwrap_or_else(|| Unpack(UnpackPattern::default()));
-
-        alp.body.into_iter().rev().fold(tailpat, |tail, head| {
-            Unpack(UnpackPattern::from_iter([
-                ("head".to_string(), Pattern::from(head)),
-                ("tail".to_string(), tail),
-            ]))
-        })
+        alp.into_reverse_fold(
+            |opttail| {
+                opttail
+                    .map(Pattern::Bind)
+                    .unwrap_or_else(|| Unpack(UnpackPattern::default()))
+            },
+            |tail, head| {
+                Unpack(UnpackPattern::from_iter([
+                    ("head".to_string(), Pattern::from(head)),
+                    ("tail".to_string(), tail),
+                ]))
+            },
+        )
     }
 }
 

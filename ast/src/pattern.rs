@@ -1,11 +1,11 @@
-mod list;
 mod unpack;
 
 use crate::{Identifier, Literal};
 use std::fmt;
 
-pub use self::list::ListPattern;
 pub use self::unpack::UnpackPattern;
+
+pub type ListPattern = sappho_gast::ListForm<Pattern, Identifier>;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum Pattern {
