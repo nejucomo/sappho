@@ -21,8 +21,5 @@ path = "../fmtutil"
 [dependencies.sappho-value]
 path = "../value"
 
-[dev-dependencies]
-test-case = "2.0"
-
 [dev-dependencies.sappho-parser]
 path = "../parser"
