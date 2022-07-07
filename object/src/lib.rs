@@ -51,11 +51,6 @@ impl<F, Q, A> Object<F, Q, A> {
         &self.a
     }
 
-    pub fn unwrap(self) -> (Option<F>, Option<Q>, IdentMap<A>) {
-        let Object { f, q, a } = self;
-        (f, q, a)
-    }
-
     pub fn unbundle(self) -> Unbundled<F, Q, A> {
         use Unbundled::*;
 
@@ -102,6 +97,18 @@ impl<F, Q, A> Object<F, Q, A> {
             q: self.q.map(tquery),
             a: self.a.into_map_values(tattr),
         }
+    }
+
+    pub fn into_try_map_values<TA, DA, E>(self, tattr: TA) -> Result<Object<F, Q, DA>, E>
+    where
+        TA: Fn(A) -> Result<DA, E>,
+    {
+        let mut dsta = IdentMap::default();
+        for (aname, x) in self.a {
+            let dx = tattr(x)?;
+            dsta.define(aname, dx).unwrap();
+        }
+        Ok(Object::new(self.f, self.q, dsta))
     }
 }
 

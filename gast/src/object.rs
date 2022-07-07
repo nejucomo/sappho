@@ -70,10 +70,6 @@ impl<P, X, Q, G> ObjectDef<P, X, Q, G> {
         ))
     }
 
-    pub fn unwrap(self) -> (Option<FuncDef<P, X>>, Option<QueryDef<Q>>, IdentMap<G>) {
-        self.0.unwrap()
-    }
-
     pub fn unbundle(self) -> Unbundled<P, X, Q, G> {
         use sappho_object::Unbundled as OU;
         use Unbundled::*;
@@ -84,6 +80,13 @@ impl<P, X, Q, G> ObjectDef<P, X, Q, G> {
             OU::Query(q) => Query(q),
             OU::Attrs(a) => Bundled(ObjectDef::new_attrs(a)),
         }
+    }
+
+    pub fn into_try_map_values<F, DG, E>(self, tattr: F) -> Result<ObjectDef<P, X, Q, DG>, E>
+    where
+        F: Fn(G) -> Result<DG, E>,
+    {
+        self.0.into_try_map_values(tattr).map(ObjectDef)
     }
 }
 

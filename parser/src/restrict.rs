@@ -52,18 +52,9 @@ where
             Ref(x) => Ok(Ref(x)),
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
-            Object(x) => {
-                use sappho_gast::ObjectDef;
-                use sappho_identmap::IdentMap;
-
-                let (f, q, a) = x.unwrap();
-                let mut a2 = IdentMap::default();
-                for (aname, aexpr) in a {
-                    let aexpr2 = GenExpr::<FXD>::restrict(aexpr, span.clone())?;
-                    a2.define(aname, aexpr2).unwrap();
-                }
-                Ok(Object(ObjectDef::new(f, q, a2)))
-            }
+            Object(x) => x
+                .into_try_map_values(|expr| GenExpr::<FXD>::restrict(expr, span.clone()))
+                .map(Object),
             List(x) => {
                 let tailspan = span.clone();
                 Ok(List(x.try_map(
