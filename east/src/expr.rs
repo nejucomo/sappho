@@ -94,7 +94,7 @@ where
     use sappho_gast::Unbundled as U;
 
     match objdef.unbundle() {
-        U::Bundled(obj) => Object(ObjectDef::from(obj).transform_into()),
+        U::Bundled(obj) => Object(obj.transform_into()),
         U::Func(f) => Func(f.transform_into()),
         U::Query(q) => Query(q.transform_into()),
         U::Attrs(a) => a
