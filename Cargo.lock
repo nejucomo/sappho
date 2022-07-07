@@ -394,6 +394,7 @@ dependencies = [
  "sappho-fmtutil",
  "sappho-identmap",
  "sappho-object",
+ "test-case",
 ]
 
 [[package]]
