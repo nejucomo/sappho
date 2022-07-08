@@ -1,1 +1,1 @@
-{ head: { thingy: 2 }, tail: { head: { thingy: 3 }, tail: { head: { thingy: 5 }, tail: {} } } }
+[{ thingy: 2 }, { thingy: 3 }, { thingy: 5 }]

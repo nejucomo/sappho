@@ -4,6 +4,7 @@ use crate::{
     ApplicationExpr, FuncDef, Identifier, LetExpr, ListExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef, QueryDef,
 };
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use std::fmt;
 
 /// The general top-level expression for all effects.
@@ -82,6 +83,15 @@ impl<FX> From<ApplicationExpr<FX>> for GenExpr<FX> {
 impl<FX> From<LookupExpr<FX>> for GenExpr<FX> {
     fn from(x: LookupExpr<FX>) -> Self {
         GenExpr::Lookup(x)
+    }
+}
+
+impl<FX> TryIntoIdentMap<GenExpr<FX>> for GenExpr<FX> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<GenExpr<FX>>> {
+        match self {
+            GenExpr::Object(objdef) => objdef.try_into_identmap(),
+            _ => None,
+        }
     }
 }
 
