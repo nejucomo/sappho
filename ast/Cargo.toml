@@ -17,5 +17,8 @@ path = "../fmtutil"
 [dependencies.sappho-gast]
 path = "../gast"
 
+[dependencies.sappho-listform]
+path = "../listform"
+
 [dependencies.sappho-object]
 path = "../object"

@@ -9,6 +9,7 @@ members = [
   "identmap",
   "integration-tests",
   "interpreter",
+  "listform",
   "object",
   "parser",
   "source",

@@ -99,11 +99,12 @@ where
         U::Query(q) => Query(q.transform_into()),
         U::Attrs(a) => a
             .as_list_form()
-            .map(|(heads, tail)| {
-                List(ast::ListExpr::new(
-                    heads.into_iter().map(|x| ast::GenExpr::from(x.clone())),
-                    tail.map(|x| Box::new(ast::GenExpr::from(x.clone()))),
-                ))
+            .map(|listform| {
+                List(
+                    listform
+                        .map_elems(|x| ast::GenExpr::from(x.clone()))
+                        .map_tail(|x| Box::new(ast::GenExpr::from(x.clone()))),
+                )
             })
             .unwrap_or_else(|| Object(ObjectDef::new_attrs(a).transform_into())),
     }

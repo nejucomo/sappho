@@ -1,4 +1,5 @@
 use crate::{Coerce, CoercionFailure, Value};
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use std::borrow::Borrow;
 use std::fmt;
 use std::ops::Deref;
@@ -36,6 +37,12 @@ where
 {
     fn from(v: T) -> Self {
         ValRef(Rc::new(Value::from(v)))
+    }
+}
+
+impl TryIntoIdentMap<ValRef> for ValRef {
+    fn try_into_identmap(&self) -> Option<&IdentMap<ValRef>> {
+        self.deref().try_into_identmap()
     }
 }
 

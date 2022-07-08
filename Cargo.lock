@@ -337,6 +337,7 @@ dependencies = [
  "sappho-fmtutil",
  "sappho-gast",
  "sappho-identmap",
+ "sappho-listform",
  "sappho-object",
 ]
 
@@ -400,6 +401,7 @@ name = "sappho-identmap"
 version = "0.1.0"
 dependencies = [
  "sappho-fmtutil",
+ "sappho-listform",
 ]
 
 [[package]]
@@ -426,10 +428,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "sappho-listform"
+version = "0.1.0"
+dependencies = [
+ "sappho-fmtutil",
+ "test-case",
+]
+
+[[package]]
 name = "sappho-object"
 version = "0.1.0"
 dependencies = [
  "derive-new",
+ "sappho-fmtutil",
  "sappho-identmap",
 ]
 
@@ -443,6 +454,7 @@ dependencies = [
  "sappho-ast",
  "sappho-gast",
  "sappho-identmap",
+ "sappho-listform",
  "sappho-source",
  "test-case",
 ]

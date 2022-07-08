@@ -4,6 +4,7 @@ mod tryinto;
 
 pub use self::tryinto::TryIntoIdentMap;
 
+use sappho_listform::ListForm;
 use std::collections::BTreeMap;
 use std::fmt;
 
@@ -74,11 +75,11 @@ impl<T> IdentMap<T>
 where
     T: TryIntoIdentMap<T>,
 {
-    pub fn as_list_form(&self) -> Option<(Vec<&T>, Option<&T>)> {
+    pub fn as_list_form(&self) -> Option<ListForm<&T, &T>> {
         self.try_as_list_form().ok()
     }
 
-    fn try_as_list_form(&self) -> Result<(Vec<&T>, Option<&T>), ()> {
+    fn try_as_list_form(&self) -> Result<ListForm<&T, &T>, ()> {
         fn get<'a, T>(idmap: &'a IdentMap<T>, attr: &IdentRef) -> Result<&'a T, ()> {
             idmap.get(attr).ok_or(())
         }
@@ -87,7 +88,7 @@ where
         let mut idmap = self;
         loop {
             if idmap.is_empty() {
-                return Ok((ts, None));
+                return Ok(ListForm::new(ts, None));
             } else if idmap.len() != 2 {
                 return Err(());
             }
@@ -97,7 +98,7 @@ where
             if let Some(tailmap) = tail.try_into_identmap() {
                 idmap = tailmap;
             } else {
-                return Ok((ts, Some(tail)));
+                return Ok(ListForm::new(ts, Some(tail)));
             }
         }
     }

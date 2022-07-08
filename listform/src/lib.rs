@@ -19,6 +19,26 @@ impl<X, T> ListForm<X, T> {
         }
     }
 
+    pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, T>
+    where
+        F: Fn(X) -> DX,
+    {
+        ListForm {
+            body: self.body.into_iter().map(f).collect(),
+            tail: self.tail,
+        }
+    }
+
+    pub fn map_tail<F, DT>(self, f: F) -> ListForm<X, DT>
+    where
+        F: Fn(T) -> DT,
+    {
+        ListForm {
+            body: self.body,
+            tail: self.tail.map(f),
+        }
+    }
+
     pub fn into_reverse_fold<S, TT, F>(self, ttail: TT, f: F) -> S
     where
         TT: FnOnce(Option<T>) -> S,
@@ -37,6 +57,15 @@ impl<X, T> ListForm<X, T> {
         Ok(ListForm {
             body: bodyres?,
             tail: self.tail.map(ttail).transpose()?,
+        })
+    }
+}
+
+impl<X, T, E> ListForm<X, Result<T, E>> {
+    pub fn transpose_tail(self) -> Result<ListForm<X, T>, E> {
+        Ok(ListForm {
+            body: self.body,
+            tail: self.tail.transpose()?,
         })
     }
 }

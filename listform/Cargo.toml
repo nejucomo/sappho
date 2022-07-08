@@ -1,5 +1,5 @@
 [package]
-name = "sappho-identmap"
+name = "sappho-listform"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies.sappho-fmtutil]
 path = "../fmtutil"
 
-[dependencies.sappho-listform]
-path = "../listform"
+[dev-dependencies]
+test-case = "2.0"

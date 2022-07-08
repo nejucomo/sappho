@@ -102,7 +102,7 @@ where
     P: fmt::Display,
     X: fmt::Display,
     Q: fmt::Display,
-    G: fmt::Display,
+    G: fmt::Display + TryIntoIdentMap<G>,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.0.fmt(f)

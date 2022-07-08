@@ -18,6 +18,9 @@ path = "../gast"
 [dependencies.sappho-identmap]
 path = "../identmap"
 
+[dependencies.sappho-listform]
+path = "../listform"
+
 [dependencies.sappho-source]
 path = "../source"
 
