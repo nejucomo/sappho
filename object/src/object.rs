@@ -122,37 +122,22 @@ where
             return write!(f, "{{}}");
         }
 
-        struct CommaTracker(bool);
+        let mut ct = sappho_fmtutil::CommaTracker::default();
 
-        impl CommaTracker {
-            pub fn insert(&mut self, f: &mut fmt::Formatter) -> fmt::Result {
-                if self.0 {
-                    write!(f, ",")
-                } else {
-                    self.0 = true;
-                    Ok(())
-                }
-            }
-        }
-
-        let mut ct = CommaTracker(false);
-
-        write!(f, "{{")?;
+        write!(f, "{{ ")?;
         if let Some(func) = self.func() {
             ct.insert(f)?;
-            write!(f, " ")?;
             func.fmt(f)?;
         }
 
         if let Some(query) = self.query() {
             ct.insert(f)?;
-            write!(f, " ")?;
             query.fmt(f)?;
         }
 
         for (name, attr) in self.attrs().iter() {
             ct.insert(f)?;
-            write!(f, " {}: ", name)?;
+            write!(f, "{}: ", name)?;
             attr.fmt(f)?;
         }
 

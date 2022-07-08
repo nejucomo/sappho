@@ -440,6 +440,7 @@ name = "sappho-object"
 version = "0.1.0"
 dependencies = [
  "derive-new",
+ "sappho-fmtutil",
  "sappho-identmap",
 ]
 
