@@ -3,32 +3,21 @@ mod bindfailure;
 use crate::{Attrs, ValRef};
 use sappho_east::{Literal, Pattern, UnpackPattern};
 use sappho_identmap::{IdentMap, IdentRef};
-use std::ops::{Deref, DerefMut};
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};
 
 #[derive(Debug, Default, derive_more::From)]
 pub struct Frame(IdentMap<ValRef>);
 
-impl Deref for Frame {
-    type Target = IdentMap<ValRef>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for Frame {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
 impl Frame {
     pub fn from_pattern_binding(pattern: &Pattern, value: &ValRef) -> Result<Frame, BindFailure> {
         let mut frame = Frame::default();
         frame.bind_pattern(pattern, value)?;
         Ok(frame)
+    }
+
+    pub fn deref(&self, ident: &IdentRef) -> Option<ValRef> {
+        self.0.get(ident).cloned()
     }
 
     fn bind_pattern(&mut self, pattern: &Pattern, value: &ValRef) -> Result<(), BindFailure> {
@@ -46,7 +35,7 @@ impl Frame {
     fn bind_ident(&mut self, ident: &IdentRef, value: &ValRef) -> Result<(), BindFailureReason> {
         // BUG: unwrap `RedefinitionError` which should be detected statically prior to binding
         // evaluation.
-        self.define(ident.to_string(), value.clone()).unwrap();
+        self.0.define(ident.to_string(), value.clone()).unwrap();
         Ok(())
     }
 

@@ -23,7 +23,7 @@ impl Scope {
     fn deref_opt(&self, ident: &IdentRef) -> Option<ValRef> {
         match self {
             Scope::Empty => None,
-            Scope::Frame(map, lower) => map.get(ident).cloned().or_else(|| lower.deref_opt(ident)),
+            Scope::Frame(map, lower) => map.deref(ident).or_else(|| lower.deref_opt(ident)),
         }
     }
 }
