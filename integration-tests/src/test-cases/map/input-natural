@@ -1,6 +1,5 @@
-let maprec = fn rec -> fn f -> fn list -> match list {
-  [] -> [],
-  [h, ..t] -> [f h, ..(rec rec f t)],
+let map = fn f -> fn list -> match list {
+  []       -> [],
+  [h, ..t] -> [f h, ..(map f t)],
 };
-let map = maprec maprec;
 map (fn x -> { thingy: x }) [2, 3, 5]
