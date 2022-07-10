@@ -1,7 +1,7 @@
-mod scoperef;
+mod sref;
 mod unbound;
 
-pub use self::scoperef::{BindFailure, BindFailureReason, ScopeRef};
+pub use self::sref::{BindFailure, BindFailureReason, ScopeRef};
 pub use self::unbound::Unbound;
 
 use crate::{Attrs, ValRef};
