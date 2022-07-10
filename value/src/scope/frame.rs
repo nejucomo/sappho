@@ -1,13 +1,15 @@
 mod bindfailure;
 
-use crate::{Attrs, ValRef};
+use crate::{Attrs, Unbound, ValRef};
 use sappho_east::{Literal, Pattern, UnpackPattern};
 use sappho_identmap::{IdentMap, IdentRef};
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};
 
+/// A `Frame` maps in-scope bindings to [Option]<[ValRef]> where `None` indicates a
+/// forward-reference is not yet fulfilled, while `Some(v)` provides a defined value.
 #[derive(Debug, Default, derive_more::From)]
-pub struct Frame(IdentMap<ValRef>);
+pub struct Frame(IdentMap<Option<ValRef>>);
 
 impl Frame {
     pub fn from_pattern_binding(pattern: &Pattern, value: &ValRef) -> Result<Frame, BindFailure> {
@@ -16,8 +18,20 @@ impl Frame {
         Ok(frame)
     }
 
-    pub fn deref(&self, ident: &IdentRef) -> Option<ValRef> {
-        self.0.get(ident).cloned()
+    /// Return [Result]<[Option]<[ValRef]>, [Unbound]> where `None` indicates the binding is not
+    /// declared in this frame. If a binding is declared, but not defined, this is an
+    /// [Unbound::Unfulfilled] error.
+    pub fn deref(&self, ident: &IdentRef) -> Result<Option<ValRef>, Unbound> {
+        use crate::UnboundKind::Unfulfilled;
+
+        self.0
+            .get(ident)
+            // Clone the entry to `Option<ValRef>`, if present:
+            .cloned()
+            // If there is a `None`, the binding is unfulfilled:
+            .map(|optval| optval.ok_or_else(|| Unfulfilled.make(ident)))
+            // Transpose so that a missing binding becomes `Ok(None)`:
+            .transpose()
     }
 
     fn bind_pattern(&mut self, pattern: &Pattern, value: &ValRef) -> Result<(), BindFailure> {
@@ -35,7 +49,9 @@ impl Frame {
     fn bind_ident(&mut self, ident: &IdentRef, value: &ValRef) -> Result<(), BindFailureReason> {
         // BUG: unwrap `RedefinitionError` which should be detected statically prior to binding
         // evaluation.
-        self.0.define(ident.to_string(), value.clone()).unwrap();
+        self.0
+            .define(ident.to_string(), Some(value.clone()))
+            .unwrap();
         Ok(())
     }
 
