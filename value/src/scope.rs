@@ -1,16 +1,18 @@
+mod frame;
 mod sref;
 mod unbound;
 
-pub use self::sref::{BindFailure, BindFailureReason, ScopeRef};
+pub use self::frame::{BindFailure, BindFailureReason, Frame};
+pub use self::sref::ScopeRef;
 pub use self::unbound::Unbound;
 
-use crate::{Attrs, ValRef};
+use crate::ValRef;
 use sappho_identmap::IdentRef;
 
 #[derive(Debug)]
 pub enum Scope {
     Empty,
-    Frame(Attrs, ScopeRef),
+    Frame(Frame, ScopeRef),
 }
 
 impl Scope {
@@ -19,11 +21,9 @@ impl Scope {
     }
 
     fn deref_opt(&self, ident: &IdentRef) -> Option<ValRef> {
-        use Scope::*;
-
         match self {
-            Empty => None,
-            Frame(map, lower) => map.get(ident).cloned().or_else(|| lower.deref_opt(ident)),
+            Scope::Empty => None,
+            Scope::Frame(map, lower) => map.get(ident).cloned().or_else(|| lower.deref_opt(ident)),
         }
     }
 }

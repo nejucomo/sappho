@@ -1,13 +1,7 @@
-mod bind;
-mod bindfailure;
-
-use self::bind::bind_attrs;
-use crate::{Attrs, Scope, ValRef};
+use crate::{BindFailure, Frame, Scope, ValRef};
 use sappho_east::Pattern;
 use std::ops::Deref;
 use std::rc::Rc;
-
-pub use self::bindfailure::{BindFailure, BindFailureReason};
 
 #[derive(Clone, Debug)]
 pub struct ScopeRef(Rc<Scope>);
@@ -20,13 +14,13 @@ impl Default for ScopeRef {
 
 impl ScopeRef {
     pub fn bind(&self, pattern: &Pattern, val: &ValRef) -> Result<ScopeRef, BindFailure> {
-        let attrs = bind_attrs(pattern, val)?;
-        Ok(self.extend(attrs))
+        let frame = Frame::from_pattern_binding(pattern, val)?;
+        Ok(self.extend(frame))
     }
 
-    fn extend(&self, attrs: Attrs) -> ScopeRef {
-        let frame = Scope::Frame(attrs, self.clone());
-        ScopeRef(Rc::new(frame))
+    fn extend(&self, frame: Frame) -> ScopeRef {
+        let scope = Scope::Frame(frame, self.clone());
+        ScopeRef(Rc::new(scope))
     }
 }
 
