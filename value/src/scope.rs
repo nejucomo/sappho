@@ -1,29 +1,46 @@
-mod scoperef;
+mod frame;
+mod sref;
 mod unbound;
 
-pub use self::scoperef::{BindFailure, BindFailureReason, ScopeRef};
-pub use self::unbound::Unbound;
+pub use self::frame::{BindFailure, BindFailureReason, Frame};
+pub use self::sref::ScopeRef;
+pub use self::unbound::{Unbound, UnboundKind};
 
-use crate::{Attrs, ValRef};
+use crate::ValRef;
+use sappho_east::Pattern;
 use sappho_identmap::IdentRef;
 
 #[derive(Debug)]
 pub enum Scope {
     Empty,
-    Frame(Attrs, ScopeRef),
+    Frame(Frame, ScopeRef),
 }
 
 impl Scope {
-    pub fn deref(&self, ident: &IdentRef) -> Result<ValRef, Unbound> {
-        self.deref_opt(ident).ok_or_else(|| Unbound::new(ident))
-    }
-
-    fn deref_opt(&self, ident: &IdentRef) -> Option<ValRef> {
+    pub fn bind_pattern(&self, pattern: &Pattern, value: &ValRef) -> Result<(), BindFailure> {
         use Scope::*;
 
         match self {
-            Empty => None,
-            Frame(map, lower) => map.get(ident).cloned().or_else(|| lower.deref_opt(ident)),
+            Empty => unreachable!(),
+            Frame(frame, _) => frame.bind_pattern(pattern, value),
+        }
+    }
+
+    pub fn deref(&self, ident: &IdentRef) -> Result<ValRef, Unbound> {
+        use crate::UnboundKind::Undeclared;
+
+        self.deref_opt(ident)
+            // An `Ok(None)` is an inner value representing no binding declared:
+            .and_then(|optval| optval.ok_or_else(|| Undeclared.make(ident)))
+    }
+
+    fn deref_opt(&self, ident: &IdentRef) -> Result<Option<ValRef>, Unbound> {
+        match self {
+            Scope::Empty => Ok(None),
+            Scope::Frame(map, lower) => match map.deref(ident) {
+                Ok(None) => lower.deref_opt(ident),
+                other => other,
+            },
         }
     }
 }

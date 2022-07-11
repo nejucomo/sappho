@@ -7,14 +7,14 @@ where
     FX: Eval,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        let subscope =
-            self.clauses
-                .iter()
-                .try_fold(scope.clone(), |sc, clause| -> Result<ScopeRef> {
-                    let bindval = clause.bindexpr.eval(&sc)?;
-                    let subscope = sc.bind(&clause.binding, &bindval)?;
-                    Ok(subscope)
-                })?;
+        // Declare all forward bindings first:
+        let subscope = scope.declare(self.clauses.iter().map(|clause| &clause.binding));
+
+        // Now fulfill the definitions for each clause:
+        for clause in self.clauses.iter() {
+            let v = clause.bindexpr.eval(&subscope)?;
+            subscope.bind_pattern(&clause.binding, &v)?;
+        }
 
         self.tail.eval(&subscope)
     }

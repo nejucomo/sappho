@@ -1,0 +1,24 @@
+let f = fn { left: l, right: r } ->
+  { left: g l, right: g r };
+
+let g = fn obj -> match obj {
+  { subtree: j } -> f j,
+  other -> other,
+};
+
+let tree = {
+  left: 2,
+  right: {
+    subtree: {
+      left: {
+        subtree: {
+          left: 3,
+          right: 5,
+        },
+      },
+      right: 7,
+    },
+  },
+};
+
+f tree

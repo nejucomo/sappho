@@ -13,9 +13,10 @@ where
 
         let tval = target.eval(scope)?;
         for clause in clauses {
-            if let Ok(matchscope) = scope.bind(&clause.pattern, &tval) {
+            if let Ok(matchscope) = scope.declare_then_bind(&clause.pattern, &tval) {
                 return clause.body.eval(&matchscope);
             }
+            // TODO: Verify any Err case is a benign mismatch.
         }
 
         Err(Mismatch(
