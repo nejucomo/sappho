@@ -3,38 +3,32 @@ mod bindfailure;
 use crate::{Attrs, Unbound, ValRef};
 use sappho_east::{Literal, Pattern, UnpackPattern};
 use sappho_identmap::{IdentMap, IdentRef};
+use std::cell::RefCell;
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};
 
 /// A `Frame` maps in-scope bindings to [Option]<[ValRef]> where `None` indicates a
 /// forward-reference is not yet fulfilled, while `Some(v)` provides a defined value.
-#[derive(Debug, Default, derive_more::From)]
-pub struct Frame(IdentMap<Option<ValRef>>);
+#[derive(Debug, Default)]
+pub struct Frame(IdentMap<RefCell<Option<ValRef>>>);
 
 impl Frame {
-    pub fn from_pattern_binding(pattern: &Pattern, value: &ValRef) -> Result<Frame, BindFailure> {
-        let mut frame = Frame::default();
-        frame.bind_pattern(pattern, value)?;
-        Ok(frame)
+    pub fn declare(&mut self, pattern: &Pattern) {
+        use Pattern::*;
+
+        match pattern {
+            // BUG: Different patterns in a let may bind the same identifier:
+            Bind(ident) => self.0.define(ident.clone(), RefCell::new(None)).unwrap(),
+            LitEq(_) => {}
+            Unpack(unpack) => {
+                for subpat in unpack.values() {
+                    self.declare(subpat);
+                }
+            }
+        }
     }
 
-    /// Return [Result]<[Option]<[ValRef]>, [Unbound]> where `None` indicates the binding is not
-    /// declared in this frame. If a binding is declared, but not defined, this is an
-    /// [Unbound::Unfulfilled] error.
-    pub fn deref(&self, ident: &IdentRef) -> Result<Option<ValRef>, Unbound> {
-        use crate::UnboundKind::Unfulfilled;
-
-        self.0
-            .get(ident)
-            // Clone the entry to `Option<ValRef>`, if present:
-            .cloned()
-            // If there is a `None`, the binding is unfulfilled:
-            .map(|optval| optval.ok_or_else(|| Unfulfilled.make(ident)))
-            // Transpose so that a missing binding becomes `Ok(None)`:
-            .transpose()
-    }
-
-    fn bind_pattern(&mut self, pattern: &Pattern, value: &ValRef) -> Result<(), BindFailure> {
+    pub fn bind_pattern(&self, pattern: &Pattern, value: &ValRef) -> Result<(), BindFailure> {
         use Pattern::*;
 
         let into_bf = |r| BindFailure::new(pattern, value, r);
@@ -46,16 +40,35 @@ impl Frame {
         }
     }
 
-    fn bind_ident(&mut self, ident: &IdentRef, value: &ValRef) -> Result<(), BindFailureReason> {
-        // BUG: unwrap `RedefinitionError` which should be detected statically prior to binding
-        // evaluation.
+    /// Return [Result]<[Option]<[ValRef]>, [Unbound]> where `None` indicates the binding is not
+    /// declared in this frame. If a binding is declared, but not defined, this is an
+    /// [Unbound::Unfulfilled] error.
+    pub fn deref(&self, ident: &IdentRef) -> Result<Option<ValRef>, Unbound> {
+        use crate::UnboundKind::Unfulfilled;
+
         self.0
-            .define(ident.to_string(), Some(value.clone()))
-            .unwrap();
-        Ok(())
+            .get(ident)
+            .map(|rcell| {
+                let optval: Option<ValRef> = rcell.borrow().clone();
+                optval.ok_or_else(|| Unfulfilled.make(ident))
+            })
+            .transpose()
     }
 
-    fn bind_unpack(&mut self, unpack: &UnpackPattern, value: &ValRef) -> Result<(), BindFailure> {
+    fn bind_ident(&self, ident: &IdentRef, value: &ValRef) -> Result<(), BindFailureReason> {
+        let cell = self
+            .0
+            .get(ident)
+            .unwrap_or_else(|| panic!("attempt to bind undeclared binding: {:?}", ident));
+
+        if cell.borrow_mut().replace(value.clone()).is_none() {
+            Ok(())
+        } else {
+            panic!("redefinition of {:?}", ident);
+        }
+    }
+
+    fn bind_unpack(&self, unpack: &UnpackPattern, value: &ValRef) -> Result<(), BindFailure> {
         self.bind_unpack_inner(unpack, value).map_err(|e| match e {
             Failure(bf) => bf,
             Reason(r) => BindFailure::new(&Pattern::Unpack(unpack.clone()), value, r),
@@ -63,7 +76,7 @@ impl Frame {
     }
 
     fn bind_unpack_inner(
-        &mut self,
+        &self,
         unpack: &UnpackPattern,
         value: &ValRef,
     ) -> Result<(), InnerFailure> {

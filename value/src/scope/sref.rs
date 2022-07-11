@@ -13,9 +13,27 @@ impl Default for ScopeRef {
 }
 
 impl ScopeRef {
-    pub fn bind(&self, pattern: &Pattern, val: &ValRef) -> Result<ScopeRef, BindFailure> {
-        let frame = Frame::from_pattern_binding(pattern, val)?;
-        Ok(self.extend(frame))
+    pub fn declare_then_bind(
+        &self,
+        pattern: &Pattern,
+        value: &ValRef,
+    ) -> Result<Self, BindFailure> {
+        let subscope = self.declare([pattern]);
+        subscope.bind_pattern(pattern, value)?;
+        Ok(subscope)
+    }
+
+    pub fn declare<'a, I>(&self, patterns: I) -> Self
+    where
+        I: IntoIterator<Item = &'a Pattern>,
+    {
+        let mut frame = Frame::default();
+
+        for pattern in patterns {
+            frame.declare(pattern);
+        }
+
+        self.extend(frame)
     }
 
     fn extend(&self, frame: Frame) -> ScopeRef {

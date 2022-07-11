@@ -7,6 +7,7 @@ pub use self::sref::ScopeRef;
 pub use self::unbound::{Unbound, UnboundKind};
 
 use crate::ValRef;
+use sappho_east::Pattern;
 use sappho_identmap::IdentRef;
 
 #[derive(Debug)]
@@ -16,6 +17,15 @@ pub enum Scope {
 }
 
 impl Scope {
+    pub fn bind_pattern(&self, pattern: &Pattern, value: &ValRef) -> Result<(), BindFailure> {
+        use Scope::*;
+
+        match self {
+            Empty => unreachable!(),
+            Frame(frame, _) => frame.bind_pattern(pattern, value),
+        }
+    }
+
     pub fn deref(&self, ident: &IdentRef) -> Result<ValRef, Unbound> {
         use crate::UnboundKind::Undeclared;
 

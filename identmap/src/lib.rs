@@ -42,6 +42,10 @@ impl<T> IdentMap<T> {
         self.0.keys()
     }
 
+    pub fn values(&self) -> impl Iterator<Item = &T> {
+        self.0.values()
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = (&Identifier, &T)> {
         self.0.iter()
     }

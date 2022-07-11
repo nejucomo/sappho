@@ -19,7 +19,7 @@ impl Func {
     }
 
     pub fn bind_arg(&self, arg: &ValRef) -> Result<GenThunk<PureEffects>, BindFailure> {
-        let callscope = self.defscope.bind(&self.binding, arg)?;
+        let callscope = self.defscope.declare_then_bind(&self.binding, arg)?;
         Ok(GenThunk::new(self.body.clone(), callscope))
     }
 }
