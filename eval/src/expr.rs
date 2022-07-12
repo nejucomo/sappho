@@ -8,11 +8,12 @@ mod object;
 
 use crate::{Eval, Result};
 use sappho_east::GenExpr;
+use sappho_unparse::DisplayDepth;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for GenExpr<FX>
 where
-    FX: Eval + std::fmt::Display,
+    FX: Eval + DisplayDepth + DisplayDepth,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         log::debug!("Evaluating:\n  From: {}\n  ...\n", self);
@@ -31,7 +32,7 @@ where
 
 fn eval_expr<FX>(expr: &GenExpr<FX>, scope: &ScopeRef) -> Result<ValRef>
 where
-    FX: Eval + std::fmt::Display,
+    FX: Eval + DisplayDepth + DisplayDepth,
 {
     use GenExpr::*;
 

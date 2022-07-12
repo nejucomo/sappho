@@ -1,6 +1,6 @@
 use crate::{FromFx, GenExpr};
 use sappho_ast as ast;
-use std::fmt;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 pub type QueryExpr = GenExpr<QueryEffects>;
 
@@ -33,14 +33,14 @@ impl FromFx for ast::QueryEffects {
     }
 }
 
-impl fmt::Display for QueryEffects {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl DisplayDepth for QueryEffects {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         use QueryEffects::*;
 
         match self {
             Inquire(x) => {
                 write!(f, "$")?;
-                x.fmt(f)
+                x.fmt_depth(f, depth)
             }
         }
     }

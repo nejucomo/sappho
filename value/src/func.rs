@@ -1,6 +1,6 @@
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 use sappho_east::{FuncClause, Pattern, PureEffects, PureExpr};
-use std::fmt;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Debug)]
 pub struct Func {
@@ -24,12 +24,12 @@ impl Func {
     }
 }
 
-impl fmt::Display for Func {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl DisplayDepth for Func {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         write!(f, "fn ")?;
-        self.binding.fmt(f)?;
+        self.binding.fmt_depth(f, depth)?;
         write!(f, " -> ")?;
-        self.body.fmt(f)?;
+        self.body.fmt_depth(f, depth)?;
         Ok(())
     }
 }

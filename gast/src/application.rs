@@ -1,4 +1,4 @@
-use std::fmt;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -22,15 +22,21 @@ impl<X> ApplicationExpr<X> {
     }
 }
 
-impl<Expr> fmt::Display for ApplicationExpr<Expr>
+impl<Expr> DisplayDepth for ApplicationExpr<Expr>
 where
-    Expr: fmt::Display,
+    Expr: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "(")?;
-        self.target.fmt(f)?;
-        write!(f, " ")?;
-        self.argument.fmt(f)?;
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        use sappho_unparse::indent;
+
+        writeln!(f, "(")?;
+        indent(f, depth + 1)?;
+        self.target.fmt_depth(f, depth + 1)?;
+        writeln!(f)?;
+        indent(f, depth + 1)?;
+        self.argument.fmt_depth(f, depth + 1)?;
+        writeln!(f)?;
+        indent(f, depth)?;
         write!(f, ")")?;
         Ok(())
     }

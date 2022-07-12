@@ -8,8 +8,8 @@ edition = "2021"
 [dependencies]
 derive-new = "0.5.9"
 
-[dependencies.sappho-fmtutil]
-path = "../fmtutil"
+[dependencies.sappho-unparse]
+path = "../unparse"
 
 [dependencies.sappho-identmap]
 path = "../identmap"

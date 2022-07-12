@@ -1,1 +1,3 @@
-match 42 { x -> x }
+match 42 {
+  x -> x,
+}

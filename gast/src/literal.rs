@@ -1,4 +1,4 @@
-use std::fmt;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// A literal value, such as `3.1415`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -7,8 +7,9 @@ pub enum Literal {
     Num(f64),
 }
 
-impl fmt::Display for Literal {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl DisplayDepth for Literal {
+    fn fmt_depth(&self, f: &mut Formatter, _depth: usize) -> FmtResult {
+        use std::fmt::Display;
         use Literal::*;
 
         match self {

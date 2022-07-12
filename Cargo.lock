@@ -334,11 +334,11 @@ name = "sappho-ast"
 version = "0.1.0"
 dependencies = [
  "derive_more",
- "sappho-fmtutil",
  "sappho-gast",
  "sappho-identmap",
  "sappho-listform",
  "sappho-object",
+ "sappho-unparse",
 ]
 
 [[package]]
@@ -364,6 +364,7 @@ dependencies = [
  "sappho-gast",
  "sappho-identmap",
  "sappho-object",
+ "sappho-unparse",
  "test-case",
 ]
 
@@ -375,14 +376,11 @@ dependencies = [
  "log",
  "sappho-ast",
  "sappho-east",
- "sappho-fmtutil",
+ "sappho-listform",
  "sappho-parser",
+ "sappho-unparse",
  "sappho-value",
 ]
-
-[[package]]
-name = "sappho-fmtutil"
-version = "0.1.0"
 
 [[package]]
 name = "sappho-gast"
@@ -390,9 +388,9 @@ version = "0.1.0"
 dependencies = [
  "derive-new",
  "derive_more",
- "sappho-fmtutil",
  "sappho-identmap",
  "sappho-object",
+ "sappho-unparse",
  "test-case",
 ]
 
@@ -400,8 +398,8 @@ dependencies = [
 name = "sappho-identmap"
 version = "0.1.0"
 dependencies = [
- "sappho-fmtutil",
  "sappho-listform",
+ "sappho-unparse",
 ]
 
 [[package]]
@@ -431,7 +429,8 @@ dependencies = [
 name = "sappho-listform"
 version = "0.1.0"
 dependencies = [
- "sappho-fmtutil",
+ "indoc",
+ "sappho-unparse",
  "test-case",
 ]
 
@@ -440,8 +439,8 @@ name = "sappho-object"
 version = "0.1.0"
 dependencies = [
  "derive-new",
- "sappho-fmtutil",
  "sappho-identmap",
+ "sappho-unparse",
 ]
 
 [[package]]
@@ -475,14 +474,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "sappho-unparse"
+version = "0.1.0"
+
+[[package]]
 name = "sappho-value"
 version = "0.1.0"
 dependencies = [
  "derive_more",
  "sappho-east",
- "sappho-fmtutil",
  "sappho-identmap",
  "sappho-object",
+ "sappho-unparse",
 ]
 
 [[package]]

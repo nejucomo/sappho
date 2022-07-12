@@ -1,4 +1,4 @@
-use std::fmt;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// A query definition, ie `query $x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -18,13 +18,13 @@ impl<X> QueryDef<X> {
     }
 }
 
-impl<X> fmt::Display for QueryDef<X>
+impl<X> DisplayDepth for QueryDef<X>
 where
-    X: fmt::Display,
+    X: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         write!(f, "query ")?;
-        self.body.fmt(f)?;
+        self.body.fmt_depth(f, depth)?;
         Ok(())
     }
 }

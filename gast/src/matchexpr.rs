@@ -1,6 +1,6 @@
 mod clause;
 
-use std::fmt;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 pub use self::clause::MatchClause;
 
@@ -31,19 +31,24 @@ impl<P, X> MatchExpr<P, X> {
     }
 }
 
-impl<P, X> fmt::Display for MatchExpr<P, X>
+impl<P, X> DisplayDepth for MatchExpr<P, X>
 where
-    P: fmt::Display,
-    X: fmt::Display,
+    P: DisplayDepth,
+    X: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use sappho_fmtutil::fmt_comma_sep;
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        use sappho_unparse::indent;
 
         write!(f, "match ")?;
-        self.target.fmt(f)?;
-        write!(f, " {{ ")?;
-        fmt_comma_sep(&self.clauses, f)?;
-        write!(f, " }}")?;
+        self.target.fmt_depth(f, depth)?;
+        writeln!(f, " {{")?;
+        for clause in &self.clauses {
+            indent(f, depth + 1)?;
+            clause.fmt_depth(f, depth + 1)?;
+            writeln!(f, ",")?;
+        }
+        indent(f, depth)?;
+        write!(f, "}}")?;
         Ok(())
     }
 }

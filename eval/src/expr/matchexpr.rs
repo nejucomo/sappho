@@ -1,10 +1,11 @@
 use crate::{Eval, Result};
 use sappho_east::MatchExpr;
+use sappho_unparse::DisplayDepth;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for MatchExpr<FX>
 where
-    FX: Eval,
+    FX: Eval + DisplayDepth,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use crate::Error::Mismatch;

@@ -5,7 +5,7 @@ use crate::{
     ObjectDef, QueryDef,
 };
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use std::fmt;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// The general top-level expression for all effects.
 #[derive(Debug, PartialEq)]
@@ -95,25 +95,34 @@ impl<FX> TryIntoIdentMap<GenExpr<FX>> for GenExpr<FX> {
     }
 }
 
-impl<FX> fmt::Display for GenExpr<FX>
+impl<FX> DisplayDepth for GenExpr<FX>
 where
-    FX: fmt::Display,
+    FX: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         use GenExpr::*;
 
         match self {
-            Lit(x) => x.fmt(f),
-            Ref(x) => x.fmt(f),
-            Func(x) => x.fmt(f),
-            Query(x) => x.fmt(f),
-            Object(x) => x.fmt(f),
-            List(x) => x.fmt(f),
-            Let(x) => x.fmt(f),
-            Match(x) => x.fmt(f),
-            Application(x) => x.fmt(f),
-            Lookup(x) => x.fmt(f),
-            Effect(x) => x.fmt(f),
+            Lit(x) => x.fmt_depth(f, depth),
+            Ref(x) => x.fmt_depth(f, depth),
+            Func(x) => x.fmt_depth(f, depth),
+            Query(x) => x.fmt_depth(f, depth),
+            Object(x) => x.fmt_depth(f, depth),
+            List(x) => x.fmt_depth(f, depth),
+            Let(x) => x.fmt_depth(f, depth),
+            Match(x) => x.fmt_depth(f, depth),
+            Application(x) => x.fmt_depth(f, depth),
+            Lookup(x) => x.fmt_depth(f, depth),
+            Effect(x) => x.fmt_depth(f, depth),
         }
+    }
+}
+
+impl<FX> std::fmt::Display for GenExpr<FX>
+where
+    FX: DisplayDepth,
+{
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
+        self.fmt_depth(f, 0)
     }
 }

@@ -11,8 +11,8 @@ derive_more = "0.99.17"
 [dependencies.sappho-identmap]
 path = "../identmap"
 
-[dependencies.sappho-fmtutil]
-path = "../fmtutil"
+[dependencies.sappho-unparse]
+path = "../unparse"
 
 [dependencies.sappho-gast]
 path = "../gast"

@@ -1,1 +1,7 @@
-eval error: value { a: 2 } does not match pattern { a: x, b: y, c: z }: missing attr b
+eval error: value {
+  a: 2,
+} does not match pattern {
+  a: x,
+  b: y,
+  c: z,
+}: missing attr b
