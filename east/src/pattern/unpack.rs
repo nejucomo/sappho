@@ -1,7 +1,7 @@
 use crate::Pattern;
 use sappho_ast as ast;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, Identifier};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 use std::ops::Deref;
 
 #[derive(Clone, Debug, Default, PartialEq, derive_more::From)]

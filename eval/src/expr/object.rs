@@ -1,6 +1,6 @@
 use crate::{Eval, EvalV, Result};
 use sappho_east::ObjectDef;
-use sappho_fmtutil::DisplayDepth;
+use sappho_unparse::DisplayDepth;
 use sappho_value::{Attrs, Func, Object, Query, ScopeRef, Value};
 
 impl<FX> EvalV for ObjectDef<FX>

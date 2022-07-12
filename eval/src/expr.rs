@@ -8,7 +8,7 @@ mod object;
 
 use crate::{Eval, Result};
 use sappho_east::GenExpr;
-use sappho_fmtutil::DisplayDepth;
+use sappho_unparse::DisplayDepth;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for GenExpr<FX>

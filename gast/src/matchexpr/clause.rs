@@ -1,4 +1,4 @@
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]

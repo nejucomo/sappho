@@ -1,5 +1,5 @@
 [package]
-name = "sappho-fmtutil"
+name = "sappho-unparse"
 version = "0.1.0"
 edition = "2021"
 

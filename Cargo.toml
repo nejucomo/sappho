@@ -4,7 +4,7 @@ members = [
   "cli",
   "east",
   "eval",
-  "fmtutil",
+  "unparse",
   "gast",
   "identmap",
   "integration-tests",

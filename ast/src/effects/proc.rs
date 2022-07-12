@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// Proc expressions can cause mutations (in memory or I/O), as in `!launch_balloon`, as well as
 /// causing [QueryEffects](crate::QueryEffects).

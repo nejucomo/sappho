@@ -1,4 +1,4 @@
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -27,7 +27,7 @@ where
     Expr: DisplayDepth,
 {
     fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_fmtutil::indent;
+        use sappho_unparse::indent;
 
         writeln!(f, "(")?;
         indent(f, depth + 1)?;

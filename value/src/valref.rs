@@ -1,6 +1,6 @@
 use crate::{Coerce, CoercionFailure, Value};
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 use std::borrow::Borrow;
 use std::ops::Deref;
 use std::rc::Rc;

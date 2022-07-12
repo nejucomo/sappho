@@ -1,6 +1,6 @@
 use crate::{Object, ValRef};
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 use std::fmt::Display;
 
 #[derive(Debug, derive_more::From)]

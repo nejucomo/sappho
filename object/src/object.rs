@@ -1,7 +1,7 @@
 use crate::Unbundled;
 use derive_new::new;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
@@ -122,7 +122,7 @@ where
     A: DisplayDepth,
 {
     fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_fmtutil::indent;
+        use sappho_unparse::indent;
 
         if self.is_empty() {
             return write!(f, "{{}}");

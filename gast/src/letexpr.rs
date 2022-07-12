@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 pub use self::clause::LetClause;
 
@@ -37,7 +37,7 @@ where
     X: DisplayDepth,
 {
     fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_fmtutil::indent;
+        use sappho_unparse::indent;
 
         let (indented, cdepth) = if depth == 0 {
             (false, 0)

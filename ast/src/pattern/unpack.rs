@@ -1,6 +1,6 @@
 use crate::Pattern;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, Identifier};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]

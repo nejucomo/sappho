@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 pub use self::clause::MatchClause;
 
@@ -37,7 +37,7 @@ where
     X: DisplayDepth,
 {
     fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_fmtutil::indent;
+        use sappho_unparse::indent;
 
         write!(f, "match ")?;
         self.target.fmt_depth(f, depth)?;

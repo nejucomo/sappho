@@ -2,8 +2,8 @@ mod unpack;
 
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 pub use self::unpack::UnpackPattern;
 

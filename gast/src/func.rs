@@ -1,4 +1,4 @@
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]

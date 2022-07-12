@@ -1,6 +1,6 @@
 use crate::{Eval, Result};
 use sappho_east::LetExpr;
-use sappho_fmtutil::DisplayDepth;
+use sappho_unparse::DisplayDepth;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for LetExpr<FX>

@@ -1,8 +1,8 @@
 mod unpack;
 
 use crate::{Identifier, Literal};
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_listform::ListForm;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 pub use self::unpack::UnpackPattern;
 

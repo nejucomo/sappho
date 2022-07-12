@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// Pure expressions without side-effects.
 pub type PureExpr = GenExpr<PureEffects>;

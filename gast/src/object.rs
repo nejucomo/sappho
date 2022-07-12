@@ -1,7 +1,7 @@
 use crate::{FuncDef, QueryDef};
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]

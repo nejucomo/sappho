@@ -1,5 +1,5 @@
 use crate::{Eval, EvalThunk, Result};
-use sappho_fmtutil::DisplayDepth;
+use sappho_unparse::DisplayDepth;
 use sappho_value::{GenThunk, ValRef};
 
 impl<FX> EvalThunk for GenThunk<FX>

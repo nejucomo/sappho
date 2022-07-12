@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// Query expressions can read mutable memory, as in `$myvar`.
 pub type QueryExpr = GenExpr<QueryEffects>;

@@ -3,8 +3,8 @@ use crate::{
     ObjectDef,
 };
 use sappho_ast as ast;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum GenExpr<Effects> {

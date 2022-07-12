@@ -1,5 +1,5 @@
 use crate::Identifier;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]

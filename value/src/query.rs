@@ -1,6 +1,6 @@
 use crate::{GenThunk, ScopeRef};
 use sappho_east::{QueryClause, QueryEffects, QueryExpr};
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Debug)]
 pub struct Query {

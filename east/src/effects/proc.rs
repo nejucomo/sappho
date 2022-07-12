@@ -1,6 +1,6 @@
 use crate::{FromFx, GenExpr};
 use sappho_ast as ast;
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 pub type ProcExpr = GenExpr<ProcEffects>;
 

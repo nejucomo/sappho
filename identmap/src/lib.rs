@@ -4,8 +4,8 @@ mod tryinto;
 
 pub use self::tryinto::TryIntoIdentMap;
 
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_listform::ListForm;
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 use std::collections::BTreeMap;
 
 pub type Identifier = String;
@@ -149,7 +149,7 @@ where
     T: DisplayDepth,
 {
     fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_fmtutil::indent;
+        use sappho_unparse::indent;
 
         if self.0.is_empty() {
             write!(f, "{{}}")

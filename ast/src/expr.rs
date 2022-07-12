@@ -4,8 +4,8 @@ use crate::{
     ApplicationExpr, FuncDef, Identifier, LetExpr, ListExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef, QueryDef,
 };
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// The general top-level expression for all effects.
 #[derive(Debug, PartialEq)]

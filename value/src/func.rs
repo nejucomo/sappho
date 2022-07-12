@@ -1,6 +1,6 @@
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 use sappho_east::{FuncClause, Pattern, PureEffects, PureExpr};
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Debug)]
 pub struct Func {

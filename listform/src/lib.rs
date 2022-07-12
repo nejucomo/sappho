@@ -1,4 +1,4 @@
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -80,7 +80,7 @@ where
     T: DisplayDepth,
 {
     fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_fmtutil::indent;
+        use sappho_unparse::indent;
 
         if self.is_empty() {
             write!(f, "[]")
@@ -128,7 +128,7 @@ where
 mod tests {
     use crate::ListForm;
     use indoc::indoc;
-    use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+    use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
     use test_case::test_case;
 
     struct X;

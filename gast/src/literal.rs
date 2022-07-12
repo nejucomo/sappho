@@ -1,4 +1,4 @@
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 /// A literal value, such as `3.1415`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]

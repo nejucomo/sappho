@@ -1,4 +1,4 @@
-use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct LetClause<Pattern, Expr> {
