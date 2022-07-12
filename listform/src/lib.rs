@@ -108,14 +108,23 @@ where
 #[cfg(test)]
 mod tests {
     use crate::ListForm;
+    use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
     use test_case::test_case;
 
+    struct X;
+
+    impl DisplayDepth for X {
+        fn fmt_depth(&self, f: &mut Formatter, _depth: usize) -> FmtResult {
+            write!(f, "X")
+        }
+    }
+
     #[test_case([], None => "[]")]
-    #[test_case([], Some(42) => "[..42]")]
-    #[test_case([2], None => "[2]")]
-    #[test_case([2], Some(5) => "[2, ..5]")]
-    #[test_case([2, 3], Some(5) => "[2, 3, ..5]")]
-    fn display<const K: usize>(body: [u8; K], tail: Option<u8>) -> String {
+    #[test_case([], Some(X) => "[..X]")]
+    #[test_case([X], None => "[X]")]
+    #[test_case([X], Some(X) => "[X, ..X]")]
+    #[test_case([X, X], Some(X) => "[X, X, ..X]")]
+    fn display<const K: usize>(body: [X; K], tail: Option<X>) -> String {
         ListForm::new(body, tail).to_string()
     }
 }
