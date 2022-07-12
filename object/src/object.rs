@@ -128,33 +128,27 @@ where
             return write!(f, "{{}}");
         }
 
-        let mut ct = sappho_fmtutil::CommaTracker::default();
-
         writeln!(f, "{{")?;
         if let Some(func) = self.func() {
-            ct.insert(f)?;
-            writeln!(f)?;
             indent(f, depth + 1)?;
             func.fmt_depth(f, depth + 1)?;
+            writeln!(f, ",")?;
         }
 
         if let Some(query) = self.query() {
-            ct.insert(f)?;
-            writeln!(f)?;
             indent(f, depth + 1)?;
             query.fmt_depth(f, depth + 1)?;
+            writeln!(f, ",")?;
         }
 
         for (name, attr) in self.attrs().iter() {
-            ct.insert(f)?;
-            writeln!(f)?;
             indent(f, depth + 1)?;
             write!(f, "{}: ", name)?;
             attr.fmt_depth(f, depth + 1)?;
+            writeln!(f, ",")?;
         }
 
-        writeln!(f)?;
         indent(f, depth)?;
-        write!(f, " }}")
+        write!(f, "}}")
     }
 }

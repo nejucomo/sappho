@@ -1,2 +1,6 @@
-{ query $let x = 42;
-x }
+{
+  query $(
+    let x = 42;
+    x
+  ),
+}

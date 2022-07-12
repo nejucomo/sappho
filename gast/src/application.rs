@@ -33,6 +33,7 @@ where
         indent(f, depth + 1)?;
         self.target.fmt_depth(f, depth + 1)?;
         writeln!(f)?;
+        indent(f, depth + 1)?;
         self.argument.fmt_depth(f, depth + 1)?;
         writeln!(f)?;
         indent(f, depth)?;

@@ -1,1 +1,10 @@
-{ head: 2, tail: { head: 3, tail: { head: 5, tail: {} } } }
+{
+  head: 2,
+  tail: {
+    head: 3,
+    tail: {
+      head: 5,
+      tail: {},
+    },
+  },
+}

@@ -50,9 +50,11 @@ where
         }
 
         for clause in self.clauses.iter() {
+            indent(f, cdepth)?;
             clause.fmt_depth(f, cdepth)?;
             writeln!(f, ";")?;
         }
+        indent(f, cdepth)?;
         self.tail.fmt_depth(f, cdepth)?;
 
         if indented {

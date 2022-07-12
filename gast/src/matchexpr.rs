@@ -41,7 +41,7 @@ where
 
         write!(f, "match ")?;
         self.target.fmt_depth(f, depth)?;
-        write!(f, " {{")?;
+        writeln!(f, " {{")?;
         for clause in &self.clauses {
             indent(f, depth + 1)?;
             clause.fmt_depth(f, depth + 1)?;

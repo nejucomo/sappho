@@ -159,10 +159,10 @@ where
                 indent(f, depth + 1)?;
                 write!(f, "{}: ", k)?;
                 v.fmt_depth(f, depth + 1)?;
-                writeln!(f)?;
+                writeln!(f, ",")?;
             }
             indent(f, depth)?;
-            write!(f, " }}")
+            write!(f, "}}")
         }
     }
 }

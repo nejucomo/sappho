@@ -85,19 +85,29 @@ where
         if self.is_empty() {
             write!(f, "[]")
         } else {
+            let mut first = true;
+
             writeln!(f, "[")?;
             for elem in self.body.iter() {
+                if first {
+                    first = false;
+                } else {
+                    writeln!(f, ",")?;
+                }
                 indent(f, depth + 1)?;
                 elem.fmt_depth(f, depth + 1)?;
-                writeln!(f, ",")?;
             }
 
             if let Some(tail) = &self.tail {
+                if !first {
+                    writeln!(f, ",")?;
+                }
                 indent(f, depth + 1)?;
                 write!(f, "..")?;
                 tail.fmt_depth(f, depth + 1)?;
-                writeln!(f)?;
             }
+            writeln!(f)?;
+            indent(f, depth)?;
             write!(f, "]")?;
             Ok(())
         }
@@ -137,7 +147,7 @@ mod tests {
     })]
     #[test_case([X], None => indoc! { "
         [
-          X,
+          X
         ]"
     })]
     #[test_case([X], Some(X) => indoc! { "
