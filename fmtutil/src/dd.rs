@@ -1,18 +1,12 @@
-use std::fmt::{Formatter, Result};
+pub use std::fmt::{Formatter, Result as FmtResult};
 
 pub trait DisplayDepth {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> Result;
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult;
 }
 
-pub trait FormatterExt<'a> {
-    fn indent(&'a mut self, depth: usize) -> Result;
-}
-
-impl<'a> FormatterExt<'a> for Formatter<'a> {
-    fn indent(&'a mut self, depth: usize) -> Result {
-        for _ in 0..depth {
-            write!(self, "  ")?;
-        }
-        Ok(())
+pub fn indent(f: &mut Formatter, depth: usize) -> FmtResult {
+    for _ in 0..depth {
+        write!(f, "  ")?;
     }
+    Ok(())
 }
