@@ -432,6 +432,7 @@ dependencies = [
 name = "sappho-listform"
 version = "0.1.0"
 dependencies = [
+ "indoc",
  "sappho-fmtutil",
  "test-case",
 ]

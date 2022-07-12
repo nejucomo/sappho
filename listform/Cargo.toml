@@ -10,3 +10,4 @@ path = "../fmtutil"
 
 [dev-dependencies]
 test-case = "2.0"
+indoc = "1.0.6"

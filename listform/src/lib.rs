@@ -19,6 +19,10 @@ impl<X, T> ListForm<X, T> {
         }
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.body.is_empty() && self.tail.is_none()
+    }
+
     pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, T>
     where
         F: Fn(X) -> DX,
@@ -78,20 +82,25 @@ where
     fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         use sappho_fmtutil::indent;
 
-        writeln!(f, "[")?;
-        for elem in self.body.iter() {
-            indent(f, depth + 1)?;
-            elem.fmt_depth(f, depth + 1)?;
-            writeln!(f, ",")?;
-        }
+        if self.is_empty() {
+            write!(f, "[]")
+        } else {
+            writeln!(f, "[")?;
+            for elem in self.body.iter() {
+                indent(f, depth + 1)?;
+                elem.fmt_depth(f, depth + 1)?;
+                writeln!(f, ",")?;
+            }
 
-        if let Some(tail) = &self.tail {
-            indent(f, depth + 1)?;
-            write!(f, "..")?;
-            tail.fmt_depth(f, depth + 1)?;
+            if let Some(tail) = &self.tail {
+                indent(f, depth + 1)?;
+                write!(f, "..")?;
+                tail.fmt_depth(f, depth + 1)?;
+                writeln!(f)?;
+            }
+            write!(f, "]")?;
+            Ok(())
         }
-        write!(f, "]")?;
-        Ok(())
     }
 }
 
@@ -108,6 +117,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::ListForm;
+    use indoc::indoc;
     use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
     use test_case::test_case;
 
@@ -120,10 +130,29 @@ mod tests {
     }
 
     #[test_case([], None => "[]")]
-    #[test_case([], Some(X) => "[..X]")]
-    #[test_case([X], None => "[X]")]
-    #[test_case([X], Some(X) => "[X, ..X]")]
-    #[test_case([X, X], Some(X) => "[X, X, ..X]")]
+    #[test_case([], Some(X) => indoc! { "
+        [
+          ..X
+        ]"
+    })]
+    #[test_case([X], None => indoc! { "
+        [
+          X,
+        ]"
+    })]
+    #[test_case([X], Some(X) => indoc! { "
+        [
+          X,
+          ..X
+        ]"
+    })]
+    #[test_case([X, X], Some(X) => indoc! { "
+        [
+          X,
+          X,
+          ..X
+        ]"
+    })]
     fn display<const K: usize>(body: [X; K], tail: Option<X>) -> String {
         ListForm::new(body, tail).to_string()
     }
