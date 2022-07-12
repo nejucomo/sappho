@@ -1,4 +1,4 @@
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -70,24 +70,38 @@ impl<X, T, E> ListForm<X, Result<T, E>> {
     }
 }
 
-impl<X, T> fmt::Display for ListForm<X, T>
+impl<X, T> DisplayDepth for ListForm<X, T>
 where
-    X: fmt::Display,
-    T: fmt::Display,
+    X: DisplayDepth,
+    T: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use sappho_fmtutil::fmt_comma_sep;
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        use sappho_fmtutil::indent;
 
-        write!(f, "[")?;
-        fmt_comma_sep(self.body.iter(), f)?;
+        writeln!(f, "[")?;
+        for elem in self.body.iter() {
+            indent(f, depth + 1)?;
+            elem.fmt_depth(f, depth + 1)?;
+            writeln!(f, ",")?;
+        }
+
         if let Some(tail) = &self.tail {
-            if !self.body.is_empty() {
-                write!(f, ", ")?;
-            }
-            write!(f, "..{}", tail)?;
+            indent(f, depth + 1)?;
+            write!(f, "..")?;
+            tail.fmt_depth(f, depth + 1)?;
         }
         write!(f, "]")?;
         Ok(())
+    }
+}
+
+impl<X, T> std::fmt::Display for ListForm<X, T>
+where
+    X: DisplayDepth,
+    T: DisplayDepth,
+{
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
+        self.fmt_depth(f, 0)
     }
 }
 

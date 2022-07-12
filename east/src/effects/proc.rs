@@ -1,6 +1,6 @@
 use crate::{FromFx, GenExpr};
 use sappho_ast as ast;
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 pub type ProcExpr = GenExpr<ProcEffects>;
 
@@ -36,18 +36,18 @@ impl FromFx for ast::ProcEffects {
     }
 }
 
-impl fmt::Display for ProcEffects {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl DisplayDepth for ProcEffects {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         use ProcEffects::*;
 
         match self {
             Inquire(x) => {
                 write!(f, "$")?;
-                x.fmt(f)
+                x.fmt_depth(f, depth)
             }
             Evoke(x) => {
                 write!(f, "!")?;
-                x.fmt(f)
+                x.fmt_depth(f, depth)
             }
         }
     }

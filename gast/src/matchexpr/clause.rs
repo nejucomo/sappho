@@ -1,4 +1,4 @@
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,15 +23,15 @@ impl<P, X> MatchClause<P, X> {
     }
 }
 
-impl<P, X> fmt::Display for MatchClause<P, X>
+impl<P, X> DisplayDepth for MatchClause<P, X>
 where
-    P: fmt::Display,
-    X: fmt::Display,
+    P: DisplayDepth,
+    X: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.pattern.fmt(f)?;
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        self.pattern.fmt_depth(f, depth)?;
         write!(f, " -> ")?;
-        self.body.fmt(f)?;
+        self.body.fmt_depth(f, depth)?;
         Ok(())
     }
 }

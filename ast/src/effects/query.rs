@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 /// Query expressions can read mutable memory, as in `$myvar`.
 pub type QueryExpr = GenExpr<QueryEffects>;
@@ -17,14 +17,14 @@ impl From<QueryEffects> for QueryExpr {
     }
 }
 
-impl fmt::Display for QueryEffects {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl DisplayDepth for QueryEffects {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         use QueryEffects::*;
 
         match self {
             Inquire(x) => {
                 write!(f, "$")?;
-                x.fmt(f)
+                x.fmt_depth(f, depth)
             }
         }
     }

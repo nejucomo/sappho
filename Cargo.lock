@@ -361,6 +361,7 @@ version = "0.1.0"
 dependencies = [
  "derive_more",
  "sappho-ast",
+ "sappho-fmtutil",
  "sappho-gast",
  "sappho-identmap",
  "sappho-object",

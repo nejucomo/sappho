@@ -4,9 +4,9 @@ mod tryinto;
 
 pub use self::tryinto::TryIntoIdentMap;
 
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_listform::ListForm;
 use std::collections::BTreeMap;
-use std::fmt;
 
 pub type Identifier = String;
 pub type IdentRef = str;
@@ -144,18 +144,24 @@ impl<T> IntoIterator for IdentMap<T> {
     }
 }
 
-impl<T> fmt::Display for IdentMap<T>
+impl<T> DisplayDepth for IdentMap<T>
 where
-    T: fmt::Display,
+    T: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        use sappho_fmtutil::indent;
+
         if self.0.is_empty() {
             write!(f, "{{}}")
         } else {
-            use sappho_fmtutil::fmt_comma_sep;
-
-            write!(f, "{{ ")?;
-            fmt_comma_sep(self.0.iter().map(|(n, a)| format!("{}: {}", n, a)), f)?;
+            writeln!(f, "{{")?;
+            for (k, v) in &self.0 {
+                indent(f, depth + 1)?;
+                write!(f, "{}: ", k)?;
+                v.fmt_depth(f, depth + 1)?;
+                writeln!(f)?;
+            }
+            indent(f, depth)?;
             write!(f, " }}")
         }
     }

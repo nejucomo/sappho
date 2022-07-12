@@ -1,6 +1,6 @@
 mod clause;
 
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 pub use self::clause::LetClause;
 
@@ -31,17 +31,35 @@ impl<P, X> LetExpr<P, X> {
     }
 }
 
-impl<P, X> fmt::Display for LetExpr<P, X>
+impl<P, X> DisplayDepth for LetExpr<P, X>
 where
-    P: fmt::Display,
-    X: fmt::Display,
+    P: DisplayDepth,
+    X: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        use sappho_fmtutil::indent;
+
+        let (indented, cdepth) = if depth == 0 {
+            (false, 0)
+        } else {
+            (true, depth + 1)
+        };
+
+        if indented {
+            writeln!(f, "(")?;
+        }
+
         for clause in self.clauses.iter() {
-            clause.fmt(f)?;
+            clause.fmt_depth(f, cdepth)?;
             writeln!(f, ";")?;
         }
-        self.tail.fmt(f)?;
+        self.tail.fmt_depth(f, cdepth)?;
+
+        if indented {
+            writeln!(f)?;
+            indent(f, depth)?;
+            write!(f, ")")?;
+        }
         Ok(())
     }
 }

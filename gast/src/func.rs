@@ -1,4 +1,4 @@
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,16 +23,16 @@ impl<P, X> FuncDef<P, X> {
     }
 }
 
-impl<P, X> fmt::Display for FuncDef<P, X>
+impl<P, X> DisplayDepth for FuncDef<P, X>
 where
-    P: fmt::Display,
-    X: fmt::Display,
+    P: DisplayDepth,
+    X: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         write!(f, "fn ")?;
-        self.binding.fmt(f)?;
+        self.binding.fmt_depth(f, depth)?;
         write!(f, " -> ")?;
-        self.body.fmt(f)?;
+        self.body.fmt_depth(f, depth)?;
         Ok(())
     }
 }

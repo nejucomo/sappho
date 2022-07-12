@@ -1,5 +1,5 @@
 use crate::Identifier;
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,12 +23,12 @@ impl<X> LookupExpr<X> {
     }
 }
 
-impl<X> fmt::Display for LookupExpr<X>
+impl<X> DisplayDepth for LookupExpr<X>
 where
-    X: fmt::Display,
+    X: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.target.fmt(f)?;
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        self.target.fmt_depth(f, depth)?;
         write!(f, ".{}", self.attr)?;
         Ok(())
     }

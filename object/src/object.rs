@@ -1,7 +1,7 @@
 use crate::Unbundled;
 use derive_new::new;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
@@ -115,36 +115,46 @@ impl<F, Q, A> TryIntoIdentMap<A> for Object<F, Q, A> {
     }
 }
 
-impl<F, Q, A> fmt::Display for Object<F, Q, A>
+impl<F, Q, A> DisplayDepth for Object<F, Q, A>
 where
-    F: fmt::Display,
-    Q: fmt::Display,
-    A: fmt::Display,
+    F: DisplayDepth,
+    Q: DisplayDepth,
+    A: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+        use sappho_fmtutil::indent;
+
         if self.is_empty() {
             return write!(f, "{{}}");
         }
 
         let mut ct = sappho_fmtutil::CommaTracker::default();
 
-        write!(f, "{{ ")?;
+        writeln!(f, "{{")?;
         if let Some(func) = self.func() {
             ct.insert(f)?;
-            func.fmt(f)?;
+            writeln!(f)?;
+            indent(f, depth + 1)?;
+            func.fmt_depth(f, depth + 1)?;
         }
 
         if let Some(query) = self.query() {
             ct.insert(f)?;
-            query.fmt(f)?;
+            writeln!(f)?;
+            indent(f, depth + 1)?;
+            query.fmt_depth(f, depth + 1)?;
         }
 
         for (name, attr) in self.attrs().iter() {
             ct.insert(f)?;
+            writeln!(f)?;
+            indent(f, depth + 1)?;
             write!(f, "{}: ", name)?;
-            attr.fmt(f)?;
+            attr.fmt_depth(f, depth + 1)?;
         }
 
+        writeln!(f)?;
+        indent(f, depth)?;
         write!(f, " }}")
     }
 }

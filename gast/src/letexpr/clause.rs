@@ -1,4 +1,4 @@
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct LetClause<Pattern, Expr> {
@@ -22,16 +22,16 @@ impl<P, X> LetClause<P, X> {
     }
 }
 
-impl<P, X> fmt::Display for LetClause<P, X>
+impl<P, X> DisplayDepth for LetClause<P, X>
 where
-    P: fmt::Display,
-    X: fmt::Display,
+    P: DisplayDepth,
+    X: DisplayDepth,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         write!(f, "let ")?;
-        self.binding.fmt(f)?;
+        self.binding.fmt_depth(f, depth)?;
         write!(f, " = ")?;
-        self.bindexpr.fmt(f)?;
+        self.bindexpr.fmt_depth(f, depth)?;
         Ok(())
     }
 }

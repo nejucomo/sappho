@@ -1,6 +1,6 @@
 use crate::{GenThunk, ScopeRef};
 use sappho_east::{QueryClause, QueryEffects, QueryExpr};
-use std::fmt;
+use sappho_fmtutil::{DisplayDepth, FmtResult, Formatter};
 
 #[derive(Debug)]
 pub struct Query {
@@ -21,10 +21,10 @@ impl Query {
     }
 }
 
-impl fmt::Display for Query {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl DisplayDepth for Query {
+    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
         write!(f, "query ")?;
-        self.body.fmt(f)?;
+        self.body.fmt_depth(f, depth)?;
         Ok(())
     }
 }
