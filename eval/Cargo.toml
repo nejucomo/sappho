@@ -18,6 +18,9 @@ path = "../east"
 [dependencies.sappho-fmtutil]
 path = "../fmtutil"
 
+[dependencies.sappho-listform]
+path = "../listform"
+
 [dependencies.sappho-value]
 path = "../value"
 

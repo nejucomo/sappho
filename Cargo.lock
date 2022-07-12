@@ -377,6 +377,7 @@ dependencies = [
  "sappho-ast",
  "sappho-east",
  "sappho-fmtutil",
+ "sappho-listform",
  "sappho-parser",
  "sappho-value",
 ]

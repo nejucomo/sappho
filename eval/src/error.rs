@@ -24,10 +24,15 @@ impl fmt::Display for Error {
             Unbound(x) => x.fmt(f),
             MissingAttr(v, name) => write!(f, "missing attr {}.{}", v, name),
             Mismatch(v, pats) => {
-                use sappho_fmtutil::fmt_comma_sep;
+                // TODO: This is a super hacky way to get the `DisplayDepth` of the patterns:
+                use sappho_listform::ListForm;
 
-                write!(f, "value {} does not match any of these patterns: ", v)?;
-                fmt_comma_sep(pats, f)
+                write!(
+                    f,
+                    "value {} does not match any of these patterns: {}",
+                    v,
+                    ListForm::<Pattern, Pattern>::new(pats.clone(), None)
+                )
             }
             CoercionFailure(x) => x.fmt(f),
             BindFailure(x) => x.fmt(f),
