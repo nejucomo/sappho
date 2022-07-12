@@ -1,11 +1,10 @@
-use crate::{List, Object, ValRef};
+use crate::{Object, ValRef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use std::fmt;
 
 #[derive(Debug, derive_more::From)]
 pub enum Value {
     Num(f64),
-    List(List),
     Object(Box<Object>),
 }
 
@@ -24,7 +23,6 @@ impl fmt::Display for Value {
 
         match self {
             Num(x) => x.fmt(f),
-            List(x) => x.fmt(f),
             Object(x) => {
                 if let Some(list) = x.try_into_identmap().and_then(|m| m.as_list_form()) {
                     list.fmt(f)
