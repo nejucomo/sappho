@@ -7,6 +7,10 @@ use clap::{ArgEnum, Parser, Subcommand};
 #[derive(Debug, Parser)]
 #[clap()]
 pub struct Options {
+    /// Turn on trace output
+    #[clap(short, long)]
+    pub trace: bool,
+
     #[clap(subcommand)]
     command: Command,
 }
