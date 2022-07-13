@@ -161,7 +161,7 @@ where
                 subs.write(&": ");
                 subs.write(v);
                 subs.write(&",");
-                subs.write(OptSpace);
+                subs.write(&OptSpace);
             }
             s.add_substream(subs);
             s.write(&"}");

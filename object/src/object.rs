@@ -132,13 +132,13 @@ where
             if let Some(func) = self.func() {
                 subs.write(func);
                 subs.write(&",");
-                subs.write(OptSpace);
+                subs.write(&OptSpace);
             }
 
             if let Some(query) = self.query() {
                 subs.write(query);
                 subs.write(&",");
-                subs.write(OptSpace);
+                subs.write(&OptSpace);
             }
 
             for (name, attr) in self.attrs().iter() {
@@ -146,7 +146,7 @@ where
                 subs.write(&": ");
                 subs.write(attr);
                 subs.write(&",");
-                subs.write(OptSpace);
+                subs.write(&OptSpace);
             }
 
             s.add_substream(subs);

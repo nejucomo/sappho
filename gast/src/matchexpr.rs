@@ -46,7 +46,7 @@ where
         for clause in &self.clauses {
             subs.write(clause);
             subs.write(&",");
-            subs.write(OptSpace);
+            subs.write(&OptSpace);
         }
         s.add_substream(subs);
         s.write(&"}");
