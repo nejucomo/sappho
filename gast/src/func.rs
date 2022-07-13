@@ -28,7 +28,7 @@ where
     P: Unparse,
     X: Unparse,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         write!(f, "fn ")?;
         self.binding.unparse(f, depth)?;
         write!(f, " -> ")?;

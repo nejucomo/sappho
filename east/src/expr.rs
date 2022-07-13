@@ -123,7 +123,7 @@ impl<FX> Unparse for GenExpr<FX>
 where
     FX: Unparse,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use GenExpr::*;
 
         match self {

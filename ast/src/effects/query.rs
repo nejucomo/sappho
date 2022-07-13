@@ -18,7 +18,7 @@ impl From<QueryEffects> for QueryExpr {
 }
 
 impl Unparse for QueryEffects {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use QueryEffects::*;
 
         match self {

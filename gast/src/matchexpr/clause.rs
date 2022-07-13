@@ -28,7 +28,7 @@ where
     P: Unparse,
     X: Unparse,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         self.pattern.unparse(f, depth)?;
         write!(f, " -> ")?;
         self.body.unparse(f, depth)?;

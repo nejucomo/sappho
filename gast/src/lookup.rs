@@ -27,7 +27,7 @@ impl<X> Unparse for LookupExpr<X>
 where
     X: Unparse,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         self.target.unparse(f, depth)?;
         write!(f, ".{}", self.attr)?;
         Ok(())

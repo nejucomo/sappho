@@ -22,7 +22,7 @@ impl<X> Unparse for QueryDef<X>
 where
     X: Unparse,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         write!(f, "query ")?;
         self.body.unparse(f, depth)?;
         Ok(())

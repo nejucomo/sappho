@@ -37,7 +37,7 @@ impl FromFx for ast::ProcEffects {
 }
 
 impl Unparse for ProcEffects {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use ProcEffects::*;
 
         match self {

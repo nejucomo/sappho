@@ -19,7 +19,7 @@ impl TryIntoIdentMap<ValRef> for Value {
 }
 
 impl Unparse for Value {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use Value::*;
 
         match self {

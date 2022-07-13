@@ -9,7 +9,7 @@ pub type PureExpr = GenExpr<PureEffects>;
 pub enum PureEffects {}
 
 impl Unparse for PureEffects {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         unreachable!("pure effects are never instantiated");
     }
 }

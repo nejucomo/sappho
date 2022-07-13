@@ -104,7 +104,7 @@ where
     Q: Unparse,
     G: Unparse + TryIntoIdentMap<G>,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         self.0.unparse(f, depth)
     }
 }

@@ -121,7 +121,7 @@ where
     Q: Unparse,
     A: Unparse,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::{Unparse, Stream};
 
         if self.is_empty() {

@@ -8,7 +8,7 @@ pub enum Literal {
 }
 
 impl Unparse for Literal {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use std::fmt::Display;
         use Literal::*;
 

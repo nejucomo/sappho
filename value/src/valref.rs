@@ -53,14 +53,14 @@ impl std::fmt::Display for ValRef {
 }
 
 impl Unparse for ValRef {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         self.deref().unparse(f, depth)
     }
 }
 
 // Necessary for value as list form:
 impl<'a> Unparse for &'a ValRef {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         self.deref().unparse(f, depth)
     }
 }

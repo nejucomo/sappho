@@ -40,7 +40,7 @@ impl Deref for UnpackPattern {
 }
 
 impl Unparse for UnpackPattern {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         self.0.unparse(f, depth)
     }
 }

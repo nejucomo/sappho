@@ -148,7 +148,7 @@ impl<T> Unparse for IdentMap<T>
 where
     T: Unparse,
 {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::{Unparse, Stream};
 
         if self.0.is_empty() {

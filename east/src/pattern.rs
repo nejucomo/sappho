@@ -76,7 +76,7 @@ impl From<Pattern> for ast::Pattern {
 }
 
 impl Unparse for Pattern {
-    fn unparse(&self) -> Stream {
+    fn unparse_into(&self, s: &mut Stream) {
         use Pattern::*;
 
         match self {
