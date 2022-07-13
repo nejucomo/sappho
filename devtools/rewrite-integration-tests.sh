@@ -14,15 +14,15 @@ for casedir in test-cases/*
 do
   echo "Updating $casedir..."
   input="$(ls "$casedir"/input* | head -1)"
-  cp "$input" "$input.tmp"
-  if sappho eval "$input.tmp" > "$casedir/expected" 2>&1
+  if sappho eval "$input" > "$casedir/expected" 2>&1
   then
     # It successfully parsed and evaluated, so do source code rewrites:
     echo "Updating $casedir unparse expectations..."
+    cp "$input" "$input.tmp"
     for style in canonical reduced
     do
       sappho parse -f "$style" "$input.tmp" > "$casedir/input-$style" || true
     done
+    rm "$input.tmp"
   fi
-  rm "$input.tmp"
 done
