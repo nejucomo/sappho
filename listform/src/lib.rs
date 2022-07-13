@@ -137,7 +137,7 @@ mod tests {
 
     impl Unparse for X {
         fn unparse_into(&self, s: &mut Stream) {
-            write!(f, "X")
+            s.write(&"X");
         }
     }
 
