@@ -4,6 +4,7 @@ use crate::{Identifier, Literal};
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
+use std::fmt;
 
 pub use self::unpack::UnpackPattern;
 
@@ -87,9 +88,9 @@ impl Unparse for Pattern {
     }
 }
 
-impl std::fmt::Display for Pattern {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.unparse(f, 0)
+impl fmt::Display for Pattern {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.unparse().fmt(f)
     }
 }
 

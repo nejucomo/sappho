@@ -12,7 +12,7 @@ impl Unparse for Literal {
         use Literal::*;
 
         match self {
-            Num(x) => s.write(x.to_string()),
+            Num(x) => s.write(&x.to_string()),
         }
     }
 }

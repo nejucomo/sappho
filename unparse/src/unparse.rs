@@ -27,3 +27,12 @@ impl Unparse for Break {
         s.add_break(*self)
     }
 }
+
+impl<T> Unparse for Box<T>
+where
+    T: Unparse,
+{
+    fn unparse_into(&self, s: &mut Stream) {
+        s.write(self.as_ref())
+    }
+}

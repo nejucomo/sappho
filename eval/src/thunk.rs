@@ -1,5 +1,5 @@
 use crate::{Eval, EvalThunk, Result};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::Unparse;
 use sappho_value::{GenThunk, ValRef};
 
 impl<FX> EvalThunk for GenThunk<FX>

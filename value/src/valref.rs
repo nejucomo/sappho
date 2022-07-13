@@ -2,6 +2,7 @@ use crate::{Coerce, CoercionFailure, Value};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
+use std::fmt;
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -46,9 +47,9 @@ impl TryIntoIdentMap<ValRef> for ValRef {
     }
 }
 
-impl std::fmt::Display for ValRef {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.unparse(f, 0)
+impl fmt::Display for ValRef {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.unparse().fmt(f)
     }
 }
 

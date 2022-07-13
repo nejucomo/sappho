@@ -1,6 +1,6 @@
 use crate::{Eval, Result};
 use sappho_east::MatchExpr;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for MatchExpr<FX>

@@ -24,6 +24,6 @@ where
 {
     fn unparse_into(&self, s: &mut Stream) {
         s.write(&"query ");
-        s.write(self.body);
+        s.write(&self.body);
     }
 }

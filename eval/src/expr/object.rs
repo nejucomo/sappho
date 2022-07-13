@@ -1,6 +1,6 @@
 use crate::{Eval, EvalV, Result};
 use sappho_east::ObjectDef;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::Unparse;
 use sappho_value::{Attrs, Func, Object, Query, ScopeRef, Value};
 
 impl<FX> EvalV for ObjectDef<FX>

@@ -6,6 +6,7 @@ use crate::{
 };
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
+use std::fmt;
 
 /// The general top-level expression for all effects.
 #[derive(Debug, PartialEq)]
@@ -118,11 +119,11 @@ where
     }
 }
 
-impl<FX> std::fmt::Display for GenExpr<FX>
+impl<FX> fmt::Display for GenExpr<FX>
 where
     FX: Unparse,
 {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.unparse().fmt(f)
     }
 }

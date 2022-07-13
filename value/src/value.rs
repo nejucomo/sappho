@@ -1,7 +1,6 @@
 use crate::{Object, ValRef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
-use std::fmt::Display;
 
 #[derive(Debug, derive_more::From)]
 pub enum Value {
@@ -23,10 +22,10 @@ impl Unparse for Value {
         use Value::*;
 
         match self {
-            Num(x) => s.write(x.to_string()),
+            Num(x) => s.write(&x.to_string()),
             Object(x) => {
                 if let Some(list) = x.try_into_identmap().and_then(|m| m.as_list_form()) {
-                    s.write(list)
+                    s.write(&list)
                 } else {
                     s.write(x)
                 }

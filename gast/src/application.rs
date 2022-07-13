@@ -33,9 +33,9 @@ where
         s.write(&Opt);
         {
             let mut subs = Stream::new();
-            subs.write(self.target);
+            subs.write(&self.target);
             subs.write(&OptSpace);
-            subs.write(self.argument);
+            subs.write(&self.argument);
             s.add_substream(subs);
         }
         s.write(&Opt);

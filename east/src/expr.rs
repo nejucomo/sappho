@@ -5,6 +5,7 @@ use crate::{
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
+use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum GenExpr<Effects> {
@@ -139,11 +140,11 @@ where
     }
 }
 
-impl<FX> std::fmt::Display for GenExpr<FX>
+impl<FX> fmt::Display for GenExpr<FX>
 where
     FX: Unparse,
 {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.unparse(f, 0)
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.unparse().fmt(f)
     }
 }

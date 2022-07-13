@@ -44,6 +44,6 @@ where
             s.write(&";");
             s.write(&Mandatory);
         }
-        s.write(self.tail);
+        s.write(&self.tail);
     }
 }

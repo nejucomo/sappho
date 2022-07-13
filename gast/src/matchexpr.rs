@@ -40,7 +40,7 @@ where
         use sappho_unparse::Break::OptSpace;
 
         s.write(&"match ");
-        s.write(self.target);
+        s.write(&self.target);
         s.write(&" {");
         let mut subs = Stream::new();
         for clause in &self.clauses {
