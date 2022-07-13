@@ -10,16 +10,19 @@ cargo build
 
 cd ./integration-tests/src
 
-set -x
 for casedir in test-cases/*
 do
+  echo "Updating $casedir..."
   input="$(ls "$casedir"/input* | head -1)"
   cp "$input" "$input.tmp"
-  sappho eval "$input.tmp" > "$casedir/expected" 2>&1 || true
-  for style in canonical reduced
-  do
-    sappho parse -f "$style" "$input.tmp" > "$casedir/input-$style" || true
-  done
+  if sappho eval "$input.tmp" > "$casedir/expected" 2>&1
+  then
+    # It successfully parsed and evaluated, so do source code rewrites:
+    echo "Updating $casedir unparse expectations..."
+    for style in canonical reduced
+    do
+      sappho parse -f "$style" "$input.tmp" > "$casedir/input-$style" || true
+    done
+  fi
   rm "$input.tmp"
 done
-set +x
