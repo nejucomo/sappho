@@ -7,6 +7,6 @@ impl Stream {
     }
 
     pub fn write_str(&mut self, s: &str) {
-        todo!();
+        todo!("{:?}", s);
     }
 }
