@@ -24,16 +24,16 @@ impl Stream {
         thing.unparse_into(self)
     }
 
-    pub fn write_string(&mut self, s: String) {
+    pub fn add_substream(&mut self, sub: Stream) {
+        self.0.push(Substream(sub));
+    }
+
+    pub(crate) fn write_string(&mut self, s: String) {
         self.0.push(Leaf(s))
     }
 
-    pub fn add_break(&mut self, brk: Break) {
+    pub(crate) fn add_break(&mut self, brk: Break) {
         self.0.push(Break(brk));
-    }
-
-    pub fn add_substream(&mut self, sub: Stream) {
-        self.0.push(Substream(sub));
     }
 }
 
