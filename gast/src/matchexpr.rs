@@ -39,16 +39,16 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Break::OptSpace;
 
-        s.write("match ");
+        s.write(&"match ");
         s.write(self.target);
-        s.write(" {");
+        s.write(&" {");
         let mut subs = Stream::new();
         for clause in &self.clauses {
             subs.write(clause);
-            subs.write(",");
+            subs.write(&",");
             subs.write(OptSpace);
         }
         s.add_substream(subs);
-        s.write("}");
+        s.write(&"}");
     }
 }

@@ -29,7 +29,7 @@ where
 {
     fn unparse_into(&self, s: &mut Stream) {
         s.write(self.target);
-        s.write(".");
+        s.write(&".");
         s.write(self.attr);
     }
 }

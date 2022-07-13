@@ -84,18 +84,18 @@ where
         use sappho_unparse::Break::{Opt, OptSpace};
 
         if self.is_empty() {
-            s.write("[]")
+            s.write(&"[]")
         } else {
             let mut first = true;
 
-            s.write("[");
+            s.write(&"[");
             s.write(Opt);
             let mut subs = Stream::new();
             for elem in self.body.iter() {
                 if first {
                     first = false;
                 } else {
-                    subs.write(",");
+                    subs.write(&",");
                     subs.write(OptSpace);
                 }
                 subs.write(elem);
@@ -103,15 +103,15 @@ where
 
             if let Some(tail) = &self.tail {
                 if !first {
-                    subs.write(",");
+                    subs.write(&",");
                     subs.write(OptSpace);
                 }
-                subs.write("..");
+                subs.write(&"..");
                 subs.write(tail);
             }
             s.add_substream(subs);
             s.write(Opt);
-            s.write("]");
+            s.write(&"]");
         }
     }
 }

@@ -41,7 +41,7 @@ where
 
         for clause in self.clauses.iter() {
             s.write(clause);
-            s.write(";");
+            s.write(&";");
             s.write(Mandatory);
         }
         s.write(self.tail);

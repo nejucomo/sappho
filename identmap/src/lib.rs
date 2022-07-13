@@ -152,19 +152,19 @@ where
         use sappho_unparse::Break::OptSpace;
 
         if self.0.is_empty() {
-            s.write("{}");
+            s.write(&"{}");
         } else {
-            s.write("{");
+            s.write(&"{");
             let mut subs = Stream::new();
             for (k, v) in &self.0 {
                 subs.write(k);
-                subs.write(": ");
+                subs.write(&": ");
                 subs.write(v);
-                subs.write(",");
+                subs.write(&",");
                 subs.write(OptSpace);
             }
             s.add_substream(subs);
-            s.write("}");
+            s.write(&"}");
         }
     }
 }
