@@ -89,26 +89,26 @@ where
             let mut first = true;
 
             s.write(&"[");
-            let mut subs = Stream::new();
-            for elem in self.body.iter() {
-                if first {
-                    first = false;
-                } else {
-                    subs.write(&",");
+            s.substream(|subs| {
+                for elem in self.body.iter() {
+                    if first {
+                        first = false;
+                    } else {
+                        subs.write(&",");
+                    }
+                    subs.write(&OptSpace);
+                    subs.write(elem);
                 }
-                subs.write(&OptSpace);
-                subs.write(elem);
-            }
 
-            if let Some(tail) = &self.tail {
-                if !first {
-                    subs.write(&",");
+                if let Some(tail) = &self.tail {
+                    if !first {
+                        subs.write(&",");
+                    }
+                    subs.write(&OptSpace);
+                    subs.write(&"..");
+                    subs.write(tail);
                 }
-                subs.write(&OptSpace);
-                subs.write(&"..");
-                subs.write(tail);
-            }
-            s.add_substream(subs);
+            });
             s.write(&Opt);
             s.write(&"]");
         }

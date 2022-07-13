@@ -155,15 +155,15 @@ where
             s.write(&"{}");
         } else {
             s.write(&"{");
-            let mut subs = Stream::new();
-            for (k, v) in &self.0 {
-                subs.write(&OptSpace);
-                subs.write(k);
-                subs.write(&": ");
-                subs.write(v);
-                subs.write(&",");
-            }
-            s.add_substream(subs);
+            s.substream(|subs| {
+                for (k, v) in &self.0 {
+                    subs.write(&OptSpace);
+                    subs.write(k);
+                    subs.write(&": ");
+                    subs.write(v);
+                    subs.write(&",");
+                }
+            });
             s.write(&OptSpace);
             s.write(&"}");
         }

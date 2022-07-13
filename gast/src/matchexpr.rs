@@ -42,13 +42,13 @@ where
         s.write(&"match ");
         s.write(&self.target);
         s.write(&" {");
-        let mut subs = Stream::new();
-        for clause in &self.clauses {
-            subs.write(&OptSpace);
-            subs.write(clause);
-            subs.write(&",");
-        }
-        s.add_substream(subs);
+        s.substream(|subs| {
+            for clause in &self.clauses {
+                subs.write(&OptSpace);
+                subs.write(clause);
+                subs.write(&",");
+            }
+        });
         s.write(&OptSpace);
         s.write(&"}");
     }

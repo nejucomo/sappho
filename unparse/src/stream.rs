@@ -2,7 +2,7 @@ mod display;
 
 use crate::{Break, Unparse};
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Stream(Vec<Item>);
 
 #[derive(Debug)]
@@ -14,10 +14,6 @@ enum Item {
 use Item::*;
 
 impl Stream {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     pub fn write<U>(&mut self, thing: &U)
     where
         U: Unparse,
@@ -25,8 +21,17 @@ impl Stream {
         thing.unparse_into(self)
     }
 
-    pub fn add_substream(&mut self, sub: Stream) {
+    pub fn substream<F>(&mut self, f: F)
+    where
+        F: FnOnce(&mut Stream),
+    {
+        let mut sub = Stream::new();
+        f(&mut sub);
         self.0.push(Substream(sub));
+    }
+
+    pub(crate) fn new() -> Self {
+        Stream(vec![])
     }
 
     pub(crate) fn write_string(&mut self, s: String) {

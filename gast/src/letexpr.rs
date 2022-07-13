@@ -40,15 +40,15 @@ where
         use sappho_unparse::Break::Mandatory;
 
         s.write(&"(");
-        let mut subs = Stream::new();
-        for clause in self.clauses.iter() {
+        s.substream(|subs| {
+            for clause in self.clauses.iter() {
+                subs.write(&Mandatory);
+                subs.write(clause);
+                subs.write(&";");
+            }
             subs.write(&Mandatory);
-            subs.write(clause);
-            subs.write(&";");
-        }
-        subs.write(&Mandatory);
-        subs.write(&self.tail);
-        s.add_substream(subs);
+            subs.write(&self.tail);
+        });
         s.write(&Mandatory);
         s.write(&")");
     }
