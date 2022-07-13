@@ -3,3 +3,4 @@ parse error: from "test-cases/parse-error-evocation-in-query/input", line 1:
 |       ^^
 |
 +-> Syntax error: while parsing query definition, query expressions cannot contain evoke effects, e.g. `!…`
+
