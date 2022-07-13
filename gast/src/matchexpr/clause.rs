@@ -1,4 +1,4 @@
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -29,9 +29,8 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        self.pattern.unparse(f, depth)?;
-        write!(f, " -> ")?;
-        self.body.unparse(f, depth)?;
-        Ok(())
+        self.pattern.unparse(s);
+        s.write_str(" -> ");
+        self.body.unparse(s);
     }
 }

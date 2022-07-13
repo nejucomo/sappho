@@ -5,7 +5,7 @@ use crate::{
     ObjectDef, QueryDef,
 };
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// The general top-level expression for all effects.
 #[derive(Debug, PartialEq)]
@@ -103,17 +103,17 @@ where
         use GenExpr::*;
 
         match self {
-            Lit(x) => x.unparse(f, depth),
-            Ref(x) => x.unparse(f, depth),
-            Func(x) => x.unparse(f, depth),
-            Query(x) => x.unparse(f, depth),
-            Object(x) => x.unparse(f, depth),
-            List(x) => x.unparse(f, depth),
-            Let(x) => x.unparse(f, depth),
-            Match(x) => x.unparse(f, depth),
-            Application(x) => x.unparse(f, depth),
-            Lookup(x) => x.unparse(f, depth),
-            Effect(x) => x.unparse(f, depth),
+            Lit(x) => x.unparse_into(s),
+            Ref(x) => x.unparse_into(s),
+            Func(x) => x.unparse_into(s),
+            Query(x) => x.unparse_into(s),
+            Object(x) => x.unparse_into(s),
+            List(x) => x.unparse_into(s),
+            Let(x) => x.unparse_into(s),
+            Match(x) => x.unparse_into(s),
+            Application(x) => x.unparse_into(s),
+            Lookup(x) => x.unparse_into(s),
+            Effect(x) => x.unparse_into(s),
         }
     }
 }
@@ -123,6 +123,6 @@ where
     FX: Unparse,
 {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.unparse(f, 0)
+        self.unparse().fmt(f)
     }
 }

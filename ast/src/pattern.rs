@@ -2,7 +2,7 @@ mod unpack;
 
 use crate::{Identifier, Literal};
 use sappho_listform::ListForm;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 pub use self::unpack::UnpackPattern;
 
@@ -21,10 +21,10 @@ impl Unparse for Pattern {
         use Pattern::*;
 
         match self {
-            Bind(x) => x.unparse(f, depth),
-            LitEq(x) => x.unparse(f, depth),
-            Unpack(x) => x.unparse(f, depth),
-            List(x) => x.unparse(f, depth),
+            Bind(x) => x.unparse_into(s),
+            LitEq(x) => x.unparse_into(s),
+            Unpack(x) => x.unparse_into(s),
+            List(x) => x.unparse_into(s),
         }
     }
 }

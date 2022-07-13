@@ -1,5 +1,5 @@
 use crate::Identifier;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -28,8 +28,8 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        self.target.unparse(f, depth)?;
-        write!(f, ".{}", self.attr)?;
-        Ok(())
+        self.target.unparse(s);
+        s.write_str(".");
+        s.write_str(self.attr);
     }
 }

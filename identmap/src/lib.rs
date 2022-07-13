@@ -5,7 +5,7 @@ mod tryinto;
 pub use self::tryinto::TryIntoIdentMap;
 
 use sappho_listform::ListForm;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 use std::collections::BTreeMap;
 
 pub type Identifier = String;
@@ -149,20 +149,21 @@ where
     T: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Unparse, Stream};
+        use sappho_unparse::{Stream, Unparse};
 
         if self.0.is_empty() {
-            write!(f, "{{}}")
+            s.write_str("{}");
         } else {
-            writeln!(f, "{{")?;
+            s.write_str("{");
+            let mut subs = Stream::new();
             for (k, v) in &self.0 {
-                indent(f, depth + 1)?;
-                write!(f, "{}: ", k)?;
-                v.unparse(f, depth + 1)?;
-                writeln!(f, ",")?;
+                subs.write_str(k);
+                subs.write_str(": ");
+                v.unparse_into(&mut subs);
+                subs.write_str_break(",", OptSpace);
             }
-            indent(f, depth)?;
-            write!(f, "}}")
+            s.add_substream(subs);
+            s.write_str("}");
         }
     }
 }

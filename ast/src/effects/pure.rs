@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// Pure expressions without side-effects.
 pub type PureExpr = GenExpr<PureEffects>;
@@ -9,7 +9,7 @@ pub type PureExpr = GenExpr<PureEffects>;
 pub enum PureEffects {}
 
 impl Unparse for PureEffects {
-    fn unparse_into(&self, s: &mut Stream) {
+    fn unparse_into(&self, _s: &mut Stream) {
         unreachable!("pure effects are never instantiated");
     }
 }

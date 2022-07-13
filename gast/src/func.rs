@@ -1,4 +1,4 @@
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -29,10 +29,9 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        write!(f, "fn ")?;
-        self.binding.unparse(f, depth)?;
-        write!(f, " -> ")?;
-        self.body.unparse(f, depth)?;
-        Ok(())
+        s.write_str("fn ");
+        self.binding.unparse(s);
+        s.write_str(" -> ");
+        self.body.unparse(s);
     }
 }

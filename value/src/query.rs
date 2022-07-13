@@ -1,6 +1,6 @@
 use crate::{GenThunk, ScopeRef};
 use sappho_east::{QueryClause, QueryEffects, QueryExpr};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug)]
 pub struct Query {
@@ -23,8 +23,7 @@ impl Query {
 
 impl Unparse for Query {
     fn unparse_into(&self, s: &mut Stream) {
-        write!(f, "query ")?;
-        self.body.unparse(f, depth)?;
-        Ok(())
+        s.write_str("query ");
+        self.body.unparse_into(s);
     }
 }

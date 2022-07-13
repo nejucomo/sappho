@@ -1,4 +1,4 @@
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// A query definition, ie `query $x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,8 +23,7 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        write!(f, "query ")?;
-        self.body.unparse(f, depth)?;
-        Ok(())
+        s.write_str("query ");
+        self.body.unparse(s)
     }
 }

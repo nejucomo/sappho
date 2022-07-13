@@ -1,7 +1,7 @@
 use crate::{FuncDef, QueryDef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -105,6 +105,6 @@ where
     G: Unparse + TryIntoIdentMap<G>,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        self.0.unparse(f, depth)
+        self.0.unparse_into(s)
     }
 }

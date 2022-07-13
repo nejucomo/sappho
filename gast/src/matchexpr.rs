@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 pub use self::clause::MatchClause;
 
@@ -37,18 +37,15 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Unparse, Stream};
-
-        write!(f, "match ")?;
-        self.target.unparse(f, depth)?;
-        writeln!(f, " {{")?;
+        s.write_str("match ");
+        self.target.unparse(s);
+        s.write_str(" {");
+        let mut subs = Stream::new();
         for clause in &self.clauses {
-            indent(f, depth + 1)?;
-            clause.unparse(f, depth + 1)?;
-            writeln!(f, ",")?;
+            clause.unparse(&mut subs);
+            subs.write_str_break(",", true);
         }
-        indent(f, depth)?;
-        write!(f, "}}")?;
-        Ok(())
+        s.add_substream(subs);
+        s.write_str("}");
     }
 }

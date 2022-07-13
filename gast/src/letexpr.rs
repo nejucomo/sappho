@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 pub use self::clause::LetClause;
 
@@ -37,31 +37,12 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Unparse, Stream};
-
-        let (indented, cdepth) = if depth == 0 {
-            (false, 0)
-        } else {
-            (true, depth + 1)
-        };
-
-        if indented {
-            writeln!(f, "(")?;
-        }
+        use sappho_unparse::Break::Mandatory;
 
         for clause in self.clauses.iter() {
-            indent(f, cdepth)?;
-            clause.unparse(f, cdepth)?;
-            writeln!(f, ";")?;
+            clause.unparse(s);
+            clause.write_str_break(";", Mandatory);
         }
-        indent(f, cdepth)?;
-        self.tail.unparse(f, cdepth)?;
-
-        if indented {
-            writeln!(f)?;
-            indent(f, depth)?;
-            write!(f, ")")?;
-        }
-        Ok(())
+        self.tail.unparse(s);
     }
 }

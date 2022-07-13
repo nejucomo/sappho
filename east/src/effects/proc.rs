@@ -1,6 +1,6 @@
 use crate::{FromFx, GenExpr};
 use sappho_ast as ast;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 pub type ProcExpr = GenExpr<ProcEffects>;
 
@@ -42,12 +42,12 @@ impl Unparse for ProcEffects {
 
         match self {
             Inquire(x) => {
-                write!(f, "$")?;
-                x.unparse(f, depth)
+                s.write_str("$");
+                x.unparse_into(s);
             }
             Evoke(x) => {
-                write!(f, "!")?;
-                x.unparse(f, depth)
+                s.write_str("!");
+                x.unparse_into(s);
             }
         }
     }

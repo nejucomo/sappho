@@ -1,12 +1,35 @@
+use crate::Break;
+
+#[derive(Debug, Default)]
+pub struct Stream(Vec<Item>);
+
 #[derive(Debug)]
-pub struct Stream;
+enum Item {
+    Leaf(String),
+    Break(Break),
+    Substream(Stream),
+}
+use Item::*;
 
 impl Stream {
     pub fn new() -> Self {
-        todo!();
+        Self::default()
     }
 
     pub fn write_str(&mut self, s: &str) {
-        todo!("{:?}", s);
+        self.0.push(Leaf(s.to_string()))
+    }
+
+    pub fn write_str_break(&mut self, s: &str, brk: Break) {
+        self.write_str(s);
+        self.add_break(brk);
+    }
+
+    pub fn add_break(&mut self, brk: Break) {
+        self.0.push(Break(brk));
+    }
+
+    pub fn add_substream(&mut self, sub: Stream) {
+        self.0.push(Substream(sub));
     }
 }

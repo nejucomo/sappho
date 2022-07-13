@@ -1,7 +1,7 @@
 use crate::Unbundled;
 use derive_new::new;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
@@ -122,33 +122,32 @@ where
     A: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Unparse, Stream};
+        use sappho_unparse::Break::OptSpace;
 
         if self.is_empty() {
-            return write!(f, "{{}}");
-        }
+            s.write_str("{}");
+        } else {
+            s.write_str("{");
+            let mut subs = Stream::new();
+            if let Some(func) = self.func() {
+                func.unparse_into(&mut subs);
+                subs.write_str_break(",", OptSpace);
+            }
 
-        writeln!(f, "{{")?;
-        if let Some(func) = self.func() {
-            indent(f, depth + 1)?;
-            func.unparse(f, depth + 1)?;
-            writeln!(f, ",")?;
-        }
+            if let Some(query) = self.query() {
+                query.unparse_into(&mut subs);
+                subs.write_str_break(",", OptSpace);
+            }
 
-        if let Some(query) = self.query() {
-            indent(f, depth + 1)?;
-            query.unparse(f, depth + 1)?;
-            writeln!(f, ",")?;
-        }
+            for (name, attr) in self.attrs().iter() {
+                subs.write_str(name);
+                subs.write_str(": ");
+                attr.unparse_into(&mut subs);
+                subs.write_str_break(",", OptSpace);
+            }
 
-        for (name, attr) in self.attrs().iter() {
-            indent(f, depth + 1)?;
-            write!(f, "{}: ", name)?;
-            attr.unparse(f, depth + 1)?;
-            writeln!(f, ",")?;
+            s.add_substream(subs);
+            s.write_str("}");
         }
-
-        indent(f, depth)?;
-        write!(f, "}}")
     }
 }

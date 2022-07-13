@@ -1,6 +1,6 @@
 use crate::{Coerce, CoercionFailure, Value};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
 use std::ops::Deref;
 use std::rc::Rc;
@@ -54,13 +54,13 @@ impl std::fmt::Display for ValRef {
 
 impl Unparse for ValRef {
     fn unparse_into(&self, s: &mut Stream) {
-        self.deref().unparse(f, depth)
+        self.deref().unparse(s)
     }
 }
 
 // Necessary for value as list form:
 impl<'a> Unparse for &'a ValRef {
     fn unparse_into(&self, s: &mut Stream) {
-        self.deref().unparse(f, depth)
+        self.deref().unparse(s)
     }
 }

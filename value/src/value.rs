@@ -1,6 +1,6 @@
 use crate::{Object, ValRef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 use std::fmt::Display;
 
 #[derive(Debug, derive_more::From)]
@@ -23,12 +23,12 @@ impl Unparse for Value {
         use Value::*;
 
         match self {
-            Num(x) => x.fmt(f),
+            Num(x) => s.write_str(x.to_string()),
             Object(x) => {
                 if let Some(list) = x.try_into_identmap().and_then(|m| m.as_list_form()) {
-                    list.unparse(f, depth)
+                    list.unparse(s)
                 } else {
-                    x.unparse(f, depth)
+                    x.unparse(s)
                 }
             }
         }

@@ -1,6 +1,6 @@
 use crate::Pattern;
 use sappho_identmap::{IdentMap, Identifier};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -34,6 +34,6 @@ impl Deref for UnpackPattern {
 
 impl Unparse for UnpackPattern {
     fn unparse_into(&self, s: &mut Stream) {
-        self.0.unparse(f, depth)
+        self.0.unparse_into(s)
     }
 }

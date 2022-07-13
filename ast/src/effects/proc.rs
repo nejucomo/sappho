@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// Proc expressions can cause mutations (in memory or I/O), as in `!launch_balloon`, as well as
 /// causing [QueryEffects](crate::QueryEffects).
@@ -27,12 +27,12 @@ impl Unparse for ProcEffects {
 
         match self {
             Inquire(x) => {
-                write!(f, "$")?;
-                x.unparse(f, depth)
+                s.write_str("$");
+                x.unparse_into(s);
             }
             Evoke(x) => {
-                write!(f, "!")?;
-                x.unparse(f, depth)
+                s.write_str("!");
+                x.unparse_into(s);
             }
         }
     }

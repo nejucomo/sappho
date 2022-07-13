@@ -1,6 +1,6 @@
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 use sappho_east::{FuncClause, Pattern, PureEffects, PureExpr};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug)]
 pub struct Func {
@@ -26,10 +26,9 @@ impl Func {
 
 impl Unparse for Func {
     fn unparse_into(&self, s: &mut Stream) {
-        write!(f, "fn ")?;
-        self.binding.unparse(f, depth)?;
-        write!(f, " -> ")?;
-        self.body.unparse(f, depth)?;
-        Ok(())
+        s.write_str("fn ");
+        self.binding.unparse(s);
+        s.write_str(" -> ");
+        self.body.unparse(s);
     }
 }

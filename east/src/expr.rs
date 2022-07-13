@@ -4,7 +4,7 @@ use crate::{
 };
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum GenExpr<Effects> {
@@ -127,14 +127,14 @@ where
         use GenExpr::*;
 
         match self {
-            Lit(x) => x.unparse(f, depth),
-            Ref(x) => x.unparse(f, depth),
-            Object(x) => x.unparse(f, depth),
-            Let(x) => x.unparse(f, depth),
-            Match(x) => x.unparse(f, depth),
-            Application(x) => x.unparse(f, depth),
-            Lookup(x) => x.unparse(f, depth),
-            Effect(x) => x.unparse(f, depth),
+            Lit(x) => x.unparse_into(s),
+            Ref(x) => x.unparse_into(s),
+            Object(x) => x.unparse_into(s),
+            Let(x) => x.unparse_into(s),
+            Match(x) => x.unparse_into(s),
+            Application(x) => x.unparse_into(s),
+            Lookup(x) => x.unparse_into(s),
+            Effect(x) => x.unparse_into(s),
         }
     }
 }

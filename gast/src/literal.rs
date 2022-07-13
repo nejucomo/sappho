@@ -1,4 +1,4 @@
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// A literal value, such as `3.1415`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -13,7 +13,7 @@ impl Unparse for Literal {
         use Literal::*;
 
         match self {
-            Num(x) => x.fmt(f),
+            Num(x) => s.write_string(x.to_string()),
         }
     }
 }

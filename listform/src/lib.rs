@@ -1,4 +1,4 @@
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -80,36 +80,35 @@ where
     T: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Unparse, Stream};
+        use sappho_unparse::{Stream, Unparse};
 
         if self.is_empty() {
-            write!(f, "[]")
+            s.write_str("[]")
         } else {
             let mut first = true;
 
-            writeln!(f, "[")?;
+            s.write_str_break("[", true);
+            let mut subs = Stream::new();
             for elem in self.body.iter() {
                 if first {
                     first = false;
                 } else {
-                    writeln!(f, ",")?;
+                    subs.write_str_break(",", true);
                 }
-                indent(f, depth + 1)?;
-                elem.unparse(f, depth + 1)?;
+                elem.unparse_into(&mut subs);
             }
 
             if let Some(tail) = &self.tail {
                 if !first {
-                    writeln!(f, ",")?;
+                    subs.write_str_break(",", true);
                 }
-                indent(f, depth + 1)?;
-                write!(f, "..")?;
-                tail.unparse(f, depth + 1)?;
+                subs.write_str("..");
+                tail.unparse(&mut subs);
             }
-            writeln!(f)?;
-            indent(f, depth)?;
-            write!(f, "]")?;
-            Ok(())
+            s.add_substream(subs);
+            s.add_break(true);
+            s.write_str("]");
+            s
         }
     }
 }
@@ -120,7 +119,7 @@ where
     T: Unparse,
 {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.unparse(f, 0)
+        self.unparse().fmt(f)
     }
 }
 
@@ -128,7 +127,7 @@ where
 mod tests {
     use crate::ListForm;
     use indoc::indoc;
-    use sappho_unparse::{Unparse, Stream};
+    use sappho_unparse::{Stream, Unparse};
     use test_case::test_case;
 
     struct X;

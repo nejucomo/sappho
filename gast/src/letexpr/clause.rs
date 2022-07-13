@@ -1,4 +1,4 @@
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct LetClause<Pattern, Expr> {
@@ -28,10 +28,9 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        write!(f, "let ")?;
-        self.binding.unparse(f, depth)?;
-        write!(f, " = ")?;
-        self.bindexpr.unparse(f, depth)?;
-        Ok(())
+        s.write_str("let ");
+        self.binding.unparse(s);
+        s.write_str(" = ");
+        self.bindexpr.unparse(s);
     }
 }

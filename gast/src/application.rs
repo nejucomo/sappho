@@ -1,4 +1,4 @@
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -27,17 +27,15 @@ where
     Expr: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Unparse, Stream};
+        use sappho_unparse::Break::{Opt, OptSpace};
 
-        writeln!(f, "(")?;
-        indent(f, depth + 1)?;
-        self.target.unparse(f, depth + 1)?;
-        writeln!(f)?;
-        indent(f, depth + 1)?;
-        self.argument.unparse(f, depth + 1)?;
-        writeln!(f)?;
-        indent(f, depth)?;
-        write!(f, ")")?;
-        Ok(())
+        s.write_str_break("(", Opt);
+        let mut subs = Stream::new();
+        self.target.unparse(&mut subs);
+        subs.add_break(OptSpace);
+        self.argument.unparse(&mut subs);
+        s.add_substream(subs);
+        s.add_break(Opt);
+        s.write_str(")");
     }
 }

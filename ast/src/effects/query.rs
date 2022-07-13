@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_unparse::{Unparse, Stream};
+use sappho_unparse::{Stream, Unparse};
 
 /// Query expressions can read mutable memory, as in `$myvar`.
 pub type QueryExpr = GenExpr<QueryEffects>;
@@ -23,8 +23,8 @@ impl Unparse for QueryEffects {
 
         match self {
             Inquire(x) => {
-                write!(f, "$")?;
-                x.unparse(f, depth)
+                s.write_str("$");
+                x.unparse_into(s);
             }
         }
     }
