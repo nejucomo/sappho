@@ -44,11 +44,12 @@ where
         s.write(&" {");
         let mut subs = Stream::new();
         for clause in &self.clauses {
+            subs.write(&OptSpace);
             subs.write(clause);
             subs.write(&",");
-            subs.write(&OptSpace);
         }
         s.add_substream(subs);
+        s.write(&OptSpace);
         s.write(&"}");
     }
 }

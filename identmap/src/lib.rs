@@ -157,13 +157,14 @@ where
             s.write(&"{");
             let mut subs = Stream::new();
             for (k, v) in &self.0 {
+                subs.write(&OptSpace);
                 subs.write(k);
                 subs.write(&": ");
                 subs.write(v);
                 subs.write(&",");
-                subs.write(&OptSpace);
             }
             s.add_substream(subs);
+            s.write(&OptSpace);
             s.write(&"}");
         }
     }

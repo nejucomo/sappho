@@ -30,9 +30,9 @@ where
         use sappho_unparse::Break::{Opt, OptSpace};
 
         s.write(&"(");
-        s.write(&Opt);
         {
             let mut subs = Stream::new();
+            subs.write(&OptSpace);
             subs.write(&self.target);
             subs.write(&OptSpace);
             subs.write(&self.argument);

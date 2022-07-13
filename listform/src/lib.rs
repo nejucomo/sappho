@@ -89,23 +89,22 @@ where
             let mut first = true;
 
             s.write(&"[");
-            s.write(&Opt);
             let mut subs = Stream::new();
             for elem in self.body.iter() {
                 if first {
                     first = false;
                 } else {
                     subs.write(&",");
-                    subs.write(&OptSpace);
                 }
+                subs.write(&OptSpace);
                 subs.write(elem);
             }
 
             if let Some(tail) = &self.tail {
                 if !first {
                     subs.write(&",");
-                    subs.write(&OptSpace);
                 }
+                subs.write(&OptSpace);
                 subs.write(&"..");
                 subs.write(tail);
             }

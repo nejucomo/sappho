@@ -128,28 +128,30 @@ where
             s.write(&"{}");
         } else {
             s.write(&"{");
+
             let mut subs = Stream::new();
             if let Some(func) = self.func() {
+                subs.write(&OptSpace);
                 subs.write(func);
                 subs.write(&",");
-                subs.write(&OptSpace);
             }
 
             if let Some(query) = self.query() {
+                subs.write(&OptSpace);
                 subs.write(query);
                 subs.write(&",");
-                subs.write(&OptSpace);
             }
 
             for (name, attr) in self.attrs().iter() {
+                subs.write(&OptSpace);
                 subs.write(name);
                 subs.write(&": ");
                 subs.write(attr);
                 subs.write(&",");
-                subs.write(&OptSpace);
             }
 
             s.add_substream(subs);
+            s.write(&OptSpace);
             s.write(&"}");
         }
     }

@@ -39,11 +39,17 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Break::Mandatory;
 
+        s.write(&"(");
+        let mut subs = Stream::new();
         for clause in self.clauses.iter() {
-            s.write(clause);
-            s.write(&";");
-            s.write(&Mandatory);
+            subs.write(&Mandatory);
+            subs.write(clause);
+            subs.write(&";");
         }
-        s.write(&self.tail);
+        subs.write(&Mandatory);
+        subs.write(&self.tail);
+        s.add_substream(subs);
+        s.write(&Mandatory);
+        s.write(&")");
     }
 }
