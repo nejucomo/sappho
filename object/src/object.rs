@@ -125,29 +125,32 @@ where
         use sappho_unparse::Break::OptSpace;
 
         if self.is_empty() {
-            s.write_str("{}");
+            s.write("{}");
         } else {
-            s.write_str("{");
+            s.write("{");
             let mut subs = Stream::new();
             if let Some(func) = self.func() {
-                func.unparse_into(&mut subs);
-                subs.write_str_break(",", OptSpace);
+                subs.write(func);
+                subs.write(",");
+                subs.write(OptSpace);
             }
 
             if let Some(query) = self.query() {
-                query.unparse_into(&mut subs);
-                subs.write_str_break(",", OptSpace);
+                subs.write(query);
+                subs.write(",");
+                subs.write(OptSpace);
             }
 
             for (name, attr) in self.attrs().iter() {
-                subs.write_str(name);
-                subs.write_str(": ");
-                attr.unparse_into(&mut subs);
-                subs.write_str_break(",", OptSpace);
+                subs.write(name);
+                subs.write(": ");
+                subs.write(attr);
+                subs.write(",");
+                subs.write(OptSpace);
             }
 
             s.add_substream(subs);
-            s.write_str("}");
+            s.write("}");
         }
     }
 }

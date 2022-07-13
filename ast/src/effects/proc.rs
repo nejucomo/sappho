@@ -27,12 +27,12 @@ impl Unparse for ProcEffects {
 
         match self {
             Inquire(x) => {
-                s.write_str("$");
-                x.unparse_into(s);
+                s.write("$");
+                s.write(x);
             }
             Evoke(x) => {
-                s.write_str("!");
-                x.unparse_into(s);
+                s.write("!");
+                s.write(x);
             }
         }
     }

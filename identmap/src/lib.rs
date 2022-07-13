@@ -149,21 +149,22 @@ where
     T: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Stream, Unparse};
+        use sappho_unparse::Break::OptSpace;
 
         if self.0.is_empty() {
-            s.write_str("{}");
+            s.write("{}");
         } else {
-            s.write_str("{");
+            s.write("{");
             let mut subs = Stream::new();
             for (k, v) in &self.0 {
-                subs.write_str(k);
-                subs.write_str(": ");
-                v.unparse_into(&mut subs);
-                subs.write_str_break(",", OptSpace);
+                subs.write(k);
+                subs.write(": ");
+                subs.write(v);
+                subs.write(",");
+                subs.write(OptSpace);
             }
             s.add_substream(subs);
-            s.write_str("}");
+            s.write("}");
         }
     }
 }

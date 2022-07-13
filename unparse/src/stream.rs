@@ -1,4 +1,5 @@
-use crate::Break;
+use crate::{Break, Unparse};
+use std::fmt;
 
 #[derive(Debug, Default)]
 pub struct Stream(Vec<Item>);
@@ -16,13 +17,15 @@ impl Stream {
         Self::default()
     }
 
-    pub fn write_str(&mut self, s: &str) {
-        self.0.push(Leaf(s.to_string()))
+    pub fn write<U>(&mut self, thing: &U)
+    where
+        U: Unparse,
+    {
+        thing.unparse_into(self)
     }
 
-    pub fn write_str_break(&mut self, s: &str, brk: Break) {
-        self.write_str(s);
-        self.add_break(brk);
+    pub fn write_string(&mut self, s: String) {
+        self.0.push(Leaf(s))
     }
 
     pub fn add_break(&mut self, brk: Break) {
@@ -31,5 +34,11 @@ impl Stream {
 
     pub fn add_substream(&mut self, sub: Stream) {
         self.0.push(Substream(sub));
+    }
+}
+
+impl fmt::Display for Stream {
+    fn fmt(&self, _f: &mut fmt::Formatter) -> fmt::Result {
+        todo!();
     }
 }

@@ -29,13 +29,16 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Break::{Opt, OptSpace};
 
-        s.write_str_break("(", Opt);
-        let mut subs = Stream::new();
-        self.target.unparse(&mut subs);
-        subs.add_break(OptSpace);
-        self.argument.unparse(&mut subs);
-        s.add_substream(subs);
-        s.add_break(Opt);
-        s.write_str(")");
+        s.write("(");
+        s.write(Opt);
+        {
+            let mut subs = Stream::new();
+            subs.write(self.target);
+            subs.write(OptSpace);
+            subs.write(self.argument);
+            s.add_substream(subs);
+        }
+        s.write(Opt);
+        s.write(")");
     }
 }

@@ -26,9 +26,9 @@ impl Func {
 
 impl Unparse for Func {
     fn unparse_into(&self, s: &mut Stream) {
-        s.write_str("fn ");
-        self.binding.unparse(s);
-        s.write_str(" -> ");
-        self.body.unparse(s);
+        s.write("fn ");
+        s.write(self.binding);
+        s.write(" -> ");
+        s.write(self.body);
     }
 }

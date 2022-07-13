@@ -9,11 +9,10 @@ pub enum Literal {
 
 impl Unparse for Literal {
     fn unparse_into(&self, s: &mut Stream) {
-        use std::fmt::Display;
         use Literal::*;
 
         match self {
-            Num(x) => s.write_string(x.to_string()),
+            Num(x) => s.write(x.to_string()),
         }
     }
 }

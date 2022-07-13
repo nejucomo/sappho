@@ -37,15 +37,18 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        s.write_str("match ");
-        self.target.unparse(s);
-        s.write_str(" {");
+        use sappho_unparse::Break::OptSpace;
+
+        s.write("match ");
+        s.write(self.target);
+        s.write(" {");
         let mut subs = Stream::new();
         for clause in &self.clauses {
-            clause.unparse(&mut subs);
-            subs.write_str_break(",", true);
+            subs.write(clause);
+            subs.write(",");
+            subs.write(OptSpace);
         }
         s.add_substream(subs);
-        s.write_str("}");
+        s.write("}");
     }
 }

@@ -23,12 +23,12 @@ impl Unparse for Value {
         use Value::*;
 
         match self {
-            Num(x) => s.write_str(x.to_string()),
+            Num(x) => s.write(x.to_string()),
             Object(x) => {
                 if let Some(list) = x.try_into_identmap().and_then(|m| m.as_list_form()) {
-                    list.unparse(s)
+                    s.write(list)
                 } else {
-                    x.unparse(s)
+                    s.write(x)
                 }
             }
         }

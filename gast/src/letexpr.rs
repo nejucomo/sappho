@@ -40,9 +40,10 @@ where
         use sappho_unparse::Break::Mandatory;
 
         for clause in self.clauses.iter() {
-            clause.unparse(s);
-            clause.write_str_break(";", Mandatory);
+            s.write(clause);
+            s.write(";");
+            s.write(Mandatory);
         }
-        self.tail.unparse(s);
+        s.write(self.tail);
     }
 }

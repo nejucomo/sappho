@@ -1,4 +1,5 @@
 use sappho_unparse::{Stream, Unparse};
+use std::fmt;
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -80,45 +81,47 @@ where
     T: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Stream, Unparse};
+        use sappho_unparse::Break::{Opt, OptSpace};
 
         if self.is_empty() {
-            s.write_str("[]")
+            s.write("[]")
         } else {
             let mut first = true;
 
-            s.write_str_break("[", true);
+            s.write("[");
+            s.write(Opt);
             let mut subs = Stream::new();
             for elem in self.body.iter() {
                 if first {
                     first = false;
                 } else {
-                    subs.write_str_break(",", true);
+                    subs.write(",");
+                    subs.write(OptSpace);
                 }
-                elem.unparse_into(&mut subs);
+                subs.write(elem);
             }
 
             if let Some(tail) = &self.tail {
                 if !first {
-                    subs.write_str_break(",", true);
+                    subs.write(",");
+                    subs.write(OptSpace);
                 }
-                subs.write_str("..");
-                tail.unparse(&mut subs);
+                subs.write("..");
+                subs.write(tail);
             }
             s.add_substream(subs);
-            s.add_break(true);
-            s.write_str("]");
-            s
+            s.write(Opt);
+            s.write("]");
         }
     }
 }
 
-impl<X, T> std::fmt::Display for ListForm<X, T>
+impl<X, T> fmt::Display for ListForm<X, T>
 where
     X: Unparse,
     T: Unparse,
 {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.unparse().fmt(f)
     }
 }

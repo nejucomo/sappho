@@ -28,8 +28,8 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        self.target.unparse(s);
-        s.write_str(".");
-        s.write_str(self.attr);
+        s.write(self.target);
+        s.write(".");
+        s.write(self.attr);
     }
 }

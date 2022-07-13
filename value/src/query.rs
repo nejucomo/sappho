@@ -23,7 +23,7 @@ impl Query {
 
 impl Unparse for Query {
     fn unparse_into(&self, s: &mut Stream) {
-        s.write_str("query ");
-        self.body.unparse_into(s);
+        s.write("query ");
+        s.write(self.body);
     }
 }

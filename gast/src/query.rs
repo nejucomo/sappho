@@ -23,7 +23,7 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        s.write_str("query ");
-        self.body.unparse(s)
+        s.write("query ");
+        s.write(self.body);
     }
 }

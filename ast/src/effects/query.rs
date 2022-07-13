@@ -23,8 +23,8 @@ impl Unparse for QueryEffects {
 
         match self {
             Inquire(x) => {
-                s.write_str("$");
-                x.unparse_into(s);
+                s.write("$");
+                s.write(x);
             }
         }
     }
