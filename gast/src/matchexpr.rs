@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 pub use self::clause::MatchClause;
 
@@ -31,20 +31,20 @@ impl<P, X> MatchExpr<P, X> {
     }
 }
 
-impl<P, X> DisplayDepth for MatchExpr<P, X>
+impl<P, X> Unparse for MatchExpr<P, X>
 where
-    P: DisplayDepth,
-    X: DisplayDepth,
+    P: Unparse,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse(&self) -> Stream {
+        use sappho_unparse::{Unparse, Stream};
 
         write!(f, "match ")?;
-        self.target.fmt_depth(f, depth)?;
+        self.target.unparse(f, depth)?;
         writeln!(f, " {{")?;
         for clause in &self.clauses {
             indent(f, depth + 1)?;
-            clause.fmt_depth(f, depth + 1)?;
+            clause.unparse(f, depth + 1)?;
             writeln!(f, ",")?;
         }
         indent(f, depth)?;

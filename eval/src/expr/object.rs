@@ -1,11 +1,11 @@
 use crate::{Eval, EvalV, Result};
 use sappho_east::ObjectDef;
-use sappho_unparse::DisplayDepth;
+use sappho_unparse::{Unparse, Stream};
 use sappho_value::{Attrs, Func, Object, Query, ScopeRef, Value};
 
 impl<FX> EvalV for ObjectDef<FX>
 where
-    FX: Eval + DisplayDepth + DisplayDepth,
+    FX: Eval + Unparse + Unparse,
 {
     fn eval_val(&self, scope: &ScopeRef) -> Result<Value> {
         let mut attrs = Attrs::default();

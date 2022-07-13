@@ -1,4 +1,4 @@
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -22,19 +22,19 @@ impl<X> ApplicationExpr<X> {
     }
 }
 
-impl<Expr> DisplayDepth for ApplicationExpr<Expr>
+impl<Expr> Unparse for ApplicationExpr<Expr>
 where
-    Expr: DisplayDepth,
+    Expr: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse(&self) -> Stream {
+        use sappho_unparse::{Unparse, Stream};
 
         writeln!(f, "(")?;
         indent(f, depth + 1)?;
-        self.target.fmt_depth(f, depth + 1)?;
+        self.target.unparse(f, depth + 1)?;
         writeln!(f)?;
         indent(f, depth + 1)?;
-        self.argument.fmt_depth(f, depth + 1)?;
+        self.argument.unparse(f, depth + 1)?;
         writeln!(f)?;
         indent(f, depth)?;
         write!(f, ")")?;

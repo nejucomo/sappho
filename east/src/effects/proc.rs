@@ -1,6 +1,6 @@
 use crate::{FromFx, GenExpr};
 use sappho_ast as ast;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 pub type ProcExpr = GenExpr<ProcEffects>;
 
@@ -36,18 +36,18 @@ impl FromFx for ast::ProcEffects {
     }
 }
 
-impl DisplayDepth for ProcEffects {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for ProcEffects {
+    fn unparse(&self) -> Stream {
         use ProcEffects::*;
 
         match self {
             Inquire(x) => {
                 write!(f, "$")?;
-                x.fmt_depth(f, depth)
+                x.unparse(f, depth)
             }
             Evoke(x) => {
                 write!(f, "!")?;
-                x.fmt_depth(f, depth)
+                x.unparse(f, depth)
             }
         }
     }

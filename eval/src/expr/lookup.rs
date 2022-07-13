@@ -1,11 +1,11 @@
 use crate::{Eval, Result};
 use sappho_east::LookupExpr;
-use sappho_unparse::DisplayDepth;
+use sappho_unparse::{Unparse, Stream};
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for LookupExpr<FX>
 where
-    FX: Eval + DisplayDepth,
+    FX: Eval + Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use crate::Error::MissingAttr;

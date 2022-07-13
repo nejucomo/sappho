@@ -1,6 +1,6 @@
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 use sappho_east::{FuncClause, Pattern, PureEffects, PureExpr};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 #[derive(Debug)]
 pub struct Func {
@@ -24,12 +24,12 @@ impl Func {
     }
 }
 
-impl DisplayDepth for Func {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for Func {
+    fn unparse(&self) -> Stream {
         write!(f, "fn ")?;
-        self.binding.fmt_depth(f, depth)?;
+        self.binding.unparse(f, depth)?;
         write!(f, " -> ")?;
-        self.body.fmt_depth(f, depth)?;
+        self.body.unparse(f, depth)?;
         Ok(())
     }
 }

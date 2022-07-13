@@ -1,4 +1,4 @@
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -74,13 +74,13 @@ impl<X, T, E> ListForm<X, Result<T, E>> {
     }
 }
 
-impl<X, T> DisplayDepth for ListForm<X, T>
+impl<X, T> Unparse for ListForm<X, T>
 where
-    X: DisplayDepth,
-    T: DisplayDepth,
+    X: Unparse,
+    T: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse(&self) -> Stream {
+        use sappho_unparse::{Unparse, Stream};
 
         if self.is_empty() {
             write!(f, "[]")
@@ -95,7 +95,7 @@ where
                     writeln!(f, ",")?;
                 }
                 indent(f, depth + 1)?;
-                elem.fmt_depth(f, depth + 1)?;
+                elem.unparse(f, depth + 1)?;
             }
 
             if let Some(tail) = &self.tail {
@@ -104,7 +104,7 @@ where
                 }
                 indent(f, depth + 1)?;
                 write!(f, "..")?;
-                tail.fmt_depth(f, depth + 1)?;
+                tail.unparse(f, depth + 1)?;
             }
             writeln!(f)?;
             indent(f, depth)?;
@@ -116,11 +116,11 @@ where
 
 impl<X, T> std::fmt::Display for ListForm<X, T>
 where
-    X: DisplayDepth,
-    T: DisplayDepth,
+    X: Unparse,
+    T: Unparse,
 {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.fmt_depth(f, 0)
+        self.unparse(f, 0)
     }
 }
 
@@ -128,13 +128,13 @@ where
 mod tests {
     use crate::ListForm;
     use indoc::indoc;
-    use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+    use sappho_unparse::{Unparse, Stream};
     use test_case::test_case;
 
     struct X;
 
-    impl DisplayDepth for X {
-        fn fmt_depth(&self, f: &mut Formatter, _depth: usize) -> FmtResult {
+    impl Unparse for X {
+        fn unparse(&self) -> Stream {
             write!(f, "X")
         }
     }

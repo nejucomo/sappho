@@ -1,11 +1,11 @@
 use crate::{Eval, Result};
 use sappho_east::LetExpr;
-use sappho_unparse::DisplayDepth;
+use sappho_unparse::{Unparse, Stream};
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for LetExpr<FX>
 where
-    FX: Eval + DisplayDepth,
+    FX: Eval + Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         // Declare all forward bindings first:

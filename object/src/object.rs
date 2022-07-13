@@ -1,7 +1,7 @@
 use crate::Unbundled;
 use derive_new::new;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
@@ -115,14 +115,14 @@ impl<F, Q, A> TryIntoIdentMap<A> for Object<F, Q, A> {
     }
 }
 
-impl<F, Q, A> DisplayDepth for Object<F, Q, A>
+impl<F, Q, A> Unparse for Object<F, Q, A>
 where
-    F: DisplayDepth,
-    Q: DisplayDepth,
-    A: DisplayDepth,
+    F: Unparse,
+    Q: Unparse,
+    A: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse(&self) -> Stream {
+        use sappho_unparse::{Unparse, Stream};
 
         if self.is_empty() {
             return write!(f, "{{}}");
@@ -131,20 +131,20 @@ where
         writeln!(f, "{{")?;
         if let Some(func) = self.func() {
             indent(f, depth + 1)?;
-            func.fmt_depth(f, depth + 1)?;
+            func.unparse(f, depth + 1)?;
             writeln!(f, ",")?;
         }
 
         if let Some(query) = self.query() {
             indent(f, depth + 1)?;
-            query.fmt_depth(f, depth + 1)?;
+            query.unparse(f, depth + 1)?;
             writeln!(f, ",")?;
         }
 
         for (name, attr) in self.attrs().iter() {
             indent(f, depth + 1)?;
             write!(f, "{}: ", name)?;
-            attr.fmt_depth(f, depth + 1)?;
+            attr.unparse(f, depth + 1)?;
             writeln!(f, ",")?;
         }
 

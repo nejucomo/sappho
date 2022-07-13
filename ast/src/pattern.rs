@@ -2,7 +2,7 @@ mod unpack;
 
 use crate::{Identifier, Literal};
 use sappho_listform::ListForm;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 pub use self::unpack::UnpackPattern;
 
@@ -16,15 +16,15 @@ pub enum Pattern {
     List(ListPattern),
 }
 
-impl DisplayDepth for Pattern {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for Pattern {
+    fn unparse(&self) -> Stream {
         use Pattern::*;
 
         match self {
-            Bind(x) => x.fmt_depth(f, depth),
-            LitEq(x) => x.fmt_depth(f, depth),
-            Unpack(x) => x.fmt_depth(f, depth),
-            List(x) => x.fmt_depth(f, depth),
+            Bind(x) => x.unparse(f, depth),
+            LitEq(x) => x.unparse(f, depth),
+            Unpack(x) => x.unparse(f, depth),
+            List(x) => x.unparse(f, depth),
         }
     }
 }

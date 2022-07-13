@@ -5,7 +5,7 @@ mod tryinto;
 pub use self::tryinto::TryIntoIdentMap;
 
 use sappho_listform::ListForm;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 use std::collections::BTreeMap;
 
 pub type Identifier = String;
@@ -144,12 +144,12 @@ impl<T> IntoIterator for IdentMap<T> {
     }
 }
 
-impl<T> DisplayDepth for IdentMap<T>
+impl<T> Unparse for IdentMap<T>
 where
-    T: DisplayDepth,
+    T: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse(&self) -> Stream {
+        use sappho_unparse::{Unparse, Stream};
 
         if self.0.is_empty() {
             write!(f, "{{}}")
@@ -158,7 +158,7 @@ where
             for (k, v) in &self.0 {
                 indent(f, depth + 1)?;
                 write!(f, "{}: ", k)?;
-                v.fmt_depth(f, depth + 1)?;
+                v.unparse(f, depth + 1)?;
                 writeln!(f, ",")?;
             }
             indent(f, depth)?;

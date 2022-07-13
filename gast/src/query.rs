@@ -1,4 +1,4 @@
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 /// A query definition, ie `query $x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -18,13 +18,13 @@ impl<X> QueryDef<X> {
     }
 }
 
-impl<X> DisplayDepth for QueryDef<X>
+impl<X> Unparse for QueryDef<X>
 where
-    X: DisplayDepth,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+    fn unparse(&self) -> Stream {
         write!(f, "query ")?;
-        self.body.fmt_depth(f, depth)?;
+        self.body.unparse(f, depth)?;
         Ok(())
     }
 }

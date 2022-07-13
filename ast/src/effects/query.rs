@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 /// Query expressions can read mutable memory, as in `$myvar`.
 pub type QueryExpr = GenExpr<QueryEffects>;
@@ -17,14 +17,14 @@ impl From<QueryEffects> for QueryExpr {
     }
 }
 
-impl DisplayDepth for QueryEffects {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for QueryEffects {
+    fn unparse(&self) -> Stream {
         use QueryEffects::*;
 
         match self {
             Inquire(x) => {
                 write!(f, "$")?;
-                x.fmt_depth(f, depth)
+                x.unparse(f, depth)
             }
         }
     }

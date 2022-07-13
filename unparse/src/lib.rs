@@ -1,8 +1,8 @@
 use std::fmt::Display;
 pub use std::fmt::{Formatter, Result as FmtResult};
 
-pub trait DisplayDepth {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult;
+pub trait Unparse {
+    fn unparse(&self) -> Stream {
 }
 
 pub fn indent(f: &mut Formatter, depth: usize) -> FmtResult {
@@ -12,17 +12,17 @@ pub fn indent(f: &mut Formatter, depth: usize) -> FmtResult {
     Ok(())
 }
 
-impl DisplayDepth for String {
-    fn fmt_depth(&self, f: &mut Formatter, _depth: usize) -> FmtResult {
+impl Unparse for String {
+    fn unparse(&self) -> Stream {
         self.fmt(f)
     }
 }
 
-impl<X> DisplayDepth for Box<X>
+impl<X> Unparse for Box<X>
 where
-    X: DisplayDepth,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        self.as_ref().fmt_depth(f, depth)
+    fn unparse(&self) -> Stream {
+        self.as_ref().unparse(f, depth)
     }
 }

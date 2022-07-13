@@ -3,7 +3,7 @@ mod unpack;
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 pub use self::unpack::UnpackPattern;
 
@@ -75,21 +75,21 @@ impl From<Pattern> for ast::Pattern {
     }
 }
 
-impl DisplayDepth for Pattern {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for Pattern {
+    fn unparse(&self) -> Stream {
         use Pattern::*;
 
         match self {
-            Bind(x) => x.fmt_depth(f, depth),
-            LitEq(x) => x.fmt_depth(f, depth),
-            Unpack(x) => x.fmt_depth(f, depth),
+            Bind(x) => x.unparse(f, depth),
+            LitEq(x) => x.unparse(f, depth),
+            Unpack(x) => x.unparse(f, depth),
         }
     }
 }
 
 impl std::fmt::Display for Pattern {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.fmt_depth(f, 0)
+        self.unparse(f, 0)
     }
 }
 

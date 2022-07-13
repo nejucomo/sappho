@@ -4,7 +4,7 @@ use crate::{
 };
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum GenExpr<Effects> {
@@ -119,31 +119,31 @@ impl<FX> TryIntoIdentMap<GenExpr<FX>> for GenExpr<FX> {
     }
 }
 
-impl<FX> DisplayDepth for GenExpr<FX>
+impl<FX> Unparse for GenExpr<FX>
 where
-    FX: DisplayDepth,
+    FX: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+    fn unparse(&self) -> Stream {
         use GenExpr::*;
 
         match self {
-            Lit(x) => x.fmt_depth(f, depth),
-            Ref(x) => x.fmt_depth(f, depth),
-            Object(x) => x.fmt_depth(f, depth),
-            Let(x) => x.fmt_depth(f, depth),
-            Match(x) => x.fmt_depth(f, depth),
-            Application(x) => x.fmt_depth(f, depth),
-            Lookup(x) => x.fmt_depth(f, depth),
-            Effect(x) => x.fmt_depth(f, depth),
+            Lit(x) => x.unparse(f, depth),
+            Ref(x) => x.unparse(f, depth),
+            Object(x) => x.unparse(f, depth),
+            Let(x) => x.unparse(f, depth),
+            Match(x) => x.unparse(f, depth),
+            Application(x) => x.unparse(f, depth),
+            Lookup(x) => x.unparse(f, depth),
+            Effect(x) => x.unparse(f, depth),
         }
     }
 }
 
 impl<FX> std::fmt::Display for GenExpr<FX>
 where
-    FX: DisplayDepth,
+    FX: Unparse,
 {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.fmt_depth(f, 0)
+        self.unparse(f, 0)
     }
 }

@@ -1,6 +1,6 @@
 use crate::{GenThunk, ScopeRef};
 use sappho_east::{QueryClause, QueryEffects, QueryExpr};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Unparse, Stream};
 
 #[derive(Debug)]
 pub struct Query {
@@ -21,10 +21,10 @@ impl Query {
     }
 }
 
-impl DisplayDepth for Query {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for Query {
+    fn unparse(&self) -> Stream {
         write!(f, "query ")?;
-        self.body.fmt_depth(f, depth)?;
+        self.body.unparse(f, depth)?;
         Ok(())
     }
 }
