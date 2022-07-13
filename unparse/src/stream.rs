@@ -1,5 +1,6 @@
+mod display;
+
 use crate::{Break, Unparse};
-use std::fmt;
 
 #[derive(Debug, Default)]
 pub struct Stream(Vec<Item>);
@@ -34,11 +35,5 @@ impl Stream {
 
     pub(crate) fn add_break(&mut self, brk: Break) {
         self.0.push(Break(brk));
-    }
-}
-
-impl fmt::Display for Stream {
-    fn fmt(&self, _f: &mut fmt::Formatter) -> fmt::Result {
-        todo!();
     }
 }
