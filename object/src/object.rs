@@ -126,27 +126,27 @@ where
         use sappho_unparse::Break::OptSpace;
 
         if self.is_empty() {
-            s.write(&"{}");
+            s.write("{}");
         } else {
             s.bracketed(Squiggle, |subs| {
                 if let Some(func) = self.func() {
                     subs.write(&OptSpace);
                     subs.write(func);
-                    subs.write(&",");
+                    subs.write(",");
                 }
 
                 if let Some(query) = self.query() {
                     subs.write(&OptSpace);
                     subs.write(query);
-                    subs.write(&",");
+                    subs.write(",");
                 }
 
                 for (name, attr) in self.attrs().iter() {
                     subs.write(&OptSpace);
                     subs.write(name);
-                    subs.write(&": ");
+                    subs.write(": ");
                     subs.write(attr);
-                    subs.write(&",");
+                    subs.write(",");
                 }
             });
         }

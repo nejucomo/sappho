@@ -30,7 +30,7 @@ impl Stream {
 
     pub fn write<U>(&mut self, thing: &U)
     where
-        U: Unparse,
+        U: Unparse + ?Sized,
     {
         thing.unparse_into(self)
     }
@@ -42,14 +42,14 @@ impl Stream {
         use Brackets::*;
         use Break::Opt;
 
-        self.write(&match brackets {
+        self.write(match brackets {
             Parens => "(",
             Square => "[",
             Squiggle => "{",
         });
         self.substream(f);
         self.write(&Opt);
-        self.write(&match brackets {
+        self.write(match brackets {
             Parens => ")",
             Square => "]",
             Squiggle => "}",

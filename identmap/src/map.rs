@@ -141,15 +141,15 @@ where
         use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
 
         if self.0.is_empty() {
-            s.write(&"{}");
+            s.write("{}");
         } else {
             s.bracketed(Squiggle, |subs| {
                 for (k, v) in &self.0 {
                     subs.write(&OptSpace);
                     subs.write(k);
-                    subs.write(&": ");
+                    subs.write(": ");
                     subs.write(v);
-                    subs.write(&",");
+                    subs.write(",");
                 }
             });
         }

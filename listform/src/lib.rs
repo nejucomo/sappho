@@ -85,7 +85,7 @@ where
         use sappho_unparse::Break::OptSpace;
 
         if self.is_empty() {
-            s.write(&"[]")
+            s.write("[]")
         } else {
             s.bracketed(Square, |subs| {
                 let mut first = true;
@@ -94,7 +94,7 @@ where
                     if first {
                         first = false;
                     } else {
-                        subs.write(&",");
+                        subs.write(",");
                     }
                     subs.write(&OptSpace);
                     subs.write(elem);
@@ -102,10 +102,10 @@ where
 
                 if let Some(tail) = &self.tail {
                     if !first {
-                        subs.write(&",");
+                        subs.write(",");
                     }
                     subs.write(&OptSpace);
-                    subs.write(&"..");
+                    subs.write("..");
                     subs.write(tail);
                 }
             });
@@ -134,7 +134,7 @@ mod tests {
 
     impl Unparse for X {
         fn unparse_into(&self, s: &mut Stream) {
-            s.write(&"X");
+            s.write("X");
         }
     }
 

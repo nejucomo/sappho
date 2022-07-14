@@ -39,14 +39,14 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
 
-        s.write(&"match ");
+        s.write("match ");
         s.write(&self.target);
-        s.write(&" ");
+        s.write(" ");
         s.bracketed(Squiggle, |subs| {
             for clause in &self.clauses {
                 subs.write(&OptSpace);
                 subs.write(clause);
-                subs.write(&",");
+                subs.write(",");
             }
         });
     }
