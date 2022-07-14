@@ -3,6 +3,7 @@ use crate::{
     ObjectDef,
 };
 use sappho_ast as ast;
+use sappho_gast::transform_object_def;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
@@ -31,7 +32,7 @@ where
             ast::GenExpr::Ref(x) => Ref(x),
             ast::GenExpr::Func(x) => ast::GenExpr::from(ast::ObjectDef::new_func(x)).into(),
             ast::GenExpr::Query(x) => ast::GenExpr::from(ast::ObjectDef::new_query(x)).into(),
-            ast::GenExpr::Object(x) => Object(x.transform_into()),
+            ast::GenExpr::Object(x) => Object(transform_object_def(x)),
             ast::GenExpr::List(x) => x.into(),
             ast::GenExpr::Let(x) => Let(x.transform_into()),
             ast::GenExpr::Match(x) => Match(x.transform_into()),
@@ -92,10 +93,10 @@ where
     AstFxFor<FX>: Clone,
 {
     use ast::GenExpr::{Func, List, Object, Query};
-    use sappho_gast::Unbundled as U;
+    use sappho_object::Unbundled as U;
 
     match objdef.unbundle() {
-        U::Bundled(obj) => Object(obj.transform_into()),
+        U::Bundled(obj) => Object(transform_object_def(obj)),
         U::Func(f) => Func(f.transform_into()),
         U::Query(q) => Query(q.transform_into()),
         U::Attrs(a) => a
@@ -107,7 +108,7 @@ where
                         .map_tail(|x| Box::new(ast::GenExpr::from(x.clone()))),
                 )
             })
-            .unwrap_or_else(|| Object(ObjectDef::new_attrs(a).transform_into())),
+            .unwrap_or_else(|| Object(transform_object_def(ObjectDef::new_attrs(a)))),
     }
 }
 
