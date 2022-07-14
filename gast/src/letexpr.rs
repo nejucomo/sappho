@@ -40,8 +40,8 @@ where
         use sappho_unparse::Break::Mandatory;
 
         let unparse_clauses = |s: &mut Stream| {
-            for clause in self.clauses.iter() {
-                if s.depth() > 0 {
+            for (ix, clause) in self.clauses.iter().enumerate() {
+                if s.depth() > 0 || ix > 0 {
                     s.write(&Mandatory);
                 }
                 s.write(clause);
