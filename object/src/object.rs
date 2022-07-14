@@ -1,7 +1,7 @@
 use crate::Unbundled;
 use derive_new::new;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, A> {
@@ -115,40 +115,42 @@ impl<F, Q, A> TryIntoIdentMap<A> for Object<F, Q, A> {
     }
 }
 
-impl<F, Q, A> DisplayDepth for Object<F, Q, A>
+impl<F, Q, A> Unparse for Object<F, Q, A>
 where
-    F: DisplayDepth,
-    Q: DisplayDepth,
-    A: DisplayDepth,
+    F: Unparse,
+    Q: Unparse,
+    A: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse_into(&self, s: &mut Stream) {
+        use sappho_unparse::Break::OptSpace;
 
         if self.is_empty() {
-            return write!(f, "{{}}");
-        }
+            s.write(&"{}");
+        } else {
+            s.write(&"{");
+            s.substream(|subs| {
+                if let Some(func) = self.func() {
+                    subs.write(&OptSpace);
+                    subs.write(func);
+                    subs.write(&",");
+                }
 
-        writeln!(f, "{{")?;
-        if let Some(func) = self.func() {
-            indent(f, depth + 1)?;
-            func.fmt_depth(f, depth + 1)?;
-            writeln!(f, ",")?;
-        }
+                if let Some(query) = self.query() {
+                    subs.write(&OptSpace);
+                    subs.write(query);
+                    subs.write(&",");
+                }
 
-        if let Some(query) = self.query() {
-            indent(f, depth + 1)?;
-            query.fmt_depth(f, depth + 1)?;
-            writeln!(f, ",")?;
+                for (name, attr) in self.attrs().iter() {
+                    subs.write(&OptSpace);
+                    subs.write(name);
+                    subs.write(&": ");
+                    subs.write(attr);
+                    subs.write(&",");
+                }
+            });
+            s.write(&OptSpace);
+            s.write(&"}");
         }
-
-        for (name, attr) in self.attrs().iter() {
-            indent(f, depth + 1)?;
-            write!(f, "{}: ", name)?;
-            attr.fmt_depth(f, depth + 1)?;
-            writeln!(f, ",")?;
-        }
-
-        indent(f, depth)?;
-        write!(f, "}}")
     }
 }

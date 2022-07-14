@@ -1,4 +1,4 @@
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,15 +23,14 @@ impl<P, X> MatchClause<P, X> {
     }
 }
 
-impl<P, X> DisplayDepth for MatchClause<P, X>
+impl<P, X> Unparse for MatchClause<P, X>
 where
-    P: DisplayDepth,
-    X: DisplayDepth,
+    P: Unparse,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        self.pattern.fmt_depth(f, depth)?;
-        write!(f, " -> ")?;
-        self.body.fmt_depth(f, depth)?;
-        Ok(())
+    fn unparse_into(&self, s: &mut Stream) {
+        s.write(&self.pattern);
+        s.write(&" -> ");
+        s.write(&self.body);
     }
 }

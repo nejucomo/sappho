@@ -1,4 +1,5 @@
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
+use std::fmt;
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -74,53 +75,53 @@ impl<X, T, E> ListForm<X, Result<T, E>> {
     }
 }
 
-impl<X, T> DisplayDepth for ListForm<X, T>
+impl<X, T> Unparse for ListForm<X, T>
 where
-    X: DisplayDepth,
-    T: DisplayDepth,
+    X: Unparse,
+    T: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse_into(&self, s: &mut Stream) {
+        use sappho_unparse::Break::{Opt, OptSpace};
 
         if self.is_empty() {
-            write!(f, "[]")
+            s.write(&"[]")
         } else {
             let mut first = true;
 
-            writeln!(f, "[")?;
-            for elem in self.body.iter() {
-                if first {
-                    first = false;
-                } else {
-                    writeln!(f, ",")?;
+            s.write(&"[");
+            s.substream(|subs| {
+                for elem in self.body.iter() {
+                    if first {
+                        first = false;
+                    } else {
+                        subs.write(&",");
+                    }
+                    subs.write(&OptSpace);
+                    subs.write(elem);
                 }
-                indent(f, depth + 1)?;
-                elem.fmt_depth(f, depth + 1)?;
-            }
 
-            if let Some(tail) = &self.tail {
-                if !first {
-                    writeln!(f, ",")?;
+                if let Some(tail) = &self.tail {
+                    if !first {
+                        subs.write(&",");
+                    }
+                    subs.write(&OptSpace);
+                    subs.write(&"..");
+                    subs.write(tail);
                 }
-                indent(f, depth + 1)?;
-                write!(f, "..")?;
-                tail.fmt_depth(f, depth + 1)?;
-            }
-            writeln!(f)?;
-            indent(f, depth)?;
-            write!(f, "]")?;
-            Ok(())
+            });
+            s.write(&Opt);
+            s.write(&"]");
         }
     }
 }
 
-impl<X, T> std::fmt::Display for ListForm<X, T>
+impl<X, T> fmt::Display for ListForm<X, T>
 where
-    X: DisplayDepth,
-    T: DisplayDepth,
+    X: Unparse,
+    T: Unparse,
 {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.fmt_depth(f, 0)
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.unparse().fmt(f)
     }
 }
 
@@ -128,14 +129,14 @@ where
 mod tests {
     use crate::ListForm;
     use indoc::indoc;
-    use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+    use sappho_unparse::{Stream, Unparse};
     use test_case::test_case;
 
     struct X;
 
-    impl DisplayDepth for X {
-        fn fmt_depth(&self, f: &mut Formatter, _depth: usize) -> FmtResult {
-            write!(f, "X")
+    impl Unparse for X {
+        fn unparse_into(&self, s: &mut Stream) {
+            s.write(&"X");
         }
     }
 

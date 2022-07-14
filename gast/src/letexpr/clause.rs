@@ -1,4 +1,4 @@
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct LetClause<Pattern, Expr> {
@@ -22,16 +22,15 @@ impl<P, X> LetClause<P, X> {
     }
 }
 
-impl<P, X> DisplayDepth for LetClause<P, X>
+impl<P, X> Unparse for LetClause<P, X>
 where
-    P: DisplayDepth,
-    X: DisplayDepth,
+    P: Unparse,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        write!(f, "let ")?;
-        self.binding.fmt_depth(f, depth)?;
-        write!(f, " = ")?;
-        self.bindexpr.fmt_depth(f, depth)?;
-        Ok(())
+    fn unparse_into(&self, s: &mut Stream) {
+        s.write(&"let ");
+        s.write(&self.binding);
+        s.write(&" = ");
+        s.write(&self.bindexpr);
     }
 }

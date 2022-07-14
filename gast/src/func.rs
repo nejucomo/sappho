@@ -1,4 +1,4 @@
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,16 +23,15 @@ impl<P, X> FuncDef<P, X> {
     }
 }
 
-impl<P, X> DisplayDepth for FuncDef<P, X>
+impl<P, X> Unparse for FuncDef<P, X>
 where
-    P: DisplayDepth,
-    X: DisplayDepth,
+    P: Unparse,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        write!(f, "fn ")?;
-        self.binding.fmt_depth(f, depth)?;
-        write!(f, " -> ")?;
-        self.body.fmt_depth(f, depth)?;
-        Ok(())
+    fn unparse_into(&self, s: &mut Stream) {
+        s.write(&"fn ");
+        s.write(&self.binding);
+        s.write(&" -> ");
+        s.write(&self.body);
     }
 }

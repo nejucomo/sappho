@@ -1,7 +1,8 @@
 use crate::{Coerce, CoercionFailure, Value};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
+use std::fmt;
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -46,21 +47,21 @@ impl TryIntoIdentMap<ValRef> for ValRef {
     }
 }
 
-impl std::fmt::Display for ValRef {
-    fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        self.fmt_depth(f, 0)
+impl fmt::Display for ValRef {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.unparse().fmt(f)
     }
 }
 
-impl DisplayDepth for ValRef {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        self.deref().fmt_depth(f, depth)
+impl Unparse for ValRef {
+    fn unparse_into(&self, s: &mut Stream) {
+        self.deref().unparse_into(s)
     }
 }
 
 // Necessary for value as list form:
-impl<'a> DisplayDepth for &'a ValRef {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        self.deref().fmt_depth(f, depth)
+impl<'a> Unparse for &'a ValRef {
+    fn unparse_into(&self, s: &mut Stream) {
+        self.deref().unparse_into(s)
     }
 }

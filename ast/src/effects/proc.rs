@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 /// Proc expressions can cause mutations (in memory or I/O), as in `!launch_balloon`, as well as
 /// causing [QueryEffects](crate::QueryEffects).
@@ -21,18 +21,18 @@ impl From<ProcEffects> for ProcExpr {
     }
 }
 
-impl DisplayDepth for ProcEffects {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for ProcEffects {
+    fn unparse_into(&self, s: &mut Stream) {
         use ProcEffects::*;
 
         match self {
             Inquire(x) => {
-                write!(f, "$")?;
-                x.fmt_depth(f, depth)
+                s.write(&"$");
+                s.write(x);
             }
             Evoke(x) => {
-                write!(f, "!")?;
-                x.fmt_depth(f, depth)
+                s.write(&"!");
+                s.write(x);
             }
         }
     }

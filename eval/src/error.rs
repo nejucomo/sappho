@@ -24,7 +24,7 @@ impl fmt::Display for Error {
             Unbound(x) => x.fmt(f),
             MissingAttr(v, name) => write!(f, "missing attr {}.{}", v, name),
             Mismatch(v, pats) => {
-                // TODO: This is a super hacky way to get the `DisplayDepth` of the patterns:
+                // TODO: This is a super hacky way to get the `Unparse` of the patterns:
                 use sappho_listform::ListForm;
 
                 write!(

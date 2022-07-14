@@ -1,7 +1,7 @@
 use crate::{FuncDef, QueryDef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -97,14 +97,14 @@ impl<P, X, Q, G> TryIntoIdentMap<G> for ObjectDef<P, X, Q, G> {
     }
 }
 
-impl<P, X, Q, G> DisplayDepth for ObjectDef<P, X, Q, G>
+impl<P, X, Q, G> Unparse for ObjectDef<P, X, Q, G>
 where
-    P: DisplayDepth,
-    X: DisplayDepth,
-    Q: DisplayDepth,
-    G: DisplayDepth + TryIntoIdentMap<G>,
+    P: Unparse,
+    X: Unparse,
+    Q: Unparse,
+    G: Unparse + TryIntoIdentMap<G>,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        self.0.fmt_depth(f, depth)
+    fn unparse_into(&self, s: &mut Stream) {
+        self.0.unparse_into(s)
     }
 }

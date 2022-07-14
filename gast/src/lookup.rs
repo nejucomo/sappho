@@ -1,5 +1,5 @@
 use crate::Identifier;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,13 +23,13 @@ impl<X> LookupExpr<X> {
     }
 }
 
-impl<X> DisplayDepth for LookupExpr<X>
+impl<X> Unparse for LookupExpr<X>
 where
-    X: DisplayDepth,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        self.target.fmt_depth(f, depth)?;
-        write!(f, ".{}", self.attr)?;
-        Ok(())
+    fn unparse_into(&self, s: &mut Stream) {
+        s.write(&self.target);
+        s.write(&".");
+        s.write(&self.attr);
     }
 }

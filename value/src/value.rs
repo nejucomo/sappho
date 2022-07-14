@@ -1,7 +1,6 @@
 use crate::{Object, ValRef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
-use std::fmt::Display;
+use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]
 pub enum Value {
@@ -18,17 +17,17 @@ impl TryIntoIdentMap<ValRef> for Value {
     }
 }
 
-impl DisplayDepth for Value {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
+impl Unparse for Value {
+    fn unparse_into(&self, s: &mut Stream) {
         use Value::*;
 
         match self {
-            Num(x) => x.fmt(f),
+            Num(x) => s.write(&x.to_string()),
             Object(x) => {
                 if let Some(list) = x.try_into_identmap().and_then(|m| m.as_list_form()) {
-                    list.fmt_depth(f, depth)
+                    s.write(&list)
                 } else {
-                    x.fmt_depth(f, depth)
+                    s.write(x)
                 }
             }
         }

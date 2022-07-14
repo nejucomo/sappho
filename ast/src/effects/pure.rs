@@ -1,5 +1,5 @@
 use crate::GenExpr;
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 /// Pure expressions without side-effects.
 pub type PureExpr = GenExpr<PureEffects>;
@@ -8,8 +8,8 @@ pub type PureExpr = GenExpr<PureEffects>;
 #[derive(Clone, Debug, PartialEq)]
 pub enum PureEffects {}
 
-impl DisplayDepth for PureEffects {
-    fn fmt_depth(&self, _f: &mut Formatter, _depth: usize) -> FmtResult {
+impl Unparse for PureEffects {
+    fn unparse_into(&self, _s: &mut Stream) {
         unreachable!("pure effects are never instantiated");
     }
 }

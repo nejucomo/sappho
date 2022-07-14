@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 
 pub use self::clause::LetClause;
 
@@ -31,37 +31,33 @@ impl<P, X> LetExpr<P, X> {
     }
 }
 
-impl<P, X> DisplayDepth for LetExpr<P, X>
+impl<P, X> Unparse for LetExpr<P, X>
 where
-    P: DisplayDepth,
-    X: DisplayDepth,
+    P: Unparse,
+    X: Unparse,
 {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        use sappho_unparse::indent;
+    fn unparse_into(&self, s: &mut Stream) {
+        use sappho_unparse::Break::Mandatory;
 
-        let (indented, cdepth) = if depth == 0 {
-            (false, 0)
-        } else {
-            (true, depth + 1)
+        let unparse_clauses = |s: &mut Stream| {
+            for (ix, clause) in self.clauses.iter().enumerate() {
+                if s.depth() > 0 || ix > 0 {
+                    s.write(&Mandatory);
+                }
+                s.write(clause);
+                s.write(&";");
+            }
+            s.write(&Mandatory);
+            s.write(&self.tail);
         };
 
-        if indented {
-            writeln!(f, "(")?;
+        if s.depth() == 0 {
+            unparse_clauses(s);
+        } else {
+            s.write(&"(");
+            s.substream(unparse_clauses);
+            s.write(&Mandatory);
+            s.write(&")");
         }
-
-        for clause in self.clauses.iter() {
-            indent(f, cdepth)?;
-            clause.fmt_depth(f, cdepth)?;
-            writeln!(f, ";")?;
-        }
-        indent(f, cdepth)?;
-        self.tail.fmt_depth(f, cdepth)?;
-
-        if indented {
-            writeln!(f)?;
-            indent(f, depth)?;
-            write!(f, ")")?;
-        }
-        Ok(())
     }
 }

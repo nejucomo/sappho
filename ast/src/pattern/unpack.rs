@@ -1,6 +1,6 @@
 use crate::Pattern;
 use sappho_identmap::{IdentMap, Identifier};
-use sappho_unparse::{DisplayDepth, FmtResult, Formatter};
+use sappho_unparse::{Stream, Unparse};
 use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -32,8 +32,8 @@ impl Deref for UnpackPattern {
     }
 }
 
-impl DisplayDepth for UnpackPattern {
-    fn fmt_depth(&self, f: &mut Formatter, depth: usize) -> FmtResult {
-        self.0.fmt_depth(f, depth)
+impl Unparse for UnpackPattern {
+    fn unparse_into(&self, s: &mut Stream) {
+        self.0.unparse_into(s)
     }
 }
