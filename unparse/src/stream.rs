@@ -3,7 +3,10 @@ mod display;
 use crate::{Break, Unparse};
 
 #[derive(Debug)]
-pub struct Stream(Vec<Item>);
+pub struct Stream {
+    items: Vec<Item>,
+    depth: usize,
+}
 
 #[derive(Debug)]
 enum Item {
@@ -14,6 +17,10 @@ enum Item {
 use Item::*;
 
 impl Stream {
+    pub fn depth(&self) -> usize {
+        self.depth
+    }
+
     pub fn write<U>(&mut self, thing: &U)
     where
         U: Unparse,
@@ -25,20 +32,26 @@ impl Stream {
     where
         F: FnOnce(&mut Stream),
     {
-        let mut sub = Stream::new();
+        let mut sub = Stream {
+            items: vec![],
+            depth: self.depth + 1,
+        };
         f(&mut sub);
-        self.0.push(Substream(sub));
+        self.items.push(Substream(sub));
     }
 
     pub(crate) fn new() -> Self {
-        Stream(vec![])
+        Stream {
+            items: vec![],
+            depth: 0,
+        }
     }
 
     pub(crate) fn write_string(&mut self, s: String) {
-        self.0.push(Leaf(s))
+        self.items.push(Leaf(s))
     }
 
     pub(crate) fn add_break(&mut self, brk: Break) {
-        self.0.push(Break(brk));
+        self.items.push(Break(brk));
     }
 }

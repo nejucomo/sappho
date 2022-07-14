@@ -4,20 +4,20 @@ use std::fmt;
 
 impl fmt::Display for Stream {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt_items(self, f, 0)
+        fmt_stream(self, f)
     }
 }
 
-fn fmt_items(stream: &Stream, f: &mut fmt::Formatter, depth: usize) -> fmt::Result {
-    for item in &stream.0[..] {
-        fmt_item(item, f, depth)?;
+fn fmt_stream(stream: &Stream, f: &mut fmt::Formatter) -> fmt::Result {
+    for item in &stream.items[..] {
+        fmt_item(item, f, stream.depth)?;
     }
     Ok(())
 }
 
 fn fmt_item(item: &Item, f: &mut fmt::Formatter, depth: usize) -> fmt::Result {
     match item {
-        Leaf(s) => f.write_str(&s),
+        Leaf(s) => f.write_str(s),
         Break(_) => {
             f.write_str("\n")?;
             for _ in 0..depth {
@@ -25,6 +25,6 @@ fn fmt_item(item: &Item, f: &mut fmt::Formatter, depth: usize) -> fmt::Result {
             }
             Ok(())
         }
-        Substream(sub) => fmt_items(sub, f, depth + 1),
+        Substream(sub) => fmt_stream(sub, f),
     }
 }
