@@ -81,15 +81,15 @@ where
     T: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Break::{Opt, OptSpace};
+        use sappho_unparse::Brackets::Square;
+        use sappho_unparse::Break::OptSpace;
 
         if self.is_empty() {
             s.write(&"[]")
         } else {
-            let mut first = true;
+            s.bracketed(Square, |subs| {
+                let mut first = true;
 
-            s.write(&"[");
-            s.substream(|subs| {
                 for elem in self.body.iter() {
                     if first {
                         first = false;
@@ -109,8 +109,6 @@ where
                     subs.write(tail);
                 }
             });
-            s.write(&Opt);
-            s.write(&"]");
         }
     }
 }

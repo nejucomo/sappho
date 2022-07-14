@@ -122,13 +122,13 @@ where
     A: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
+        use sappho_unparse::Brackets::Squiggle;
         use sappho_unparse::Break::OptSpace;
 
         if self.is_empty() {
             s.write(&"{}");
         } else {
-            s.write(&"{");
-            s.substream(|subs| {
+            s.bracketed(Squiggle, |subs| {
                 if let Some(func) = self.func() {
                     subs.write(&OptSpace);
                     subs.write(func);
@@ -149,8 +149,6 @@ where
                     subs.write(&",");
                 }
             });
-            s.write(&OptSpace);
-            s.write(&"}");
         }
     }
 }

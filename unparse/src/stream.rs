@@ -16,6 +16,13 @@ enum Item {
 }
 use Item::*;
 
+#[derive(Debug)]
+pub enum Brackets {
+    Parens,
+    Square,
+    Squiggle,
+}
+
 impl Stream {
     pub fn depth(&self) -> usize {
         self.depth
@@ -28,7 +35,28 @@ impl Stream {
         thing.unparse_into(self)
     }
 
-    pub fn substream<F>(&mut self, f: F)
+    pub fn bracketed<F>(&mut self, brackets: Brackets, f: F)
+    where
+        F: FnOnce(&mut Stream),
+    {
+        use Brackets::*;
+        use Break::Opt;
+
+        self.write(&match brackets {
+            Parens => "(",
+            Square => "[",
+            Squiggle => "{",
+        });
+        self.substream(f);
+        self.write(&Opt);
+        self.write(&match brackets {
+            Parens => ")",
+            Square => "]",
+            Squiggle => "}",
+        });
+    }
+
+    fn substream<F>(&mut self, f: F)
     where
         F: FnOnce(&mut Stream),
     {

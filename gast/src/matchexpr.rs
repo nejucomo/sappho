@@ -37,19 +37,17 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Break::OptSpace;
+        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
 
         s.write(&"match ");
         s.write(&self.target);
-        s.write(&" {");
-        s.substream(|subs| {
+        s.write(&" ");
+        s.bracketed(Squiggle, |subs| {
             for clause in &self.clauses {
                 subs.write(&OptSpace);
                 subs.write(clause);
                 subs.write(&",");
             }
         });
-        s.write(&OptSpace);
-        s.write(&"}");
     }
 }

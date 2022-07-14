@@ -27,16 +27,16 @@ where
     Expr: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Break::{Opt, OptSpace};
+        use sappho_unparse::{
+            Brackets::Parens,
+            Break::{Opt, OptSpace},
+        };
 
-        s.write(&"(");
-        s.substream(|subs| {
-            subs.write(&OptSpace);
+        s.bracketed(Parens, |subs| {
+            subs.write(&Opt);
             subs.write(&self.target);
             subs.write(&OptSpace);
             subs.write(&self.argument);
         });
-        s.write(&Opt);
-        s.write(&")");
     }
 }
