@@ -1,4 +1,5 @@
 mod application;
+mod core;
 mod effects;
 mod letexpr;
 mod literal;
@@ -39,16 +40,9 @@ where
     use Expr::*;
 
     match expr {
-        Lit(x) => x.eval(scope),
-        Ref(x) => {
-            let v = scope.deref(x)?;
-            Ok(v)
-        }
-        Object(x) => x.eval(scope),
-        Let(x) => x.eval(scope),
+        Core(x) => x.eval(scope),
         Match(x) => x.eval(scope),
         Application(x) => x.eval(scope),
         Lookup(x) => x.eval(scope),
-        Effect(x) => x.eval(scope),
     }
 }

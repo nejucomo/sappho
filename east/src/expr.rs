@@ -1,6 +1,4 @@
-use crate::{
-    ApplicationExpr, EffectExpr, Identifier, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
-};
+use crate::{CoreExpr, ObjectDef};
 use sappho_ast as ast;
 use sappho_gast::transform_object_def;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
@@ -8,20 +6,17 @@ use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum Expr<Effects> {
-    Lit(Literal),
-    Ref(Identifier),
-    Object(ObjectDef<Effects>),
-    Let(LetExpr<Effects>),
-    Match(MatchExpr<Effects>),
-    Application(ApplicationExpr<Effects>),
-    Lookup(LookupExpr<Effects>),
-    Effect(EffectExpr<Effects>),
-}
+pub struct Expr<Effects>(CoreExpr<Effects>);
 
 impl<FX> From<ast::Expr<FX>> for Expr<FX> {
     fn from(x: ast::Expr<FX>) -> Self {
-        use Expr::*;
+        Expr(CoreExpr::from(x))
+    }
+}
+
+impl<FX> From<ast::Expr<FX>> for CoreExpr<FX> {
+    fn from(x: ast::Expr<FX>) -> Self {
+        use sappho_gast::CoreExpr::*;
 
         match x {
             ast::Expr::Lit(x) => Lit(x),
@@ -41,19 +36,19 @@ impl<FX> From<ast::Expr<FX>> for Expr<FX> {
 
 impl<FX> From<ast::ListExpr<FX>> for Expr<FX> {
     fn from(x: ast::ListExpr<FX>) -> Self {
-        use Expr::Object;
+        use sappho_gast::CoreExpr::Object;
 
         x.into_reverse_fold(
             |opttail| {
                 opttail
                     .map(|x| Expr::from(*x))
-                    .unwrap_or_else(|| Object(ObjectDef::default()))
+                    .unwrap_or_else(|| Expr(Object(ObjectDef::default())))
             },
             |tail, head| {
-                Object(ObjectDef::new_attrs([
+                Expr(Object(ObjectDef::new_attrs([
                     ("head".to_string(), Expr::from(head)),
                     ("tail".to_string(), tail),
-                ]))
+                ])))
             },
         )
     }
@@ -64,17 +59,24 @@ where
     FX: Clone,
 {
     fn from(x: Expr<FX>) -> Self {
-        use Expr::*;
+        ast::Expr::from(x.0)
+    }
+}
 
+impl<FX> From<CoreExpr<FX>> for ast::Expr<FX>
+where
+    FX: Clone,
+{
+    fn from(x: CoreExpr<FX>) -> Self {
         match x {
-            Lit(x) => ast::Expr::Lit(x),
-            Ref(x) => ast::Expr::Ref(x),
-            Object(x) => objdef_to_ast_expr(x),
-            Let(x) => ast::Expr::Let(x.transform_into()),
-            Match(x) => ast::Expr::Match(x.transform_into()),
-            Application(x) => ast::Expr::Application(x.transform_into()),
-            Lookup(x) => ast::Expr::Lookup(x.transform_into()),
-            Effect(x) => ast::Expr::Effect(x.transform_into()),
+            CoreExpr::Lit(x) => ast::Expr::Lit(x),
+            CoreExpr::Ref(x) => ast::Expr::Ref(x),
+            CoreExpr::Object(x) => objdef_to_ast_expr(x),
+            CoreExpr::Let(x) => ast::Expr::Let(x.transform_into()),
+            CoreExpr::Match(x) => ast::Expr::Match(x.transform_into()),
+            CoreExpr::Application(x) => ast::Expr::Application(x.transform_into()),
+            CoreExpr::Lookup(x) => ast::Expr::Lookup(x.transform_into()),
+            CoreExpr::Effect(x) => ast::Expr::Effect(x.transform_into()),
         }
     }
 }
@@ -105,10 +107,7 @@ where
 
 impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
     fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
-        match self {
-            Expr::Object(od) => od.try_into_identmap(),
-            _ => None,
-        }
+        self.0.try_into_identmap()
     }
 }
 
@@ -117,18 +116,7 @@ where
     FX: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use Expr::*;
-
-        match self {
-            Lit(x) => x.unparse_into(s),
-            Ref(x) => x.unparse_into(s),
-            Object(x) => x.unparse_into(s),
-            Let(x) => x.unparse_into(s),
-            Match(x) => x.unparse_into(s),
-            Application(x) => x.unparse_into(s),
-            Lookup(x) => x.unparse_into(s),
-            Effect(x) => x.unparse_into(s),
-        }
+        self.0.unparse_into(s);
     }
 }
 

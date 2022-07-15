@@ -4,6 +4,7 @@ mod expr;
 mod pattern;
 
 pub type ApplicationExpr<FX> = sappho_gast::ApplicationExpr<Expr<FX>>;
+pub type CoreExpr<FX> = sappho_gast::CoreExpr<Pattern, PureExpr, QueryExpr, Expr<FX>, FX>;
 pub type EffectExpr<FX> = sappho_gast::EffectExpr<FX, Expr<FX>>;
 pub type FuncClause = sappho_gast::FuncDef<Pattern, PureExpr>;
 pub type LetClause<FX> = sappho_gast::LetClause<Pattern, Expr<FX>>;
