@@ -1,8 +1,8 @@
-use crate::GenExpr;
+use crate::Expr;
 use sappho_unparse::{Stream, Unparse};
 
 /// Pure expressions without side-effects.
-pub type PureExpr = GenExpr<PureEffects>;
+pub type PureExpr = Expr<PureEffects>;
 
 /// Pure effects cannot be instantiated, because pure expressions have no side effects.
 #[derive(Clone, Debug, PartialEq)]

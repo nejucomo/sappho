@@ -1,13 +1,13 @@
-use crate::{FromFx, GenExpr};
+use crate::{Expr, FromFx};
 use sappho_ast as ast;
 use sappho_unparse::{Stream, Unparse};
 
-pub type ProcExpr = GenExpr<ProcEffects>;
+pub type ProcExpr = Expr<ProcEffects>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum ProcEffects {
-    Inquire(Box<GenExpr<ProcEffects>>),
-    Evoke(Box<GenExpr<ProcEffects>>),
+    Inquire(Box<Expr<ProcEffects>>),
+    Evoke(Box<Expr<ProcEffects>>),
 }
 
 impl FromFx for ProcEffects {
@@ -17,8 +17,8 @@ impl FromFx for ProcEffects {
         use ProcEffects::{Evoke, Inquire};
 
         match astfx {
-            ast::ProcEffects::Inquire(x) => Inquire(Box::new(GenExpr::from(*x))),
-            ast::ProcEffects::Evoke(x) => Evoke(Box::new(GenExpr::from(*x))),
+            ast::ProcEffects::Inquire(x) => Inquire(Box::new(Expr::from(*x))),
+            ast::ProcEffects::Evoke(x) => Evoke(Box::new(Expr::from(*x))),
         }
     }
 }
@@ -30,8 +30,8 @@ impl FromFx for ast::ProcEffects {
         use ProcEffects::{Evoke, Inquire};
 
         match astfx {
-            Inquire(x) => ast::ProcEffects::Inquire(Box::new(ast::GenExpr::from(*x))),
-            Evoke(x) => ast::ProcEffects::Evoke(Box::new(ast::GenExpr::from(*x))),
+            Inquire(x) => ast::ProcEffects::Inquire(Box::new(ast::Expr::from(*x))),
+            Evoke(x) => ast::ProcEffects::Evoke(Box::new(ast::Expr::from(*x))),
         }
     }
 }

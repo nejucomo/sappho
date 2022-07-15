@@ -9,12 +9,12 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{FuncDef, GenExpr, Identifier, ObjectDef, ProcEffects, ProcExpr, QueryDef};
+use sappho_ast::{Expr, FuncDef, Identifier, ObjectDef, ProcEffects, ProcExpr, QueryDef};
 
 pub(crate) fn common_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
-    use GenExpr::{Func, Object, Query};
+    use Expr::{Func, Object, Query};
 
     object_def(expr.clone())
         .map(Object)

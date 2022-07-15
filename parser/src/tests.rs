@@ -1,7 +1,6 @@
 use sappho_ast::{
-    FuncDef,
-    GenExpr::{self, Effect},
-    ListPattern, Pattern, PureExpr, QueryDef,
+    Expr::{self, Effect},
+    FuncDef, ListPattern, Pattern, PureExpr, QueryDef,
     QueryEffects::Inquire,
     QueryExpr,
 };
@@ -13,7 +12,7 @@ fn num(f: f64) -> PureExpr {
     sappho_gast::Literal::Num(f).into()
 }
 
-fn refexpr<FX>(s: &str) -> GenExpr<FX> {
+fn refexpr<FX>(s: &str) -> Expr<FX> {
     s.to_string().into()
 }
 
@@ -25,7 +24,7 @@ fn list<T>(xs: T) -> PureExpr
 where
     T: IntoIterator<Item = PureExpr>,
 {
-    GenExpr::from_iter(xs)
+    Expr::from_iter(xs)
 }
 
 fn let_expr<const K: usize>(clauses: [(Pattern, PureExpr); K], bindexpr: PureExpr) -> PureExpr {

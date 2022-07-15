@@ -7,11 +7,11 @@ mod matchexpr;
 mod object;
 
 use crate::{Eval, Result};
-use sappho_east::GenExpr;
+use sappho_east::Expr;
 use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 
-impl<FX> Eval for GenExpr<FX>
+impl<FX> Eval for Expr<FX>
 where
     FX: Eval + Unparse + Unparse,
 {
@@ -30,11 +30,11 @@ where
     }
 }
 
-fn eval_expr<FX>(expr: &GenExpr<FX>, scope: &ScopeRef) -> Result<ValRef>
+fn eval_expr<FX>(expr: &Expr<FX>, scope: &ScopeRef) -> Result<ValRef>
 where
     FX: Eval + Unparse + Unparse,
 {
-    use GenExpr::*;
+    use Expr::*;
 
     match expr {
         Lit(x) => x.eval(scope),

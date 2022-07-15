@@ -1,7 +1,7 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    ApplicationExpr, GenExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr, ProcEffects,
+    ApplicationExpr, Expr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr, ProcEffects,
     PureEffects, QueryEffects, QueryExpr,
 };
 
@@ -40,12 +40,12 @@ impl Restrict<ProcEffects> for QueryEffects {
     }
 }
 
-impl<FXS, FXD> Restrict<GenExpr<FXS>> for GenExpr<FXD>
+impl<FXS, FXD> Restrict<Expr<FXS>> for Expr<FXD>
 where
     FXD: Restrict<FXS>,
 {
-    fn restrict(src: GenExpr<FXS>, span: Span) -> Result<Self, BareError> {
-        use GenExpr::*;
+    fn restrict(src: Expr<FXS>, span: Span) -> Result<Self, BareError> {
+        use Expr::*;
 
         match src {
             Lit(x) => Ok(Lit(x)),
@@ -53,13 +53,13 @@ where
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
             Object(x) => x
-                .into_try_map_values(|expr| GenExpr::<FXD>::restrict(expr, span.clone()))
+                .into_try_map_values(|expr| Expr::<FXD>::restrict(expr, span.clone()))
                 .map(Object),
             List(x) => {
                 let tailspan = span.clone();
                 Ok(List(x.try_map(
-                    move |elem| GenExpr::<FXD>::restrict(elem, span.clone()),
-                    move |tail| GenExpr::<FXD>::restrict(*tail, tailspan).map(Box::new),
+                    move |elem| Expr::<FXD>::restrict(elem, span.clone()),
+                    move |tail| Expr::<FXD>::restrict(*tail, tailspan).map(Box::new),
                 )?))
             }
             Let(x) => LetExpr::restrict(x, span).map(Let),
@@ -81,7 +81,7 @@ where
             .into_iter()
             .map(|lc| LetClause::<FXD>::restrict(lc, span.clone()))
             .collect::<Result<_, BareError>>()?;
-        let tail = Box::new(GenExpr::<FXD>::restrict(*src.tail, span)?);
+        let tail = Box::new(Expr::<FXD>::restrict(*src.tail, span)?);
 
         Ok(LetExpr { clauses, tail })
     }
@@ -94,7 +94,7 @@ where
     fn restrict(src: LetClause<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(LetClause {
             binding: src.binding,
-            bindexpr: Box::new(GenExpr::<FXD>::restrict(*src.bindexpr, span)?),
+            bindexpr: Box::new(Expr::<FXD>::restrict(*src.bindexpr, span)?),
         })
     }
 }
@@ -105,7 +105,7 @@ where
 {
     fn restrict(src: MatchExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(MatchExpr {
-            target: Box::new(GenExpr::<FXD>::restrict(*src.target, span.clone())?),
+            target: Box::new(Expr::<FXD>::restrict(*src.target, span.clone())?),
             clauses: src
                 .clauses
                 .into_iter()
@@ -122,7 +122,7 @@ where
     fn restrict(src: MatchClause<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(MatchClause {
             pattern: src.pattern,
-            body: Box::new(GenExpr::<FXD>::restrict(*src.body, span)?),
+            body: Box::new(Expr::<FXD>::restrict(*src.body, span)?),
         })
     }
 }
@@ -133,8 +133,8 @@ where
 {
     fn restrict(src: ApplicationExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(ApplicationExpr {
-            target: Box::new(GenExpr::<FXD>::restrict(*src.target, span.clone())?),
-            argument: Box::new(GenExpr::<FXD>::restrict(*src.argument, span)?),
+            target: Box::new(Expr::<FXD>::restrict(*src.target, span.clone())?),
+            argument: Box::new(Expr::<FXD>::restrict(*src.argument, span)?),
         })
     }
 }
@@ -145,7 +145,7 @@ where
 {
     fn restrict(src: LookupExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(LookupExpr {
-            target: Box::new(GenExpr::<FXD>::restrict(*src.target, span)?),
+            target: Box::new(Expr::<FXD>::restrict(*src.target, span)?),
             attr: src.attr,
         })
     }

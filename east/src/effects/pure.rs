@@ -1,8 +1,8 @@
+use crate::Expr;
 use crate::FromFx;
-use crate::GenExpr;
 
 pub use sappho_ast::PureEffects;
-pub type PureExpr = GenExpr<PureEffects>;
+pub type PureExpr = Expr<PureEffects>;
 
 impl FromFx for PureEffects {
     type AstFx = Self;

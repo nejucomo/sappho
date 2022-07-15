@@ -1,19 +1,19 @@
-use crate::GenExpr;
+use crate::Expr;
 use sappho_unparse::{Stream, Unparse};
 
 /// Query expressions can read mutable memory, as in `$myvar`.
-pub type QueryExpr = GenExpr<QueryEffects>;
+pub type QueryExpr = Expr<QueryEffects>;
 
 /// The query effect reads mutable memory.
 #[derive(Debug, PartialEq)]
 pub enum QueryEffects {
     /// Inquire is the name of the `$myvar` effect syntax & semantics.
-    Inquire(Box<GenExpr<QueryEffects>>),
+    Inquire(Box<Expr<QueryEffects>>),
 }
 
 impl From<QueryEffects> for QueryExpr {
     fn from(x: QueryEffects) -> Self {
-        GenExpr::Effect(x)
+        Expr::Effect(x)
     }
 }
 
