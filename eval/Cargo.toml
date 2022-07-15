@@ -15,6 +15,9 @@ path = "../ast"
 [dependencies.sappho-east]
 path = "../east"
 
+[dependencies.sappho-gast]
+path = "../gast"
+
 [dependencies.sappho-unparse]
 path = "../unparse"
 

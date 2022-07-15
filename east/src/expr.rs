@@ -1,6 +1,5 @@
 use crate::{
-    ApplicationExpr, AstFxFor, FromFx, Identifier, LetExpr, Literal, LookupExpr, MatchExpr,
-    ObjectDef,
+    ApplicationExpr, EffectExpr, Identifier, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
 };
 use sappho_ast as ast;
 use sappho_gast::transform_object_def;
@@ -17,14 +16,11 @@ pub enum Expr<Effects> {
     Match(MatchExpr<Effects>),
     Application(ApplicationExpr<Effects>),
     Lookup(LookupExpr<Effects>),
-    Effect(Effects),
+    Effect(EffectExpr<Effects>),
 }
 
-impl<FX> From<ast::Expr<AstFxFor<FX>>> for Expr<FX>
-where
-    FX: FromFx,
-{
-    fn from(x: ast::Expr<AstFxFor<FX>>) -> Self {
+impl<FX> From<ast::Expr<FX>> for Expr<FX> {
+    fn from(x: ast::Expr<FX>) -> Self {
         use Expr::*;
 
         match x {
@@ -38,16 +34,13 @@ where
             ast::Expr::Match(x) => Match(x.transform_into()),
             ast::Expr::Application(x) => Application(x.transform_into()),
             ast::Expr::Lookup(x) => Lookup(x.transform_into()),
-            ast::Expr::Effect(x) => Effect(FX::from_fx(x)),
+            ast::Expr::Effect(x) => Effect(x.transform_into()),
         }
     }
 }
 
-impl<FX> From<ast::ListExpr<AstFxFor<FX>>> for Expr<FX>
-where
-    FX: FromFx,
-{
-    fn from(x: ast::ListExpr<AstFxFor<FX>>) -> Self {
+impl<FX> From<ast::ListExpr<FX>> for Expr<FX> {
+    fn from(x: ast::ListExpr<FX>) -> Self {
         use Expr::Object;
 
         x.into_reverse_fold(
@@ -66,12 +59,11 @@ where
     }
 }
 
-impl<FX> From<Expr<AstFxFor<FX>>> for ast::Expr<FX>
+impl<FX> From<Expr<FX>> for ast::Expr<FX>
 where
-    FX: FromFx,
-    AstFxFor<FX>: Clone,
+    FX: Clone,
 {
-    fn from(x: Expr<AstFxFor<FX>>) -> Self {
+    fn from(x: Expr<FX>) -> Self {
         use Expr::*;
 
         match x {
@@ -82,15 +74,14 @@ where
             Match(x) => ast::Expr::Match(x.transform_into()),
             Application(x) => ast::Expr::Application(x.transform_into()),
             Lookup(x) => ast::Expr::Lookup(x.transform_into()),
-            Effect(x) => ast::Expr::Effect(FX::from_fx(x)),
+            Effect(x) => ast::Expr::Effect(x.transform_into()),
         }
     }
 }
 
-fn objdef_to_ast_expr<FX>(objdef: ObjectDef<AstFxFor<FX>>) -> ast::Expr<FX>
+fn objdef_to_ast_expr<FX>(objdef: ObjectDef<FX>) -> ast::Expr<FX>
 where
-    FX: FromFx,
-    AstFxFor<FX>: Clone,
+    FX: Clone,
 {
     use ast::Expr::{Func, List, Object, Query};
     use sappho_object::Unbundled as U;

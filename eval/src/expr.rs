@@ -7,13 +7,14 @@ mod matchexpr;
 mod object;
 
 use crate::{Eval, Result};
-use sappho_east::Expr;
+use sappho_east::{EffectExpr, Expr};
 use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for Expr<FX>
 where
-    FX: Eval + Unparse + Unparse,
+    EffectExpr<FX>: Eval,
+    FX: Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         log::debug!("Evaluating:\n  From: {}\n  ...\n", self);
@@ -32,7 +33,8 @@ where
 
 fn eval_expr<FX>(expr: &Expr<FX>, scope: &ScopeRef) -> Result<ValRef>
 where
-    FX: Eval + Unparse + Unparse,
+    EffectExpr<FX>: Eval,
+    FX: Unparse,
 {
     use Expr::*;
 

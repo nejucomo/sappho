@@ -1,8 +1,8 @@
 //! Top-level expression type `Expr`, generic over [crate::effects]
 
 use crate::{
-    ApplicationExpr, FuncDef, Identifier, LetExpr, ListExpr, Literal, LookupExpr, MatchExpr,
-    ObjectDef, QueryDef,
+    ApplicationExpr, EffectExpr, FuncDef, Identifier, LetExpr, ListExpr, Literal, LookupExpr,
+    MatchExpr, ObjectDef, QueryDef,
 };
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
@@ -21,7 +21,7 @@ pub enum Expr<Effects> {
     Match(MatchExpr<Effects>),
     Application(ApplicationExpr<Effects>),
     Lookup(LookupExpr<Effects>),
-    Effect(Effects),
+    Effect(EffectExpr<Effects>),
 }
 
 impl<FX> From<Literal> for Expr<FX> {

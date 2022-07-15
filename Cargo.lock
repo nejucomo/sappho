@@ -376,6 +376,7 @@ dependencies = [
  "log",
  "sappho-ast",
  "sappho-east",
+ "sappho-gast",
  "sappho-listform",
  "sappho-parser",
  "sappho-unparse",
@@ -483,6 +484,7 @@ version = "0.1.0"
 dependencies = [
  "derive_more",
  "sappho-east",
+ "sappho-gast",
  "sappho-identmap",
  "sappho-object",
  "sappho-unparse",

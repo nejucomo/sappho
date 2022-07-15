@@ -1,21 +1,24 @@
 use crate::{Eval, Result};
-use sappho_east::{PureEffects, QueryEffects};
+use sappho_east::EffectExpr;
+use sappho_gast::{PureEffects, QueryEffects};
 use sappho_value::{ScopeRef, ValRef};
 
-impl Eval for PureEffects {
+impl Eval for EffectExpr<PureEffects> {
     fn eval(&self, _scope: &ScopeRef) -> Result<ValRef> {
-        unreachable!("There are no pure effects beyond `Expr` so theis should never evaluate.");
+        unreachable!("There are no pure effects beyond `Expr` so this should never evaluate.");
     }
 }
 
-impl Eval for QueryEffects {
+impl Eval for EffectExpr<QueryEffects> {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        match self {
-            QueryEffects::Inquire(qexpr) => {
+        use QueryEffects::*;
+
+        match self.effect {
+            Inquire => {
                 use crate::EvalThunk;
                 use sappho_value::Query;
 
-                let v = qexpr.eval(scope)?;
+                let v = self.expr.eval(scope)?;
                 let q: &Query = v.coerce()?;
                 q.as_thunk().eval_thunk()
             }

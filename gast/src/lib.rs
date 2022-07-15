@@ -1,4 +1,5 @@
 mod application;
+mod effects;
 mod func;
 mod letexpr;
 mod literal;
@@ -8,6 +9,7 @@ mod object;
 mod query;
 
 pub use self::application::ApplicationExpr;
+pub use self::effects::{EffectExpr, ProcEffects, PureEffects, QueryEffects};
 pub use self::func::FuncDef;
 pub use self::letexpr::{LetClause, LetExpr};
 pub use self::literal::Literal;
