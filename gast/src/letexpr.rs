@@ -37,7 +37,7 @@ where
     X: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Break::Mandatory;
+        use sappho_unparse::{Brackets::Parens, Break::Mandatory};
 
         let unparse_clauses = |s: &mut Stream| {
             for (ix, clause) in self.clauses.iter().enumerate() {
@@ -45,7 +45,7 @@ where
                     s.write(&Mandatory);
                 }
                 s.write(clause);
-                s.write(&";");
+                s.write(";");
             }
             s.write(&Mandatory);
             s.write(&self.tail);
@@ -54,10 +54,7 @@ where
         if s.depth() == 0 {
             unparse_clauses(s);
         } else {
-            s.write(&"(");
-            s.substream(unparse_clauses);
-            s.write(&Mandatory);
-            s.write(&")");
+            s.bracketed(Parens, unparse_clauses);
         }
     }
 }

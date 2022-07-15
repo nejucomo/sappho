@@ -10,7 +10,7 @@ pub trait Unparse {
     fn unparse_into(&self, s: &mut Stream);
 }
 
-impl<'a> Unparse for &'a str {
+impl Unparse for str {
     fn unparse_into(&self, s: &mut Stream) {
         s.write_string(self.to_string())
     }

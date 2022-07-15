@@ -138,23 +138,20 @@ where
     T: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Break::OptSpace;
+        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
 
         if self.0.is_empty() {
-            s.write(&"{}");
+            s.write("{}");
         } else {
-            s.write(&"{");
-            s.substream(|subs| {
+            s.bracketed(Squiggle, |subs| {
                 for (k, v) in &self.0 {
                     subs.write(&OptSpace);
                     subs.write(k);
-                    subs.write(&": ");
+                    subs.write(": ");
                     subs.write(v);
-                    subs.write(&",");
+                    subs.write(",");
                 }
             });
-            s.write(&OptSpace);
-            s.write(&"}");
         }
     }
 }

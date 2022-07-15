@@ -39,7 +39,7 @@ impl Unparse for QueryEffects {
 
         match self {
             Inquire(x) => {
-                s.write(&"$");
+                s.write("$");
                 s.write(x);
             }
         }
