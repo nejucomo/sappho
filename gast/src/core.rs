@@ -4,7 +4,7 @@ use crate::{
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum CoreExpr<Pattern, PureExpr, QueryExpr, Expr, FX> {
     Lit(Literal),
     Ref(Identifier),
@@ -14,6 +14,29 @@ pub enum CoreExpr<Pattern, PureExpr, QueryExpr, Expr, FX> {
     Application(ApplicationExpr<Expr>),
     Lookup(LookupExpr<Expr>),
     Effect(EffectExpr<FX, Expr>),
+}
+
+impl<P, X, Q, G, FX> CoreExpr<P, X, Q, G, FX> {
+    pub fn transform_into<PD, XD, QD, GD>(self) -> CoreExpr<PD, XD, QD, GD, FX>
+    where
+        PD: From<P>,
+        XD: From<X>,
+        QD: From<Q>,
+        GD: From<G>,
+    {
+        use CoreExpr::*;
+
+        match self {
+            Lit(x) => Lit(x),
+            Ref(x) => Ref(x),
+            Object(x) => Object(crate::transform_object_def(x)),
+            Let(x) => Let(x.transform_into()),
+            Match(x) => Match(x.transform_into()),
+            Application(x) => Application(x.transform_into()),
+            Lookup(x) => Lookup(x.transform_into()),
+            Effect(x) => Effect(x.transform_into()),
+        }
+    }
 }
 
 impl<P, X, Q, G, FX> TryIntoIdentMap<G> for CoreExpr<P, X, Q, G, FX> {
