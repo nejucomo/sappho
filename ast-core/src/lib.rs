@@ -7,6 +7,7 @@ mod literal;
 mod lookup;
 mod matchexpr;
 mod object;
+mod proc;
 mod query;
 
 pub type Identifier = sappho_identmap::Identifier;
@@ -19,4 +20,5 @@ pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::{transform_object_def, ObjectDef};
+pub use self::proc::{ProcDef, Statements};
 pub use self::query::QueryDef;

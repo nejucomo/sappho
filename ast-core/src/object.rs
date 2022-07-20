@@ -1,22 +1,35 @@
-use crate::{FuncDef, QueryDef};
+use crate::{FuncDef, ProcDef, QueryDef};
 use sappho_object::Object;
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
-pub type ObjectDef<Pattern, PureExpr, QueryExpr, Expr> =
-    Object<FuncDef<Pattern, PureExpr>, QueryDef<QueryExpr>, Expr>;
+pub type ObjectDef<Pattern, PureExpr, QueryExpr, ProcExpr, Expr> =
+    Object<FuncDef<Pattern, PureExpr>, QueryDef<QueryExpr>, ProcDef<ProcExpr>, Expr>;
 
-pub fn transform_object_def<P, PD, X, XD, Q, QD, G, GD>(
-    obj: ObjectDef<P, X, Q, G>,
-) -> ObjectDef<PD, XD, QD, GD>
+pub fn transform_object_def<
+    Pat,
+    Pure,
+    Query,
+    Proc,
+    Generic,
+    DstPat,
+    DstPure,
+    DstQuery,
+    DstProc,
+    DstGeneric,
+>(
+    obj: ObjectDef<Pat, Pure, Query, Proc, Generic>,
+) -> ObjectDef<DstPat, DstPure, DstQuery, DstProc, DstGeneric>
 where
-    PD: From<P>,
-    XD: From<X>,
-    QD: From<Q>,
-    GD: From<G>,
+    DstPat: From<Pat>,
+    DstPure: From<Pure>,
+    DstQuery: From<Query>,
+    DstProc: From<Proc>,
+    DstGeneric: From<Generic>,
 {
     obj.transform(
         |func| func.transform_into(),
         |query| query.transform_into(),
-        GD::from,
+        |proc| proc.transform_into(),
+        DstGeneric::from,
     )
 }
