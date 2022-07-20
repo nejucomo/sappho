@@ -19,9 +19,9 @@ pub(super) fn proc_expr_def(
             exprs
                 .into_iter()
                 .reduce(|t, a| {
-                    use sappho_gast::ApplicationExpr;
+                    use sappho_ast_core::ApplicationExpr;
 
-                    ApplicationExpr::new(Box::new(t), Box::new(a)).into()
+                    ProcExpr::from(ApplicationExpr::new(Box::new(t), Box::new(a)))
                 })
                 .expect(".at_least(1) postcondition failed.")
         })
@@ -34,7 +34,7 @@ fn non_application(
         .then(attr_lookup().repeated())
         .map(|(x, lookups)| {
             lookups.into_iter().fold(x, |x, attr| {
-                use sappho_gast::LookupExpr;
+                use sappho_ast_core::LookupExpr;
 
                 LookupExpr::new(Box::new(x), attr).into()
             })
@@ -52,7 +52,7 @@ fn non_app_non_lookup(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     parens_expr(pexpr.clone())
-        .or(proc_effect(pexpr.clone()).map(ProcExpr::Effect))
+        .or(proc_effect(pexpr.clone()).map(ProcExpr::from))
         .or(universal_expr())
         .or(common_expr(pexpr.clone()))
         .or(recursive_expr(pexpr))

@@ -1,4 +1,5 @@
 mod application;
+mod core;
 mod effects;
 mod letexpr;
 mod literal;
@@ -7,17 +8,20 @@ mod matchexpr;
 mod object;
 
 use crate::{Eval, Result};
-use sappho_east::GenExpr;
+use sappho_ast_reduced::{EffectExpr, Expr};
 use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 
-impl<FX> Eval for GenExpr<FX>
+impl<FX> Eval for Expr<FX>
 where
-    FX: Eval + Unparse + Unparse,
+    EffectExpr<FX>: Eval,
+    FX: Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
+        use std::ops::Deref;
+
         log::debug!("Evaluating:\n  From: {}\n  ...\n", self);
-        let r = eval_expr(self, scope);
+        let r = self.deref().eval(scope);
         log::debug!(
             "Evaluated:\n  From: {}\n  To: {}\n",
             self,
@@ -27,26 +31,5 @@ where
             }
         );
         r
-    }
-}
-
-fn eval_expr<FX>(expr: &GenExpr<FX>, scope: &ScopeRef) -> Result<ValRef>
-where
-    FX: Eval + Unparse + Unparse,
-{
-    use GenExpr::*;
-
-    match expr {
-        Lit(x) => x.eval(scope),
-        Ref(x) => {
-            let v = scope.deref(x)?;
-            Ok(v)
-        }
-        Object(x) => x.eval(scope),
-        Let(x) => x.eval(scope),
-        Match(x) => x.eval(scope),
-        Application(x) => x.eval(scope),
-        Lookup(x) => x.eval(scope),
-        Effect(x) => x.eval(scope),
     }
 }

@@ -1,5 +1,5 @@
 use crate::{EvalV, Result};
-use sappho_east::Literal;
+use sappho_ast_reduced::Literal;
 use sappho_value::{ScopeRef, Value};
 
 impl EvalV for Literal {

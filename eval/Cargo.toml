@@ -12,8 +12,11 @@ log = "0.4.17"
 [dependencies.sappho-ast]
 path = "../ast"
 
-[dependencies.sappho-east]
-path = "../east"
+[dependencies.sappho-ast-reduced]
+path = "../ast-reduced"
+
+[dependencies.sappho-ast-core]
+path = "../ast-core"
 
 [dependencies.sappho-unparse]
 path = "../unparse"

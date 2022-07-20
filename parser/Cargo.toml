@@ -12,8 +12,8 @@ derive_more = "0.99"
 [dependencies.sappho-ast]
 path = "../ast"
 
-[dependencies.sappho-gast]
-path = "../gast"
+[dependencies.sappho-ast-core]
+path = "../ast-core"
 
 [dependencies.sappho-identmap]
 path = "../identmap"

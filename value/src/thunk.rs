@@ -1,5 +1,5 @@
 use crate::ScopeRef;
-use sappho_east::GenExpr;
+use sappho_ast_reduced::Expr;
 
 /// Bind a source expression to the runtime scope in which it appears for later evaluation.
 ///
@@ -17,16 +17,16 @@ use sappho_east::GenExpr;
 /// containing `q`. When `$r` is evaluated, the thunk of the `r` query is evaluated with it's
 /// definition scope.
 pub struct GenThunk<Effects> {
-    expr: GenExpr<Effects>,
+    expr: Expr<Effects>,
     scope: ScopeRef,
 }
 
 impl<FX> GenThunk<FX> {
-    pub fn new(expr: GenExpr<FX>, scope: ScopeRef) -> Self {
+    pub fn new(expr: Expr<FX>, scope: ScopeRef) -> Self {
         GenThunk { scope, expr }
     }
 
-    pub fn peek(&self) -> (&GenExpr<FX>, &ScopeRef) {
+    pub fn peek(&self) -> (&Expr<FX>, &ScopeRef) {
         (&self.expr, &self.scope)
     }
 }

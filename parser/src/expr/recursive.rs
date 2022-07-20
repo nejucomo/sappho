@@ -5,21 +5,21 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{GenExpr, LetClause, LetExpr, ListExpr, MatchClause, MatchExpr};
+use sappho_ast::{Expr, LetClause, LetExpr, ListExpr, MatchClause, MatchExpr};
 
 pub(crate) fn recursive_expr<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
-) -> impl Parser<char, GenExpr<FX>, Error = BareError> + 'a {
-    use GenExpr::*;
+    expr: Recursive<'a, char, Expr<FX>, BareError>,
+) -> impl Parser<char, Expr<FX>, Error = BareError> + 'a {
+    use Expr::List;
 
     list_expr(expr.clone())
         .map(List)
-        .or(let_expr(expr.clone()).map(Let))
-        .or(match_expr(expr).map(Match))
+        .or(let_expr(expr.clone()).map(Expr::from))
+        .or(match_expr(expr).map(Expr::from))
 }
 
 fn list_expr<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+    expr: Recursive<'a, char, Expr<FX>, BareError>,
 ) -> impl Parser<char, ListExpr<FX>, Error = BareError> + 'a {
     use crate::listform::list_form;
 
@@ -27,7 +27,7 @@ fn list_expr<'a, FX: 'a>(
 }
 
 fn let_expr<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+    expr: Recursive<'a, char, Expr<FX>, BareError>,
 ) -> impl Parser<char, LetExpr<FX>, Error = BareError> + 'a {
     let_clause(expr.clone())
         .then_ignore(ws())
@@ -42,7 +42,7 @@ fn let_expr<'a, FX: 'a>(
 }
 
 fn let_clause<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+    expr: Recursive<'a, char, Expr<FX>, BareError>,
 ) -> impl Parser<char, LetClause<FX>, Error = BareError> + 'a {
     Keyword::Let
         .parser()
@@ -57,7 +57,7 @@ fn let_clause<'a, FX: 'a>(
 }
 
 fn match_expr<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+    expr: Recursive<'a, char, Expr<FX>, BareError>,
 ) -> impl Parser<char, MatchExpr<FX>, Error = BareError> + 'a {
     use crate::delimited::delimited;
 
@@ -80,7 +80,7 @@ fn match_expr<'a, FX: 'a>(
 }
 
 fn match_clause<'a, FX: 'a>(
-    expr: Recursive<'a, char, GenExpr<FX>, BareError>,
+    expr: Recursive<'a, char, Expr<FX>, BareError>,
 ) -> impl Parser<char, MatchClause<FX>, Error = BareError> + 'a {
     pattern()
         .then_ignore(just("->").delimited_by(ws(), ws()))

@@ -1,10 +1,10 @@
 use sappho_ast as ast;
-use sappho_east as east;
+use sappho_ast_reduced as astred;
 
-pub fn reduce(expr: ast::PureExpr) -> east::PureExpr {
-    east::PureExpr::from(expr)
+pub fn reduce(expr: ast::PureExpr) -> astred::PureExpr {
+    astred::PureExpr::from(expr)
 }
 
 pub fn canonicalize(expr: ast::PureExpr) -> ast::PureExpr {
-    ast::PureExpr::from(east::PureExpr::from(expr))
+    ast::PureExpr::from(astred::PureExpr::from(expr))
 }

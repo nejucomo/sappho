@@ -1,19 +1,13 @@
-use sappho_ast::{
-    FuncDef,
-    GenExpr::{self, Effect},
-    ListPattern, Pattern, PureExpr, QueryDef,
-    QueryEffects::Inquire,
-    QueryExpr,
-};
-use sappho_gast::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
+use sappho_ast::{EffectExpr, Expr, FuncDef, ListPattern, Pattern, PureExpr, QueryDef, QueryExpr};
+use sappho_ast_core::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
 use sappho_identmap::IdentMap;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
-    sappho_gast::Literal::Num(f).into()
+    sappho_ast_core::Literal::Num(f).into()
 }
 
-fn refexpr<FX>(s: &str) -> GenExpr<FX> {
+fn refexpr<FX>(s: &str) -> Expr<FX> {
     s.to_string().into()
 }
 
@@ -21,11 +15,16 @@ fn bind(s: &str) -> Pattern {
     Pattern::Bind(s.to_string())
 }
 
+fn inquire(x: QueryExpr) -> QueryExpr {
+    use sappho_ast_core::QueryEffects;
+    QueryExpr::from(EffectExpr::new(QueryEffects::Inquire, Box::new(x)))
+}
+
 fn list<T>(xs: T) -> PureExpr
 where
     T: IntoIterator<Item = PureExpr>,
 {
-    GenExpr::from_iter(xs)
+    Expr::from_iter(xs)
 }
 
 fn let_expr<const K: usize>(clauses: [(Pattern, PureExpr); K], bindexpr: PureExpr) -> PureExpr {
@@ -44,7 +43,7 @@ fn func_def(p: Pattern, x: PureExpr) -> FuncDef {
 }
 
 fn func_def_expr(p: Pattern, x: PureExpr) -> PureExpr {
-    func_def(p, x).into()
+    PureExpr::Func(func_def(p, x))
 }
 
 fn query_def(x: QueryExpr) -> QueryDef {
@@ -52,7 +51,7 @@ fn query_def(x: QueryExpr) -> QueryDef {
 }
 
 fn query_def_expr(x: QueryExpr) -> PureExpr {
-    query_def(x).into()
+    PureExpr::Query(query_def(x))
 }
 
 fn object_def(f: Option<FuncDef>, q: Option<QueryDef>) -> PureExpr {
@@ -181,10 +180,8 @@ fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&str>) -> Pattern {
 #[test_case(
     "query $x" =>
     query_def_expr(
-        Effect(
-            Inquire(
-                Box::new(refexpr("x"))
-            )
+        inquire(
+            refexpr("x")
         )
     )
     ; "query inquire x"

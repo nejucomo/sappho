@@ -1,5 +1,5 @@
 use derive_more::From;
-use sappho_east::{Identifier, Pattern};
+use sappho_ast_reduced::{Identifier, Pattern};
 use sappho_value::{BindFailure, CoercionFailure, Unbound, ValRef};
 use std::fmt;
 

@@ -1,11 +1,10 @@
 [workspace]
 members = [
   "ast",
+  "ast-core",
+  "ast-reduced",
   "cli",
-  "east",
   "eval",
-  "unparse",
-  "gast",
   "identmap",
   "integration-tests",
   "interpreter",
@@ -14,5 +13,6 @@ members = [
   "parser",
   "source",
   "transform",
+  "unparse",
   "value",
 ]

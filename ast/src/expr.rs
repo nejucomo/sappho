@@ -1,125 +1,65 @@
-//! Top-level expression type `GenExpr`, generic over [crate::effects]
+//! Top-level expression type `Expr`, generic over [crate::effects]
 
-use crate::{
-    ApplicationExpr, FuncDef, Identifier, LetExpr, ListExpr, Literal, LookupExpr, MatchExpr,
-    ObjectDef, QueryDef,
-};
+use crate::{CoreExpr, FuncDef, ListExpr, QueryDef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
 /// The general top-level expression for all effects.
 #[derive(Debug, PartialEq)]
-pub enum GenExpr<Effects> {
-    Lit(Literal),
-    Ref(Identifier),
+pub enum Expr<Effects> {
+    Core(CoreExpr<Effects>),
+
+    // Extensions from Core:
     Func(FuncDef),
     Query(QueryDef),
-    Object(ObjectDef<Effects>),
     List(ListExpr<Effects>),
-    Let(LetExpr<Effects>),
-    Match(MatchExpr<Effects>),
-    Application(ApplicationExpr<Effects>),
-    Lookup(LookupExpr<Effects>),
-    Effect(Effects),
 }
 
-impl<FX> From<Literal> for GenExpr<FX> {
-    fn from(x: Literal) -> Self {
-        GenExpr::Lit(x)
+impl<FX, T> From<T> for Expr<FX>
+where
+    CoreExpr<FX>: From<T>,
+{
+    fn from(x: T) -> Self {
+        Expr::Core(CoreExpr::from(x))
     }
 }
 
-impl<FX> From<Identifier> for GenExpr<FX> {
-    fn from(x: Identifier) -> Self {
-        GenExpr::Ref(x)
-    }
-}
-
-impl<FX> From<FuncDef> for GenExpr<FX> {
-    fn from(x: FuncDef) -> Self {
-        GenExpr::Func(x)
-    }
-}
-
-impl<FX> From<QueryDef> for GenExpr<FX> {
-    fn from(x: QueryDef) -> Self {
-        GenExpr::Query(x)
-    }
-}
-
-impl<FX> From<ObjectDef<FX>> for GenExpr<FX> {
-    fn from(x: ObjectDef<FX>) -> Self {
-        GenExpr::Object(x)
-    }
-}
-
-impl<FX> FromIterator<GenExpr<FX>> for GenExpr<FX> {
+impl<FX> FromIterator<Expr<FX>> for Expr<FX> {
     fn from_iter<T>(iter: T) -> Self
     where
-        T: IntoIterator<Item = GenExpr<FX>>,
+        T: IntoIterator<Item = Expr<FX>>,
     {
-        GenExpr::List(ListExpr::new(iter, None))
+        Expr::List(ListExpr::new(iter, None))
     }
 }
 
-impl<FX> From<LetExpr<FX>> for GenExpr<FX> {
-    fn from(x: LetExpr<FX>) -> Self {
-        GenExpr::Let(x)
-    }
-}
-
-impl<FX> From<MatchExpr<FX>> for GenExpr<FX> {
-    fn from(x: MatchExpr<FX>) -> Self {
-        GenExpr::Match(x)
-    }
-}
-
-impl<FX> From<ApplicationExpr<FX>> for GenExpr<FX> {
-    fn from(x: ApplicationExpr<FX>) -> Self {
-        GenExpr::Application(x)
-    }
-}
-
-impl<FX> From<LookupExpr<FX>> for GenExpr<FX> {
-    fn from(x: LookupExpr<FX>) -> Self {
-        GenExpr::Lookup(x)
-    }
-}
-
-impl<FX> TryIntoIdentMap<GenExpr<FX>> for GenExpr<FX> {
-    fn try_into_identmap(&self) -> Option<&IdentMap<GenExpr<FX>>> {
+impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
         match self {
-            GenExpr::Object(objdef) => objdef.try_into_identmap(),
+            Expr::Core(c) => c.try_into_identmap(),
             _ => None,
         }
     }
 }
 
-impl<FX> Unparse for GenExpr<FX>
+impl<FX> Unparse for Expr<FX>
 where
     FX: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use GenExpr::*;
+        use Expr::*;
 
         match self {
-            Lit(x) => x.unparse_into(s),
-            Ref(x) => x.unparse_into(s),
+            Core(x) => x.unparse_into(s),
             Func(x) => x.unparse_into(s),
             Query(x) => x.unparse_into(s),
-            Object(x) => x.unparse_into(s),
             List(x) => x.unparse_into(s),
-            Let(x) => x.unparse_into(s),
-            Match(x) => x.unparse_into(s),
-            Application(x) => x.unparse_into(s),
-            Lookup(x) => x.unparse_into(s),
-            Effect(x) => x.unparse_into(s),
         }
     }
 }
 
-impl<FX> fmt::Display for GenExpr<FX>
+impl<FX> fmt::Display for Expr<FX>
 where
     FX: Unparse,
 {
