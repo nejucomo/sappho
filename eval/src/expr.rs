@@ -18,8 +18,10 @@ where
     FX: Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
+        use std::ops::Deref;
+
         log::debug!("Evaluating:\n  From: {}\n  ...\n", self);
-        let r = eval_expr(self, scope);
+        let r = self.deref().eval(scope);
         log::debug!(
             "Evaluated:\n  From: {}\n  To: {}\n",
             self,
@@ -29,20 +31,5 @@ where
             }
         );
         r
-    }
-}
-
-fn eval_expr<FX>(expr: &Expr<FX>, scope: &ScopeRef) -> Result<ValRef>
-where
-    EffectExpr<FX>: Eval,
-    FX: Unparse,
-{
-    use Expr::*;
-
-    match expr {
-        Core(x) => x.eval(scope),
-        Match(x) => x.eval(scope),
-        Application(x) => x.eval(scope),
-        Lookup(x) => x.eval(scope),
     }
 }

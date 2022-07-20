@@ -3,9 +3,18 @@ use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
+use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Expr<Effects>(CoreExpr<Effects>);
+
+impl<FX> Deref for Expr<FX> {
+    type Target = CoreExpr<FX>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 impl<FX> From<ast::Expr<FX>> for Expr<FX> {
     fn from(x: ast::Expr<FX>) -> Self {
