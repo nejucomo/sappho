@@ -129,7 +129,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
 
 impl<F, Q, P, A> TryIntoIdentMap<A> for Object<F, Q, P, A> {
     fn try_into_identmap(&self) -> Option<&IdentMap<A>> {
-        if self.f.is_none() && self.q.is_none() {
+        if self.f.is_none() && self.q.is_none() && self.p.is_none() {
             Some(self.attrs())
         } else {
             None
