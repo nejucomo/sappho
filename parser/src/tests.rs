@@ -1,8 +1,4 @@
-use sappho_ast::{
-    EffectExpr,
-    Expr::{self, Effect},
-    FuncDef, ListPattern, Pattern, PureExpr, QueryDef, QueryExpr,
-};
+use sappho_ast::{EffectExpr, Expr, FuncDef, ListPattern, Pattern, PureExpr, QueryDef, QueryExpr};
 use sappho_gast::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
 use sappho_identmap::IdentMap;
 use test_case::test_case;
@@ -21,7 +17,7 @@ fn bind(s: &str) -> Pattern {
 
 fn inquire(x: QueryExpr) -> QueryExpr {
     use sappho_gast::QueryEffects;
-    Effect(EffectExpr::new(QueryEffects::Inquire, Box::new(x)))
+    QueryExpr::from(EffectExpr::new(QueryEffects::Inquire, Box::new(x)))
 }
 
 fn list<T>(xs: T) -> PureExpr
@@ -47,7 +43,7 @@ fn func_def(p: Pattern, x: PureExpr) -> FuncDef {
 }
 
 fn func_def_expr(p: Pattern, x: PureExpr) -> PureExpr {
-    func_def(p, x).into()
+    PureExpr::Func(func_def(p, x))
 }
 
 fn query_def(x: QueryExpr) -> QueryDef {
@@ -55,7 +51,7 @@ fn query_def(x: QueryExpr) -> QueryDef {
 }
 
 fn query_def_expr(x: QueryExpr) -> PureExpr {
-    query_def(x).into()
+    PureExpr::Query(query_def(x))
 }
 
 fn object_def(f: Option<FuncDef>, q: Option<QueryDef>) -> PureExpr {
