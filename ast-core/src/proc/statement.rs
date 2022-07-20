@@ -29,6 +29,7 @@ where
             Return(x) => {
                 s.write("return ");
                 s.write(x);
+                s.write(";");
             }
         }
     }
