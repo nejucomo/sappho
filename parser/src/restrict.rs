@@ -4,7 +4,7 @@ use sappho_ast::{
     ApplicationExpr, CoreExpr, EffectExpr, Expr, LetClause, LetExpr, LookupExpr, MatchClause,
     MatchExpr,
 };
-use sappho_gast::{ProcEffects, PureEffects, QueryEffects};
+use sappho_astcore::{ProcEffects, PureEffects, QueryEffects};
 
 pub(crate) trait Restrict<S>: Sized {
     fn restrict(src: S, span: Span) -> Result<Self, BareError>;
@@ -66,7 +66,7 @@ where
     FXD: Restrict<FXS>,
 {
     fn restrict(src: CoreExpr<FXS>, span: Span) -> Result<Self, BareError> {
-        use sappho_gast::CoreExpr::*;
+        use sappho_astcore::CoreExpr::*;
 
         match src {
             Lit(x) => Ok(Lit(x)),

@@ -1,5 +1,5 @@
 [package]
-name = "sappho-gast"
+name = "sappho-astcore"
 version = "0.1.0"
 edition = "2021"
 

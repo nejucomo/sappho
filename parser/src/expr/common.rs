@@ -10,7 +10,7 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Expr, FuncDef, Identifier, ObjectDef, ProcExpr, QueryDef};
-use sappho_gast::ProcEffects;
+use sappho_astcore::ProcEffects;
 
 pub(crate) fn common_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,

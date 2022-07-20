@@ -334,11 +334,23 @@ name = "sappho-ast"
 version = "0.1.0"
 dependencies = [
  "derive_more",
- "sappho-gast",
+ "sappho-astcore",
  "sappho-identmap",
  "sappho-listform",
  "sappho-object",
  "sappho-unparse",
+]
+
+[[package]]
+name = "sappho-astcore"
+version = "0.1.0"
+dependencies = [
+ "derive-new",
+ "derive_more",
+ "sappho-identmap",
+ "sappho-object",
+ "sappho-unparse",
+ "test-case",
 ]
 
 [[package]]
@@ -361,7 +373,7 @@ version = "0.1.0"
 dependencies = [
  "derive_more",
  "sappho-ast",
- "sappho-gast",
+ "sappho-astcore",
  "sappho-identmap",
  "sappho-object",
  "sappho-unparse",
@@ -375,24 +387,12 @@ dependencies = [
  "derive_more",
  "log",
  "sappho-ast",
+ "sappho-astcore",
  "sappho-east",
- "sappho-gast",
  "sappho-listform",
  "sappho-parser",
  "sappho-unparse",
  "sappho-value",
-]
-
-[[package]]
-name = "sappho-gast"
-version = "0.1.0"
-dependencies = [
- "derive-new",
- "derive_more",
- "sappho-identmap",
- "sappho-object",
- "sappho-unparse",
- "test-case",
 ]
 
 [[package]]
@@ -452,7 +452,7 @@ dependencies = [
  "derive_more",
  "include_dir",
  "sappho-ast",
- "sappho-gast",
+ "sappho-astcore",
  "sappho-identmap",
  "sappho-listform",
  "sappho-source",
@@ -483,8 +483,8 @@ name = "sappho-value"
 version = "0.1.0"
 dependencies = [
  "derive_more",
+ "sappho-astcore",
  "sappho-east",
- "sappho-gast",
  "sappho-identmap",
  "sappho-object",
  "sappho-unparse",

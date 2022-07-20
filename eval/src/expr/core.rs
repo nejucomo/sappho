@@ -9,7 +9,7 @@ where
     FX: Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        use sappho_gast::CoreExpr::*;
+        use sappho_astcore::CoreExpr::*;
 
         match self {
             Lit(x) => x.eval(scope),

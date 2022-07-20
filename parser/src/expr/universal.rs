@@ -4,7 +4,7 @@ use sappho_ast::{Identifier, Literal, ProcExpr};
 use std::str::FromStr;
 
 pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError> {
-    use sappho_gast::CoreExpr::{Lit, Ref};
+    use sappho_astcore::CoreExpr::{Lit, Ref};
 
     identifier()
         .map(Ref)

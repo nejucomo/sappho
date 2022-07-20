@@ -33,7 +33,7 @@ impl<FX> From<ast::Expr<FX>> for Expr<FX> {
 
 impl<FX> From<ast::ListExpr<FX>> for Expr<FX> {
     fn from(x: ast::ListExpr<FX>) -> Self {
-        use sappho_gast::CoreExpr::Object;
+        use sappho_astcore::CoreExpr::Object;
 
         x.into_reverse_fold(
             |opttail| {
@@ -68,8 +68,8 @@ where
     FX: Clone,
 {
     use ast::Expr::{Core, Func, List, Query};
-    use sappho_gast::transform_object_def;
-    use sappho_gast::CoreExpr::Object;
+    use sappho_astcore::transform_object_def;
+    use sappho_astcore::CoreExpr::Object;
     use sappho_object::Unbundled as U;
 
     match objdef.unbundle() {
