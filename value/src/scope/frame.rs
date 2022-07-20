@@ -1,7 +1,7 @@
 mod bindfailure;
 
 use crate::{Attrs, Unbound, ValRef};
-use sappho_east::{Literal, Pattern, UnpackPattern};
+use sappho_ast_reduced::{Literal, Pattern, UnpackPattern};
 use sappho_identmap::{IdentMap, IdentRef};
 use std::cell::RefCell;
 

@@ -1,6 +1,6 @@
 use crate::{Eval, Result};
+use sappho_ast_reduced::EffectExpr;
 use sappho_astcore::{PureEffects, QueryEffects};
-use sappho_east::EffectExpr;
 use sappho_value::{ScopeRef, ValRef};
 
 impl Eval for EffectExpr<PureEffects> {

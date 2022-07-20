@@ -1,6 +1,6 @@
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
+use sappho_ast_reduced::{FuncClause, Pattern, PureExpr};
 use sappho_astcore::PureEffects;
-use sappho_east::{FuncClause, Pattern, PureExpr};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug)]

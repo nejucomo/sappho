@@ -1,5 +1,5 @@
 use crate::ScopeRef;
-use sappho_east::Expr;
+use sappho_ast_reduced::Expr;
 
 /// Bind a source expression to the runtime scope in which it appears for later evaluation.
 ///

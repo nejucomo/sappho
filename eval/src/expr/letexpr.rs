@@ -1,5 +1,5 @@
 use crate::{Eval, Result};
-use sappho_east::{EffectExpr, LetExpr};
+use sappho_ast_reduced::{EffectExpr, LetExpr};
 use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 

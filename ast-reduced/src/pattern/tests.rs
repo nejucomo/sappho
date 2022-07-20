@@ -47,7 +47,7 @@ fn cons_pat(head: &str, tail: Pattern) -> Pattern {
         ),
     )
 )]
-fn ast_to_east<const K: usize>(body: [&str; K], tail: Option<&str>) -> Pattern {
+fn ast_to_red<const K: usize>(body: [&str; K], tail: Option<&str>) -> Pattern {
     use ast::Pattern::Bind;
 
     Pattern::from(ast::ListPattern::new(
@@ -101,6 +101,6 @@ where
         ]),
     )
 )]
-fn east_to_ast(p: Pattern) -> ast::Pattern {
+fn red_to_ast(p: Pattern) -> ast::Pattern {
     p.into()
 }

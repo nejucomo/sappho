@@ -8,7 +8,7 @@ mod matchexpr;
 mod object;
 
 use crate::{Eval, Result};
-use sappho_east::{EffectExpr, Expr};
+use sappho_ast_reduced::{EffectExpr, Expr};
 use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 

@@ -1,5 +1,5 @@
 use crate::{CoercionFailure, ValRef};
-use sappho_east::Pattern;
+use sappho_ast_reduced::Pattern;
 use std::fmt;
 
 #[derive(Debug)]

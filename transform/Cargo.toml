@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies.sappho-ast]
 path = "../ast"
 
-[dependencies.sappho-east]
-path = "../east"
+[dependencies.sappho-ast-reduced]
+path = "../ast-reduced"

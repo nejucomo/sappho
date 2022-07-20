@@ -1,5 +1,5 @@
 use crate::{Eval, EvalV, Result};
-use sappho_east::{EffectExpr, ObjectDef};
+use sappho_ast_reduced::{EffectExpr, ObjectDef};
 use sappho_unparse::Unparse;
 use sappho_value::{Attrs, Func, Object, Query, ScopeRef, Value};
 

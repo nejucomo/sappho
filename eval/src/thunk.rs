@@ -1,5 +1,5 @@
 use crate::{Eval, EvalThunk, Result};
-use sappho_east::EffectExpr;
+use sappho_ast_reduced::EffectExpr;
 use sappho_unparse::Unparse;
 use sappho_value::{GenThunk, ValRef};
 

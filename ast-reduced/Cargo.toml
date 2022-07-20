@@ -1,5 +1,5 @@
 [package]
-name = "sappho-east"
+name = "sappho-ast-reduced"
 version = "0.1.0"
 edition = "2021"
 

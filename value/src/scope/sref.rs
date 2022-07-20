@@ -1,5 +1,5 @@
 use crate::{BindFailure, Frame, Scope, ValRef};
-use sappho_east::Pattern;
+use sappho_ast_reduced::Pattern;
 use std::ops::Deref;
 use std::rc::Rc;
 

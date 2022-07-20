@@ -2,7 +2,7 @@
 members = [
   "ast",
   "cli",
-  "east",
+  "ast-reduced",
   "eval",
   "unparse",
   "astcore",

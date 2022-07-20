@@ -11,8 +11,8 @@ derive_more = "0.99.17"
 [dependencies.sappho-astcore]
 path = "../astcore"
 
-[dependencies.sappho-east]
-path = "../east"
+[dependencies.sappho-ast-reduced]
+path = "../ast-reduced"
 
 [dependencies.sappho-unparse]
 path = "../unparse"
