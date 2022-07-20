@@ -1,4 +1,5 @@
 {
-  proc {return 42
+  proc {
+    return 42;
   },
 }

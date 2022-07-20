@@ -1,6 +1,1 @@
-parse error: from "test-cases/proc-42/input-canonical", line 2:
-| }
-|  ^
-|
-+-> Syntax error: unexpected '}' while expecting ' ', '!', '$', '(', ';', '[', '\n', 'f', 'l', 'm', 'p', 'q', or '{'
-
+42

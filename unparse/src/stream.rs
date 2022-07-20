@@ -40,20 +40,19 @@ impl Stream {
         F: FnOnce(&mut Stream),
     {
         use Brackets::*;
-        use Break::Opt;
+        use Break::{Mandatory, Opt};
 
-        self.write(match brackets {
-            Parens => "(",
-            Square => "[",
-            Squiggle => "{",
-        });
+        let (brk, open, close) = match brackets {
+            Parens => (Opt, "(", ")"),
+            Square => (Opt, "[", "]"),
+            Squiggle => (Mandatory, "{", "}"),
+        };
+
+        self.write(open);
+        // self.write(&brk);
         self.substream(f);
-        self.write(&Opt);
-        self.write(match brackets {
-            Parens => ")",
-            Square => "]",
-            Squiggle => "}",
-        });
+        self.write(&brk);
+        self.write(close);
     }
 
     fn substream<F>(&mut self, f: F)
