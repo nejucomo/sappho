@@ -1,10 +1,10 @@
 use sappho_ast::{EffectExpr, Expr, FuncDef, ListPattern, Pattern, PureExpr, QueryDef, QueryExpr};
-use sappho_astcore::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
+use sappho_ast_core::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
 use sappho_identmap::IdentMap;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
-    sappho_astcore::Literal::Num(f).into()
+    sappho_ast_core::Literal::Num(f).into()
 }
 
 fn refexpr<FX>(s: &str) -> Expr<FX> {
@@ -16,7 +16,7 @@ fn bind(s: &str) -> Pattern {
 }
 
 fn inquire(x: QueryExpr) -> QueryExpr {
-    use sappho_astcore::QueryEffects;
+    use sappho_ast_core::QueryEffects;
     QueryExpr::from(EffectExpr::new(QueryEffects::Inquire, Box::new(x)))
 }
 

@@ -14,8 +14,8 @@ path = "../ast"
 [dependencies.sappho-unparse]
 path = "../unparse"
 
-[dependencies.sappho-astcore]
-path = "../astcore"
+[dependencies.sappho-ast-core]
+path = "../ast-core"
 
 [dependencies.sappho-identmap]
 path = "../identmap"

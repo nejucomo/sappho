@@ -8,8 +8,8 @@ edition = "2021"
 [dependencies]
 derive_more = "0.99.17"
 
-[dependencies.sappho-astcore]
-path = "../astcore"
+[dependencies.sappho-ast-core]
+path = "../ast-core"
 
 [dependencies.sappho-ast-reduced]
 path = "../ast-reduced"

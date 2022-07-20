@@ -5,7 +5,7 @@ members = [
   "ast-reduced",
   "eval",
   "unparse",
-  "astcore",
+  "ast-core",
   "identmap",
   "integration-tests",
   "interpreter",
