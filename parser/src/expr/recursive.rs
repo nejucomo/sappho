@@ -10,12 +10,12 @@ use sappho_ast::{Expr, LetClause, LetExpr, ListExpr, MatchClause, MatchExpr};
 pub(crate) fn recursive_expr<'a, FX: 'a>(
     expr: Recursive<'a, char, Expr<FX>, BareError>,
 ) -> impl Parser<char, Expr<FX>, Error = BareError> + 'a {
-    use Expr::*;
+    use Expr::List;
 
     list_expr(expr.clone())
         .map(List)
-        .or(let_expr(expr.clone()).map(Let))
-        .or(match_expr(expr).map(Match))
+        .or(let_expr(expr.clone()).map(Expr::from))
+        .or(match_expr(expr).map(Expr::from))
 }
 
 fn list_expr<'a, FX: 'a>(

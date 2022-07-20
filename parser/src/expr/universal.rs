@@ -1,12 +1,15 @@
 use crate::error::BareError;
 use chumsky::{text, Parser};
-use sappho_ast::{Expr, Identifier, Literal, ProcExpr};
+use sappho_ast::{Identifier, Literal, ProcExpr};
 use std::str::FromStr;
 
 pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError> {
-    use Expr::{Lit, Ref};
+    use sappho_gast::CoreExpr::{Lit, Ref};
 
-    identifier().map(Ref).or(literal().map(Lit))
+    identifier()
+        .map(Ref)
+        .or(literal().map(Lit))
+        .map(ProcExpr::from)
 }
 
 pub(super) fn identifier() -> impl Parser<char, Identifier, Error = BareError> {

@@ -16,6 +16,15 @@ pub enum Expr<Effects> {
     List(ListExpr<Effects>),
 }
 
+impl<FX, T> From<T> for Expr<FX>
+where
+    CoreExpr<FX>: From<T>,
+{
+    fn from(x: T) -> Self {
+        Expr::Core(CoreExpr::from(x))
+    }
+}
+
 impl<FX> FromIterator<Expr<FX>> for Expr<FX> {
     fn from_iter<T>(iter: T) -> Self
     where

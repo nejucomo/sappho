@@ -1,7 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    ApplicationExpr, EffectExpr, Expr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
+    ApplicationExpr, CoreExpr, EffectExpr, Expr, LetClause, LetExpr, LookupExpr, MatchClause,
+    MatchExpr,
 };
 use sappho_gast::{ProcEffects, PureEffects, QueryEffects};
 
@@ -46,13 +47,9 @@ where
         use Expr::*;
 
         match src {
-            Lit(x) => Ok(Lit(x)),
-            Ref(x) => Ok(Ref(x)),
+            Core(x) => CoreExpr::restrict(x, span).map(Core),
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
-            Object(x) => x
-                .into_try_map_values(|expr| Expr::<FXD>::restrict(expr, span.clone()))
-                .map(Object),
             List(x) => {
                 let tailspan = span.clone();
                 Ok(List(x.try_map(
@@ -60,6 +57,23 @@ where
                     move |tail| Expr::<FXD>::restrict(*tail, tailspan).map(Box::new),
                 )?))
             }
+        }
+    }
+}
+
+impl<FXS, FXD> Restrict<CoreExpr<FXS>> for CoreExpr<FXD>
+where
+    FXD: Restrict<FXS>,
+{
+    fn restrict(src: CoreExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        use sappho_gast::CoreExpr::*;
+
+        match src {
+            Lit(x) => Ok(Lit(x)),
+            Ref(x) => Ok(Ref(x)),
+            Object(x) => x
+                .into_try_map_values(|expr| Expr::<FXD>::restrict(expr, span.clone()))
+                .map(Object),
             Let(x) => LetExpr::restrict(x, span).map(Let),
             Match(x) => MatchExpr::restrict(x, span).map(Match),
             Application(x) => ApplicationExpr::restrict(x, span).map(Application),

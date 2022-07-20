@@ -15,10 +15,10 @@ use sappho_gast::ProcEffects;
 pub(crate) fn common_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
-    use Expr::{Func, Object, Query};
+    use Expr::{Func, Query};
 
     object_def(expr.clone())
-        .map(Object)
+        .map(ProcExpr::from)
         .or(func_def(expr.clone()).map(Func))
         .or(query_def(expr).map(Query))
 }
