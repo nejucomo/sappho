@@ -29,6 +29,7 @@ pub type PureExpr = Expr<sappho_ast_core::PureEffects>;
 pub type QueryDef = sappho_ast_core::QueryDef<QueryExpr>;
 pub type ProcDef = sappho_ast_core::ProcDef<ProcExpr>;
 pub type QueryExpr = Expr<sappho_ast_core::QueryEffects>;
+pub type Statements = sappho_ast_core::Statements<ProcExpr>;
 pub use self::expr::Expr;
 pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
 pub use sappho_ast_core::{Identifier, Literal};

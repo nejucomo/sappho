@@ -10,6 +10,7 @@ pub enum Keyword {
     Match,
     Proc,
     Query,
+    Return,
 }
 
 impl Keyword {
@@ -26,6 +27,7 @@ impl Keyword {
             Match => "match",
             Proc => "proc",
             Query => "query",
+            Return => "return",
         }
     }
 
@@ -49,7 +51,8 @@ impl Iterator for Iter {
                 Let => Some(Match),
                 Match => Some(Proc),
                 Proc => Some(Query),
-                Query => None,
+                Query => Some(Return),
+                Return => None,
             }
         });
         r
