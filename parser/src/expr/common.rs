@@ -98,6 +98,7 @@ fn construct_object(
 
     let mut query = None;
     let mut func = None;
+    let proc = None; // TODO: parse procs.
     let mut attrs = IdentMap::default();
 
     for clause in clauses.into_iter() {
@@ -113,7 +114,7 @@ fn construct_object(
         }
     }
 
-    Ok(ObjectDef::new(func, query, attrs))
+    Ok(ObjectDef::new(func, query, proc, attrs))
 }
 
 fn set_clause<T>(

@@ -50,6 +50,7 @@ where
             Core(x) => CoreExpr::restrict(x, span).map(Core),
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
+            Proc(x) => Ok(Proc(x)),
             List(x) => {
                 let tailspan = span.clone();
                 Ok(List(x.try_map(
