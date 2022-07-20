@@ -12,7 +12,7 @@ use chumsky::Parser;
 use sappho_ast::{Expr, FuncDef, Identifier, ObjectDef, ProcExpr, QueryDef};
 use sappho_ast_core::ProcEffects;
 
-pub(crate) fn common_expr(
+pub(crate) fn object_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     use Expr::{Func, Query};

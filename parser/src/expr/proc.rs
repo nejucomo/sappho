@@ -1,7 +1,7 @@
 use crate::delimited::delimited;
 use crate::error::BareError;
-use crate::expr::common::common_expr;
 use crate::expr::effect::proc_effect;
+use crate::expr::object::object_expr;
 use crate::expr::recursive::recursive_expr;
 use crate::expr::universal::universal_expr;
 use crate::space::ws;
@@ -54,7 +54,7 @@ fn non_app_non_lookup(
     parens_expr(pexpr.clone())
         .or(proc_effect(pexpr.clone()).map(ProcExpr::from))
         .or(universal_expr())
-        .or(common_expr(pexpr.clone()))
+        .or(object_expr(pexpr.clone()))
         .or(recursive_expr(pexpr))
 }
 
