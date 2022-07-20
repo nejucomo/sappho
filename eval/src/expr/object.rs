@@ -1,7 +1,7 @@
 use crate::{Eval, EvalV, Result};
 use sappho_ast_reduced::{EffectExpr, ObjectDef};
 use sappho_unparse::Unparse;
-use sappho_value::{Attrs, Func, Object, Query, ScopeRef, Value};
+use sappho_value::{Attrs, Func, Object, Proc, Query, ScopeRef, Value};
 
 impl<FX> EvalV for ObjectDef<FX>
 where
@@ -17,7 +17,12 @@ where
 
         let func = self.func().map(|fc| Func::new(fc, scope));
         let query = self.query().map(|qc| Query::new(qc, scope));
+        let proc = self
+            .proc()
+            .map(|pdef| Proc::new(pdef.clone(), scope.clone()));
 
-        Ok(Value::Object(Box::new(Object::new(func, query, attrs))))
+        Ok(Value::Object(Box::new(Object::new(
+            func, query, proc, attrs,
+        ))))
     }
 }

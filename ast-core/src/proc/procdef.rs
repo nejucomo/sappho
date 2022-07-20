@@ -20,6 +20,7 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Brackets::Squiggle;
 
+        s.write("proc ");
         s.bracketed(Squiggle, |subs| {
             subs.write(&self.0);
         });

@@ -16,6 +16,7 @@ pub type MatchExpr<FX> = sappho_ast_core::MatchExpr<Pattern, Expr<FX>>;
 pub type ObjectDef<FX> =
     sappho_ast_core::ObjectDef<Pattern, PureExpr, QueryExpr, ProcExpr, Expr<FX>>;
 pub type ProcExpr = Expr<sappho_ast_core::ProcEffects>;
+pub type ProcClause = sappho_ast_core::ProcDef<ProcExpr>;
 pub type PureExpr = Expr<sappho_ast_core::PureEffects>;
 pub type QueryClause = sappho_ast_core::QueryDef<QueryExpr>;
 pub type QueryExpr = Expr<sappho_ast_core::QueryEffects>;

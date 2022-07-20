@@ -8,6 +8,15 @@ use std::ops::Deref;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Expr<Effects>(CoreExpr<Effects>);
 
+impl<FX> Expr<FX> {
+    pub fn new<T>(x: T) -> Self
+    where
+        CoreExpr<FX>: From<T>,
+    {
+        Expr(CoreExpr::from(x))
+    }
+}
+
 impl<FX> Deref for Expr<FX> {
     type Target = CoreExpr<FX>;
 
