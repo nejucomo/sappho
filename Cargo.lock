@@ -455,6 +455,7 @@ dependencies = [
  "sappho-ast-core",
  "sappho-identmap",
  "sappho-listform",
+ "sappho-object",
  "sappho-source",
  "test-case",
 ]

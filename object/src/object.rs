@@ -1,4 +1,4 @@
-use crate::Unbundled;
+use crate::{Element, IntoIter, Unbundled};
 use derive_new::new;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
@@ -125,6 +125,65 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
         }
         Ok(Object::new(self.f, self.q, self.p, dsta))
     }
+
+    pub fn as_refs(&self) -> Object<&F, &Q, &P, &A> {
+        Object {
+            f: self.f.as_ref(),
+            q: self.q.as_ref(),
+            p: self.p.as_ref(),
+            a: self.a.iter().map(|(k, v)| (k.clone(), v)).collect(),
+        }
+    }
+}
+
+impl<F, Q, P, A> IntoIterator for Object<F, Q, P, A> {
+    type Item = Element<F, Q, P, A>;
+    type IntoIter = IntoIter<F, Q, P, A>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        let Object { f, q, p, a } = self;
+        IntoIter {
+            f,
+            q,
+            p,
+            a: a.into_iter(),
+        }
+    }
+}
+
+impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>, String> {
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = Element<F, Q, P, A>>,
+    {
+        use Element::*;
+
+        let mut obj = Object::default();
+        for elem in iter {
+            match elem {
+                Func(f) => {
+                    if obj.f.replace(f).is_some() {
+                        return Err("multiple funcs disallowed in object creation".to_string());
+                    }
+                }
+                Query(q) => {
+                    if obj.q.replace(q).is_some() {
+                        return Err("multiple queries disallowed in object creation".to_string());
+                    }
+                }
+                Proc(p) => {
+                    if obj.p.replace(p).is_some() {
+                        return Err("multiple procs disallowed in object creation".to_string());
+                    }
+                }
+                Attr(k, v) => obj
+                    .a
+                    .define(k.clone(), v)
+                    .map_err(|_| format!("duplicate attribute {:?}", k))?,
+            }
+        }
+        Ok(obj)
+    }
 }
 
 impl<F, Q, P, A> TryIntoIdentMap<A> for Object<F, Q, P, A> {
@@ -152,26 +211,9 @@ where
             s.write("{}");
         } else {
             s.bracketed(Squiggle, |subs| {
-                fn write_component<T>(subs: &mut Stream, opt: Option<&T>)
-                where
-                    T: Unparse,
-                {
-                    if let Some(x) = opt {
-                        subs.write(&OptSpace);
-                        subs.write(x);
-                        subs.write(",");
-                    }
-                }
-
-                write_component(subs, self.func());
-                write_component(subs, self.query());
-                write_component(subs, self.proc());
-
-                for (name, attr) in self.attrs().iter() {
+                for elem in self.as_refs().into_iter() {
                     subs.write(&OptSpace);
-                    subs.write(name);
-                    subs.write(": ");
-                    subs.write(attr);
+                    subs.write(&elem);
                     subs.write(",");
                 }
             });
