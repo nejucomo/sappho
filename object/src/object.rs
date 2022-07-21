@@ -151,6 +151,41 @@ impl<F, Q, P, A> IntoIterator for Object<F, Q, P, A> {
     }
 }
 
+impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>, String> {
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = Element<F, Q, P, A>>,
+    {
+        use Element::*;
+
+        let mut obj = Object::default();
+        for elem in iter {
+            match elem {
+                Func(f) => {
+                    if obj.f.replace(f).is_some() {
+                        return Err("multiple funcs disallowed in object creation".to_string());
+                    }
+                }
+                Query(q) => {
+                    if obj.q.replace(q).is_some() {
+                        return Err("multiple queries disallowed in object creation".to_string());
+                    }
+                }
+                Proc(p) => {
+                    if obj.p.replace(p).is_some() {
+                        return Err("multiple procs disallowed in object creation".to_string());
+                    }
+                }
+                Attr(k, v) => obj
+                    .a
+                    .define(k.clone(), v)
+                    .map_err(|_| format!("duplicate attribute {:?}", k))?,
+            }
+        }
+        Ok(obj)
+    }
+}
+
 impl<F, Q, P, A> TryIntoIdentMap<A> for Object<F, Q, P, A> {
     fn try_into_identmap(&self) -> Option<&IdentMap<A>> {
         if self.f.is_none() && self.q.is_none() && self.p.is_none() {

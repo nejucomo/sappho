@@ -3,7 +3,6 @@ mod procdef;
 use self::procdef::proc_def;
 use crate::delimited::delimited;
 use crate::error::BareError;
-use crate::error::Span;
 use crate::expr::pattern::pattern;
 use crate::expr::universal::identifier;
 use crate::expr::{pure_expr, query_expr};
@@ -14,6 +13,7 @@ use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Expr, FuncDef, Identifier, ObjectDef, ProcDef, ProcExpr, QueryDef};
 use sappho_ast_core::ProcEffects;
+use sappho_object::Element;
 
 pub(crate) fn object_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
@@ -62,21 +62,21 @@ fn object_def(
         .allow_trailing();
 
     delimited('{', innards, '}')
-        .try_map(construct_object)
+        .try_map(|clauses, span| {
+            clauses
+                .into_iter()
+                .collect::<Result<ObjectDef<ProcEffects>, String>>()
+                .map_err(|msg| BareError::custom(span, msg))
+        })
         .labelled("object definition")
 }
 
-enum ObjectClause {
-    Attr(Identifier, ProcExpr),
-    Func(FuncDef),
-    Query(QueryDef),
-    Proc(ProcDef),
-}
+type ObjectClause = Element<FuncDef, QueryDef, ProcDef, ProcExpr>;
 
 fn object_clause(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ObjectClause, Error = BareError> + '_ {
-    use ObjectClause::*;
+    use Element::*;
 
     attr_def(expr.clone())
         .map(|(id, x)| Attr(id, x))
@@ -94,48 +94,4 @@ fn attr_def(
         .then_ignore(ws().or_not())
         .then(expr)
         .labelled("attribute definition")
-}
-
-fn construct_object(
-    clauses: Vec<ObjectClause>,
-    span: Span,
-) -> Result<ObjectDef<ProcEffects>, BareError> {
-    use sappho_identmap::{IdentMap, RedefinitionError};
-
-    let mut query = None;
-    let mut func = None;
-    let mut proc = None;
-    let mut attrs = IdentMap::default();
-
-    for clause in clauses.into_iter() {
-        use ObjectClause::*;
-
-        let clspan = span.clone();
-        match clause {
-            Query(x) => set_clause(&mut query, x, Keyword::Query, clspan)?,
-            Func(x) => set_clause(&mut func, x, Keyword::Fn, clspan)?,
-            Proc(x) => set_clause(&mut proc, x, Keyword::Proc, clspan)?,
-            Attr(id, x) => attrs.define(id, x).map_err(|RedefinitionError(id)| {
-                BareError::custom(clspan, format!("duplicate attribute {:?}", id))
-            })?,
-        }
-    }
-
-    Ok(ObjectDef::new(func, query, proc, attrs))
-}
-
-fn set_clause<T>(
-    slot: &mut Option<T>,
-    clause: T,
-    label: Keyword,
-    span: Span,
-) -> Result<(), BareError> {
-    if slot.replace(clause).is_none() {
-        Ok(())
-    } else {
-        Err(BareError::custom(
-            span,
-            format!("Object may not contain multiple {} clauses", label.as_str()),
-        ))
-    }
 }

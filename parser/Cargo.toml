@@ -21,6 +21,9 @@ path = "../identmap"
 [dependencies.sappho-listform]
 path = "../listform"
 
+[dependencies.sappho-object]
+path = "../object"
+
 [dependencies.sappho-source]
 path = "../source"
 
