@@ -1,6 +1,6 @@
 //! Top-level expression type `Expr`, generic over [crate::effects]
 
-use crate::{CoreExpr, FuncDef, ListExpr, QueryDef};
+use crate::{CoreExpr, FuncDef, ListExpr, ProcDef, QueryDef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
@@ -13,6 +13,7 @@ pub enum Expr<Effects> {
     // Extensions from Core:
     Func(FuncDef),
     Query(QueryDef),
+    Proc(ProcDef),
     List(ListExpr<Effects>),
 }
 
@@ -54,6 +55,7 @@ where
             Core(x) => x.unparse_into(s),
             Func(x) => x.unparse_into(s),
             Query(x) => x.unparse_into(s),
+            Proc(x) => x.unparse_into(s),
             List(x) => x.unparse_into(s),
         }
     }

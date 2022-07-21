@@ -55,12 +55,12 @@ fn query_def_expr(x: QueryExpr) -> PureExpr {
 }
 
 fn object_def(f: Option<FuncDef>, q: Option<QueryDef>) -> PureExpr {
-    ObjectDef::new(f, q, Default::default()).into()
+    ObjectDef::new(f, q, None, Default::default()).into()
 }
 
 fn attrs_def<const K: usize>(attrs: [(&str, PureExpr); K]) -> PureExpr {
     let stringattrs = attrs.into_iter().map(|(s, x)| (s.to_string(), x));
-    ObjectDef::new(None, None, IdentMap::from_iter(stringattrs)).into()
+    ObjectDef::new(None, None, None, IdentMap::from_iter(stringattrs)).into()
 }
 
 fn app_expr(t: PureExpr, a: PureExpr) -> PureExpr {

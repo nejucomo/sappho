@@ -5,10 +5,10 @@ use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
-pub enum CoreExpr<Pattern, PureExpr, QueryExpr, Expr, FX> {
+pub enum CoreExpr<Pattern, PureExpr, QueryExpr, ProcExpr, Expr, FX> {
     Lit(Literal),
     Ref(Identifier),
-    Object(ObjectDef<Pattern, PureExpr, QueryExpr, Expr>),
+    Object(ObjectDef<Pattern, PureExpr, QueryExpr, ProcExpr, Expr>),
     Let(LetExpr<Pattern, Expr>),
     Match(MatchExpr<Pattern, Expr>),
     Application(ApplicationExpr<Expr>),
@@ -16,13 +16,16 @@ pub enum CoreExpr<Pattern, PureExpr, QueryExpr, Expr, FX> {
     Effect(EffectExpr<FX, Expr>),
 }
 
-impl<P, X, Q, G, FX> CoreExpr<P, X, Q, G, FX> {
-    pub fn transform_into<PD, XD, QD, GD>(self) -> CoreExpr<PD, XD, QD, GD, FX>
+impl<Pat, Pure, Query, Proc, Generic, FX> CoreExpr<Pat, Pure, Query, Proc, Generic, FX> {
+    pub fn transform_into<DstPat, DstPure, DstQuery, DstProc, DstGeneric>(
+        self,
+    ) -> CoreExpr<DstPat, DstPure, DstQuery, DstProc, DstGeneric, FX>
     where
-        PD: From<P>,
-        XD: From<X>,
-        QD: From<Q>,
-        GD: From<G>,
+        DstPat: From<Pat>,
+        DstPure: From<Pure>,
+        DstQuery: From<Query>,
+        DstProc: From<Proc>,
+        DstGeneric: From<Generic>,
     {
         use CoreExpr::*;
 
@@ -39,8 +42,10 @@ impl<P, X, Q, G, FX> CoreExpr<P, X, Q, G, FX> {
     }
 }
 
-impl<P, X, Q, G, FX> TryIntoIdentMap<G> for CoreExpr<P, X, Q, G, FX> {
-    fn try_into_identmap(&self) -> Option<&IdentMap<G>> {
+impl<Pat, Pure, Query, Proc, Generic, FX> TryIntoIdentMap<Generic>
+    for CoreExpr<Pat, Pure, Query, Proc, Generic, FX>
+{
+    fn try_into_identmap(&self) -> Option<&IdentMap<Generic>> {
         match self {
             CoreExpr::Object(objdef) => objdef.try_into_identmap(),
             _ => None,
@@ -48,12 +53,13 @@ impl<P, X, Q, G, FX> TryIntoIdentMap<G> for CoreExpr<P, X, Q, G, FX> {
     }
 }
 
-impl<P, X, Q, G, FX> Unparse for CoreExpr<P, X, Q, G, FX>
+impl<Pat, Pure, Query, Proc, Generic, FX> Unparse for CoreExpr<Pat, Pure, Query, Proc, Generic, FX>
 where
-    P: Unparse,
-    X: Unparse,
-    Q: Unparse,
-    G: Unparse,
+    Pat: Unparse,
+    Pure: Unparse,
+    Query: Unparse,
+    Proc: Unparse,
+    Generic: Unparse,
     FX: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {

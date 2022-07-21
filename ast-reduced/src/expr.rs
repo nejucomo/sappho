@@ -8,6 +8,15 @@ use std::ops::Deref;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Expr<Effects>(CoreExpr<Effects>);
 
+impl<FX> Expr<FX> {
+    pub fn new<T>(x: T) -> Self
+    where
+        CoreExpr<FX>: From<T>,
+    {
+        Expr(CoreExpr::from(x))
+    }
+}
+
 impl<FX> Deref for Expr<FX> {
     type Target = CoreExpr<FX>;
 
@@ -25,6 +34,9 @@ impl<FX> From<ast::Expr<FX>> for Expr<FX> {
             }
             ast::Expr::Query(x) => {
                 Expr(ast::CoreExpr::from(ast::ObjectDef::new_query(x)).transform_into())
+            }
+            ast::Expr::Proc(x) => {
+                Expr(ast::CoreExpr::from(ast::ObjectDef::new_proc(x)).transform_into())
             }
             ast::Expr::List(x) => x.into(),
         }
@@ -67,7 +79,7 @@ fn objdef_to_ast_expr<FX>(objdef: ObjectDef<FX>) -> ast::Expr<FX>
 where
     FX: Clone,
 {
-    use ast::Expr::{Core, Func, List, Query};
+    use ast::Expr::{Core, Func, List, Proc, Query};
     use sappho_ast_core::transform_object_def;
     use sappho_ast_core::CoreExpr::Object;
     use sappho_object::Unbundled as U;
@@ -76,6 +88,7 @@ where
         U::Bundled(obj) => Core(transform_object_def(obj).into()),
         U::Func(f) => Func(f.transform_into()),
         U::Query(q) => Query(q.transform_into()),
+        U::Proc(p) => Proc(p.transform_into()),
         U::Attrs(a) => a
             .as_list_form()
             .map(|listform| {
