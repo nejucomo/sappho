@@ -50,18 +50,6 @@ impl<T> IdentMap<T> {
 
         out
     }
-
-    pub fn map_value_refs<F, U>(&self, f: F) -> IdentMap<U>
-    where
-        F: Fn(&T) -> U,
-    {
-        let mut out = IdentMap::default();
-        for (id, v) in self.iter() {
-            out.define(id.clone(), f(v)).unwrap();
-        }
-
-        out
-    }
 }
 
 impl<T> IdentMap<T>
