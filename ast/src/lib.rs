@@ -5,8 +5,9 @@
 //! `fn x -> x` is AST short-hand for reduced `{ fn x -> x }`.
 //!
 //! The top-level expression for evaluation is [PureExpr], which is a type alias to a general
-//! expression type over all effects, [Expr]. The three bespoke effects are [PureEffects],
-//! [QueryEffects], and [ProcEffects].
+//! expression type over all effects, [Expr]. The three bespoke effects are
+//! [PureEffects](sappho_ast_core::PureEffects), [QueryEffects](sappho_ast_core::QueryEffects),
+//! and [ProcEffects](sappho_ast_core::ProcEffects).
 
 mod expr;
 mod pattern;

@@ -1,4 +1,4 @@
-//! Top-level expression type `Expr`, generic over [crate::effects]
+//! Top-level expression type `Expr`, generic over effects [PureEffects](sappho_ast_core::PureEffects), [QueryEffects](sappho_ast_core::QueryEffects), or [ProcEffects](sappho_ast_core::ProcEffects).
 
 use crate::{CoreExpr, FuncDef, ListExpr, ProcDef, QueryDef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};

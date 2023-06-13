@@ -1,6 +1,6 @@
 mod bindfailure;
 
-use crate::{Attrs, Unbound, ValRef};
+use crate::{Attrs, Unbound, UnboundKind::Unfulfilled, ValRef};
 use sappho_ast_reduced::{Literal, Pattern, UnpackPattern};
 use sappho_identmap::{IdentMap, IdentRef};
 use std::cell::RefCell;
@@ -42,10 +42,8 @@ impl Frame {
 
     /// Return [Result]<[Option]<[ValRef]>, [Unbound]> where `None` indicates the binding is not
     /// declared in this frame. If a binding is declared, but not defined, this is an
-    /// [Unbound::Unfulfilled] error.
+    /// [Unfulfilled] error.
     pub fn deref(&self, ident: &IdentRef) -> Result<Option<ValRef>, Unbound> {
-        use crate::UnboundKind::Unfulfilled;
-
         self.0
             .get(ident)
             .map(|rcell| {
