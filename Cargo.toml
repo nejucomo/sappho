@@ -16,3 +16,9 @@ members = [
   "unparse",
   "value",
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "gplv3"
+homepage = "https://github.com/nathan-at-least/sappho"
