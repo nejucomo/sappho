@@ -6,12 +6,11 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+clap.workspace = true
 derive_more.workspace = true
 log.workspace = true
-simplelog.workspace = true
-clap.workspace = true
-
 sappho-interpreter.workspace = true
 sappho-parser.workspace = true
 sappho-source.workspace = true
 sappho-transform.workspace = true
+simplelog.workspace = true
