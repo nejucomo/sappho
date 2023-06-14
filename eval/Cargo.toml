@@ -9,23 +9,12 @@ homepage.workspace = true
 derive_more = "0.99"
 log = "0.4.17"
 
-[dependencies.sappho-ast]
-path = "../ast"
+sappho-ast-core.workspace = true
+sappho-ast-reduced.workspace = true
+sappho-ast.workspace = true
+sappho-listform.workspace = true
+sappho-unparse.workspace = true
+sappho-value.workspace = true
 
-[dependencies.sappho-ast-reduced]
-path = "../ast-reduced"
-
-[dependencies.sappho-ast-core]
-path = "../ast-core"
-
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-listform]
-path = "../listform"
-
-[dependencies.sappho-value]
-path = "../value"
-
-[dev-dependencies.sappho-parser]
-path = "../parser"
+[dev-dependencies]
+sappho-parser.workspace = true

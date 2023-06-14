@@ -8,8 +8,5 @@ homepage.workspace = true
 [dependencies]
 derive-new = "0.5.9"
 
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-identmap]
-path = "../identmap"
+sappho-identmap.workspace = true
+sappho-unparse.workspace = true

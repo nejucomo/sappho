@@ -22,3 +22,20 @@ version = "0.1.0"
 edition = "2021"
 license = "gplv3"
 homepage = "https://github.com/nathan-at-least/sappho"
+
+[workspace.dependencies]
+sappho-ast-core = { path = "ast-core" }
+sappho-ast = { path = "ast" }
+sappho-ast-reduced = { path = "ast-reduced" }
+sappho-cli = { path = "cli" }
+sappho-eval = { path = "eval" }
+sappho-identmap = { path = "identmap" }
+sappho-integration-tests = { path = "integration-tests" }
+sappho-interpreter = { path = "interpreter" }
+sappho-listform = { path = "listform" }
+sappho-object = { path = "object" }
+sappho-parser = { path = "parser" }
+sappho-source = { path = "source" }
+sappho-transform = { path = "transform" }
+sappho-unparse = { path = "unparse" }
+sappho-value = { path = "value" }

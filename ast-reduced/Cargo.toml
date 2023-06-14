@@ -8,20 +8,11 @@ homepage.workspace = true
 [dependencies]
 derive_more = "0.99.17"
 
-[dependencies.sappho-ast]
-path = "../ast"
-
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-ast-core]
-path = "../ast-core"
-
-[dependencies.sappho-identmap]
-path = "../identmap"
-
-[dependencies.sappho-object]
-path = "../object"
+sappho-ast-core.workspace = true
+sappho-ast.workspace = true
+sappho-identmap.workspace = true
+sappho-object.workspace = true
+sappho-unparse.workspace = true
 
 [dev-dependencies]
 test-case = "2.0"

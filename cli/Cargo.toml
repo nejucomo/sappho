@@ -9,22 +9,9 @@ homepage.workspace = true
 derive_more = "0.99.17"
 log = "0.4.17"
 simplelog = "0.12.0"
+clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
 
-[dependencies.clap]
-version = "3.1.18"
-features = [
-  "derive",
-  "cargo",
-]
-
-[dependencies.sappho-interpreter]
-path = "../interpreter"
-
-[dependencies.sappho-parser]
-path = "../parser"
-
-[dependencies.sappho-source]
-path = "../source"
-
-[dependencies.sappho-transform]
-path = "../transform"
+sappho-interpreter.workspace = true
+sappho-parser.workspace = true
+sappho-source.workspace = true
+sappho-transform.workspace = true

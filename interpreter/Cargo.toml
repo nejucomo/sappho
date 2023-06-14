@@ -9,11 +9,6 @@ homepage.workspace = true
 derive_more = "0.99.17"
 pathutil = "0.1.3"
 
-[dependencies.sappho-eval]
-path = "../eval"
-
-[dependencies.sappho-parser]
-path = "../parser"
-
-[dependencies.sappho-source]
-path = "../source"
+sappho-eval.workspace = true
+sappho-parser.workspace = true
+sappho-source.workspace = true

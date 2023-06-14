@@ -9,17 +9,8 @@ homepage.workspace = true
 derive_more = "0.99.17"
 derive-new = "0.5.9"
 
-[dependencies.sappho-ast-core]
-path = "../ast-core"
-
-[dependencies.sappho-ast-reduced]
-path = "../ast-reduced"
-
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-identmap]
-path = "../identmap"
-
-[dependencies.sappho-object]
-path = "../object"
+sappho-ast-core.workspace = true
+sappho-ast-reduced.workspace = true
+sappho-identmap.workspace = true
+sappho-object.workspace = true
+sappho-unparse.workspace = true

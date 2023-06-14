@@ -5,8 +5,8 @@ edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 
-[dependencies.sappho-unparse]
-path = "../unparse"
+[dependencies]
+sappho-unparse.workspace = true
 
 [dev-dependencies]
 test-case = "2.0"

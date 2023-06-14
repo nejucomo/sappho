@@ -8,17 +8,8 @@ homepage.workspace = true
 [dependencies]
 derive_more = "0.99.17"
 
-[dependencies.sappho-identmap]
-path = "../identmap"
-
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-ast-core]
-path = "../ast-core"
-
-[dependencies.sappho-listform]
-path = "../listform"
-
-[dependencies.sappho-object]
-path = "../object"
+sappho-ast-core.workspace = true
+sappho-identmap.workspace = true
+sappho-listform.workspace = true
+sappho-object.workspace = true
+sappho-unparse.workspace = true
