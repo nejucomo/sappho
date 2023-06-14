@@ -3,8 +3,9 @@ use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum SourceOption {
+    #[default]
     Stdin,
     Path(PathBuf),
 }
@@ -21,12 +22,6 @@ impl<'a> LoadSource<'a> for &'a SourceOption {
             }
             Path(p) => p.as_path().load(),
         }
-    }
-}
-
-impl Default for SourceOption {
-    fn default() -> Self {
-        SourceOption::Stdin
     }
 }
 

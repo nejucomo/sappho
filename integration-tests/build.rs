@@ -111,7 +111,7 @@ fn generate_unparse_case(
 ) -> Result<()> {
     use std::io::Write;
 
-    let exppathhost = casedir.join(&format!("input-{}", style));
+    let exppathhost = casedir.join(format!("input-{}", style));
     let exppath = exppathhost.pe_strip_prefix("src/")?;
     let inpath = input.pe_strip_prefix("src/")?;
     f.write_all(
