@@ -3,7 +3,7 @@ use std::fmt;
 
 #[derive(Debug, derive_more::From)]
 pub enum LoadParseError<'a> {
-    Load(std::io::Error),
+    Load(anyhow::Error),
     Parse(Errors<'a>),
 }
 

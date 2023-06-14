@@ -7,9 +7,12 @@ homepage.workspace = true
 
 [build-dependencies]
 indoc.workspace = true
-pathutil.workspace = true
+anyhow-std.workspace = true
+anyhow.workspace = true
 
 [dev-dependencies]
+anyhow-std.workspace = true
+anyhow.workspace = true
 derive_more.workspace = true
 sappho-interpreter.workspace = true
 sappho-parser.workspace = true

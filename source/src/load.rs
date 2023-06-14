@@ -1,5 +1,5 @@
 use crate::Source;
-use std::io::Result;
+use anyhow::Result;
 use std::path::Path;
 
 /// Load a [Source] via [std::io::Result]. Impls are provided for [String], [str], and [Path].

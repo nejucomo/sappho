@@ -1,6 +1,8 @@
+use anyhow::Result;
 use std::borrow::Cow;
-use std::io::Result;
 use std::path::Path;
+
+// Todo: Replace with `source-text` crate.
 
 /// A `Source` refers to the textual source code and tracks the [Path] it came from (if any).
 #[derive(Clone, Debug)]
@@ -12,9 +14,9 @@ pub struct Source<'a> {
 impl<'a> Source<'a> {
     /// Load source from a [Path].
     pub fn load_path(path: &Path) -> Result<Source> {
-        use pathutil::PathExt;
+        use anyhow_std::PathAnyhow;
 
-        let text = path.pe_read_to_string()?;
+        let text = path.read_to_string_anyhow()?;
         Ok(Source {
             optpath: Some(path),
             cowtext: Cow::from(text),

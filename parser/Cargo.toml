@@ -6,6 +6,7 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+anyhow.workspace = true
 chumsky.workspace = true
 derive_more.workspace = true
 sappho-ast-core.workspace = true

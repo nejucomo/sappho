@@ -1,7 +1,7 @@
+use anyhow::Result;
+use anyhow_std::PathAnyhow;
 use indoc::indoc;
-use pathutil::{FileTypeEnum, PathExt};
 use std::fs::File;
-use std::io::Result;
 use std::path::Path;
 
 fn main() -> Result<()> {
@@ -13,24 +13,35 @@ fn main() -> Result<()> {
 }
 
 fn generate_tests(f: &mut File) -> Result<()> {
-    for entry in Path::new("src/test-cases").pe_read_dir_entries()? {
-        entry.metadata()?.require_file_type(FileTypeEnum::Dir)?;
-        generate_case_tests(f, &entry.path())?;
+    for entres in Path::new("src/test-cases").read_dir_anyhow()? {
+        let entry = entres?;
+
+        if entry.metadata()?.is_dir() {
+            generate_case_tests(f, &entry.path())?;
+        } else {
+            anyhow::bail!("expected a dir, found {:?}", entry);
+        }
     }
 
     Ok(())
 }
 
 fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
-    let casename = casedir.pe_file_name_str()?;
+    use anyhow_std::OsStrAnyhow;
+
+    let casename = casedir.file_name_anyhow()?.to_str_anyhow()?;
     let expected = casedir.join("expected");
     let mut has_canonical = false;
     let mut has_reduced = false;
     let mut inputs = vec![];
-    for entry in casedir.pe_read_dir_entries()? {
-        entry.metadata()?.require_file_type(FileTypeEnum::File)?;
+    for entres in casedir.read_dir_anyhow()? {
+        let entry = entres?;
+        if !entry.metadata()?.is_file() {
+            anyhow::bail!("expected a file, found {:?}", entry);
+        }
+
         let path = entry.path();
-        let name = path.pe_file_name_str()?;
+        let name = path.file_name_anyhow()?.to_str_anyhow()?;
         if name == "input" || name.starts_with("input-") {
             let inputcasename = format!("{}_{}", casename, name).replace('-', "_");
             generate_case_input_test(f, &expected, &path, &inputcasename)?;
@@ -43,11 +54,7 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
 
             inputs.push((inputcasename, path));
         } else if name != "expected" {
-            use std::io::{Error, ErrorKind::Other};
-            return Err(Error::new(
-                Other,
-                format!("Unexpected file: {:?}", path.display()),
-            ));
+            anyhow::bail!("Unexpected file: {:?}", path.display());
         }
     }
 
@@ -60,14 +67,9 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
     } else if !has_canonical && !has_reduced {
         Ok(())
     } else {
-        use std::io::{Error, ErrorKind::Other};
-
-        Err(Error::new(
-            Other,
-            format!(
-                "Inconsistent 'input-canonical' vs 'input-reduced' in {:?}",
-                casedir.display()
-            ),
+        Err(anyhow::anyhow!(
+            "Inconsistent 'input-canonical' vs 'input-reduced' in {:?}",
+            casedir.display()
         ))
     }
 }
@@ -80,8 +82,8 @@ fn generate_case_input_test(
 ) -> Result<()> {
     use std::io::Write;
 
-    let exppath = expected.pe_strip_prefix("src/")?;
-    let inpath = input.pe_strip_prefix("src/")?;
+    let exppath = expected.strip_prefix("src/")?;
+    let inpath = input.strip_prefix("src/")?;
     f.write_all(
         format!(
             indoc! {r#"
@@ -99,7 +101,8 @@ fn generate_case_input_test(
             exppath.display(),
         )
         .as_bytes(),
-    )
+    )?;
+    Ok(())
 }
 
 fn generate_unparse_case(
@@ -112,8 +115,8 @@ fn generate_unparse_case(
     use std::io::Write;
 
     let exppathhost = casedir.join(format!("input-{}", style));
-    let exppath = exppathhost.pe_strip_prefix("src/")?;
-    let inpath = input.pe_strip_prefix("src/")?;
+    let exppath = exppathhost.strip_prefix("src/")?;
+    let inpath = input.strip_prefix("src/")?;
     f.write_all(
         format!(
             indoc! {r#"
@@ -133,5 +136,6 @@ fn generate_unparse_case(
             style,
         )
         .as_bytes(),
-    )
+    )?;
+    Ok(())
 }

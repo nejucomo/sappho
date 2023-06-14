@@ -6,6 +6,7 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+anyhow.workspace = true
 clap.workspace = true
 derive_more.workspace = true
 log.workspace = true
