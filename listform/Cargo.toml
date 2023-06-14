@@ -9,5 +9,5 @@ homepage.workspace = true
 sappho-unparse.workspace = true
 
 [dev-dependencies]
-test-case = "2.0"
-indoc = "1.0.6"
+test-case.workspace = true
+indoc.workspace = true

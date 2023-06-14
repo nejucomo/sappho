@@ -6,8 +6,8 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-derive_more = "0.99"
-log = "0.4.17"
+derive_more.workspace = true
+log.workspace = true
 
 sappho-ast-core.workspace = true
 sappho-ast-reduced.workspace = true

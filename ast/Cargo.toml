@@ -6,7 +6,7 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-derive_more = "0.99.17"
+derive_more.workspace = true
 
 sappho-ast-core.workspace = true
 sappho-identmap.workspace = true

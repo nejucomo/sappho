@@ -6,8 +6,8 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-derive_more = "0.99.17"
-pathutil = "0.1.3"
+derive_more.workspace = true
+pathutil.workspace = true
 
 sappho-eval.workspace = true
 sappho-parser.workspace = true

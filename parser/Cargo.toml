@@ -6,8 +6,8 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-chumsky = "0.8"
-derive_more = "0.99"
+chumsky.workspace = true
+derive_more.workspace = true
 
 sappho-ast-core.workspace = true
 sappho-ast.workspace = true
@@ -17,5 +17,5 @@ sappho-object.workspace = true
 sappho-source.workspace = true
 
 [dev-dependencies]
-test-case = "2.0"
-include_dir = "0.7"
+test-case.workspace = true
+include_dir.workspace = true

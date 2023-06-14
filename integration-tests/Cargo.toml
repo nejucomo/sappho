@@ -6,11 +6,11 @@ license.workspace = true
 homepage.workspace = true
 
 [build-dependencies]
-indoc = "1.0.6"
-pathutil = "0.1.2"
+indoc.workspace = true
+pathutil.workspace = true
 
 [dev-dependencies]
-derive_more = "0.99.17"
+derive_more.workspace = true
 
 sappho-interpreter.workspace = true
 sappho-parser.workspace = true
