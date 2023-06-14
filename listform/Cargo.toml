@@ -1,13 +1,13 @@
 [package]
 name = "sappho-listform"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies.sappho-unparse]
-path = "../unparse"
+[dependencies]
+sappho-unparse.workspace = true
 
 [dev-dependencies]
-test-case = "2.0"
-indoc = "1.0.6"
+indoc.workspace = true
+test-case.workspace = true

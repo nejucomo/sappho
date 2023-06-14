@@ -1,31 +1,19 @@
 [package]
 name = "sappho-eval"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
 
 [dependencies]
-derive_more = "0.99"
-log = "0.4.17"
+derive_more.workspace = true
+log.workspace = true
+sappho-ast-core.workspace = true
+sappho-ast-reduced.workspace = true
+sappho-ast.workspace = true
+sappho-listform.workspace = true
+sappho-unparse.workspace = true
+sappho-value.workspace = true
 
-[dependencies.sappho-ast]
-path = "../ast"
-
-[dependencies.sappho-ast-reduced]
-path = "../ast-reduced"
-
-[dependencies.sappho-ast-core]
-path = "../ast-core"
-
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-listform]
-path = "../listform"
-
-[dependencies.sappho-value]
-path = "../value"
-
-[dev-dependencies.sappho-parser]
-path = "../parser"
+[dev-dependencies]
+sappho-parser.workspace = true

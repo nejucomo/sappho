@@ -1,32 +1,21 @@
 [package]
 name = "sappho-parser"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
 
 [dependencies]
-chumsky = "0.8"
-derive_more = "0.99"
-
-[dependencies.sappho-ast]
-path = "../ast"
-
-[dependencies.sappho-ast-core]
-path = "../ast-core"
-
-[dependencies.sappho-identmap]
-path = "../identmap"
-
-[dependencies.sappho-listform]
-path = "../listform"
-
-[dependencies.sappho-object]
-path = "../object"
-
-[dependencies.sappho-source]
-path = "../source"
+anyhow.workspace = true
+chumsky.workspace = true
+derive_more.workspace = true
+sappho-ast-core.workspace = true
+sappho-ast.workspace = true
+sappho-identmap.workspace = true
+sappho-listform.workspace = true
+sappho-object.workspace = true
+sappho-source.workspace = true
 
 [dev-dependencies]
-test-case = "2.0"
-include_dir = "0.7"
+test-case.workspace = true
+include_dir.workspace = true

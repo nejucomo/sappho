@@ -1,15 +1,11 @@
 [package]
 name = "sappho-object"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
 
 [dependencies]
-derive-new = "0.5.9"
-
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-identmap]
-path = "../identmap"
+derive-new.workspace = true
+sappho-identmap.workspace = true
+sappho-unparse.workspace = true

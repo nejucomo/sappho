@@ -1,22 +1,19 @@
 [package]
 name = "sappho-integration-tests"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
 
 [build-dependencies]
-indoc = "1.0.6"
-pathutil = "0.1.2"
+indoc.workspace = true
+anyhow-std.workspace = true
+anyhow.workspace = true
 
 [dev-dependencies]
-derive_more = "0.99.17"
-
-[dev-dependencies.sappho-interpreter]
-path = "../interpreter"
-
-[dev-dependencies.sappho-parser]
-path = "../parser"
-
-[dev-dependencies.sappho-transform]
-path = "../transform"
+anyhow-std.workspace = true
+anyhow.workspace = true
+derive_more.workspace = true
+sappho-interpreter.workspace = true
+sappho-parser.workspace = true
+sappho-transform.workspace = true

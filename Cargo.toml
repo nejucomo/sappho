@@ -16,3 +16,37 @@ members = [
   "unparse",
   "value",
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "gplv3"
+homepage = "https://github.com/nathan-at-least/sappho"
+
+[workspace.dependencies]
+anyhow = "1.0.71"
+anyhow-std = "0.1.4"
+chumsky = "0.8"
+clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
+derive_more = "0.99.17"
+derive-new = "0.5.9"
+include_dir = "0.7"
+indoc = "1.0.6"
+log = "0.4.17"
+sappho-ast-core = { path = "ast-core" }
+sappho-ast = { path = "ast" }
+sappho-ast-reduced = { path = "ast-reduced" }
+sappho-cli = { path = "cli" }
+sappho-eval = { path = "eval" }
+sappho-identmap = { path = "identmap" }
+sappho-integration-tests = { path = "integration-tests" }
+sappho-interpreter = { path = "interpreter" }
+sappho-listform = { path = "listform" }
+sappho-object = { path = "object" }
+sappho-parser = { path = "parser" }
+sappho-source = { path = "source" }
+sappho-transform = { path = "transform" }
+sappho-unparse = { path = "unparse" }
+sappho-value = { path = "value" }
+simplelog = "0.12.0"
+test-case = "2.0"

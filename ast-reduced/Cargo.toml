@@ -1,27 +1,17 @@
 [package]
 name = "sappho-ast-reduced"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
 
 [dependencies]
-derive_more = "0.99.17"
-
-[dependencies.sappho-ast]
-path = "../ast"
-
-[dependencies.sappho-unparse]
-path = "../unparse"
-
-[dependencies.sappho-ast-core]
-path = "../ast-core"
-
-[dependencies.sappho-identmap]
-path = "../identmap"
-
-[dependencies.sappho-object]
-path = "../object"
+derive_more.workspace = true
+sappho-ast-core.workspace = true
+sappho-ast.workspace = true
+sappho-identmap.workspace = true
+sappho-object.workspace = true
+sappho-unparse.workspace = true
 
 [dev-dependencies]
-test-case = "2.0"
+test-case.workspace = true

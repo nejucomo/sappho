@@ -12,7 +12,7 @@ pub enum SourceOption {
 use SourceOption::*;
 
 impl<'a> LoadSource<'a> for &'a SourceOption {
-    fn load(self) -> std::io::Result<Source<'a>> {
+    fn load(self) -> anyhow::Result<Source<'a>> {
         match self {
             Stdin => {
                 use std::io::Read;
