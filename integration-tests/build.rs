@@ -88,17 +88,16 @@ fn generate_case_input_test(
         format!(
             indoc! {r#"
                 #[test]
-                fn {}() {{
-                    let inpath = std::path::PathBuf::from("{}");
-                    let input = include_str!("{}");
-                    let expected = include_str!("{}");
+                fn {testname}() {{
+                    let inpath = std::path::PathBuf::from("{inpath}");
+                    let input = include_str!("{inpath}");
+                    let expected = include_str!("{exppath}");
                     crate::test_eval(inpath, input, expected);
                 }}
             "#},
-            testname,
-            inpath.display(),
-            inpath.display(),
-            exppath.display(),
+            testname = testname,
+            inpath = inpath.display(),
+            exppath = exppath.display(),
         )
         .as_bytes(),
     )?;
@@ -121,19 +120,17 @@ fn generate_unparse_case(
         format!(
             indoc! {r#"
                 #[test]
-                fn unparse_{}_{}() {{
-                    let inpath = std::path::PathBuf::from("{}");
-                    let input = include_str!("{}");
-                    let expected = include_str!("{}");
-                    crate::test_unparse(inpath, input, expected, {:?});
+                fn unparse_{style}_{icname}() {{
+                    let inpath = std::path::PathBuf::from("{inpath}");
+                    let input = include_str!("{inpath}");
+                    let expected = include_str!("{exppath}");
+                    crate::test_unparse(inpath, input, expected, {style:?});
                 }}
             "#},
-            style,
-            icname,
-            inpath.display(),
-            inpath.display(),
-            exppath.display(),
-            style,
+            style = style,
+            icname = icname,
+            inpath = inpath.display(),
+            exppath = exppath.display(),
         )
         .as_bytes(),
     )?;
