@@ -30,7 +30,7 @@ anyhow-std = "0.1.4"
 chumsky = "0.8"
 clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
 derive_more = "0.99.17"
-derive-new = "0.5.9"
+derive-new = "0.7.0"
 include_dir = "0.7"
 indoc = "1.0.6"
 log = "0.4.17"
@@ -51,3 +51,4 @@ sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
 simplelog = "0.12.0"
 test-case = "2.0"
+thiserror = "2.0.11"

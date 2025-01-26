@@ -6,3 +6,5 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+derive-new.workspace = true
+thiserror.workspace = true

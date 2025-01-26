@@ -1,30 +1,30 @@
-use crate::{Break, Stream};
+use std::ops::Deref;
+
+use crate::{Result, Stream};
 
 pub trait Unparse {
-    fn unparse(&self) -> Stream {
-        let mut s = Stream::new();
-        self.unparse_into(&mut s);
-        s
-    }
-
-    fn unparse_into(&self, s: &mut Stream);
+    fn unparse<S>(&self, stream: &mut S) -> Result<()>
+    where
+        S: Stream;
 }
 
 impl Unparse for str {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write_string(self.to_string())
+    fn unparse<S>(&self, stream: &mut S) -> Result<()>
+    where
+        S: Stream,
+    {
+        stream.write_str(self)
     }
 }
 
-impl Unparse for String {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write_string(self.clone())
-    }
-}
-
-impl Unparse for Break {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.add_break()
+impl Unparse for char {
+    fn unparse<S>(&self, stream: &mut S) -> Result<()>
+    where
+        S: Stream,
+    {
+        let mut buf = [0u8; 4];
+        let string = self.encode_utf8(&mut buf);
+        string.unparse(stream)
     }
 }
 
@@ -32,7 +32,10 @@ impl<T> Unparse for Box<T>
 where
     T: Unparse,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write(self.as_ref())
+    fn unparse<S>(&self, stream: &mut S) -> Result<()>
+    where
+        S: Stream,
+    {
+        self.deref().unparse(stream)
     }
 }

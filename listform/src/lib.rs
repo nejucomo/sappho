@@ -80,36 +80,11 @@ where
     X: Unparse,
     T: Unparse,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Square;
-        use sappho_unparse::Break::OptSpace;
-
-        if self.is_empty() {
-            s.write("[]")
-        } else {
-            s.bracketed(Square, |subs| {
-                let mut first = true;
-
-                for elem in self.body.iter() {
-                    if first {
-                        first = false;
-                    } else {
-                        subs.write(",");
-                    }
-                    subs.write(&OptSpace);
-                    subs.write(elem);
-                }
-
-                if let Some(tail) = &self.tail {
-                    if !first {
-                        subs.write(",");
-                    }
-                    subs.write(&OptSpace);
-                    subs.write("..");
-                    subs.write(tail);
-                }
-            });
-        }
+    fn unparse<S>(&self, stream: &mut S) -> sappho_unparse::Result<()>
+    where
+        S: Stream,
+    {
+        xxx
     }
 }
 
