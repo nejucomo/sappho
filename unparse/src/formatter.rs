@@ -1,8 +1,8 @@
 use crate::position::Position;
 use crate::{Error, Stream, Unparse};
 
-pub fn unparse_to_formatter<U>(
-    unparser: U,
+pub fn to_formatter<U>(
+    unparser: &U,
     f: &mut std::fmt::Formatter,
     max_width: usize,
 ) -> std::fmt::Result

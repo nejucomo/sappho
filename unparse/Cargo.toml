@@ -7,4 +7,5 @@ homepage.workspace = true
 
 [dependencies]
 derive-new.workspace = true
+either.workspace = true
 thiserror.workspace = true

@@ -1,5 +1,7 @@
-use sappho_unparse::{Stream, Unparse};
 use std::fmt;
+
+use either::Either::{self, Left, Right};
+use sappho_unparse::{self as unparse, Unparse, UnparseContainer};
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -64,6 +66,13 @@ impl<X, T> ListForm<X, T> {
             tail: self.tail.map(ttail).transpose()?,
         })
     }
+
+    pub fn iter(&self) -> impl Iterator<Item = Either<&X, &T>> {
+        self.body
+            .iter()
+            .map(Left)
+            .chain(self.tail.iter().map(Right))
+    }
 }
 
 impl<X, T, E> ListForm<X, Result<T, E>> {
@@ -75,16 +84,41 @@ impl<X, T, E> ListForm<X, Result<T, E>> {
     }
 }
 
+impl<X, T> UnparseContainer for ListForm<X, T>
+where
+    X: Unparse,
+    T: Unparse,
+{
+    fn unparse_header<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
+        stream.write("[")
+    }
+
+    fn unparse_footer<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
+        stream.write("]")
+    }
+
+    type UnparseChild<'s>
+        = Either<&'s X, &'s T>
+    where
+        X: 's,
+        T: 's;
+
+    fn unparse_iter<'s>(&'s self) -> impl Iterator<Item = Self::UnparseChild<'s>> {
+        self.iter()
+    }
+
+    fn unparse_separator() -> &'static str {
+        ","
+    }
+}
+
 impl<X, T> Unparse for ListForm<X, T>
 where
     X: Unparse,
     T: Unparse,
 {
-    fn unparse<S>(&self, stream: &mut S) -> sappho_unparse::Result<()>
-    where
-        S: Stream,
-    {
-        xxx
+    fn unparse<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
+        self.unparse_container(stream)
     }
 }
 
@@ -94,22 +128,23 @@ where
     T: Unparse,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.unparse().fmt(f)
+        unparse::to_formatter(self, f, 80)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::ListForm;
     use indoc::indoc;
-    use sappho_unparse::{Stream, Unparse};
+    use sappho_unparse::{self as unparse, Unparse};
     use test_case::test_case;
+
+    use crate::ListForm;
 
     struct X;
 
     impl Unparse for X {
-        fn unparse_into(&self, s: &mut Stream) {
-            s.write("X");
+        fn unparse<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
+            stream.write("X")
         }
     }
 

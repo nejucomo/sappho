@@ -1,5 +1,7 @@
 use std::ops::Deref;
 
+use either::Either::{self, Left, Right};
+
 use crate::{Result, Stream};
 
 pub trait Unparse {
@@ -26,5 +28,18 @@ where
 {
     fn unparse<'a, 'b>(&self, stream: &mut Stream<'a, 'b>) -> Result<()> {
         self.deref().unparse(stream)
+    }
+}
+
+impl<L, R> Unparse for Either<&L, &R>
+where
+    L: Unparse,
+    R: Unparse,
+{
+    fn unparse<'a, 'b>(&self, stream: &mut Stream<'a, 'b>) -> Result<()> {
+        match self {
+            Left(l) => l.unparse(stream),
+            Right(r) => r.unparse(stream),
+        }
     }
 }
