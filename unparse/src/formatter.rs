@@ -1,5 +1,5 @@
 use crate::position::Position;
-use crate::{Error, FmtPos, Unparse};
+use crate::{Error, Stream, Unparse};
 
 pub fn unparse_to_formatter<U>(
     unparser: U,
@@ -9,7 +9,7 @@ pub fn unparse_to_formatter<U>(
 where
     U: Unparse,
 {
-    let mut stream = FmtPos::new(f, Position::new(max_width));
+    let mut stream = Stream::new(Some(f), Position::new(max_width));
     unparser.unparse(&mut stream).map_err(|e| match e {
         Error::Wrap(e) => panic!("internal inconsistency: unexpected {e:?}"),
         Error::Fmt(e) => e,

@@ -1,29 +1,39 @@
 use derive_new::new;
 
-use crate::{Result, Stream, WrapError};
+use crate::{Result, WrapError};
 
 #[derive(Copy, Clone, Debug, new)]
 pub struct Position {
     maxwidth: usize,
     #[new(default)]
-    indent: usize,
-    #[new(default)]
     col: usize,
+    #[new(default)]
+    indent_level: usize,
+    #[new(value = "2")]
+    indentation_size: usize,
     #[new(default)]
     wraperr: bool,
 }
 
 impl Position {
-    pub fn wrap_trial(&self) -> Self {
-        Position {
-            wraperr: true,
-            ..*self
-        }
+    pub(crate) fn indent_inc(&mut self, indent: bool) {
+        if indent {
+            self.indent_level += 1;
+        } else {
+            assert!(self.indent_level > 0);
+            self.indent_level -= 1;
+        };
     }
-}
 
-impl Stream for Position {
-    fn write_str(&mut self, s: &str) -> Result<()> {
+    pub(crate) fn indent_level(&self) -> usize {
+        self.indent_level
+    }
+
+    pub(crate) fn indentation_size(&self) -> usize {
+        self.indentation_size
+    }
+
+    pub(crate) fn track_str(&mut self, s: &str) -> Result<()> {
         for c in s.chars() {
             if c == '\t' {
                 panic!("tabs are evil");
@@ -45,9 +55,5 @@ impl Stream for Position {
         }
 
         Ok(())
-    }
-
-    fn position(&self) -> Position {
-        *self
     }
 }
