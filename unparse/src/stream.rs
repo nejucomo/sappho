@@ -13,13 +13,14 @@ pub struct Stream<'a, 'b> {
 }
 
 impl<'a, 'b> Stream<'a, 'b> {
-    pub fn write<U>(&mut self, value: &U) -> Result<()>
+    pub fn write<U>(&mut self, value: U) -> Result<()>
     where
-        U: ?Sized + Unparse,
+        U: Unparse,
     {
         value.unparse(self)
     }
 
+    #[allow(dead_code)]
     pub(crate) fn wrap_trial(&self) -> Self {
         Stream {
             optf: None,
@@ -33,11 +34,13 @@ impl<'a, 'b> Stream<'a, 'b> {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub(crate) fn newline_indent(&mut self, indent: bool) -> Result<()> {
         self.pos.indent_inc(indent);
         self.newline()
     }
 
+    #[allow(dead_code)]
     pub(crate) fn newline(&mut self) -> Result<()> {
         self.write_str("\n")?;
         for _ in 0..self.pos.indent_level() {
