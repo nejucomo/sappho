@@ -1,7 +1,5 @@
 use derive_new::new;
 
-use crate::{Result, WrapError};
-
 #[derive(Copy, Clone, Debug, new)]
 pub struct Position {
     maxwidth: usize,
@@ -11,49 +9,36 @@ pub struct Position {
     indent_level: usize,
     #[new(value = "2")]
     indentation_size: usize,
-    #[new(default)]
-    wraperr: bool,
 }
 
 impl Position {
-    pub(crate) fn indent_inc(&mut self, indent: bool) {
-        if indent {
-            self.indent_level += 1;
-        } else {
-            assert!(self.indent_level > 0);
-            self.indent_level -= 1;
-        };
+    pub fn indent(&mut self) {
+        self.indent_level += 1;
     }
 
-    pub(crate) fn indent_level(&self) -> usize {
-        self.indent_level
+    pub fn dedent(&mut self) {
+        assert!(self.indent_level > 0);
+        self.indent_level -= 1;
     }
 
-    pub(crate) fn indentation_size(&self) -> usize {
-        self.indentation_size
+    pub(crate) fn indentation_column(&self) -> usize {
+        self.indent_level * self.indentation_size
     }
 
-    pub(crate) fn track_str(&mut self, s: &str) -> Result<()> {
+    pub(crate) fn track_str(&mut self, s: &str) -> bool {
+        let mut wrapped = false;
         for c in s.chars() {
             if c == '\t' {
                 panic!("tabs are evil");
             } else if c == '\n' {
                 self.col = 0;
-                if self.wraperr {
-                    return Err(WrapError::Newline.into());
-                }
+                wrapped = true;
             } else {
                 self.col += 1;
-                if self.wraperr && self.col >= self.maxwidth {
-                    return Err(WrapError::TooWide {
-                        column: self.col,
-                        limit: self.maxwidth,
-                    }
-                    .into());
-                }
+                wrapped |= self.col >= self.maxwidth;
             }
         }
 
-        Ok(())
+        wrapped
     }
 }

@@ -1,53 +1,78 @@
 use std::fmt::Formatter;
 
-use derive_new::new;
-
 use crate::position::Position;
-use crate::{Result, Unparse};
+use crate::{Error, Result, Unparse};
 
-#[derive(new)]
-#[new(visibility = "pub(crate)")]
 pub struct Stream<'a, 'b> {
     optf: Option<&'a mut Formatter<'b>>,
     pos: Position,
 }
 
 impl<'a, 'b> Stream<'a, 'b> {
-    pub fn write<U>(&mut self, value: U) -> Result<()>
+    pub fn new(f: &'a mut Formatter<'b>, max_width: usize) -> Self {
+        Stream {
+            optf: Some(f),
+            pos: Position::new(max_width),
+        }
+    }
+
+    pub fn write<U>(&mut self, value: U) -> Result<bool>
     where
         U: Unparse,
     {
         value.unparse(self)
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn wrap_trial(&self) -> Self {
+    pub fn trial_write<U>(&self, value: U) -> Result<bool>
+    where
+        U: Unparse,
+    {
+        let mut ts = self.trial_stream();
+        match ts.write(value) {
+            Err(Error::Wrapped) => Ok(true),
+            other => other,
+        }
+    }
+
+    fn trial_stream(&self) -> Self {
         Stream {
             optf: None,
             pos: self.pos,
         }
     }
 
-    pub(crate) fn write_str(&mut self, s: &str) -> Result<()> {
-        self.optf.as_mut().map(|f| f.write_str(s)).transpose()?;
-        self.pos.track_str(s)?;
-        Ok(())
+    pub fn indent(&mut self) {
+        self.pos.indent();
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn newline_indent(&mut self, indent: bool) -> Result<()> {
-        self.pos.indent_inc(indent);
-        self.newline()
+    pub fn dedent(&mut self) {
+        self.pos.dedent();
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn newline(&mut self) -> Result<()> {
-        self.write_str("\n")?;
-        for _ in 0..self.pos.indent_level() {
-            for _ in 0..self.pos.indentation_size() {
-                self.write_str(" ")?;
+    pub(crate) fn write_str(&mut self, s: &str) -> Result<bool> {
+        let mut w = false;
+        for (i, chunk) in s.split('\n').enumerate() {
+            if i > 0 {
+                w |= self.write_str_raw("\n")?;
+                for _ in 0..self.pos.indentation_column() {
+                    w |= self.write_str_raw(" ")?;
+                }
             }
+            w |= self.write_str_raw(chunk)?;
         }
-        Ok(())
+        Ok(w)
+    }
+
+    fn write_str_raw(&mut self, s: &str) -> Result<bool> {
+        let wrapped = self.pos.track_str(s);
+        if let Some(f) = self.optf.as_mut() {
+            f.write_str(s)?;
+            Ok(wrapped)
+        } else if wrapped {
+            // In trial mode, we use err to terminate early:
+            Err(Error::Wrapped)
+        } else {
+            Ok(false)
+        }
     }
 }

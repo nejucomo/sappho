@@ -1,7 +1,7 @@
 use std::fmt;
 
 use either::Either::{self, Left, Right};
-use sappho_unparse::{self as unparse, Unparse, UnparseContainer};
+use sappho_unparse::{self as unparse, Unparse};
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -67,7 +67,7 @@ impl<X, T> ListForm<X, T> {
         })
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Either<&X, &T>> {
+    pub fn iter(&self) -> impl Clone + Iterator<Item = Either<&X, &T>> {
         self.body
             .iter()
             .map(Left)
@@ -83,87 +83,79 @@ impl<X, T, E> ListForm<X, Result<T, E>> {
         })
     }
 }
-
-impl<X, T> UnparseContainer for ListForm<X, T>
+impl<'s, X, T> Unparse for &'s ListForm<X, T>
 where
-    X: Unparse,
-    T: Unparse,
+    &'s X: Unparse,
+    &'s T: Unparse,
 {
-    fn unparse_header<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
-        stream.write("[")
-    }
+    fn unparse<'a, 'b>(self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<bool> {
+        let unparse_items = || self.iter().map(|ei| ei.map_right(|tail| ("..", tail)));
 
-    fn unparse_footer<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
-        stream.write("]")
-    }
+        stream.write('[')?;
 
-    type UnparseChild<'s>
-        = Either<&'s X, &'s T>
-    where
-        X: 's,
-        T: 's;
+        let wrapped = stream.trial_write(unparse::sequence(unparse_items(), ", "))?;
+        let wrap = wrapped && self.iter().count() > 1;
+        let sep = if wrap { ",\n" } else { ", " };
 
-    fn unparse_iter<'s>(&'s self) -> impl Iterator<Item = Self::UnparseChild<'s>> {
-        self.iter()
-    }
-
-    fn unparse_separator() -> &'static str {
-        ","
-    }
-}
-
-impl<X, T> Unparse for ListForm<X, T>
-where
-    X: Unparse,
-    T: Unparse,
-{
-    fn unparse<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
-        self.unparse_container(stream)
+        if wrap {
+            stream.indent();
+            stream.write('\n')?;
+        }
+        stream.write(unparse::sequence(unparse_items(), sep))?;
+        if wrap {
+            stream.dedent();
+            stream.write('\n')?;
+        }
+        stream.write(']')?;
+        Ok(wrapped)
     }
 }
 
 impl<X, T> fmt::Display for ListForm<X, T>
 where
-    X: Unparse,
-    T: Unparse,
+    for<'s> &'s X: Unparse,
+    for<'s> &'s T: Unparse,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        unparse::to_formatter(self, f, 80)
+        unparse::to_formatter(self, f)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::fmt::Display;
+
     use indoc::indoc;
     use sappho_unparse::{self as unparse, Unparse};
     use test_case::test_case;
 
     use crate::ListForm;
 
+    struct TestFormatter(ListForm<X, X>);
+
+    impl Display for TestFormatter {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            unparse::to_formatter_with_max_width(&self.0, f, 10)
+        }
+    }
+
     struct X;
 
-    impl Unparse for X {
-        fn unparse<'a, 'b>(&self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<()> {
+    impl<'s> Unparse for &'s X {
+        fn unparse<'a, 'b>(self, stream: &mut unparse::Stream<'a, 'b>) -> unparse::Result<bool> {
             stream.write("X")
         }
     }
 
     #[test_case([], None => "[]")]
     #[test_case([], Some(X) => indoc! { "
-        [
-          ..X
-        ]"
+        [..X]"
     })]
     #[test_case([X], None => indoc! { "
-        [
-          X
-        ]"
+        [X]"
     })]
     #[test_case([X], Some(X) => indoc! { "
-        [
-          X,
-          ..X
-        ]"
+        [X, ..X]"
     })]
     #[test_case([X, X], Some(X) => indoc! { "
         [
@@ -173,6 +165,6 @@ mod tests {
         ]"
     })]
     fn display<const K: usize>(body: [X; K], tail: Option<X>) -> String {
-        ListForm::new(body, tail).to_string()
+        TestFormatter(ListForm::new(body, tail)).to_string()
     }
 }
