@@ -15,7 +15,6 @@ members = [
   "parser",
   "source",
   "transform",
-  "unparse",
   "value",
 ]
 
@@ -51,7 +50,6 @@ sappho-object = { path = "object" }
 sappho-parser = { path = "parser" }
 sappho-source = { path = "source" }
 sappho-transform = { path = "transform" }
-sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
 simplelog = "0.12.0"
 test-case = "2.0"

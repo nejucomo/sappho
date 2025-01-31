@@ -11,8 +11,8 @@ log.workspace = true
 sappho-ast-core.workspace = true
 sappho-ast-reduced.workspace = true
 sappho-ast.workspace = true
+sappho-legible.workspace = true
 sappho-listform.workspace = true
-sappho-unparse.workspace = true
 sappho-value.workspace = true
 
 [dev-dependencies]

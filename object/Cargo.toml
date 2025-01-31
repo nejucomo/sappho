@@ -8,4 +8,4 @@ homepage.workspace = true
 [dependencies]
 derive-new.workspace = true
 sappho-identmap.workspace = true
-sappho-unparse.workspace = true
+sappho-legible.workspace = true

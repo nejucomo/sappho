@@ -8,7 +8,7 @@ homepage.workspace = true
 [dependencies]
 derive-new.workspace = true
 either.workspace = true
-sappho-unparse.workspace = true
+sappho-legible.workspace = true
 
 [dev-dependencies]
 indoc.workspace = true

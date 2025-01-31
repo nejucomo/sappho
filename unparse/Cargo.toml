@@ -1,8 +1,0 @@
-[package]
-name = "sappho-unparse"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-homepage.workspace = true
-
-[dependencies]

@@ -11,5 +11,5 @@ derive-new.workspace = true
 sappho-ast-core.workspace = true
 sappho-ast-reduced.workspace = true
 sappho-identmap.workspace = true
+sappho-legible.workspace = true
 sappho-object.workspace = true
-sappho-unparse.workspace = true
