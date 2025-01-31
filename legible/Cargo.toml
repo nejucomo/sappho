@@ -1,0 +1,12 @@
+[package]
+name = "sappho-legible"
+description = "Pretty flow control for structured text generation."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+derive-new.workspace = true
+itertools.workspace = true
+thiserror.workspace = true

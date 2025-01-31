@@ -10,6 +10,7 @@ members = [
   "integration-tests",
   "interpreter",
   "listform",
+  "legible",
   "object",
   "parser",
   "source",
@@ -30,10 +31,11 @@ anyhow-std = "0.1.4"
 chumsky = "0.8"
 clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
 derive_more = "0.99.17"
-derive-new = "0.5.9"
+derive-new = "0.7.0"
 either = "1.13.0"
 include_dir = "0.7"
 indoc = "1.0.6"
+itertools = "0.14.0"
 log = "0.4.17"
 sappho-ast-core = { path = "ast-core" }
 sappho-ast = { path = "ast" }
@@ -43,6 +45,7 @@ sappho-eval = { path = "eval" }
 sappho-identmap = { path = "identmap" }
 sappho-integration-tests = { path = "integration-tests" }
 sappho-interpreter = { path = "interpreter" }
+sappho-legible = { path = "legible" }
 sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
 sappho-parser = { path = "parser" }
@@ -52,3 +55,4 @@ sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
 simplelog = "0.12.0"
 test-case = "2.0"
+thiserror = "2.0.11"
