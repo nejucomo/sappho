@@ -1,6 +1,6 @@
 use crate::{IdentRef, Identifier, RedefinitionError, TryIntoIdentMap};
+use sappho_legible::{Envelope, IntoNode, Joint, Node};
 use sappho_listform::ListForm;
-use sappho_unparse::{Stream, Unparse};
 use std::collections::BTreeMap;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -121,25 +121,18 @@ impl<T> IntoIterator for IdentMap<T> {
     }
 }
 
-impl<T> Unparse for IdentMap<T>
+impl<'s, T> IntoNode for &'s IdentMap<T>
 where
-    T: Unparse,
+    &'s T: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
-
-        if self.0.is_empty() {
-            s.write("{}");
-        } else {
-            s.bracketed(Squiggle, |subs| {
-                for (k, v) in &self.0 {
-                    subs.write(&OptSpace);
-                    subs.write(k);
-                    subs.write(": ");
-                    subs.write(v);
-                    subs.write(",");
-                }
-            });
-        }
+    fn into_node(self) -> Node {
+        Envelope::separated_bracketed_sequence(
+            "{",
+            ",",
+            "}",
+            self.iter()
+                .map(|(k, v)| (k, ":", Joint::from(" "), v).into_node()),
+        )
+        .into_node()
     }
 }

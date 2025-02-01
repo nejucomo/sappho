@@ -27,6 +27,28 @@ impl Envelope {
             optail: Some(Box::new(tail.into_node())),
         }
     }
+
+    /// Construct a bracketed, separated sequence node, such as `[x, a, b]` or `{a=2, b=7}`
+    pub fn separated_bracketed_sequence<I, X>(
+        open: &'static str,
+        separator: &'static str,
+        close: &'static str,
+        items: I,
+    ) -> Envelope
+    where
+        I: IntoIterator<Item = X>,
+        X: IntoNode,
+    {
+        Envelope::new_with_tail(
+            open,
+            itertools::intersperse(
+                items.into_iter().map(X::into_node),
+                (separator, Joint::from(" ")).into_node(),
+            )
+            .collect::<Node>(),
+            close,
+        )
+    }
 }
 
 impl LegibleDisplay for Envelope {

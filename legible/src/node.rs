@@ -28,6 +28,12 @@ impl IntoNode for String {
     }
 }
 
+impl<'a> IntoNode for &'a String {
+    fn into_node(self) -> Node {
+        self.as_str().into_node()
+    }
+}
+
 impl<'a> IntoNode for &'a str {
     fn into_node(self) -> Node {
         self.to_string().into_node()

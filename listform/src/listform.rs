@@ -1,5 +1,5 @@
 use either::Either::{self, Left, Right};
-use sappho_legible::{Envelope, IntoNode, Joint, Legible, Node};
+use sappho_legible::{Envelope, IntoNode, Legible, Node};
 use std::fmt;
 
 use crate::SeqAndTail;
@@ -98,17 +98,14 @@ where
     &'a T: IntoNode,
 {
     fn into_node(self) -> Node {
-        Envelope::new_with_tail(
+        Envelope::separated_bracketed_sequence(
             "[",
-            itertools::intersperse(
-                self.0
-                    .as_ref()
-                    .into_iterator()
-                    .map(|ei| ei.either(|x| x.into_node(), |t| ("..", t).into_node())),
-                (",", Joint::from(" ")).into_node(),
-            )
-            .collect::<Node>(),
+            ",",
             "]",
+            self.0
+                .as_ref()
+                .into_iterator()
+                .map(|ei| ei.either(|x| x.into_node(), |t| ("..", t).into_node())),
         )
         .into_node()
     }
