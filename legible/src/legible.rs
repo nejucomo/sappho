@@ -10,7 +10,7 @@ use crate::{IntoNode, DEFAULT_FMT_WIDTH_THRESHOLD};
 ///
 /// ```
 /// use std::fmt;
-/// use legible::{Legible, IntoNode, Node};
+/// use sappho_legible::{Legible, IntoNode, Node};
 ///
 /// struct MyType {
 ///   // ...

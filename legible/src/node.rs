@@ -31,6 +31,12 @@ impl<'a> TryFrom<String> for Node<'a> {
     }
 }
 
+impl<'a> IntoNode<'a> for &'static str {
+    fn into_node(self) -> Node<'a> {
+        Node::try_from(self).unwrap()
+    }
+}
+
 impl<'a> IntoNode<'a> for Node<'a> {
     fn into_node(self) -> Node<'a> {
         self
