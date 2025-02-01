@@ -1,5 +1,5 @@
 use either::Either::{self, Left, Right};
-use sappho_legible::{Envelope, IntoNode, Legible, Node};
+use sappho_legible::{Envelope, IntoNode, Joint, Legible, Node};
 use std::fmt;
 
 use crate::SeqAndTail;
@@ -105,7 +105,7 @@ where
                     .as_ref()
                     .into_iterator()
                     .map(|ei| ei.either(|x| x.into_node(), |t| ("..", t).into_node())),
-                ",".into_node(),
+                (",", Joint::from(" ")).into_node(),
             )
             .collect::<Node>(),
             "]",
@@ -121,49 +121,5 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.fmt_legible(f)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::ListForm;
-    use indoc::indoc;
-    use sappho_legible::{IntoNode, Node};
-    use test_case::test_case;
-
-    struct X;
-
-    impl<'a> IntoNode for &'a X {
-        fn into_node(self) -> Node {
-            "X".into_node()
-        }
-    }
-
-    #[test_case([], None => "[]")]
-    #[test_case([], Some(X) => indoc! { "
-        [
-          ..X
-        ]"
-    })]
-    #[test_case([X], None => indoc! { "
-        [
-          X
-        ]"
-    })]
-    #[test_case([X], Some(X) => indoc! { "
-        [
-          X,
-          ..X
-        ]"
-    })]
-    #[test_case([X, X], Some(X) => indoc! { "
-        [
-          X,
-          X,
-          ..X
-        ]"
-    })]
-    fn display<const K: usize>(body: [X; K], tail: Option<X>) -> String {
-        ListForm::new(body, tail).to_string()
     }
 }

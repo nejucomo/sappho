@@ -16,6 +16,12 @@ pub enum Node {
     Sequence(Sequence),
 }
 
+impl IntoNode for Joint {
+    fn into_node(self) -> Node {
+        Node::Joint(self)
+    }
+}
+
 impl IntoNode for String {
     fn into_node(self) -> Node {
         Node::Text(self)
