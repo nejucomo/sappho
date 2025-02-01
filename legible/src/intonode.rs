@@ -1,7 +1,7 @@
 use crate::Node;
 
 /// Convert into a [Node]
-pub trait IntoNode<'a> {
+pub trait IntoNode {
     /// Convert into a [Node]
-    fn into_node(self) -> Node<'a>;
+    fn into_node(self) -> Node;
 }

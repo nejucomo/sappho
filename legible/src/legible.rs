@@ -16,8 +16,8 @@ use crate::{IntoNode, DEFAULT_FMT_WIDTH_THRESHOLD};
 ///   // ...
 /// }
 ///
-/// impl<'a> IntoNode<'a> for &'a MyType {
-///     fn into_node(self) -> Node<'a> {
+/// impl<'a> IntoNode for &'a MyType {
+///     fn into_node(self) -> Node {
 ///         todo!("implement legible specification for MyType")
 ///     }
 /// }
@@ -30,7 +30,7 @@ use crate::{IntoNode, DEFAULT_FMT_WIDTH_THRESHOLD};
 /// ```
 pub trait Legible
 where
-    for<'a> &'a Self: IntoNode<'a>,
+    for<'a> &'a Self: IntoNode,
 {
     /// Format `self` to `f` via the `Legible` specification with the default width threshold
     fn fmt_legible(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -50,4 +50,4 @@ where
     }
 }
 
-impl<T> Legible for T where for<'a> &'a T: IntoNode<'a> {}
+impl<T> Legible for T where for<'a> &'a T: IntoNode {}

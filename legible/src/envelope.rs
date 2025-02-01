@@ -7,19 +7,19 @@ use crate::{IntoNode, Node};
 
 /// A head, body, and optional tail where the body is indented when wrapped
 #[derive(Debug)]
-pub struct Envelope<'s> {
-    head: Box<Node<'s>>,
-    body: Box<Node<'s>>,
-    optail: Option<Box<Node<'s>>>,
+pub struct Envelope {
+    head: Box<Node>,
+    body: Box<Node>,
+    optail: Option<Box<Node>>,
 }
 
-impl<'s> Envelope<'s> {
+impl Envelope {
     /// Construct a new envelope with a tail
     pub fn new_with_tail<A, B, C>(head: A, body: B, tail: C) -> Self
     where
-        A: IntoNode<'s>,
-        B: IntoNode<'s>,
-        C: IntoNode<'s>,
+        A: IntoNode,
+        B: IntoNode,
+        C: IntoNode,
     {
         Envelope {
             head: Box::new(head.into_node()),
@@ -29,7 +29,7 @@ impl<'s> Envelope<'s> {
     }
 }
 
-impl<'s> LegibleDisplay for Envelope<'s> {
+impl LegibleDisplay for Envelope {
     fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
     where
         S: Stream,
@@ -38,7 +38,7 @@ impl<'s> LegibleDisplay for Envelope<'s> {
     }
 }
 
-impl<'s> WrappableDisplay for Envelope<'s> {
+impl WrappableDisplay for Envelope {
     fn write_to_stream_with_wrap<S>(&self, stream: &mut S, wrap: bool) -> Result<(), S::Error>
     where
         S: Stream,

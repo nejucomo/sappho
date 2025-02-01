@@ -1,16 +1,13 @@
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
-use crate::{Text, TextError};
 
 /// Text which is replaced with newline when wrapping
 #[derive(Debug)]
-pub(crate) struct Joint(Text<'static>);
+pub(crate) struct Joint(&'static str);
 
-impl TryFrom<&'static str> for Joint {
-    type Error = TextError<'static>;
-
-    fn try_from(s: &'static str) -> Result<Self, Self::Error> {
-        Text::try_from(s).map(Joint)
+impl From<&'static str> for Joint {
+    fn from(s: &'static str) -> Self {
+        Joint(s)
     }
 }
 
@@ -19,6 +16,6 @@ impl WrappableDisplay for Joint {
     where
         S: Stream,
     {
-        stream.write(if wrap { "\n" } else { self.0.as_ref() })
+        stream.write(if wrap { "\n" } else { self.0 })
     }
 }

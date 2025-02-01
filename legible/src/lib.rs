@@ -12,7 +12,6 @@ mod node;
 mod position;
 mod sequence;
 mod stream;
-mod text;
 mod trial;
 mod wrappable;
 
@@ -21,7 +20,6 @@ pub use self::intonode::IntoNode;
 pub use self::legible::Legible;
 pub use self::node::Node;
 pub use self::sequence::Sequence;
-pub use self::text::{Text, TextError};
 
 /// This is the default width threshold used in `fmt_with
 pub const DEFAULT_FMT_WIDTH_THRESHOLD: usize = 80;

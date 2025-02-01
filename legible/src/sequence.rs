@@ -4,34 +4,34 @@ use crate::joint::Joint;
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
-use crate::{IntoNode, Node, Text};
+use crate::{IntoNode, Node};
 
 /// A sequence of items at the same indentation when wrapped
 #[derive(Debug)]
-pub struct Sequence<'s> {
-    items: Vec<Node<'s>>,
-    separator: Text<'s>,
+pub struct Sequence {
+    items: Vec<Node>,
+    separator: &'static str,
     terminal: bool,
     joint: Joint,
 }
 
-impl<'s> Sequence<'s> {
+impl Sequence {
     /// Create a new sequence with the given separator
     pub fn new_separated<I, X>(items: I, separator: &'static str) -> Self
     where
         I: IntoIterator<Item = X>,
-        X: IntoNode<'s>,
+        X: IntoNode,
     {
         Sequence {
             items: items.into_iter().map(X::into_node).collect(),
-            separator: Text::try_from(separator).unwrap(),
+            separator,
             terminal: false,
             joint: Joint::try_from(" ").unwrap(),
         }
     }
 }
 
-impl<'s> LegibleDisplay for Sequence<'s> {
+impl LegibleDisplay for Sequence {
     fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
     where
         S: Stream,
@@ -41,7 +41,7 @@ impl<'s> LegibleDisplay for Sequence<'s> {
 }
 
 /// We layout unwrapped if we can fit on the line or we have 1 or fewer items
-impl<'s> WrappableDisplay for Sequence<'s> {
+impl WrappableDisplay for Sequence {
     fn write_to_stream_with_wrap<S>(&self, stream: &mut S, wrap: bool) -> Result<(), S::Error>
     where
         S: Stream,

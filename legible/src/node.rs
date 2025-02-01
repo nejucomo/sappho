@@ -1,67 +1,49 @@
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
-use crate::{Envelope, IntoNode, Sequence, Text, TextError};
+use crate::{Envelope, IntoNode, Sequence};
 
 /// The pivotal type for [Legible](crate::Legible) which specifies a flexible layout textual representation
 #[derive(Debug)]
-pub enum Node<'a> {
+pub enum Node {
     /// Single line or sub-lines of text which never wrap internally
-    Text(Text<'a>),
+    Text(String),
     /// A head, body, and optional tail where the body is indented when wrapped
-    Envelope(Envelope<'a>),
+    Envelope(Envelope),
     /// A sequence of items at the same indentation when wrapped
-    Sequence(Sequence<'a>),
+    Sequence(Sequence),
 }
 
-impl<'a> Node<'a> {}
-
-impl<'a> TryFrom<&'a str> for Node<'a> {
-    type Error = TextError<'a>;
-
-    fn try_from(s: &'a str) -> Result<Self, Self::Error> {
-        Text::try_from(s).map(Node::Text)
-    }
-}
-
-impl<'a> TryFrom<String> for Node<'a> {
-    type Error = TextError<'a>;
-
-    fn try_from(s: String) -> Result<Self, Self::Error> {
-        Text::try_from(s).map(Node::Text)
-    }
-}
-
-impl<'a> IntoNode<'a> for &'static str {
-    fn into_node(self) -> Node<'a> {
-        Node::try_from(self).unwrap()
-    }
-}
-
-impl<'a> IntoNode<'a> for Node<'a> {
-    fn into_node(self) -> Node<'a> {
-        self
-    }
-}
-
-impl<'a> IntoNode<'a> for Text<'a> {
-    fn into_node(self) -> Node<'a> {
+impl IntoNode for String {
+    fn into_node(self) -> Node {
         Node::Text(self)
     }
 }
 
-impl<'a> IntoNode<'a> for Envelope<'a> {
-    fn into_node(self) -> Node<'a> {
+impl<'a> IntoNode for &'a str {
+    fn into_node(self) -> Node {
+        self.to_string().into_node()
+    }
+}
+
+impl IntoNode for Node {
+    fn into_node(self) -> Node {
+        self
+    }
+}
+
+impl IntoNode for Envelope {
+    fn into_node(self) -> Node {
         Node::Envelope(self)
     }
 }
 
-impl<'a> IntoNode<'a> for Sequence<'a> {
-    fn into_node(self) -> Node<'a> {
+impl IntoNode for Sequence {
+    fn into_node(self) -> Node {
         Node::Sequence(self)
     }
 }
 
-impl<'a> LegibleDisplay for Node<'a> {
+impl LegibleDisplay for Node {
     fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
     where
         S: Stream,
