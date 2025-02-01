@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct EffectExpr<FX, Expr> {
@@ -18,13 +18,12 @@ impl<FX, X> EffectExpr<FX, X> {
     }
 }
 
-impl<FX, X> Unparse for EffectExpr<FX, X>
+impl<'a, FX, X> IntoNode for &'a EffectExpr<FX, X>
 where
-    FX: Unparse,
-    X: Unparse,
+    &'a FX: IntoNode,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write(&self.effect);
-        s.write(&self.expr);
+    fn into_node(self) -> Node {
+        (&self.effect, &self.expr).into_node()
     }
 }

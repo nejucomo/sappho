@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Joint, Node};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,15 +23,12 @@ impl<P, X> FuncDef<P, X> {
     }
 }
 
-impl<P, X> Unparse for FuncDef<P, X>
+impl<'a, P, X> IntoNode for &'a FuncDef<P, X>
 where
-    P: Unparse,
-    X: Unparse,
+    &'a P: IntoNode,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write("fn ");
-        s.write(&self.binding);
-        s.write(" -> ");
-        s.write(&self.body);
+    fn into_node(self) -> Node {
+        ("fn ", &self.binding, " ->", Joint::from(" "), &self.body).into_node()
     }
 }

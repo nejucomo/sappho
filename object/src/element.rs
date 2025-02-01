@@ -1,5 +1,5 @@
 use sappho_identmap::Identifier;
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, KeyValue, Node};
 
 #[derive(Debug)]
 pub enum Element<F, Q, P, A> {
@@ -9,25 +9,21 @@ pub enum Element<F, Q, P, A> {
     Attr(Identifier, A),
 }
 
-impl<'a, F, Q, P, A> Unparse for Element<&'a F, &'a Q, &'a P, &'a A>
+impl<'a, F, Q, P, A> IntoNode for Element<&'a F, &'a Q, &'a P, &'a A>
 where
-    F: Unparse,
-    Q: Unparse,
-    P: Unparse,
-    A: Unparse,
+    &'a F: IntoNode,
+    &'a Q: IntoNode,
+    &'a P: IntoNode,
+    &'a A: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
+    fn into_node(self) -> Node {
         use Element::*;
 
         match self {
-            Func(f) => f.unparse_into(s),
-            Query(q) => q.unparse_into(s),
-            Proc(p) => p.unparse_into(s),
-            Attr(k, v) => {
-                s.write(k);
-                s.write(": ");
-                v.unparse_into(s);
-            }
+            Func(f) => f.into_node(),
+            Query(q) => q.into_node(),
+            Proc(p) => p.into_node(),
+            Attr(k, v) => KeyValue::new(k, v).into_node(),
         }
     }
 }

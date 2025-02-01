@@ -2,7 +2,7 @@ use crate::{
     ApplicationExpr, EffectExpr, Identifier, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
 };
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum CoreExpr<Pattern, PureExpr, QueryExpr, ProcExpr, Expr, FX> {
@@ -53,27 +53,28 @@ impl<Pat, Pure, Query, Proc, Generic, FX> TryIntoIdentMap<Generic>
     }
 }
 
-impl<Pat, Pure, Query, Proc, Generic, FX> Unparse for CoreExpr<Pat, Pure, Query, Proc, Generic, FX>
+impl<'a, Pat, Pure, Query, Proc, Generic, FX> IntoNode
+    for &'a CoreExpr<Pat, Pure, Query, Proc, Generic, FX>
 where
-    Pat: Unparse,
-    Pure: Unparse,
-    Query: Unparse,
-    Proc: Unparse,
-    Generic: Unparse,
-    FX: Unparse,
+    &'a Pat: IntoNode,
+    &'a Pure: IntoNode,
+    &'a Query: IntoNode,
+    &'a Proc: IntoNode,
+    &'a Generic: IntoNode,
+    &'a FX: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
+    fn into_node(self) -> Node {
         use CoreExpr::*;
 
         match self {
-            Lit(x) => x.unparse_into(s),
-            Ref(x) => x.unparse_into(s),
-            Object(x) => x.unparse_into(s),
-            Let(x) => x.unparse_into(s),
-            Match(x) => x.unparse_into(s),
-            Application(x) => x.unparse_into(s),
-            Lookup(x) => x.unparse_into(s),
-            Effect(x) => x.unparse_into(s),
+            Lit(x) => x.into_node(),
+            Ref(x) => x.into_node(),
+            Object(x) => x.into_node(),
+            Let(x) => x.into_node(),
+            Match(x) => x.into_node(),
+            Application(x) => x.into_node(),
+            Lookup(x) => x.into_node(),
+            Effect(x) => x.into_node(),
         }
     }
 }

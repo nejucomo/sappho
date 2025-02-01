@@ -1,11 +1,26 @@
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
-use crate::{IntoNode, Node};
+use crate::{IntoNode, Joint, Node};
 
 /// A sequence of items at the same indentation when wrapped
 #[derive(Clone, Debug)]
 pub struct Sequence(Vec<Node>);
+
+impl Sequence {
+    /// Construct a wrappable sequence of `separator`-separated items
+    pub fn separated<I, X>(separator: &'static str, items: I) -> Self
+    where
+        I: IntoIterator<Item = X>,
+        X: IntoNode,
+    {
+        itertools::intersperse(
+            items.into_iter().map(X::into_node),
+            (separator, Joint::from(" ")).into_node(),
+        )
+        .collect()
+    }
+}
 
 impl LegibleDisplay for Sequence {
     fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>

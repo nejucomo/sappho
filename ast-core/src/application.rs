@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Joint, Node};
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -22,21 +22,11 @@ impl<X> ApplicationExpr<X> {
     }
 }
 
-impl<Expr> Unparse for ApplicationExpr<Expr>
+impl<Expr> IntoNode for ApplicationExpr<Expr>
 where
-    Expr: Unparse,
+    Expr: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{
-            Brackets::Parens,
-            Break::{Opt, OptSpace},
-        };
-
-        s.bracketed(Parens, |subs| {
-            subs.write(&Opt);
-            subs.write(&self.target);
-            subs.write(&OptSpace);
-            subs.write(&self.argument);
-        });
+    fn into_node(self) -> Node {
+        (&self.target, Joint::from(" "), &self.argument).into_node()
     }
 }

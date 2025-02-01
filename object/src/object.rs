@@ -1,7 +1,7 @@
 use crate::{Element, IntoIter, Unbundled};
 use derive_new::new;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{Envelope, IntoNode, Node};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, P, A> {
@@ -196,27 +196,15 @@ impl<F, Q, P, A> TryIntoIdentMap<A> for Object<F, Q, P, A> {
     }
 }
 
-impl<F, Q, P, A> Unparse for Object<F, Q, P, A>
+impl<F, Q, P, A> IntoNode for Object<F, Q, P, A>
 where
-    F: Unparse,
-    Q: Unparse,
-    P: Unparse,
-    A: Unparse,
+    for<'a> &'a F: IntoNode,
+    for<'a> &'a Q: IntoNode,
+    for<'a> &'a P: IntoNode,
+    for<'a> &'a A: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Squiggle;
-        use sappho_unparse::Break::OptSpace;
-
-        if self.is_empty() {
-            s.write("{}");
-        } else {
-            s.bracketed(Squiggle, |subs| {
-                for elem in self.as_refs().into_iter() {
-                    subs.write(&OptSpace);
-                    subs.write(&elem);
-                    subs.write(",");
-                }
-            });
-        }
+    fn into_node(self) -> Node {
+        Envelope::separated_bracketed_sequence("{", ",", "}", self.as_refs().into_iter())
+            .into_node()
     }
 }

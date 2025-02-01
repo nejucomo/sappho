@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 /// The query effect reads mutable memory.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -7,12 +7,18 @@ pub enum QueryEffects {
     Inquire,
 }
 
-impl Unparse for QueryEffects {
-    fn unparse_into(&self, s: &mut Stream) {
+impl QueryEffects {
+    pub fn as_str(self) -> &'static str {
         use QueryEffects::*;
 
-        s.write(match self {
+        match self {
             Inquire => "$",
-        });
+        }
+    }
+}
+
+impl IntoNode for QueryEffects {
+    fn into_node(self) -> Node {
+        self.as_str().into_node()
     }
 }

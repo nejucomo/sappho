@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Joint, Node};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct LetClause<Pattern, Expr> {
@@ -22,15 +22,19 @@ impl<P, X> LetClause<P, X> {
     }
 }
 
-impl<P, X> Unparse for LetClause<P, X>
+impl<'a, P, X> IntoNode for &'a LetClause<P, X>
 where
-    P: Unparse,
-    X: Unparse,
+    &'a P: IntoNode,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write("let ");
-        s.write(&self.binding);
-        s.write(" = ");
-        s.write(&self.bindexpr);
+    fn into_node(self) -> Node {
+        (
+            "let ",
+            &self.binding,
+            " =",
+            Joint::from(" "),
+            &self.bindexpr,
+        )
+            .into_node()
     }
 }

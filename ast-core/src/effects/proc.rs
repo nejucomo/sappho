@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 /// A proc effect can either be a mutation or a query effect.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -10,13 +10,19 @@ pub enum ProcEffects {
     Invoke,
 }
 
-impl Unparse for ProcEffects {
-    fn unparse_into(&self, s: &mut Stream) {
+impl ProcEffects {
+    pub fn as_str(self) -> &'static str {
         use ProcEffects::*;
 
-        s.write(match self {
+        match self {
             Inquire => "$",
             Invoke => "!",
-        });
+        }
+    }
+}
+
+impl IntoNode for ProcEffects {
+    fn into_node(self) -> Node {
+        self.as_str().into_node()
     }
 }

@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Joint, Node, Sequence};
 
 pub use self::clause::LetClause;
 
@@ -31,30 +31,14 @@ impl<P, X> LetExpr<P, X> {
     }
 }
 
-impl<P, X> Unparse for LetExpr<P, X>
+impl<'a, P, X> IntoNode for &'a LetExpr<P, X>
 where
-    P: Unparse,
-    X: Unparse,
+    &'a P: IntoNode,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Brackets::Parens, Break::Mandatory};
+    fn into_node(self) -> Node {
+        let clauses = Sequence::separated(";", self.clauses().iter());
 
-        let unparse_clauses = |s: &mut Stream| {
-            for (ix, clause) in self.clauses.iter().enumerate() {
-                if s.depth() > 0 || ix > 0 {
-                    s.write(&Mandatory);
-                }
-                s.write(clause);
-                s.write(";");
-            }
-            s.write(&Mandatory);
-            s.write(&self.tail);
-        };
-
-        if s.depth() == 0 {
-            unparse_clauses(s);
-        } else {
-            s.bracketed(Parens, unparse_clauses);
-        }
+        (clauses, ";", Joint::from(" "), &self.tail).into_node()
     }
 }
