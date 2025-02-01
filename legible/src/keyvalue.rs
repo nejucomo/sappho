@@ -1,7 +1,7 @@
 use derive_more::{From, Into};
 use derive_new::new;
 
-use crate::{IntoNode, Joint, Node};
+use crate::{HeadAndTail, IntoNode, Node};
 
 /// A `K: V`-style construct which can wrap-and-indent after the colon
 #[derive(Copy, Clone, Debug, From, Into, new)]
@@ -14,6 +14,6 @@ where
 {
     fn into_node(self) -> Node {
         let KeyValue(k, v) = self;
-        (k, ":", Joint::from(" "), v).into_node()
+        HeadAndTail::new((k, ":"), " ", v).into_node()
     }
 }

@@ -22,10 +22,6 @@ impl<'a, 'b> Stream for FmtPos<'a, 'b> {
         self.pos
     }
 
-    fn position_mut(&mut self) -> &mut Position {
-        &mut self.pos
-    }
-
     fn write_chunk(&mut self, chunk: &str) -> Result<(), Self::Error> {
         self.f.write_str(chunk)?;
         self.pos.track_chunk(chunk);
@@ -34,10 +30,7 @@ impl<'a, 'b> Stream for FmtPos<'a, 'b> {
 
     fn write_newline(&mut self) -> Result<(), Self::Error> {
         self.f.write_str("\n")?;
-        for _ in 0..self.pos.indentation.column() {
-            self.f.write_str(" ")?;
-        }
-        self.pos.set_column_to_indentation();
+        self.pos.reset_column();
         Ok(())
     }
 }

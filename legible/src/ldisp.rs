@@ -23,7 +23,7 @@ impl LegibleDisplay for str {
     where
         S: Stream,
     {
-        stream.write_str(self)
+        stream.write_chunk(self)
     }
 }
 
@@ -45,6 +45,6 @@ impl LegibleDisplay for char {
         S: Stream,
     {
         let mut buf = [0; 4];
-        stream.write_str(self.encode_utf8(&mut buf))
+        stream.write_chunk(self.encode_utf8(&mut buf))
     }
 }

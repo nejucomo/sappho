@@ -1,0 +1,46 @@
+use crate::bracketseq::NodeBracketSeq;
+use crate::headandtail::NodeHeadAndTail;
+use crate::ldisp::LegibleDisplay;
+use crate::stream::Stream;
+use crate::{IntoNode, Node, Text};
+
+#[derive(Clone, Debug)]
+pub(crate) enum InnerNode {
+    Text(Text),
+    Sequence(Vec<Node>),
+    BracketSeq(NodeBracketSeq),
+    HeadAndTail(NodeHeadAndTail),
+}
+
+impl<X> FromIterator<X> for InnerNode
+where
+    X: IntoNode,
+{
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = X>,
+    {
+        InnerNode::Sequence(iter.into_iter().map(X::into_node).collect())
+    }
+}
+
+impl LegibleDisplay for InnerNode {
+    fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
+    where
+        S: Stream,
+    {
+        use InnerNode::*;
+
+        match self {
+            Text(x) => x.write_to_stream(stream),
+            Sequence(v) => {
+                for x in v {
+                    x.write_to_stream(stream)?;
+                }
+                Ok(())
+            }
+            BracketSeq(x) => x.write_to_stream(stream),
+            HeadAndTail(x) => x.write_to_stream(stream),
+        }
+    }
+}

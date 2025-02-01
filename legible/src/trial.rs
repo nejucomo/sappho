@@ -19,13 +19,9 @@ impl Stream for TrialStream {
         self.0
     }
 
-    fn position_mut(&mut self) -> &mut Position {
-        &mut self.0
-    }
-
     fn write_chunk(&mut self, chunk: &str) -> Result<(), Self::Error> {
         self.0.track_chunk(chunk);
-        if self.0.past_max_width() {
+        if self.0.past_threshold() {
             Err(OverflowError::TooWide(self.0.column()))
         } else {
             Ok(())
