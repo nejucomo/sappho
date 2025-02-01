@@ -1,5 +1,5 @@
 use either::Either::{self, Left, Right};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{Envelope, IntoNode, Legible, Node};
 use std::fmt;
 
 use crate::SeqAndTail;
@@ -92,53 +92,35 @@ impl<X, T> FromIterator<Either<X, T>> for ListForm<X, T> {
     }
 }
 
-impl<X, T> Unparse for ListForm<X, T>
+impl<'a, X, T> IntoNode for &'a ListForm<X, T>
 where
-    X: Unparse,
-    T: Unparse,
+    &'a X: IntoNode,
+    &'a T: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Square;
-        use sappho_unparse::Break::OptSpace;
-
-        if self.is_empty() {
-            s.write("[]")
-        } else {
-            s.bracketed(Square, |subs| {
-                let mut first = true;
-
-                self.0.as_ref().extract(|body, optail| {
-                    for elem in body.iter() {
-                        if first {
-                            first = false;
-                        } else {
-                            subs.write(",");
-                        }
-                        subs.write(&OptSpace);
-                        subs.write(elem);
-                    }
-
-                    if let Some(tail) = optail {
-                        if !first {
-                            subs.write(",");
-                        }
-                        subs.write(&OptSpace);
-                        subs.write("..");
-                        subs.write(tail);
-                    }
-                });
-            });
-        }
+    fn into_node(self) -> Node {
+        Envelope::new_with_tail(
+            "[",
+            itertools::intersperse(
+                self.0
+                    .as_ref()
+                    .into_iterator()
+                    .map(|ei| ei.either(|x| x.into_node(), |t| ("..", t).into_node())),
+                ",".into_node(),
+            )
+            .collect::<Node>(),
+            "]",
+        )
+        .into_node()
     }
 }
 
 impl<X, T> fmt::Display for ListForm<X, T>
 where
-    X: Unparse,
-    T: Unparse,
+    for<'a> &'a X: IntoNode,
+    for<'a> &'a T: IntoNode,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.unparse().fmt(f)
+        self.fmt_legible(f)
     }
 }
 
@@ -146,14 +128,14 @@ where
 mod tests {
     use crate::ListForm;
     use indoc::indoc;
-    use sappho_unparse::{Stream, Unparse};
+    use sappho_legible::{IntoNode, Node};
     use test_case::test_case;
 
     struct X;
 
-    impl Unparse for X {
-        fn unparse_into(&self, s: &mut Stream) {
-            s.write("X");
+    impl<'a> IntoNode for &'a X {
+        fn into_node(self) -> Node {
+            "X".into_node()
         }
     }
 

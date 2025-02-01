@@ -17,6 +17,7 @@ mod wrappable;
 
 pub use self::envelope::Envelope;
 pub use self::intonode::IntoNode;
+pub use self::joint::Joint;
 pub use self::legible::Legible;
 pub use self::node::Node;
 pub use self::sequence::Sequence;

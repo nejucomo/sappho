@@ -6,7 +6,7 @@ use crate::wrappable::WrappableDisplay;
 use crate::{IntoNode, Node};
 
 /// A head, body, and optional tail where the body is indented when wrapped
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Envelope {
     head: Box<Node>,
     body: Box<Node>,
@@ -43,7 +43,7 @@ impl WrappableDisplay for Envelope {
     where
         S: Stream,
     {
-        let joint = Joint::try_from(" ").unwrap();
+        let joint = Joint::try_from("").unwrap();
 
         stream.write(&self.head)?;
         if wrap {

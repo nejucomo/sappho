@@ -8,5 +8,6 @@ homepage.workspace = true
 
 [dependencies]
 derive-new.workspace = true
+derive_more.workspace = true
 itertools.workspace = true
 thiserror.workspace = true

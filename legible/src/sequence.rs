@@ -1,35 +1,11 @@
-use itertools::Itertools;
-
-use crate::joint::Joint;
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
 use crate::{IntoNode, Node};
 
 /// A sequence of items at the same indentation when wrapped
-#[derive(Debug)]
-pub struct Sequence {
-    items: Vec<Node>,
-    separator: &'static str,
-    terminal: bool,
-    joint: Joint,
-}
-
-impl Sequence {
-    /// Create a new sequence with the given separator
-    pub fn new_separated<I, X>(items: I, separator: &'static str) -> Self
-    where
-        I: IntoIterator<Item = X>,
-        X: IntoNode,
-    {
-        Sequence {
-            items: items.into_iter().map(X::into_node).collect(),
-            separator,
-            terminal: false,
-            joint: Joint::try_from(" ").unwrap(),
-        }
-    }
-}
+#[derive(Clone, Debug)]
+pub struct Sequence(Vec<Node>);
 
 impl LegibleDisplay for Sequence {
     fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
@@ -46,18 +22,21 @@ impl WrappableDisplay for Sequence {
     where
         S: Stream,
     {
-        use itertools::Position::{Last, Only};
-
-        for (pos, item) in self.items.iter().with_position() {
-            stream.write(item)?;
-            if matches!(pos, Last | Only) {
-                if self.terminal {
-                    stream.write(&self.separator)?;
-                }
-            } else {
-                stream.write_with_wrap(&self.joint, wrap)?;
-            }
+        for x in &self.0 {
+            stream.write_with_wrap(x, wrap)?;
         }
         Ok(())
+    }
+}
+
+impl<X> FromIterator<X> for Sequence
+where
+    X: IntoNode,
+{
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = X>,
+    {
+        Sequence(iter.into_iter().map(X::into_node).collect())
     }
 }

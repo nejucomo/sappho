@@ -8,6 +8,7 @@ homepage.workspace = true
 [dependencies]
 derive-new.workspace = true
 either.workspace = true
+itertools.workspace = true
 sappho-legible.workspace = true
 
 [dev-dependencies]
