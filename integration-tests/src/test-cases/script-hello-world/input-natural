@@ -1,0 +1,7 @@
+#! /usr/bin/env -S sappho parse
+
+{
+  main: fn world -> proc {
+    world.out "Hello World!"
+  }
+}
