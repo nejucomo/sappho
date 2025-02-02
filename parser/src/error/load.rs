@@ -1,3 +1,4 @@
+// TODO: use thiserror
 use crate::error::Errors;
 use std::fmt;
 
@@ -7,7 +8,7 @@ pub enum LoadParseError<'a> {
     Parse(Errors<'a>),
 }
 
-impl<'a> fmt::Display for LoadParseError<'a> {
+impl fmt::Display for LoadParseError<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use LoadParseError::*;
 

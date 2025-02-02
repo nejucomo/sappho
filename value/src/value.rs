@@ -17,7 +17,7 @@ impl TryIntoIdentMap<ValRef> for Value {
     }
 }
 
-impl<'a> IntoNode for &'a Value {
+impl IntoNode for &Value {
     fn into_node(self) -> Node {
         use Value::*;
 

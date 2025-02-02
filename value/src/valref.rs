@@ -53,7 +53,7 @@ impl fmt::Display for ValRef {
     }
 }
 
-impl<'a> IntoNode for &'a ValRef {
+impl IntoNode for &ValRef {
     fn into_node(self) -> Node {
         self.deref().into_node()
     }

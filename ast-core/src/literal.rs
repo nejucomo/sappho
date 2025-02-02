@@ -7,7 +7,7 @@ pub enum Literal {
     Num(f64),
 }
 
-impl<'s> IntoNode for &'s Literal {
+impl IntoNode for &Literal {
     fn into_node(self) -> Node {
         use Literal::*;
 

@@ -4,7 +4,7 @@ use sappho_legible::{IntoNode, Node};
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum PureEffects {}
 
-impl<'a> IntoNode for &'a PureEffects {
+impl IntoNode for &PureEffects {
     fn into_node(self) -> Node {
         unreachable!("pure effects are never instantiated");
     }

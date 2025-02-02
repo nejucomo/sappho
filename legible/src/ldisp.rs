@@ -6,7 +6,7 @@ pub(crate) trait LegibleDisplay {
         S: Stream;
 }
 
-impl<'a, T> LegibleDisplay for &'a T
+impl<T> LegibleDisplay for &T
 where
     T: ?Sized + LegibleDisplay,
 {

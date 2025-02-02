@@ -32,7 +32,7 @@ impl Deref for UnpackPattern {
     }
 }
 
-impl<'a> IntoNode for &'a UnpackPattern {
+impl IntoNode for &UnpackPattern {
     fn into_node(self) -> Node {
         self.0.into_node()
     }

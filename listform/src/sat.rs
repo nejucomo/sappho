@@ -101,7 +101,7 @@ where
         let mut tail = None;
 
         let mut it = iter.into_iter();
-        while let Some(ei) = it.next() {
+        for ei in it.by_ref() {
             match ei {
                 Left(x) => body.extend(Some(x)),
                 Right(t) => {

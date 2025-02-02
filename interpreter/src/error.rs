@@ -1,3 +1,4 @@
+// TODO: use thiserror
 use std::fmt;
 
 #[derive(Debug, derive_more::From)]
@@ -8,7 +9,7 @@ pub enum Error<'a> {
 
 pub type Result<'a, T> = std::result::Result<T, Error<'a>>;
 
-impl<'a> fmt::Display for Error<'a> {
+impl fmt::Display for Error<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use Error::*;
 

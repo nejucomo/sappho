@@ -16,7 +16,7 @@ pub(crate) trait WrappableDisplay {
         S: Stream;
 }
 
-impl<'a, T> WrappableDisplay for &'a T
+impl<T> WrappableDisplay for &T
 where
     T: ?Sized + WrappableDisplay,
 {

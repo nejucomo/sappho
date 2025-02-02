@@ -23,7 +23,7 @@ impl Proc {
     }
 }
 
-impl<'a> IntoNode for &'a Proc {
+impl IntoNode for &Proc {
     fn into_node(self) -> Node {
         self.pdef.into_node()
     }

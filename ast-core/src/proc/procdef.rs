@@ -19,6 +19,6 @@ where
     &'a X: IntoNode,
 {
     fn into_node(self) -> Node {
-        BracketSeq::new(("proc {", "}"), ";", self.0.into_node_iter()).into_node()
+        BracketSeq::new(("proc {", "}"), ";", self.0.node_iter()).into_node()
     }
 }

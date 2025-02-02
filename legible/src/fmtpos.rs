@@ -15,7 +15,7 @@ impl<'a, 'b> FmtPos<'a, 'b> {
     }
 }
 
-impl<'a, 'b> Stream for FmtPos<'a, 'b> {
+impl Stream for FmtPos<'_, '_> {
     type Error = std::fmt::Error;
 
     fn position(&self) -> Position {

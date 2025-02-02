@@ -25,7 +25,7 @@ impl Func {
     }
 }
 
-impl<'a> IntoNode for &'a Func {
+impl IntoNode for &Func {
     fn into_node(self) -> Node {
         HeadAndTail {
             head: ("fn ", &self.binding, " ->"),

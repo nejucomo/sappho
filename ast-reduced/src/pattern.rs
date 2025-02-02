@@ -81,7 +81,7 @@ impl std::fmt::Display for Pattern {
     }
 }
 
-impl<'a> IntoNode for &'a Pattern {
+impl IntoNode for &Pattern {
     fn into_node(self) -> Node {
         use Pattern::*;
 

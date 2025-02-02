@@ -8,7 +8,7 @@ struct Displayer {
     lf: ListForm<X, X>,
 }
 
-impl<'a> IntoNode for &'a Displayer {
+impl IntoNode for &Displayer {
     fn into_node(self) -> Node {
         self.lf.into_node()
     }
@@ -22,7 +22,7 @@ impl std::fmt::Display for Displayer {
 
 struct X;
 
-impl<'a> IntoNode for &'a X {
+impl IntoNode for &X {
     fn into_node(self) -> Node {
         "X".into_node()
     }

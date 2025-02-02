@@ -22,7 +22,7 @@ impl Query {
     }
 }
 
-impl<'a> IntoNode for &'a Query {
+impl IntoNode for &Query {
     fn into_node(self) -> Node {
         HeadAndTail::new("query", " ", &self.body).into_node()
     }

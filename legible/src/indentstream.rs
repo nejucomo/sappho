@@ -12,7 +12,7 @@ impl<'s, S> IndentStream<'s, S> {
     }
 }
 
-impl<'s, S> Stream for IndentStream<'s, S>
+impl<S> Stream for IndentStream<'_, S>
 where
     S: Stream,
 {

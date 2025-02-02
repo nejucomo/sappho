@@ -17,7 +17,7 @@ impl<X> Statements<X> {
         }
     }
 
-    pub(crate) fn into_node_iter<'a>(&'a self) -> impl Iterator<Item = Node>
+    pub(crate) fn node_iter<'a>(&'a self) -> impl Iterator<Item = Node>
     where
         &'a X: IntoNode,
     {
