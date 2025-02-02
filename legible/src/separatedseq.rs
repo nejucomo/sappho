@@ -5,6 +5,7 @@ use crate::innernode::InnerNode;
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
+use crate::writestr::WriteStr;
 use crate::{IntoNode, Node};
 
 pub(crate) type NodeSeparatedSeq = SeparatedSeq<Node>;
@@ -47,18 +48,22 @@ where
 }
 
 impl LegibleDisplay for NodeSeparatedSeq {
-    fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
+    fn write_to_stream<W>(&self, stream: &mut Stream<W>) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: WriteStr,
     {
         self.write_to_stream_maybe_wrapped(stream)
     }
 }
 
 impl WrappableDisplay for NodeSeparatedSeq {
-    fn write_to_stream_with_wrap<S>(&self, stream: &mut S, wrap: bool) -> Result<(), S::Error>
+    fn write_to_stream_with_wrap<W>(
+        &self,
+        stream: &mut Stream<W>,
+        wrap: bool,
+    ) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: WriteStr,
     {
         for (pos, x) in self.items.iter().with_position() {
             stream.write(x)?;

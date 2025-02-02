@@ -2,6 +2,7 @@ use crate::innernode::InnerNode;
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
+use crate::writestr::WriteStr;
 use crate::{IntoNode, Node, SeparatedSeq, Text};
 
 pub(crate) type NodeBracketSeq = BracketSeq<Text, Text, Node>;
@@ -44,27 +45,30 @@ where
 }
 
 impl LegibleDisplay for NodeBracketSeq {
-    fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
+    fn write_to_stream<W>(&self, stream: &mut Stream<W>) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: WriteStr,
     {
         self.write_to_stream_maybe_wrapped(stream)
     }
 }
 
 impl WrappableDisplay for NodeBracketSeq {
-    fn write_to_stream_with_wrap<S>(&self, stream: &mut S, wrap: bool) -> Result<(), S::Error>
+    fn write_to_stream_with_wrap<W>(
+        &self,
+        stream: &mut Stream<W>,
+        wrap: bool,
+    ) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: WriteStr,
     {
         let (open, close) = &self.brackets;
         stream.write(open)?;
         stream.write_joint(" ", wrap)?;
 
-        let mut substream = stream.indent();
-        self.sepseq
-            .write_to_stream_with_wrap(&mut substream, wrap)?;
-        let stream = substream.dedent();
+        stream.indent();
+        stream.write_wrap(&self.sepseq, wrap)?;
+        stream.dedent();
 
         stream.write_joint(" ", wrap)?;
         stream.write(close)?;

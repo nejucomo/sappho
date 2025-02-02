@@ -3,6 +3,7 @@ use derive_more::From;
 use crate::innernode::InnerNode;
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
+use crate::writestr::WriteStr;
 use crate::{IntoNode, Node};
 
 /// A chunk of text that excludes '\n' and '\t'
@@ -16,9 +17,9 @@ impl IntoNode for Text {
 }
 
 impl LegibleDisplay for Text {
-    fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
+    fn write_to_stream<W>(&self, stream: &mut Stream<W>) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: WriteStr,
     {
         self.0.with_str(|s| stream.write_chunk(s))
     }

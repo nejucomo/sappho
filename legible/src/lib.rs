@@ -2,9 +2,8 @@
 #![deny(missing_docs)]
 
 mod bracketed;
-mod fmtpos;
 mod headandtail;
-mod indentstream;
+mod indentation;
 mod innernode;
 mod intonode;
 mod joint;
@@ -18,6 +17,7 @@ mod stream;
 mod text;
 mod trial;
 mod wrappable;
+mod writestr;
 
 pub use self::bracketed::BracketSeq;
 pub use self::headandtail::HeadAndTail;

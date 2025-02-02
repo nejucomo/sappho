@@ -1,5 +1,5 @@
-use crate::fmtpos::FmtPos;
 use crate::ldisp::LegibleDisplay;
+use crate::stream::Stream;
 use crate::{IntoNode, DEFAULT_FMT_WIDTH_THRESHOLD};
 
 /// `Legible` types are represented compactly until they pass a width threshold, in which case their display uses newlines and indentation
@@ -46,7 +46,7 @@ where
         threshold: usize,
     ) -> std::fmt::Result {
         self.into_node()
-            .write_to_stream(&mut FmtPos::new(f, threshold))
+            .write_to_stream(&mut Stream::new_with_threshold(f, threshold))
     }
 }
 

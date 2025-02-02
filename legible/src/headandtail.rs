@@ -35,23 +35,28 @@ where
 }
 
 impl LegibleDisplay for NodeHeadAndTail {
-    fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
+    fn write_to_stream<W>(&self, stream: &mut Stream<W>) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: crate::writestr::WriteStr,
     {
         self.write_to_stream_maybe_wrapped(stream)
     }
 }
 
 impl WrappableDisplay for NodeHeadAndTail {
-    fn write_to_stream_with_wrap<S>(&self, stream: &mut S, wrap: bool) -> Result<(), S::Error>
+    fn write_to_stream_with_wrap<W>(
+        &self,
+        stream: &mut Stream<W>,
+        wrap: bool,
+    ) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: crate::writestr::WriteStr,
     {
         stream.write(&self.head)?;
-        let mut substream = stream.indent();
-        substream.write_joint(self.sep, wrap)?;
-        substream.write(&self.tail)?;
+        stream.indent();
+        stream.write_joint(self.sep, wrap)?;
+        stream.write(&self.tail)?;
+        stream.dedent();
         Ok(())
     }
 }

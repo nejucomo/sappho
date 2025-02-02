@@ -3,6 +3,7 @@ use crate::headandtail::NodeHeadAndTail;
 use crate::ldisp::LegibleDisplay;
 use crate::separatedseq::NodeSeparatedSeq;
 use crate::stream::Stream;
+use crate::writestr::WriteStr;
 use crate::{IntoNode, Node, Text};
 
 #[derive(Clone, Debug)]
@@ -27,9 +28,9 @@ where
 }
 
 impl LegibleDisplay for InnerNode {
-    fn write_to_stream<S>(&self, stream: &mut S) -> Result<(), S::Error>
+    fn write_to_stream<W>(&self, stream: &mut Stream<W>) -> Result<(), W::Error>
     where
-        S: Stream,
+        W: WriteStr,
     {
         use InnerNode::*;
 
