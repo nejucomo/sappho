@@ -60,7 +60,7 @@ impl Unparse for ValRef {
 }
 
 // Necessary for value as list form:
-impl<'a> Unparse for &'a ValRef {
+impl Unparse for &ValRef {
     fn unparse_into(&self, s: &mut Stream) {
         (*self).unparse_into(s)
     }
