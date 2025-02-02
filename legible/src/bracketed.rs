@@ -65,12 +65,13 @@ impl WrappableDisplay for NodeBracketSeq {
             stream.write(open.trim())?;
             stream.write(close.trim())?;
         } else {
-            stream.indent();
+            let wrap = wrap || open.contains('\n') || close.contains('\n');
+            stream.indent(wrap);
             stream.write_joint(open, wrap)?;
 
             stream.write_wrap(&self.sepseq, wrap)?;
 
-            stream.dedent();
+            stream.dedent(wrap);
             stream.write_joint(close, wrap)?;
         }
         Ok(())

@@ -11,8 +11,8 @@ pub(crate) struct Position {
 
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum OverflowError {
-    #[error("overflow due to a new line")]
-    Newline,
+    // #[error("overflow due to a new line")]
+    // Newline,
     #[error("overflow due to passing column {0}")]
     TooWide(usize),
 }
@@ -31,9 +31,7 @@ impl Position {
 
         self.col = startcol + s.chars().count();
 
-        if newline {
-            Err(Newline)
-        } else if self.col >= self.threshold {
+        if self.col >= self.threshold {
             Err(TooWide(self.threshold))
         } else {
             Ok(())

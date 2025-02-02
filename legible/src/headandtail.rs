@@ -4,6 +4,7 @@ use crate::innernode::InnerNode;
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
+use crate::writestr::WriteStr;
 use crate::{IntoNode, Node};
 
 pub(crate) type NodeHeadAndTail = HeadAndTail<Box<Node>, Box<Node>>;
@@ -50,13 +51,14 @@ impl WrappableDisplay for NodeHeadAndTail {
         wrap: bool,
     ) -> Result<(), W::Error>
     where
-        W: crate::writestr::WriteStr,
+        W: WriteStr,
     {
+        let wrap = wrap || self.sep.contains('\n');
         stream.write(&self.head)?;
-        stream.indent();
+        stream.indent(wrap);
         stream.write_joint(self.sep, wrap)?;
         stream.write(&self.tail)?;
-        stream.dedent();
+        stream.dedent(wrap);
         Ok(())
     }
 }

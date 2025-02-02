@@ -38,16 +38,27 @@ where
         value.write_to_stream_with_wrap(self, wrap)
     }
 
-    pub(crate) fn indent(&mut self) {
-        self.pos.indentation.indent();
+    pub(crate) fn indent(&mut self, wrap: bool) {
+        self.pos.indentation.indent(wrap);
     }
 
-    pub(crate) fn dedent(&mut self) {
-        self.pos.indentation.dedent();
+    pub(crate) fn dedent(&mut self, wrap: bool) {
+        self.pos.indentation.dedent(wrap);
     }
 
     pub(crate) fn write_chunk(&mut self, chunk: &str) -> Result<(), W::Error> {
-        self.write_raw(chunk)
+        use itertools::{
+            Itertools,
+            Position::{Last, Only},
+        };
+
+        for (pos, s) in chunk.split('\n').with_position() {
+            self.write_raw(s)?;
+            if !matches!(pos, Last | Only) {
+                self.write_newline()?;
+            }
+        }
+        Ok(())
     }
 
     pub(crate) fn write_joint(&mut self, j: &str, wrap: bool) -> Result<(), W::Error> {

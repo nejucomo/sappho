@@ -70,6 +70,7 @@ impl WrappableDisplay for NodeSeparatedSeq {
     where
         W: WriteStr,
     {
+        let wrap = wrap || self.sep.contains('\n');
         for (pos, x) in self.items.iter().with_position() {
             stream.write(x)?;
             if !matches!(pos, Last | Only) {
