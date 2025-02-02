@@ -13,6 +13,7 @@ use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for Expr<FX>
 where
+    Self: std::fmt::Display,
     EffectExpr<FX>: Eval,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
