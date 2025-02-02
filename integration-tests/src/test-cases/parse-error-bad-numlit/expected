@@ -2,5 +2,5 @@ parse error: from "test-cases/parse-error-bad-numlit/input", line 1:
 | 4ty-two
 |  ^
 |
-+-> Syntax error: unexpected 't' in numeric literal
++-> Syntax error: while parsing number, unexpected 't' in numeric literal
 

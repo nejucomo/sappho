@@ -2,5 +2,5 @@ parse error: from "test-cases/parse-error-inquiry-space/input", line 1:
 | query $ x
 |        ^
 |
-+-> Syntax error: while parsing parenthetical-expression, unexpected ' ' while expecting '!', '$', '(', '[', 'f', 'l', 'm', 'p', 'q', or '{'
++-> Syntax error: while parsing query definition, unexpected ' ' while expecting '!', '$', '(', '[', 'f', 'l', 'm', 'p', 'q', or '{'
 

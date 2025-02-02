@@ -14,7 +14,7 @@ impl<'a> SourcedError<'a> {
     }
 }
 
-impl<'a> fmt::Display for SourcedError<'a> {
+impl fmt::Display for SourcedError<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use crate::error::indent::indent;
 
