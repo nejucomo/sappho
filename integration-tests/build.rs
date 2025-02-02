@@ -41,12 +41,12 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
         }
 
         let path = entry.path();
-        let name = path.file_name_anyhow()?.to_str_anyhow()?;
+        let file_name = path.file_name_anyhow()?.to_str_anyhow()?;
 
-        let (name, ignore) = name
+        let (name, ignore) = file_name
             .strip_suffix("-ignore")
             .map(|n| (n, true))
-            .unwrap_or((name, false));
+            .unwrap_or((file_name, false));
 
         if name == "input" || name.starts_with("input-") {
             let inputcasename = format!("{}_{}", casename, name).replace('-', "_");
@@ -123,7 +123,11 @@ fn generate_unparse_case(
 ) -> Result<()> {
     use std::io::Write;
 
-    let exppathhost = casedir.join(format!("input-{}", style));
+    let exppathhost = casedir.join(format!(
+        "input-{}{}",
+        style,
+        if ignore { "-ignore" } else { "" }
+    ));
     let exppath = exppathhost.strip_prefix("src/")?;
     let inpath = input.strip_prefix("src/")?;
     f.write_all(
