@@ -61,6 +61,7 @@ where
         Ok(())
     }
 
+    /// TODO: replace this with a `Joint` type
     pub(crate) fn write_joint(&mut self, j: &str, wrap: bool) -> Result<(), W::Error> {
         if wrap {
             if j.is_empty() {
@@ -69,13 +70,13 @@ where
                 self.write_wrapped_joint(j)
             }
         } else {
-            self.write_chunk(j)
+            self.write_chunk(&j.replace('%', ""))
         }
     }
 
     fn write_wrapped_joint(&mut self, j: &str) -> Result<(), W::Error> {
         for c in j.chars() {
-            if c == ' ' || c == '\n' {
+            if c == ' ' || c == '\n' || c == '%' {
                 self.write_newline()?;
             } else {
                 let mut buf = [0; 4];

@@ -66,7 +66,7 @@ where
 {
     fn into_node(self) -> Node {
         BracketSeq::new(
-            ("[ ", " ]"),
+            ("[%", "%]"),
             ", ",
             self.into_iterator()
                 .map(|ei| ei.either(|x| x.into_node(), |t| ("..", t).into_node())),
