@@ -3,6 +3,9 @@ use std::path::PathBuf;
 pub fn test_eval(inpath: PathBuf, input: &str, expected: &str) {
     use sappho_interpreter::interpret;
 
+    dbg!(input);
+    dbg!(sappho_parser::parse((inpath.as_path(), input)).unwrap());
+
     let res = interpret((inpath.as_path(), input));
     let actual = match res {
         Ok(x) => x.to_string(),
