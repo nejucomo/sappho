@@ -1,11 +1,1 @@
-[
-  {
-    thingy: 2,
-  },
-  {
-    thingy: 3,
-  },
-  {
-    thingy: 5,
-  }
-]
+[{ thingy: 2 }, { thingy: 3 }, { thingy: 5 }]
