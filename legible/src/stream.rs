@@ -52,10 +52,26 @@ where
 
     pub(crate) fn write_joint(&mut self, j: &str, wrap: bool) -> Result<(), W::Error> {
         if wrap {
-            self.write_newline()
+            if j.is_empty() {
+                self.write_newline()
+            } else {
+                self.write_wrapped_joint(j)
+            }
         } else {
             self.write_chunk(j)
         }
+    }
+
+    fn write_wrapped_joint(&mut self, j: &str) -> Result<(), W::Error> {
+        for c in j.chars() {
+            if c == ' ' || c == '\n' {
+                self.write_newline()?;
+            } else {
+                let mut buf = [0; 4];
+                self.write_raw(c.encode_utf8(&mut buf))?;
+            }
+        }
+        Ok(())
     }
 
     pub(crate) fn write_newline(&mut self) -> Result<(), W::Error> {

@@ -126,6 +126,6 @@ where
     &'s T: IntoNode,
 {
     fn into_node(self) -> Node {
-        BracketSeq::new(('{', '}'), ",", self.iter().map(KeyValue::from)).into_node()
+        BracketSeq::new(("{ ", " }"), ", ", self.iter().map(KeyValue::from)).into_node()
     }
 }

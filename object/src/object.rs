@@ -204,6 +204,6 @@ where
     &'a A: IntoNode,
 {
     fn into_node(self) -> Node {
-        BracketSeq::new(('{', '}'), ",", self.as_refs()).into_node()
+        BracketSeq::new(("{ ", " }"), ", ", self.as_refs()).into_node()
     }
 }

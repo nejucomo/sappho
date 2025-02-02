@@ -6,7 +6,6 @@ mod headandtail;
 mod indentation;
 mod innernode;
 mod intonode;
-mod joint;
 mod keyvalue;
 mod ldisp;
 mod legible;

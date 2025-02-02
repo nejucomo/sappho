@@ -29,6 +29,11 @@ impl<X> SeparatedSeq<X> {
         }
     }
 
+    /// Are there no elements?
+    pub fn is_empty(&self) -> bool {
+        self.items.is_empty()
+    }
+
     /// Map the elements to a new type
     pub fn map<F, Y>(self, f: F) -> SeparatedSeq<Y>
     where
@@ -68,9 +73,8 @@ impl WrappableDisplay for NodeSeparatedSeq {
         for (pos, x) in self.items.iter().with_position() {
             stream.write(x)?;
             if !matches!(pos, Last | Only) {
-                stream.write(self.sep)?;
+                stream.write_joint(self.sep, wrap)?;
             }
-            stream.write_joint(" ", wrap)?;
         }
         Ok(())
     }

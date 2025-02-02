@@ -42,7 +42,7 @@ where
                 .iter()
                 .map(|cl| cl.into_node())
                 .chain(Some(self.tail.into_node())),
-            ";",
+            ";\n",
         )
         .into_node()
     }

@@ -42,8 +42,8 @@ where
             &self.target,
             " ",
             BracketSeq::new(
-                ('{', '}'),
-                ",",
+                ("{\n", "\n}"),
+                ",\n",
                 self.clauses.iter().map(|cl| cl.into_node()),
             ),
         )
