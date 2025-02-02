@@ -1,5 +1,5 @@
 let map = fn f -> fn list -> match list {
   [] -> [],
-  [h, ..t] -> [f h, ..map f t]
+  [h, ..t] -> [(f h), ..((map f) t)]
 };
-map fn x -> { thingy: x } [2, 3, 5]
+((map fn x -> { thingy: x }) [2, 3, 5])

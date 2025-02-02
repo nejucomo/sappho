@@ -1,4 +1,4 @@
-use sappho_legible::{HeadAndTail, IntoNode, Node};
+use sappho_legible::{BracketSeq, HeadAndTail, IntoNode, Node};
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -27,6 +27,11 @@ where
     &'a Expr: IntoNode,
 {
     fn into_node(self) -> Node {
-        HeadAndTail::new(&self.target, " ", &self.argument).into_node()
+        BracketSeq::new(
+            ("(%", "%)"),
+            "FIXME WHAT A HACK!",
+            Some(HeadAndTail::new(&self.target, " ", &self.argument)),
+        )
+        .into_node()
     }
 }
