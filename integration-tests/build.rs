@@ -42,9 +42,15 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
 
         let path = entry.path();
         let name = path.file_name_anyhow()?.to_str_anyhow()?;
+
+        let (name, ignore) = name
+            .strip_suffix("-ignore")
+            .map(|n| (n, true))
+            .unwrap_or((name, false));
+
         if name == "input" || name.starts_with("input-") {
             let inputcasename = format!("{}_{}", casename, name).replace('-', "_");
-            generate_case_input_test(f, &expected, &path, &inputcasename)?;
+            generate_case_input_test(f, &expected, &path, &inputcasename, ignore)?;
 
             if name == "input-canonical" {
                 has_canonical = true;
@@ -52,16 +58,16 @@ fn generate_case_tests(f: &mut File, casedir: &Path) -> Result<()> {
                 has_reduced = true;
             }
 
-            inputs.push((inputcasename, path));
+            inputs.push((inputcasename, path, ignore));
         } else if name != "expected" {
             anyhow::bail!("Unexpected file: {:?}", path.display());
         }
     }
 
     if has_canonical && has_reduced {
-        for (icname, inpath) in inputs.iter() {
-            generate_unparse_case(f, casedir, inpath, icname, "canonical")?;
-            generate_unparse_case(f, casedir, inpath, icname, "reduced")?;
+        for (icname, inpath, ignore) in inputs.iter() {
+            generate_unparse_case(f, casedir, inpath, icname, "canonical", *ignore)?;
+            generate_unparse_case(f, casedir, inpath, icname, "reduced", *ignore)?;
         }
         Ok(())
     } else if !has_canonical && !has_reduced {
@@ -79,6 +85,7 @@ fn generate_case_input_test(
     expected: &Path,
     input: &Path,
     testname: &str,
+    ignore: bool,
 ) -> Result<()> {
     use std::io::Write;
 
@@ -88,6 +95,7 @@ fn generate_case_input_test(
         format!(
             indoc! {r#"
                 #[test]
+                {ignore}
                 fn {testname}() {{
                     let inpath = std::path::PathBuf::from("{inpath}");
                     let input = include_str!("{inpath}");
@@ -95,6 +103,7 @@ fn generate_case_input_test(
                     crate::test_eval(inpath, input, expected);
                 }}
             "#},
+            ignore = if ignore { "#[ignore]" } else { "" },
             testname = testname,
             inpath = inpath.display(),
             exppath = exppath.display(),
@@ -110,6 +119,7 @@ fn generate_unparse_case(
     input: &Path,
     icname: &str,
     style: &str,
+    ignore: bool,
 ) -> Result<()> {
     use std::io::Write;
 
@@ -120,6 +130,7 @@ fn generate_unparse_case(
         format!(
             indoc! {r#"
                 #[test]
+                {ignore}
                 fn unparse_{style}_{icname}() {{
                     let inpath = std::path::PathBuf::from("{inpath}");
                     let input = include_str!("{inpath}");
@@ -127,6 +138,7 @@ fn generate_unparse_case(
                     crate::test_unparse(inpath, input, expected, {style:?});
                 }}
             "#},
+            ignore = if ignore { "#[ignore]" } else { "" },
             style = style,
             icname = icname,
             inpath = inpath.display(),
