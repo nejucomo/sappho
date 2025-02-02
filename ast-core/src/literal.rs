@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 /// A literal value, such as `3.1415`.
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -7,12 +7,12 @@ pub enum Literal {
     Num(f64),
 }
 
-impl Unparse for Literal {
-    fn unparse_into(&self, s: &mut Stream) {
+impl<'s> IntoNode for &'s Literal {
+    fn into_node(self) -> Node {
         use Literal::*;
 
         match self {
-            Num(x) => s.write(&x.to_string()),
+            Num(x) => x.to_string().into_node(),
         }
     }
 }

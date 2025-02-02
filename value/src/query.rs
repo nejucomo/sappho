@@ -1,7 +1,7 @@
 use crate::{GenThunk, ScopeRef};
 use sappho_ast_core::QueryEffects;
 use sappho_ast_reduced::{QueryClause, QueryExpr};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{HeadAndTail, IntoNode, Node};
 
 #[derive(Debug)]
 pub struct Query {
@@ -22,9 +22,8 @@ impl Query {
     }
 }
 
-impl Unparse for Query {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write("query ");
-        s.write(&self.body);
+impl<'a> IntoNode for &'a Query {
+    fn into_node(self) -> Node {
+        HeadAndTail::new("query", " ", &self.body).into_node()
     }
 }

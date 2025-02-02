@@ -1,12 +1,10 @@
 use crate::{Eval, Result};
 use sappho_ast_reduced::{ApplicationExpr, EffectExpr};
-use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for ApplicationExpr<FX>
 where
     EffectExpr<FX>: Eval,
-    FX: Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use crate::EvalThunk;

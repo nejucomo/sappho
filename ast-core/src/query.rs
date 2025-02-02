@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{HeadAndTail, IntoNode, Node};
 
 /// A query definition, ie `query $x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -18,12 +18,11 @@ impl<X> QueryDef<X> {
     }
 }
 
-impl<X> Unparse for QueryDef<X>
+impl<'a, X> IntoNode for &'a QueryDef<X>
 where
-    X: Unparse,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write("query ");
-        s.write(&self.body);
+    fn into_node(self) -> Node {
+        HeadAndTail::new("query", " ", &self.body).into_node()
     }
 }

@@ -1,5 +1,5 @@
 use either::Either::{self, Left, Right};
-use sappho_legible::{Envelope, IntoNode, Legible, Node};
+use sappho_legible::{IntoNode, Legible, Node};
 use std::fmt;
 
 use crate::SeqAndTail;
@@ -92,22 +92,23 @@ impl<X, T> FromIterator<Either<X, T>> for ListForm<X, T> {
     }
 }
 
+impl<X, T> IntoNode for ListForm<X, T>
+where
+    X: IntoNode,
+    T: IntoNode,
+{
+    fn into_node(self) -> Node {
+        self.0.into_node()
+    }
+}
+
 impl<'a, X, T> IntoNode for &'a ListForm<X, T>
 where
     &'a X: IntoNode,
     &'a T: IntoNode,
 {
     fn into_node(self) -> Node {
-        Envelope::separated_bracketed_sequence(
-            "[",
-            ",",
-            "]",
-            self.0
-                .as_ref()
-                .into_iterator()
-                .map(|ei| ei.either(|x| x.into_node(), |t| ("..", t).into_node())),
-        )
-        .into_node()
+        self.0.as_ref().into_node()
     }
 }
 

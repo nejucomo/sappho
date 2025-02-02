@@ -1,6 +1,7 @@
-use crate::bracketseq::NodeBracketSeq;
+use crate::bracketed::NodeBracketSeq;
 use crate::headandtail::NodeHeadAndTail;
 use crate::ldisp::LegibleDisplay;
+use crate::separatedseq::NodeSeparatedSeq;
 use crate::stream::Stream;
 use crate::{IntoNode, Node, Text};
 
@@ -8,6 +9,7 @@ use crate::{IntoNode, Node, Text};
 pub(crate) enum InnerNode {
     Text(Text),
     Sequence(Vec<Node>),
+    SeparatedSeq(NodeSeparatedSeq),
     BracketSeq(NodeBracketSeq),
     HeadAndTail(NodeHeadAndTail),
 }
@@ -39,6 +41,7 @@ impl LegibleDisplay for InnerNode {
                 }
                 Ok(())
             }
+            SeparatedSeq(x) => x.write_to_stream(stream),
             BracketSeq(x) => x.write_to_stream(stream),
             HeadAndTail(x) => x.write_to_stream(stream),
         }

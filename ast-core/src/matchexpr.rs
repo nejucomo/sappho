@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{BracketSeq, IntoNode, Node};
 
 pub use self::clause::MatchClause;
 
@@ -31,23 +31,22 @@ impl<P, X> MatchExpr<P, X> {
     }
 }
 
-impl<P, X> Unparse for MatchExpr<P, X>
+impl<'a, P, X> IntoNode for &'a MatchExpr<P, X>
 where
-    P: Unparse,
-    X: Unparse,
+    &'a P: IntoNode,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
-
-        s.write("match ");
-        s.write(&self.target);
-        s.write(" ");
-        s.bracketed(Squiggle, |subs| {
-            for clause in &self.clauses {
-                subs.write(&OptSpace);
-                subs.write(clause);
-                subs.write(",");
-            }
-        });
+    fn into_node(self) -> Node {
+        (
+            "match ",
+            &self.target,
+            " ",
+            BracketSeq::new(
+                ('{', '}'),
+                ",",
+                self.clauses.iter().map(|cl| cl.into_node()),
+            ),
+        )
+            .into_node()
     }
 }

@@ -47,6 +47,12 @@ impl<'a> From<&'a str> for InnerText {
     }
 }
 
+impl<'a> From<&'a String> for InnerText {
+    fn from(s: &'a String) -> Self {
+        Self::from(s.clone())
+    }
+}
+
 impl InnerText {
     pub(crate) fn with_str<F, R>(&self, f: F) -> R
     where

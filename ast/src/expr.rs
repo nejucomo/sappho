@@ -2,7 +2,7 @@
 
 use crate::{CoreExpr, FuncDef, ListExpr, ProcDef, QueryDef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Legible, Node};
 use std::fmt;
 
 /// The general top-level expression for all effects.
@@ -44,28 +44,28 @@ impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
     }
 }
 
-impl<FX> Unparse for Expr<FX>
+impl<'a, FX> IntoNode for &'a Expr<FX>
 where
-    FX: Unparse,
+    &'a FX: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
+    fn into_node(self) -> Node {
         use Expr::*;
 
         match self {
-            Core(x) => x.unparse_into(s),
-            Func(x) => x.unparse_into(s),
-            Query(x) => x.unparse_into(s),
-            Proc(x) => x.unparse_into(s),
-            List(x) => x.unparse_into(s),
+            Core(x) => x.into_node(),
+            Func(x) => x.into_node(),
+            Query(x) => x.into_node(),
+            Proc(x) => x.into_node(),
+            List(x) => x.into_node(),
         }
     }
 }
 
 impl<FX> fmt::Display for Expr<FX>
 where
-    FX: Unparse,
+    for<'a> &'a FX: IntoNode,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.unparse().fmt(f)
+        self.fmt_legible(f)
     }
 }

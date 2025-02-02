@@ -1,7 +1,7 @@
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 use sappho_ast_core::PureEffects;
 use sappho_ast_reduced::{FuncClause, Pattern, PureExpr};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{HeadAndTail, IntoNode, Node};
 
 #[derive(Debug)]
 pub struct Func {
@@ -25,11 +25,13 @@ impl Func {
     }
 }
 
-impl Unparse for Func {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write("fn ");
-        s.write(&self.binding);
-        s.write(" -> ");
-        s.write(&self.body);
+impl<'a> IntoNode for &'a Func {
+    fn into_node(self) -> Node {
+        HeadAndTail {
+            head: ("fn ", &self.binding, " ->"),
+            sep: " ",
+            tail: &self.body,
+        }
+        .into_node()
     }
 }

@@ -21,7 +21,7 @@ impl ProcEffects {
     }
 }
 
-impl IntoNode for ProcEffects {
+impl<'a> IntoNode for &'a ProcEffects {
     fn into_node(self) -> Node {
         self.as_str().into_node()
     }

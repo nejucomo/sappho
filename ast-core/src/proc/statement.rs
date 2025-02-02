@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Statements<ProcExpr> {
@@ -16,21 +16,15 @@ impl<X> Statements<X> {
             Return(x) => Return(Box::new(XD::from(*x))),
         }
     }
-}
 
-impl<X> Unparse for Statements<X>
-where
-    X: Unparse,
-{
-    fn unparse_into(&self, s: &mut Stream) {
+    pub(crate) fn into_node_iter<'a>(&'a self) -> impl Iterator<Item = Node>
+    where
+        &'a X: IntoNode,
+    {
         use Statements::*;
 
         match self {
-            Return(x) => {
-                s.write("return ");
-                s.write(x);
-                s.write(";");
-            }
+            Return(x) => Some(("return ", x, ";").into_node()).into_iter(),
         }
     }
 }

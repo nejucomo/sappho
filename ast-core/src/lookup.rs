@@ -1,5 +1,6 @@
+use sappho_legible::{HeadAndTail, IntoNode, Node};
+
 use crate::Identifier;
-use sappho_unparse::{Stream, Unparse};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,13 +24,11 @@ impl<X> LookupExpr<X> {
     }
 }
 
-impl<X> Unparse for LookupExpr<X>
+impl<'a, X> IntoNode for &'a LookupExpr<X>
 where
-    X: Unparse,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write(&self.target);
-        s.write(".");
-        s.write(&self.attr);
+    fn into_node(self) -> Node {
+        HeadAndTail::new(&self.target, "", ('.', &self.attr)).into_node()
     }
 }

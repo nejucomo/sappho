@@ -3,8 +3,7 @@ mod unpack;
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
-use std::fmt;
+use sappho_legible::{IntoNode, Legible, Node};
 
 pub use self::unpack::UnpackPattern;
 
@@ -76,21 +75,21 @@ impl From<Pattern> for ast::Pattern {
     }
 }
 
-impl Unparse for Pattern {
-    fn unparse_into(&self, s: &mut Stream) {
-        use Pattern::*;
-
-        match self {
-            Bind(x) => x.unparse_into(s),
-            LitEq(x) => x.unparse_into(s),
-            Unpack(x) => x.unparse_into(s),
-        }
+impl std::fmt::Display for Pattern {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.fmt_legible(f)
     }
 }
 
-impl fmt::Display for Pattern {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.unparse().fmt(f)
+impl<'a> IntoNode for &'a Pattern {
+    fn into_node(self) -> Node {
+        use Pattern::*;
+
+        match self {
+            Bind(x) => x.into_node(),
+            LitEq(x) => x.into_node(),
+            Unpack(x) => x.into_node(),
+        }
     }
 }
 

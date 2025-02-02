@@ -1,6 +1,6 @@
 mod clause;
 
-use sappho_legible::{IntoNode, Joint, Node, Sequence};
+use sappho_legible::{IntoNode, Node, SeparatedSeq};
 
 pub use self::clause::LetClause;
 
@@ -37,8 +37,13 @@ where
     &'a X: IntoNode,
 {
     fn into_node(self) -> Node {
-        let clauses = Sequence::separated(";", self.clauses().iter());
-
-        (clauses, ";", Joint::from(" "), &self.tail).into_node()
+        SeparatedSeq::new(
+            self.clauses
+                .iter()
+                .map(|cl| cl.into_node())
+                .chain(Some(self.tail.into_node())),
+            ";",
+        )
+        .into_node()
     }
 }

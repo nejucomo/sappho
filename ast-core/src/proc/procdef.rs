@@ -1,5 +1,6 @@
+use sappho_legible::{BracketSeq, IntoNode, Node};
+
 use crate::Statements;
-use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub struct ProcDef<ProcExpr>(Statements<ProcExpr>);
@@ -13,18 +14,11 @@ impl<X> ProcDef<X> {
     }
 }
 
-impl<X> Unparse for ProcDef<X>
+impl<'a, X> IntoNode for &'a ProcDef<X>
 where
-    X: Unparse,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Squiggle;
-        use sappho_unparse::Break;
-
-        s.write("proc ");
-        s.bracketed(Squiggle, |subs| {
-            subs.write(&Break::Mandatory);
-            subs.write(&self.0);
-        });
+    fn into_node(self) -> Node {
+        BracketSeq::new(("proc {", "}"), ";", self.0.into_node_iter()).into_node()
     }
 }

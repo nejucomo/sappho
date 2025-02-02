@@ -11,9 +11,12 @@ pub(crate) type NodeHeadAndTail = HeadAndTail<Box<Node>, Box<Node>>;
 /// A head construct with an optionally indented tail with `sep` separator
 #[derive(Clone, Debug, new)]
 pub struct HeadAndTail<H, T> {
-    head: H,
-    sep: &'static str,
-    tail: T,
+    /// The unindented head structure
+    pub head: H,
+    /// The separator
+    pub sep: &'static str,
+    /// the tail
+    pub tail: T,
 }
 
 impl<H, T> IntoNode for HeadAndTail<H, T>
@@ -22,11 +25,11 @@ where
     T: IntoNode,
 {
     fn into_node(self) -> Node {
-        InnerNode::HeadAndTail(HeadAndTail::new(
-            Box::new(self.head.into_node()),
-            self.sep,
-            Box::new(self.tail.into_node()),
-        ))
+        InnerNode::HeadAndTail(HeadAndTail {
+            head: Box::new(self.head.into_node()),
+            sep: self.sep,
+            tail: Box::new(self.tail.into_node()),
+        })
         .into_node()
     }
 }

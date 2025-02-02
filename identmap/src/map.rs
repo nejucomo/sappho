@@ -1,5 +1,5 @@
 use crate::{IdentRef, Identifier, RedefinitionError, TryIntoIdentMap};
-use sappho_legible::{Envelope, IntoNode, KeyValue, Node};
+use sappho_legible::{BracketSeq, IntoNode, KeyValue, Node};
 use sappho_listform::ListForm;
 use std::collections::BTreeMap;
 
@@ -126,7 +126,6 @@ where
     &'s T: IntoNode,
 {
     fn into_node(self) -> Node {
-        Envelope::separated_bracketed_sequence("{", ",", "}", self.iter().map(KeyValue::from))
-            .into_node()
+        BracketSeq::new(('{', '}'), ",", self.iter().map(KeyValue::from)).into_node()
     }
 }

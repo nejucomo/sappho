@@ -17,7 +17,7 @@ impl QueryEffects {
     }
 }
 
-impl IntoNode for QueryEffects {
+impl<'a> IntoNode for &'a QueryEffects {
     fn into_node(self) -> Node {
         self.as_str().into_node()
     }

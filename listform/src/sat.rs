@@ -1,4 +1,5 @@
 use either::Either::{self, Left, Right};
+use sappho_legible::{BracketSeq, IntoNode, Node};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct SeqAndTail<S, T> {
@@ -54,6 +55,23 @@ impl<S, T> SeqAndTail<S, T> {
         S: IntoIterator,
     {
         self.map_sequence(S::into_iter)
+    }
+}
+
+impl<S, X, T> IntoNode for SeqAndTail<S, T>
+where
+    S: IntoIterator<Item = X>,
+    X: IntoNode,
+    T: IntoNode,
+{
+    fn into_node(self) -> Node {
+        BracketSeq::new(
+            ('[', ']'),
+            ",",
+            self.into_iterator()
+                .map(|ei| ei.either(|x| x.into_node(), |t| ("..", t).into_node())),
+        )
+        .into_node()
     }
 }
 

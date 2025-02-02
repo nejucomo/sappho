@@ -14,6 +14,11 @@ where
 {
     fn into_node(self) -> Node {
         let KeyValue(k, v) = self;
-        HeadAndTail::new((k, ":"), " ", v).into_node()
+        HeadAndTail {
+            head: (k, ":"),
+            sep: " ",
+            tail: v,
+        }
+        .into_node()
     }
 }

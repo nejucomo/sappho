@@ -1,4 +1,4 @@
-use sappho_legible::{IntoNode, Joint, Node};
+use sappho_legible::{HeadAndTail, IntoNode, Node};
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -22,11 +22,11 @@ impl<X> ApplicationExpr<X> {
     }
 }
 
-impl<Expr> IntoNode for ApplicationExpr<Expr>
+impl<'a, Expr> IntoNode for &'a ApplicationExpr<Expr>
 where
-    Expr: IntoNode,
+    &'a Expr: IntoNode,
 {
     fn into_node(self) -> Node {
-        (&self.target, Joint::from(" "), &self.argument).into_node()
+        HeadAndTail::new(&self.target, " ", &self.argument).into_node()
     }
 }

@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{HeadAndTail, IntoNode, Node};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -23,14 +23,12 @@ impl<P, X> MatchClause<P, X> {
     }
 }
 
-impl<P, X> Unparse for MatchClause<P, X>
+impl<'a, P, X> IntoNode for &'a MatchClause<P, X>
 where
-    P: Unparse,
-    X: Unparse,
+    &'a P: IntoNode,
+    &'a X: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write(&self.pattern);
-        s.write(" -> ");
-        s.write(&self.body);
+    fn into_node(self) -> Node {
+        HeadAndTail::new((&self.pattern, " ->"), " ", &self.body).into_node()
     }
 }

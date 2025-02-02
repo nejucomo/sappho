@@ -1,6 +1,6 @@
 use crate::{Coerce, CoercionFailure, Value};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Legible, Node};
 use std::borrow::Borrow;
 use std::fmt;
 use std::ops::Deref;
@@ -49,19 +49,12 @@ impl TryIntoIdentMap<ValRef> for ValRef {
 
 impl fmt::Display for ValRef {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.unparse().fmt(f)
+        self.fmt_legible(f)
     }
 }
 
-impl Unparse for ValRef {
-    fn unparse_into(&self, s: &mut Stream) {
-        self.deref().unparse_into(s)
-    }
-}
-
-// Necessary for value as list form:
-impl<'a> Unparse for &'a ValRef {
-    fn unparse_into(&self, s: &mut Stream) {
-        (*self).unparse_into(s)
+impl<'a> IntoNode for &'a ValRef {
+    fn into_node(self) -> Node {
+        self.deref().into_node()
     }
 }

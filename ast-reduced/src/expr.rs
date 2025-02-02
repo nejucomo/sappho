@@ -1,7 +1,7 @@
 use crate::{CoreExpr, ObjectDef};
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Legible, Node};
 use std::fmt;
 use std::ops::Deref;
 
@@ -108,20 +108,20 @@ impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
     }
 }
 
-impl<FX> Unparse for Expr<FX>
+impl<'a, FX> IntoNode for &'a Expr<FX>
 where
-    FX: Unparse,
+    &'a FX: IntoNode,
 {
-    fn unparse_into(&self, s: &mut Stream) {
-        self.0.unparse_into(s);
+    fn into_node(self) -> Node {
+        self.0.into_node()
     }
 }
 
 impl<FX> fmt::Display for Expr<FX>
 where
-    FX: Unparse,
+    for<'a> &'a FX: IntoNode,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.unparse().fmt(f)
+        self.fmt_legible(f)
     }
 }

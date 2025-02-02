@@ -1,7 +1,7 @@
 use crate::{Element, IntoIter, Unbundled};
 use derive_new::new;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_legible::{Envelope, IntoNode, Node};
+use sappho_legible::{BracketSeq, IntoNode, Node};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, P, A> {
@@ -196,15 +196,14 @@ impl<F, Q, P, A> TryIntoIdentMap<A> for Object<F, Q, P, A> {
     }
 }
 
-impl<F, Q, P, A> IntoNode for Object<F, Q, P, A>
+impl<'a, F, Q, P, A> IntoNode for &'a Object<F, Q, P, A>
 where
-    for<'a> &'a F: IntoNode,
-    for<'a> &'a Q: IntoNode,
-    for<'a> &'a P: IntoNode,
-    for<'a> &'a A: IntoNode,
+    &'a F: IntoNode,
+    &'a Q: IntoNode,
+    &'a P: IntoNode,
+    &'a A: IntoNode,
 {
     fn into_node(self) -> Node {
-        Envelope::separated_bracketed_sequence("{", ",", "}", self.as_refs().into_iter())
-            .into_node()
+        BracketSeq::new(('{', '}'), ",", self.as_refs()).into_node()
     }
 }

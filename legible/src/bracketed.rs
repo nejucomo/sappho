@@ -1,20 +1,29 @@
-use itertools::Itertools;
-use itertools::Position::{Last, Only};
-
 use crate::innernode::InnerNode;
 use crate::ldisp::LegibleDisplay;
 use crate::stream::Stream;
 use crate::wrappable::WrappableDisplay;
-use crate::{IntoNode, Node, Text};
+use crate::{IntoNode, Node, SeparatedSeq, Text};
 
 pub(crate) type NodeBracketSeq = BracketSeq<Text, Text, Node>;
 
 /// A bracketed comma-separated sequence
 #[derive(Clone, Debug)]
 pub struct BracketSeq<Open, Close, Item> {
-    open: Open,
-    close: Close,
-    items: Vec<Item>,
+    brackets: (Open, Close),
+    sepseq: SeparatedSeq<Item>,
+}
+
+impl<O, C, X> BracketSeq<O, C, X> {
+    /// Create a new BracketSeq from an iterator
+    pub fn new<I>(brackets: (O, C), sep: &'static str, items: I) -> Self
+    where
+        I: IntoIterator<Item = X>,
+    {
+        BracketSeq {
+            brackets,
+            sepseq: SeparatedSeq::new(items, sep),
+        }
+    }
 }
 
 impl<O, C, X> IntoNode for BracketSeq<O, C, X>
@@ -23,10 +32,12 @@ where
     X: IntoNode,
 {
     fn into_node(self) -> Node {
+        let (open, close) = self.brackets;
+        let open = Text::from(open);
+        let close = Text::from(close);
         InnerNode::BracketSeq(BracketSeq {
-            open: Text::from(self.open),
-            close: Text::from(self.close),
-            items: self.items.into_iter().map(X::into_node).collect(),
+            brackets: (open, close),
+            sepseq: self.sepseq.map(X::into_node),
         })
         .into_node()
     }
@@ -46,20 +57,17 @@ impl WrappableDisplay for NodeBracketSeq {
     where
         S: Stream,
     {
-        stream.write(&self.open)?;
+        let (open, close) = &self.brackets;
+        stream.write(open)?;
         stream.write_joint(" ", wrap)?;
-        let mut substream = stream.indent();
-        for (pos, x) in self.items.iter().with_position() {
-            substream.write(x)?;
-            if !matches!(pos, Last | Only) {
-                substream.write(",")?;
-            }
-            substream.write_joint(" ", wrap)?;
-        }
 
+        let mut substream = stream.indent();
+        self.sepseq
+            .write_to_stream_with_wrap(&mut substream, wrap)?;
         let stream = substream.dedent();
+
         stream.write_joint(" ", wrap)?;
-        stream.write(&self.close)?;
+        stream.write(close)?;
         Ok(())
     }
 }

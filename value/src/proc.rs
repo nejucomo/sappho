@@ -1,7 +1,7 @@
 use crate::{GenThunk, ScopeRef};
 use sappho_ast_core::{EffectExpr, ProcEffects};
 use sappho_ast_reduced::{ObjectDef, ProcClause, ProcExpr};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 #[derive(Debug, derive_new::new)]
 pub struct Proc {
@@ -23,8 +23,8 @@ impl Proc {
     }
 }
 
-impl Unparse for Proc {
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write(&self.pdef);
+impl<'a> IntoNode for &'a Proc {
+    fn into_node(self) -> Node {
+        self.pdef.into_node()
     }
 }

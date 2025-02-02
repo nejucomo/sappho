@@ -1,12 +1,10 @@
 use crate::{Eval, Result};
 use sappho_ast_reduced::{CoreExpr, EffectExpr};
-use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for CoreExpr<FX>
 where
     EffectExpr<FX>: Eval,
-    FX: Unparse,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use sappho_ast_core::CoreExpr::*;

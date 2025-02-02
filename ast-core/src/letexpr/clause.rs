@@ -1,4 +1,4 @@
-use sappho_legible::{IntoNode, Joint, Node};
+use sappho_legible::{HeadAndTail, IntoNode, Node};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct LetClause<Pattern, Expr> {
@@ -28,13 +28,11 @@ where
     &'a X: IntoNode,
 {
     fn into_node(self) -> Node {
-        (
-            "let ",
-            &self.binding,
-            " =",
-            Joint::from(" "),
-            &self.bindexpr,
-        )
-            .into_node()
+        HeadAndTail {
+            head: ("let ", &self.binding, " ="),
+            sep: " ",
+            tail: &self.bindexpr,
+        }
+        .into_node()
     }
 }

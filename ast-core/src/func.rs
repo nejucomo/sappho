@@ -1,4 +1,4 @@
-use sappho_legible::{IntoNode, Joint, Node};
+use sappho_legible::{HeadAndTail, IntoNode, Node};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -29,6 +29,6 @@ where
     &'a X: IntoNode,
 {
     fn into_node(self) -> Node {
-        ("fn ", &self.binding, " ->", Joint::from(" "), &self.body).into_node()
+        HeadAndTail::new(("fn ", &self.binding, " ->"), " ", &self.body).into_node()
     }
 }

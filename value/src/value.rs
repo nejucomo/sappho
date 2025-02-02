@@ -1,6 +1,6 @@
 use crate::{Object, ValRef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
+use sappho_legible::{IntoNode, Node};
 
 #[derive(Debug, derive_more::From)]
 pub enum Value {
@@ -17,17 +17,17 @@ impl TryIntoIdentMap<ValRef> for Value {
     }
 }
 
-impl Unparse for Value {
-    fn unparse_into(&self, s: &mut Stream) {
+impl<'a> IntoNode for &'a Value {
+    fn into_node(self) -> Node {
         use Value::*;
 
         match self {
-            Num(x) => s.write(&x.to_string()),
+            Num(x) => x.to_string().into_node(),
             Object(x) => {
                 if let Some(list) = x.try_into_identmap().and_then(|m| m.as_list_form()) {
-                    s.write(&list)
+                    list.into_node()
                 } else {
-                    s.write(x)
+                    x.into_node()
                 }
             }
         }
