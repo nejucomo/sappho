@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "ast/ast",
   "ast/core",
+  "ast/fuzz",
   "ast/reduced",
   "cli",
   "eval",
@@ -35,6 +36,7 @@ include_dir = "0.7"
 indoc = "1.0.6"
 log = "0.4.17"
 sappho-ast-core = { path = "ast/core" }
+sappho-ast-fuzz = { path = "ast/fuzz" }
 sappho-ast = { path = "ast/ast" }
 sappho-ast-reduced = { path = "ast/reduced" }
 sappho-cli = { path = "cli" }
