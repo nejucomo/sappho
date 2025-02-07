@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-  "ast",
-  "ast-core",
-  "ast-reduced",
+  "ast/ast",
+  "ast/core",
+  "ast/reduced",
   "cli",
   "eval",
   "identmap",
@@ -34,9 +34,9 @@ derive-new = "0.5.9"
 include_dir = "0.7"
 indoc = "1.0.6"
 log = "0.4.17"
-sappho-ast-core = { path = "ast-core" }
-sappho-ast = { path = "ast" }
-sappho-ast-reduced = { path = "ast-reduced" }
+sappho-ast-core = { path = "ast/core" }
+sappho-ast = { path = "ast/ast" }
+sappho-ast-reduced = { path = "ast/reduced" }
 sappho-cli = { path = "cli" }
 sappho-eval = { path = "eval" }
 sappho-identmap = { path = "identmap" }
