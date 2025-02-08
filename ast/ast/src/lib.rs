@@ -6,11 +6,14 @@
 //!
 //! The top-level expression for evaluation is [PureExpr], which is a type alias to a general
 //! expression type over all effects, [Expr]. The three bespoke effects are
-//! [PureEffects](sappho_ast_core::PureEffects), [QueryEffects](sappho_ast_core::QueryEffects),
-//! and [ProcEffects](sappho_ast_core::ProcEffects).
+//! [PureEffects], [QueryEffects], and [ProcEffects].
 
 mod expr;
 mod pattern;
+
+pub use self::expr::Expr;
+pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
+pub use sappho_ast_core::{Identifier, Literal, ProcEffects, PureEffects, QueryEffects};
 
 pub type ApplicationExpr<FX> = sappho_ast_core::ApplicationExpr<Expr<FX>>;
 pub type CoreExpr<FX> =
@@ -31,6 +34,3 @@ pub type QueryDef = sappho_ast_core::QueryDef<QueryExpr>;
 pub type ProcDef = sappho_ast_core::ProcDef<ProcExpr>;
 pub type QueryExpr = Expr<sappho_ast_core::QueryEffects>;
 pub type Statements = sappho_ast_core::Statements<ProcExpr>;
-pub use self::expr::Expr;
-pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
-pub use sappho_ast_core::{Identifier, Literal};
