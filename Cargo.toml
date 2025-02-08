@@ -13,6 +13,7 @@ members = [
   "listform",
   "object",
   "parser",
+  "rand-dcomp",
   "source",
   "transform",
   "unparse",
@@ -48,6 +49,7 @@ sappho-interpreter = { path = "interpreter" }
 sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
 sappho-parser = { path = "parser" }
+sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
 sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
