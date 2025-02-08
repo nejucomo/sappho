@@ -2,11 +2,11 @@ use rand::distr::{Distribution, StandardUniform};
 use rand::Rng;
 use sappho_ast::{Identifier, Literal};
 
-use crate::{AstFuzz, DistributionExt};
+use crate::AstFuzz;
 
 impl Distribution<Literal> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Literal {
-        self.weighted_case(1, Literal::Num).sample(rng)
+        Literal::Num(self.sample(rng))
     }
 }
 
@@ -24,4 +24,8 @@ impl Distribution<f64> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
         StandardUniform.sample(rng)
     }
+}
+
+impl Distribution<()> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, _: &mut R) {}
 }
