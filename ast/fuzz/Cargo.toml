@@ -10,3 +10,4 @@ derive-new.workspace = true
 rand.workspace = true
 sappho-ast.workspace = true
 sappho-rand-dcomp.workspace = true
+sappho-listform.workspace = true
