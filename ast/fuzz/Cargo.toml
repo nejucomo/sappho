@@ -11,3 +11,4 @@ rand.workspace = true
 sappho-ast.workspace = true
 sappho-rand-dcomp.workspace = true
 sappho-listform.workspace = true
+sappho-identmap.workspace = true
