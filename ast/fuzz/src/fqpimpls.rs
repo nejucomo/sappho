@@ -12,6 +12,6 @@ impl Distribution<ProcDef> for AstFuzz {
 
 impl Distribution<Statements> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Statements {
-        Statements::Return(Box::new(self.sample(rng)))
+        Statements::Return(self.sample(rng))
     }
 }
