@@ -38,6 +38,10 @@ pub enum Command {
     /// Parse an input
     #[clap()]
     Parse(ParseOptions),
+
+    /// Generate a random expression
+    #[clap()]
+    Fuzz(FuzzOptions),
 }
 
 /// source options
@@ -54,7 +58,7 @@ pub struct SourceOptions {
 pub struct ParseOptions {
     /// Select the parse output format
     #[clap(arg_enum, long, short, default_value = "canonical")]
-    format: ParseFormat,
+    format: UnparseFormat,
 
     #[clap(flatten)]
     source: SourceOptions,
@@ -63,7 +67,7 @@ pub struct ParseOptions {
 /// parse output formats
 #[derive(ArgEnum, Clone, Debug)]
 #[clap()]
-pub enum ParseFormat {
+pub enum UnparseFormat {
     /// The internal AST representation
     AST,
 
@@ -75,4 +79,17 @@ pub enum ParseFormat {
 
     /// The reduced source code
     Reduced,
+}
+
+/// fuzz options
+#[derive(Debug, Parser)]
+#[clap()]
+pub struct FuzzOptions {
+    /// Select the parse output format
+    #[clap(arg_enum, long, short, default_value = "canonical")]
+    format: UnparseFormat,
+
+    /// The max recursion depth
+    #[clap(long, short, default_value = "3")]
+    max_depth: usize,
 }
