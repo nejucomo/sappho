@@ -1,26 +1,36 @@
+use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Clone, Debug, PartialEq)]
-pub enum Statements<ProcExpr> {
-    Return(Box<ProcExpr>),
+use crate::ExprProvider;
+
+#[derive(Clone, Debug)]
+pub enum Statements<XP>
+where
+    XP: ExprProvider,
+{
+    Return(Box<XP::Expr<ProcEffect>>),
 }
 
-impl<X> Statements<X> {
-    pub fn transform_into<XD>(self) -> Statements<XD>
+impl<XP> Statements<XP>
+where
+    XP: ExprProvider,
+{
+    pub fn transform_into<XPD>(self) -> Statements<XPD>
     where
-        XD: From<X>,
+        XPD: ExprProvider,
+        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
     {
         use Statements::*;
 
         match self {
-            Return(x) => Return(Box::new(XD::from(*x))),
+            Return(x) => Return(Box::new(XPD::Expr::from(*x))),
         }
     }
 }
 
-impl<X> Unparse for Statements<X>
+impl<XP> Unparse for Statements<XP>
 where
-    X: Unparse,
+    XP: ExprProvider,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use Statements::*;
@@ -31,6 +41,19 @@ where
                 s.write(x);
                 s.write(";");
             }
+        }
+    }
+}
+
+impl<XP> PartialEq for Statements<XP>
+where
+    XP: ExprProvider,
+{
+    fn eq(&self, other: &Self) -> bool {
+        use Statements::*;
+
+        match (self, other) {
+            (Return(a), Return(b)) => a == b,
         }
     }
 }

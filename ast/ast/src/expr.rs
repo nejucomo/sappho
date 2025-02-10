@@ -6,7 +6,7 @@ use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
 /// The general top-level expression for all effects.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Expr<Effect> {
     Core(CoreExpr<Effect>),
 

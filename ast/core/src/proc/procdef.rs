@@ -3,7 +3,7 @@ use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, derive_more::From)]
-pub struct ProcDef<XP>(Statements<XP::Expr<ProcEffect>>)
+pub struct ProcDef<XP>(Statements<XP>)
 where
     XP: ExprProvider;
 
