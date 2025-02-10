@@ -5,10 +5,9 @@ mod exprimpls;
 mod fqpimpls;
 mod fuzz;
 mod idmapimpls;
-mod letimpls;
 mod listimpls;
-mod matchimpls;
 mod patternimpls;
+mod recoreimpls;
 
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
