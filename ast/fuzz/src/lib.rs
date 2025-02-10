@@ -5,6 +5,7 @@ mod exprimpls;
 mod fqpimpls;
 mod fuzz;
 mod idmapimpls;
+mod letimpls;
 mod listimpls;
 mod patternimpls;
 

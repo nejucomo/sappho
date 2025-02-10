@@ -9,10 +9,7 @@ where
     AstFuzz: Distribution<X> + Distribution<T>,
 {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ListForm<X, T> {
-        let mut body = vec![];
-        while rng.random_ratio(2, 3) {
-            body.push(rng.sample(self));
-        }
+        let body: Vec<X> = rng.sample(self);
         let optail = rng.sample(self);
         ListForm::new(body, optail)
     }
