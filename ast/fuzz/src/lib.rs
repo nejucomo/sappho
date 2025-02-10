@@ -9,11 +9,16 @@ mod letimpls;
 mod listimpls;
 mod patternimpls;
 
-use rand::Rng;
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 use sappho_ast::PureExpr;
 
-pub fn random_expr(max_depth: usize) -> PureExpr {
-    rand::rng().sample(AstFuzz::new(max_depth))
+/// Return `(seed, expr)` where `expr` is a randomly generated expression using `seed`
+pub fn random_expr(max_depth: usize) -> (u64, PureExpr) {
+    let seed: u64 = rand::rng().random();
+    let mut prng = StdRng::seed_from_u64(seed);
+    let expr = prng.sample(AstFuzz::new(max_depth));
+    (seed, expr)
 }
 
 pub use self::fuzz::AstFuzz;

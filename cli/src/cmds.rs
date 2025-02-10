@@ -14,7 +14,8 @@ pub fn parse<'a>(source: &'a SourceOption, format: &'a UnparseFormat) -> Result<
 }
 
 pub fn fuzz(max_depth: usize, format: &UnparseFormat) -> Result<()> {
-    let x = sappho_ast_fuzz::random_expr(max_depth);
+    let (seed, x) = sappho_ast_fuzz::random_expr(max_depth);
+    println!("# AstFuzz seed: {seed}");
     unparse(x, format)
 }
 
