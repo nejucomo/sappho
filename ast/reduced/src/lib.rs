@@ -15,11 +15,11 @@ pub type MatchClause<FX> = sappho_ast_core::MatchClause<Pattern, Expr<FX>>;
 pub type MatchExpr<FX> = sappho_ast_core::MatchExpr<Pattern, Expr<FX>>;
 pub type ObjectDef<FX> =
     sappho_ast_core::ObjectDef<Pattern, PureExpr, QueryExpr, ProcExpr, Expr<FX>>;
-pub type ProcExpr = Expr<sappho_ast_core::ProcEffects>;
+pub type ProcExpr = Expr<sappho_ast_core::ProcEffect>;
 pub type ProcClause = sappho_ast_core::ProcDef<ProcExpr>;
-pub type PureExpr = Expr<sappho_ast_core::PureEffects>;
+pub type PureExpr = Expr<sappho_ast_core::PureEffect>;
 pub type QueryClause = sappho_ast_core::QueryDef<QueryExpr>;
-pub type QueryExpr = Expr<sappho_ast_core::QueryEffects>;
+pub type QueryExpr = Expr<sappho_ast_core::QueryEffect>;
 pub use self::expr::Expr;
 pub use self::pattern::{Pattern, UnpackPattern};
 pub use sappho_ast_core::{Identifier, Literal};

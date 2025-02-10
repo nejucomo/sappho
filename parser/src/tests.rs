@@ -16,8 +16,8 @@ fn bind(s: &str) -> Pattern {
 }
 
 fn inquire(x: QueryExpr) -> QueryExpr {
-    use sappho_ast_core::QueryEffects;
-    QueryExpr::from(EffectExpr::new(QueryEffects::Inquire, Box::new(x)))
+    use sappho_ast_core::QueryEffect;
+    QueryExpr::from(EffectExpr::new(QueryEffect::Inquire, Box::new(x)))
 }
 
 fn list<T>(xs: T) -> PureExpr

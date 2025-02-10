@@ -1,4 +1,4 @@
-//! Top-level expression type `Expr`, generic over effects [PureEffects](sappho_ast_core::PureEffects), [QueryEffects](sappho_ast_core::QueryEffects), or [ProcEffects](sappho_ast_core::ProcEffects).
+//! Top-level expression type `Expr`, generic over effects [PureEffect](sappho_ast_core::PureEffect), [QueryEffect](sappho_ast_core::QueryEffect), or [ProcEffect](sappho_ast_core::ProcEffect).
 
 use crate::{CoreExpr, FuncDef, ListExpr, ProcDef, QueryDef};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
@@ -7,14 +7,14 @@ use std::fmt;
 
 /// The general top-level expression for all effects.
 #[derive(Debug, PartialEq)]
-pub enum Expr<Effects> {
-    Core(CoreExpr<Effects>),
+pub enum Expr<Effect> {
+    Core(CoreExpr<Effect>),
 
     // Extensions from Core:
     Func(FuncDef),
     Query(QueryDef),
     Proc(ProcDef),
-    List(ListExpr<Effects>),
+    List(ListExpr<Effect>),
 }
 
 impl<FX, T> From<T> for Expr<FX>

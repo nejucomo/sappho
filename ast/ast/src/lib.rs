@@ -6,14 +6,14 @@
 //!
 //! The top-level expression for evaluation is [PureExpr], which is a type alias to a general
 //! expression type over all effects, [Expr]. The three bespoke effects are
-//! [PureEffects], [QueryEffects], and [ProcEffects].
+//! [PureEffect], [QueryEffect], and [ProcEffect].
 
 mod expr;
 mod pattern;
 
 pub use self::expr::Expr;
 pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
-pub use sappho_ast_core::{Identifier, Literal, ProcEffects, PureEffects, QueryEffects};
+pub use sappho_ast_core::{Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
 
 pub type ApplicationExpr<FX> = sappho_ast_core::ApplicationExpr<Expr<FX>>;
 pub type CoreExpr<FX> =
@@ -28,9 +28,9 @@ pub type MatchClause<FX> = sappho_ast_core::MatchClause<Pattern, Expr<FX>>;
 pub type MatchExpr<FX> = sappho_ast_core::MatchExpr<Pattern, Expr<FX>>;
 pub type ObjectDef<FX> =
     sappho_ast_core::ObjectDef<Pattern, PureExpr, QueryExpr, ProcExpr, Expr<FX>>;
-pub type ProcExpr = Expr<sappho_ast_core::ProcEffects>;
-pub type PureExpr = Expr<sappho_ast_core::PureEffects>;
+pub type ProcExpr = Expr<sappho_ast_core::ProcEffect>;
+pub type PureExpr = Expr<sappho_ast_core::PureEffect>;
 pub type QueryDef = sappho_ast_core::QueryDef<QueryExpr>;
 pub type ProcDef = sappho_ast_core::ProcDef<ProcExpr>;
-pub type QueryExpr = Expr<sappho_ast_core::QueryEffects>;
+pub type QueryExpr = Expr<sappho_ast_core::QueryEffect>;
 pub type Statements = sappho_ast_core::Statements<ProcExpr>;

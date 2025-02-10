@@ -6,7 +6,7 @@ use std::fmt;
 use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Expr<Effects>(CoreExpr<Effects>);
+pub struct Expr<Effect>(CoreExpr<Effect>);
 
 impl<FX> Expr<FX> {
     pub fn new<T>(x: T) -> Self

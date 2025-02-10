@@ -1,5 +1,5 @@
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
-use sappho_ast_core::PureEffects;
+use sappho_ast_core::PureEffect;
 use sappho_ast_reduced::{FuncClause, Pattern, PureExpr};
 use sappho_unparse::{Stream, Unparse};
 
@@ -19,7 +19,7 @@ impl Func {
         }
     }
 
-    pub fn bind_arg(&self, arg: &ValRef) -> Result<GenThunk<PureEffects>, BindFailure> {
+    pub fn bind_arg(&self, arg: &ValRef) -> Result<GenThunk<PureEffect>, BindFailure> {
         let callscope = self.defscope.declare_then_bind(&self.binding, arg)?;
         Ok(GenThunk::new(self.body.clone(), callscope))
     }

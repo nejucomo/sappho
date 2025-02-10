@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "ast/ast",
   "ast/core",
+  "ast/effect",
   "ast/fuzz",
   "ast/reduced",
   "cli",
@@ -38,6 +39,7 @@ indoc = "1.0.6"
 log = "0.4.17"
 rand = "0.9.0"
 sappho-ast-core = { path = "ast/core" }
+sappho-ast-effect = { path = "ast/effect" }
 sappho-ast-fuzz = { path = "ast/fuzz" }
 sappho-ast = { path = "ast/ast" }
 sappho-ast-reduced = { path = "ast/reduced" }

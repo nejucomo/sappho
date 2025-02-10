@@ -4,15 +4,15 @@ use sappho_ast::{
     ApplicationExpr, CoreExpr, EffectExpr, Expr, LetClause, LetExpr, LookupExpr, MatchClause,
     MatchExpr,
 };
-use sappho_ast_core::{ProcEffects, PureEffects, QueryEffects};
+use sappho_ast_core::{ProcEffect, PureEffect, QueryEffect};
 
 pub(crate) trait Restrict<S>: Sized {
     fn restrict(src: S, span: Span) -> Result<Self, BareError>;
 }
 
-impl Restrict<ProcEffects> for PureEffects {
-    fn restrict(src: ProcEffects, span: Span) -> Result<Self, BareError> {
-        use ProcEffects::*;
+impl Restrict<ProcEffect> for PureEffect {
+    fn restrict(src: ProcEffect, span: Span) -> Result<Self, BareError> {
+        use ProcEffect::*;
 
         Err(BareError::custom(
             span,
@@ -27,11 +27,11 @@ impl Restrict<ProcEffects> for PureEffects {
     }
 }
 
-impl Restrict<ProcEffects> for QueryEffects {
-    fn restrict(src: ProcEffects, span: Span) -> Result<Self, BareError> {
+impl Restrict<ProcEffect> for QueryEffect {
+    fn restrict(src: ProcEffect, span: Span) -> Result<Self, BareError> {
         match src {
-            ProcEffects::Inquire => Ok(QueryEffects::Inquire),
-            ProcEffects::Invoke => Err(BareError::custom(
+            ProcEffect::Inquire => Ok(QueryEffect::Inquire),
+            ProcEffect::Invoke => Err(BareError::custom(
                 span,
                 "query expressions cannot contain evoke effects, e.g. `!…`".to_string(),
             )),

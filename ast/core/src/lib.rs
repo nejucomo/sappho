@@ -1,6 +1,6 @@
 mod application;
 mod core;
-mod effects;
+mod effectexpr;
 mod func;
 mod letexpr;
 mod literal;
@@ -10,10 +10,12 @@ mod object;
 mod proc;
 mod query;
 
-pub type Identifier = sappho_identmap::Identifier;
+pub use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
+pub use sappho_identmap::Identifier;
+
 pub use self::application::ApplicationExpr;
 pub use self::core::CoreExpr;
-pub use self::effects::{EffectExpr, ProcEffects, PureEffects, QueryEffects};
+pub use self::effectexpr::EffectExpr;
 pub use self::func::FuncDef;
 pub use self::letexpr::{LetClause, LetExpr};
 pub use self::literal::Literal;

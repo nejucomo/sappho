@@ -1,5 +1,5 @@
 use crate::{GenThunk, ScopeRef};
-use sappho_ast_core::QueryEffects;
+use sappho_ast_core::QueryEffect;
 use sappho_ast_reduced::{QueryClause, QueryExpr};
 use sappho_unparse::{Stream, Unparse};
 
@@ -17,7 +17,7 @@ impl Query {
         }
     }
 
-    pub fn as_thunk(&self) -> GenThunk<QueryEffects> {
+    pub fn as_thunk(&self) -> GenThunk<QueryEffect> {
         GenThunk::new(self.body.clone(), self.defscope.clone())
     }
 }

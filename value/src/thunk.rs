@@ -16,8 +16,8 @@ use sappho_ast_reduced::Expr;
 /// When the value of `r` is evaluated a thunk captures the expression `$q` as well as the scope
 /// containing `q`. When `$r` is evaluated, the thunk of the `r` query is evaluated with it's
 /// definition scope.
-pub struct GenThunk<Effects> {
-    expr: Expr<Effects>,
+pub struct GenThunk<Effect> {
+    expr: Expr<Effect>,
     scope: ScopeRef,
 }
 
