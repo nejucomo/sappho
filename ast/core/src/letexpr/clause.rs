@@ -1,31 +1,43 @@
+use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
+use crate::ExprProvider;
+
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
-pub struct LetClause<Pattern, Expr> {
+pub struct LetClause<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
     /// The binding pattern, ie: the first `x` in `let x = 42; f x`.
-    pub binding: Pattern,
+    pub binding: XP::Pattern,
 
     /// The expression to bind, ie: `42` in `let x = 42; f x`.
-    pub bindexpr: Box<Expr>,
+    pub bindexpr: Box<XP::Expr<FX>>,
 }
 
-impl<P, X> LetClause<P, X> {
-    pub fn transform_into<PD, XD>(self) -> LetClause<PD, XD>
+impl<XP, FX> LetClause<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    pub fn transform_into<XPD>(self) -> LetClause<XPD, FX>
     where
-        PD: From<P>,
-        XD: From<X>,
+        XPD: ExprProvider,
+        XPD::Pattern: From<XP::Pattern>,
+        XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         LetClause {
-            binding: PD::from(self.binding),
-            bindexpr: Box::new(XD::from(*self.bindexpr)),
+            binding: XPD::Pattern::from(self.binding),
+            bindexpr: Box::new(XPD::Expr::from(*self.bindexpr)),
         }
     }
 }
 
-impl<P, X> Unparse for LetClause<P, X>
+impl<XP, FX> Unparse for LetClause<XP, FX>
 where
-    P: Unparse,
-    X: Unparse,
+    XP: ExprProvider,
+    FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
         s.write("let ");

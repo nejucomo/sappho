@@ -1,8 +1,10 @@
+use std::fmt::Debug;
+
 use sappho_unparse::Unparse;
 
 use self::sealed::Sealed;
 
-pub trait Effect: Sealed + Unparse + PartialEq {}
+pub trait Effect: Sealed + Unparse + PartialEq + Copy + Debug {}
 
 mod sealed {
     use crate::{ProcEffect, PureEffect, QueryEffect};

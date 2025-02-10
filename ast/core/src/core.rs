@@ -15,11 +15,11 @@ where
     Lit(Literal),
     Ref(Identifier),
     Object(ObjectDef<XP, FX>),
-    Let(LetExpr<XP::Pattern, XP::Expr<FX>>),
-    Match(MatchExpr<XP::Pattern, XP::Expr<FX>>),
-    Application(ApplicationExpr<XP::Expr<FX>>),
-    Lookup(LookupExpr<XP::Expr<FX>>),
-    Effect(EffectExpr<FX, XP::Expr<FX>>),
+    Let(LetExpr<XP, FX>),
+    Match(MatchExpr<XP, FX>),
+    Application(ApplicationExpr<XP, FX>),
+    Lookup(LookupExpr<XP, FX>),
+    Effect(EffectExpr<XP, FX>),
 }
 
 impl<XP, FX> CoreExpr<XP, FX>
