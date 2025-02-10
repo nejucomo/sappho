@@ -8,6 +8,7 @@ mod lookup;
 mod matchexpr;
 mod object;
 mod proc;
+mod provider;
 mod query;
 
 pub use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
@@ -21,6 +22,7 @@ pub use self::letexpr::{LetClause, LetExpr};
 pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
-pub use self::object::{transform_object_def, ObjectDef};
+pub use self::object::ObjectDef;
 pub use self::proc::{ProcDef, Statements};
+pub use self::provider::ExprProvider;
 pub use self::query::QueryDef;

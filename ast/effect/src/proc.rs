@@ -1,5 +1,7 @@
 use sappho_unparse::{Stream, Unparse};
 
+use crate::Effect;
+
 /// A proc effect can either be a mutation or a query effect.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum ProcEffect {
@@ -9,6 +11,8 @@ pub enum ProcEffect {
     /// Evoke a mutation, as in `!exit`.
     Invoke,
 }
+
+impl Effect for ProcEffect {}
 
 impl Unparse for ProcEffect {
     fn unparse_into(&self, s: &mut Stream) {
