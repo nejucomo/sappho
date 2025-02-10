@@ -7,6 +7,7 @@ mod fuzz;
 mod idmapimpls;
 mod letimpls;
 mod listimpls;
+mod matchimpls;
 mod patternimpls;
 
 use rand::rngs::StdRng;

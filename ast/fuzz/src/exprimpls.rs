@@ -36,6 +36,7 @@ impl<FX> Distribution<CoreExpr<FX>> for AstFuzz {
             .or(self.map(Ref).weighted_case(3))
             .or(self.map(Object).weighted_case(rwf))
             .or(self.map(Let).weighted_case(rwf))
+            .or(self.map(Match).weighted_case(rwf))
             .sample(rng)
     }
 }
