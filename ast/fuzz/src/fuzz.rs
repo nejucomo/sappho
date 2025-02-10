@@ -10,6 +10,13 @@ impl Default for AstFuzz {
 }
 
 impl AstFuzz {
+    pub fn new(max_depth: usize) -> Self {
+        // +1 due to recursion logic in `Distribution<Expr<FX>>`:
+        AstFuzz {
+            limit: max_depth + 1,
+        }
+    }
+
     pub(crate) fn next_lower_level(self) -> Self {
         AstFuzz {
             limit: std::cmp::max(1, self.limit) - 1,
