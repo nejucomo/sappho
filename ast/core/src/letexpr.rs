@@ -8,7 +8,7 @@ use crate::ExprProvider;
 pub use self::clause::LetClause;
 
 /// A `let` expression for local definitions, ie: `let x = 42; f x`.
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct LetExpr<XP, FX>
 where
     XP: ExprProvider,
@@ -68,5 +68,25 @@ where
         } else {
             s.bracketed(Parens, unparse_clauses);
         }
+    }
+}
+
+impl<XP, FX> Clone for LetExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        LetExpr::new(self.clauses.clone(), self.tail.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for LetExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.tail == other.tail && self.clauses == other.clauses
     }
 }

@@ -3,7 +3,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::ExprProvider;
 
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct EffectExpr<XP, FX>
 where
     XP: ExprProvider,
@@ -38,5 +38,25 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         s.write(&self.effect);
         s.write(&self.expr);
+    }
+}
+
+impl<XP, FX> Clone for EffectExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        EffectExpr::new(self.effect, self.expr.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for EffectExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.effect == other.effect && self.expr == other.expr
     }
 }

@@ -4,7 +4,7 @@ use sappho_unparse::{Stream, Unparse};
 use crate::ExprProvider;
 
 /// Function application, ie `f x`.
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct ApplicationExpr<XP, FX>
 where
     XP: ExprProvider,
@@ -51,5 +51,25 @@ where
             subs.write(&OptSpace);
             subs.write(&self.argument);
         });
+    }
+}
+
+impl<XP, FX> Clone for ApplicationExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        ApplicationExpr::new(self.target.clone(), self.argument.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for ApplicationExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.target == other.target && self.argument == other.argument
     }
 }

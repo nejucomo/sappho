@@ -4,7 +4,7 @@ use sappho_unparse::{Stream, Unparse};
 use crate::ExprProvider;
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct MatchClause<XP, FX>
 where
     XP: ExprProvider,
@@ -44,5 +44,25 @@ where
         s.write(&self.pattern);
         s.write(" -> ");
         s.write(&self.body);
+    }
+}
+
+impl<XP, FX> Clone for MatchClause<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        MatchClause::new(self.pattern.clone(), self.body.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for MatchClause<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.pattern == other.pattern && self.body == other.body
     }
 }

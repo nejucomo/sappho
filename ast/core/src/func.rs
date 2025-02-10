@@ -4,7 +4,7 @@ use sappho_unparse::{Stream, Unparse};
 use crate::ExprProvider;
 
 /// A function definition expression, ie `fn x -> x`.
-#[derive(Clone, Debug, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct FuncDef<XP>
 where
     XP: ExprProvider,
@@ -42,6 +42,15 @@ where
         s.write(&self.binding);
         s.write(" -> ");
         s.write(&self.body);
+    }
+}
+
+impl<XP> Clone for FuncDef<XP>
+where
+    XP: ExprProvider,
+{
+    fn clone(&self) -> Self {
+        FuncDef::new(self.binding.clone(), self.body.clone())
     }
 }
 

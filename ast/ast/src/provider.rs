@@ -1,6 +1,7 @@
 use sappho_ast_core::ExprProvider;
 use sappho_ast_effect::Effect;
 
+#[derive(Debug)]
 pub struct AstProvider;
 
 impl ExprProvider for AstProvider {

@@ -3,7 +3,7 @@ use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
 /// An attribute lookup expression, ie: `x.foo`.
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct LookupExpr<XP, FX>
 where
     XP: ExprProvider,
@@ -42,5 +42,25 @@ where
         s.write(&self.target);
         s.write(".");
         s.write(&self.attr);
+    }
+}
+
+impl<XP, FX> Clone for LookupExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        LookupExpr::new(self.target.clone(), self.attr.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for LookupExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.attr == other.attr && self.target == other.target
     }
 }

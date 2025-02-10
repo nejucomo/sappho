@@ -3,7 +3,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::ExprProvider;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub enum Statements<XP>
 where
     XP: ExprProvider,
@@ -41,6 +41,19 @@ where
                 s.write(x);
                 s.write(";");
             }
+        }
+    }
+}
+
+impl<XP> Clone for Statements<XP>
+where
+    XP: ExprProvider,
+{
+    fn clone(&self) -> Self {
+        use Statements::*;
+
+        match self {
+            Return(x) => Return(x.clone()),
         }
     }
 }

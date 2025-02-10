@@ -6,7 +6,7 @@ use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Clone, Debug, PartialEq, derive_more::From)]
+#[derive(Debug, derive_more::From)]
 pub enum CoreExpr<XP, FX>
 where
     XP: ExprProvider,
@@ -81,6 +81,49 @@ where
             Application(x) => x.unparse_into(s),
             Lookup(x) => x.unparse_into(s),
             Effect(x) => x.unparse_into(s),
+        }
+    }
+}
+
+impl<XP, FX> Clone for CoreExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        use CoreExpr::*;
+
+        match self {
+            Lit(x) => Lit(*x),
+            Ref(x) => Ref(x.clone()),
+            Object(x) => Object(x.clone()),
+            Let(x) => Let(x.clone()),
+            Match(x) => Match(x.clone()),
+            Application(x) => Application(x.clone()),
+            Lookup(x) => Lookup(x.clone()),
+            Effect(x) => Effect(x.clone()),
+        }
+    }
+}
+
+impl<XP, FX> PartialEq for CoreExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        use CoreExpr::*;
+
+        match (self, other) {
+            (Lit(l), Lit(r)) => l == r,
+            (Ref(l), Ref(r)) => l == r,
+            (Object(l), Object(r)) => l == r,
+            (Let(l), Let(r)) => l == r,
+            (Match(l), Match(r)) => l == r,
+            (Application(l), Application(r)) => l == r,
+            (Lookup(l), Lookup(r)) => l == r,
+            (Effect(l), Effect(r)) => l == r,
+            _ => false,
         }
     }
 }

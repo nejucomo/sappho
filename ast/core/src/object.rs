@@ -7,7 +7,7 @@ use sappho_unparse::Unparse;
 use crate::{ExprProvider, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
-#[derive(Clone, Debug, new)]
+#[derive(Debug, new)]
 pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>)
 where
     XP: ExprProvider,
@@ -36,13 +36,13 @@ where
     }
 }
 
-impl<XP, FX> PartialEq for ObjectDef<XP, FX>
+impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for ObjectDef<XP, FX>
 where
     XP: ExprProvider,
     FX: Effect,
 {
-    fn eq(&self, other: &Self) -> bool {
-        self.0 == other.0
+    fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
+        self.0.try_into_identmap()
     }
 }
 
@@ -56,12 +56,22 @@ where
     }
 }
 
-impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for ObjectDef<XP, FX>
+impl<XP, FX> Clone for ObjectDef<XP, FX>
 where
     XP: ExprProvider,
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
-        self.0.try_into_identmap()
+    fn clone(&self) -> Self {
+        ObjectDef(self.0.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for ObjectDef<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0
     }
 }

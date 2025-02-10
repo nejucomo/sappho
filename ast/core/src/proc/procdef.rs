@@ -2,7 +2,7 @@ use crate::{ExprProvider, Statements};
 use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Clone, Debug, derive_more::From)]
+#[derive(Debug, derive_more::From)]
 pub struct ProcDef<XP>(Statements<XP>)
 where
     XP: ExprProvider;
@@ -33,6 +33,15 @@ where
             subs.write(&Break::Mandatory);
             subs.write(&self.0);
         });
+    }
+}
+
+impl<XP> Clone for ProcDef<XP>
+where
+    XP: ExprProvider,
+{
+    fn clone(&self) -> Self {
+        ProcDef::from(self.0.clone())
     }
 }
 

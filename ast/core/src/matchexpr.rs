@@ -8,7 +8,7 @@ use crate::ExprProvider;
 pub use self::clause::MatchClause;
 
 /// A `match` expression, ie: `match x { 3 -> 0, y -> y }`.
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct MatchExpr<XP, FX>
 where
     XP: ExprProvider,
@@ -61,5 +61,25 @@ where
                 subs.write(",");
             }
         });
+    }
+}
+
+impl<XP, FX> Clone for MatchExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        MatchExpr::new(self.target.clone(), self.clauses.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for MatchExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.target == other.target && self.clauses == other.clauses
     }
 }

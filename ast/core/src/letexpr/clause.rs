@@ -3,7 +3,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::ExprProvider;
 
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct LetClause<XP, FX>
 where
     XP: ExprProvider,
@@ -44,5 +44,25 @@ where
         s.write(&self.binding);
         s.write(" = ");
         s.write(&self.bindexpr);
+    }
+}
+
+impl<XP, FX> Clone for LetClause<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        LetClause::new(self.binding.clone(), self.bindexpr.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for LetClause<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.binding == other.binding && self.bindexpr == other.bindexpr
     }
 }

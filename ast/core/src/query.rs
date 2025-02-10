@@ -4,7 +4,7 @@ use sappho_unparse::{Stream, Unparse};
 use crate::ExprProvider;
 
 /// A query definition, ie `query $x`.
-#[derive(Clone, Debug, derive_new::new)]
+#[derive(Debug, derive_new::new)]
 pub struct QueryDef<XP>
 where
     XP: ExprProvider,
@@ -35,6 +35,15 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         s.write("query ");
         s.write(&self.body);
+    }
+}
+
+impl<XP> Clone for QueryDef<XP>
+where
+    XP: ExprProvider,
+{
+    fn clone(&self) -> Self {
+        QueryDef::new(self.body.clone())
     }
 }
 
