@@ -5,7 +5,7 @@ use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::AstFuzz;
 
-pub(crate) trait FxFuzz: Sized
+pub(crate) trait FxFuzz: Sized + std::fmt::Debug
 where
     AstFuzz: Distribution<Self>,
 {

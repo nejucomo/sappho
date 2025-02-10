@@ -19,15 +19,14 @@ where
 
         // This is the single place where we reduce the recursion limit:
         let lower = self.next_lower_level();
-
         let rwf = lower.recursive_weight_factor();
 
-        <Self as Distribution<CoreExpr<FX>>>::map(*self, Core)
+        <Self as Distribution<CoreExpr<FX>>>::map(lower, Core)
             .weighted_case(1)
-            .or(<Self as Distribution<FuncDef>>::map(*self, Func).weighted_case(rwf))
-            .or(<Self as Distribution<QueryDef>>::map(*self, Query).weighted_case(rwf))
-            .or(<Self as Distribution<ProcDef>>::map(*self, Proc).weighted_case(rwf))
-            .or(<Self as Distribution<ListExpr<FX>>>::map(*self, List).weighted_case(rwf))
+            .or(<Self as Distribution<FuncDef>>::map(lower, Func).weighted_case(rwf))
+            .or(<Self as Distribution<QueryDef>>::map(lower, Query).weighted_case(rwf))
+            .or(<Self as Distribution<ProcDef>>::map(lower, Proc).weighted_case(rwf))
+            .or(<Self as Distribution<ListExpr<FX>>>::map(lower, List).weighted_case(rwf))
             .sample(rng)
     }
 }
