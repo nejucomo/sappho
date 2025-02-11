@@ -1,4 +1,4 @@
-use crate::{ExprProvider, Identifier};
+use crate::{AstProvider, Identifier};
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
@@ -6,7 +6,7 @@ use sappho_unparse::{Stream, Unparse};
 #[derive(Debug, derive_new::new)]
 pub struct LookupExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     /// The target expression of the lookup, ie `x` in `x.foo`.
@@ -18,12 +18,12 @@ where
 
 impl<XP, FX> LookupExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> LookupExpr<XPD, FX>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         LookupExpr {
@@ -35,7 +35,7 @@ where
 
 impl<XP, FX> Unparse for LookupExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -47,7 +47,7 @@ where
 
 impl<XP, FX> Clone for LookupExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -57,7 +57,7 @@ where
 
 impl<XP, FX> PartialEq for LookupExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

@@ -1,7 +1,7 @@
-use sappho_ast::{
-    Effect, EffectExpr, Expr, FuncDef, ListPattern, Pattern, PureExpr, QueryDef, QueryExpr,
+use sappho_ast::{Ast, Effect, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
+use sappho_ast_core::{
+    ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
 };
-use sappho_ast_core::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
 use sappho_identmap::IdentMap;
 use test_case::test_case;
 
@@ -43,7 +43,7 @@ fn let_expr<const K: usize>(clauses: [(Pattern, PureExpr); K], bindexpr: PureExp
     .into()
 }
 
-fn func_def(p: Pattern, x: PureExpr) -> FuncDef {
+fn func_def(p: Pattern, x: PureExpr) -> FuncDef<Ast> {
     FuncDef::new(p, Box::new(x))
 }
 
@@ -51,7 +51,7 @@ fn func_def_expr(p: Pattern, x: PureExpr) -> PureExpr {
     PureExpr::Func(func_def(p, x))
 }
 
-fn query_def(x: QueryExpr) -> QueryDef {
+fn query_def(x: QueryExpr) -> QueryDef<Ast> {
     QueryDef::new(Box::new(x))
 }
 
@@ -59,7 +59,7 @@ fn query_def_expr(x: QueryExpr) -> PureExpr {
     PureExpr::Query(query_def(x))
 }
 
-fn object_def(f: Option<FuncDef>, q: Option<QueryDef>) -> PureExpr {
+fn object_def(f: Option<FuncDef<Ast>>, q: Option<QueryDef<Ast>>) -> PureExpr {
     ObjectDef::new_from_parts(f, q, None, Default::default()).into()
 }
 

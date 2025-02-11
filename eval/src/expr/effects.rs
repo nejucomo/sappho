@@ -1,15 +1,15 @@
 use crate::{Eval, Result};
-use sappho_ast_core::{PureEffect, QueryEffect};
-use sappho_ast_reduced::EffectExpr;
+use sappho_ast_core::{EffectExpr, PureEffect, QueryEffect};
+use sappho_ast_reduced::AstRed;
 use sappho_value::{ScopeRef, ValRef};
 
-impl Eval for EffectExpr<PureEffect> {
+impl Eval for EffectExpr<AstRed, PureEffect> {
     fn eval(&self, _scope: &ScopeRef) -> Result<ValRef> {
         unreachable!("There are no pure effects beyond `Expr` so this should never evaluate.");
     }
 }
 
-impl Eval for EffectExpr<QueryEffect> {
+impl Eval for EffectExpr<AstRed, QueryEffect> {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use QueryEffect::*;
 

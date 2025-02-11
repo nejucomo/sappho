@@ -1,15 +1,16 @@
 use std::fmt;
 use std::ops::Deref;
 
-use sappho_ast as ast;
+use sappho_ast::{self as ast, ListExpr};
+use sappho_ast_core::{CoreExpr, ObjectDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{CoreExpr, ObjectDef};
+use crate::AstRed;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Expr<FX>(CoreExpr<FX>)
+pub struct Expr<FX>(CoreExpr<AstRed, FX>)
 where
     FX: Effect;
 
@@ -19,7 +20,7 @@ where
 {
     pub fn new<T>(x: T) -> Self
     where
-        CoreExpr<FX>: From<T>,
+        CoreExpr<AstRed, FX>: From<T>,
     {
         Expr(CoreExpr::from(x))
     }
@@ -29,7 +30,7 @@ impl<FX> Deref for Expr<FX>
 where
     FX: Effect,
 {
-    type Target = CoreExpr<FX>;
+    type Target = CoreExpr<AstRed, FX>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -43,15 +44,9 @@ where
     fn from(x: ast::Expr<FX>) -> Self {
         match x {
             ast::Expr::Core(x) => Expr(x.transform_into()),
-            ast::Expr::Func(x) => {
-                Expr(ast::CoreExpr::from(ast::ObjectDef::new_func(x)).transform_into())
-            }
-            ast::Expr::Query(x) => {
-                Expr(ast::CoreExpr::from(ast::ObjectDef::new_query(x)).transform_into())
-            }
-            ast::Expr::Proc(x) => {
-                Expr(ast::CoreExpr::from(ast::ObjectDef::new_proc(x)).transform_into())
-            }
+            ast::Expr::Func(x) => Expr(CoreExpr::from(ObjectDef::new_func(x)).transform_into()),
+            ast::Expr::Query(x) => Expr(CoreExpr::from(ObjectDef::new_query(x)).transform_into()),
+            ast::Expr::Proc(x) => Expr(CoreExpr::from(ObjectDef::new_proc(x)).transform_into()),
             ast::Expr::List(x) => x.into(),
         }
     }
@@ -92,7 +87,7 @@ where
     }
 }
 
-fn objdef_to_ast_expr<FX>(objdef: ObjectDef<FX>) -> ast::Expr<FX>
+fn objdef_to_ast_expr<FX>(objdef: ObjectDef<AstRed, FX>) -> ast::Expr<FX>
 where
     FX: Effect,
 {
@@ -108,13 +103,17 @@ where
         U::Attrs(a) => a
             .as_list_form()
             .map(|listform| {
-                List(
+                List(ListExpr::new(
                     listform
                         .map_elems(|x| ast::Expr::from(x.clone()))
                         .map_tail(|x| Box::new(ast::Expr::from(x.clone()))),
-                )
+                ))
             })
-            .unwrap_or_else(|| Core(Object(ObjectDef::new_attrs(a).transform_into()))),
+            .unwrap_or_else(|| {
+                Core(Object(ObjectDef::new_attrs(
+                    a.into_map_values(ast::Expr::from),
+                )))
+            }),
     }
 }
 

@@ -2,12 +2,12 @@ use crate::error::BareError;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{EffectExpr, ProcExpr};
-use sappho_ast_core::ProcEffect;
+use sappho_ast::{Ast, ProcExpr};
+use sappho_ast_core::{EffectExpr, ProcEffect};
 
 pub(crate) fn proc_effect(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, EffectExpr<ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<char, EffectExpr<Ast, ProcEffect>, Error = BareError> + '_ {
     effect()
         .then(pexpr)
         .map(|(fx, x)| EffectExpr::new(fx, Box::new(x)))

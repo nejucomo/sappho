@@ -5,9 +5,8 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{
-    Expr, LetClause, LetExpr, ListExpr, MatchClause, MatchExpr, ProcEffect, ProcExpr,
-};
+use sappho_ast::{Ast, Expr, ListExpr, ProcExpr};
+use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr, ProcEffect};
 
 pub(crate) fn recursive_expr(
     expr: Recursive<char, ProcExpr, BareError>,
@@ -25,12 +24,14 @@ fn list_expr(
 ) -> impl Parser<char, ListExpr<ProcEffect>, Error = BareError> + '_ {
     use crate::listform::list_form;
 
-    list_form(expr.clone(), expr.map(Box::new)).labelled("list-expression")
+    list_form(expr.clone(), expr.map(Box::new))
+        .map(ListExpr::new)
+        .labelled("list-expression")
 }
 
 fn let_expr(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, LetExpr<ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<char, LetExpr<Ast, ProcEffect>, Error = BareError> + '_ {
     let_clause(expr.clone())
         .then_ignore(ws())
         .repeated()
@@ -45,7 +46,7 @@ fn let_expr(
 
 fn let_clause(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, LetClause<ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<char, LetClause<Ast, ProcEffect>, Error = BareError> + '_ {
     Keyword::Let
         .parser()
         .ignore_then(pattern())
@@ -60,7 +61,7 @@ fn let_clause(
 
 fn match_expr(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, MatchExpr<ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<char, MatchExpr<Ast, ProcEffect>, Error = BareError> + '_ {
     use crate::delimited::delimited;
 
     Keyword::Match
@@ -83,7 +84,7 @@ fn match_expr(
 
 fn match_clause(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, MatchClause<ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<char, MatchClause<Ast, ProcEffect>, Error = BareError> + '_ {
     pattern()
         .then_ignore(just("->").delimited_by(ws(), ws()))
         .then(expr)

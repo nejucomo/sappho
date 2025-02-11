@@ -1,19 +1,22 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Expr, FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
+use sappho_ast::{Ast, Expr};
+use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
 use sappho_identmap::IdentMap;
 use sappho_object::Object;
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;
 
-impl<FX> Distribution<ObjectDef<FX>> for AstFuzz
+impl<FX> Distribution<ObjectDef<Ast, FX>> for AstFuzz
 where
     FX: FxFuzz,
     AstFuzz: Distribution<FX>,
 {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ObjectDef<FX> {
-        ObjectDef::new(rng.sample::<Object<FuncDef, QueryDef, ProcDef, Expr<FX>>, _>(self))
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ObjectDef<Ast, FX> {
+        ObjectDef::new(
+            rng.sample::<Object<FuncDef<Ast>, QueryDef<Ast>, ProcDef<Ast>, Expr<FX>>, _>(self),
+        )
     }
 }
 
@@ -31,26 +34,26 @@ where
     }
 }
 
-impl Distribution<FuncDef> for AstFuzz {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> FuncDef {
-        FuncDef::new(rng.sample(self), rng.sample(self))
+impl Distribution<FuncDef<Ast>> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> FuncDef<Ast> {
+        FuncDef::<Ast>::new(rng.sample(self), rng.sample(self))
     }
 }
 
-impl Distribution<QueryDef> for AstFuzz {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> QueryDef {
-        QueryDef::new(rng.sample(self))
+impl Distribution<QueryDef<Ast>> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> QueryDef<Ast> {
+        QueryDef::<Ast>::new(rng.sample(self))
     }
 }
 
-impl Distribution<ProcDef> for AstFuzz {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ProcDef {
-        ProcDef::from(rng.sample::<Statements, _>(self))
+impl Distribution<ProcDef<Ast>> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ProcDef<Ast> {
+        ProcDef::<Ast>::from(rng.sample::<Statements<Ast>, _>(self))
     }
 }
 
-impl Distribution<Statements> for AstFuzz {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Statements {
-        Statements::Return(self.sample(rng))
+impl Distribution<Statements<Ast>> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Statements<Ast> {
+        Statements::<Ast>::Return(self.sample(rng))
     }
 }

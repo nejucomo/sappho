@@ -1,19 +1,19 @@
-use crate::{ExprProvider, Statements};
+use crate::{AstProvider, Statements};
 use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]
 pub struct ProcDef<XP>(Statements<XP>)
 where
-    XP: ExprProvider;
+    XP: AstProvider;
 
 impl<XP> ProcDef<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     pub fn transform_into<XPD>(self) -> ProcDef<XPD>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
     {
         ProcDef(self.0.transform_into())
@@ -22,7 +22,7 @@ where
 
 impl<XP> Unparse for ProcDef<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Brackets::Squiggle;
@@ -38,7 +38,7 @@ where
 
 impl<XP> Clone for ProcDef<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     fn clone(&self) -> Self {
         ProcDef::from(self.0.clone())
@@ -47,7 +47,7 @@ where
 
 impl<XP> PartialEq for ProcDef<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0

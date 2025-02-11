@@ -1,10 +1,10 @@
-use sappho_ast_core::ExprProvider;
+use sappho_ast_core::AstProvider;
 use sappho_ast_effect::Effect;
 
 #[derive(Debug)]
 pub struct Ast;
 
-impl ExprProvider for Ast {
+impl AstProvider for Ast {
     type Pattern = crate::Pattern;
 
     type Expr<FX>

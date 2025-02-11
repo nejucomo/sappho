@@ -1,23 +1,23 @@
 use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::ExprProvider;
+use crate::AstProvider;
 
 #[derive(Debug)]
 pub enum Statements<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     Return(Box<XP::Expr<ProcEffect>>),
 }
 
 impl<XP> Statements<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     pub fn transform_into<XPD>(self) -> Statements<XPD>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
     {
         use Statements::*;
@@ -30,7 +30,7 @@ where
 
 impl<XP> Unparse for Statements<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use Statements::*;
@@ -47,7 +47,7 @@ where
 
 impl<XP> Clone for Statements<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     fn clone(&self) -> Self {
         use Statements::*;
@@ -60,7 +60,7 @@ where
 
 impl<XP> PartialEq for Statements<XP>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
 {
     fn eq(&self, other: &Self) -> bool {
         use Statements::*;

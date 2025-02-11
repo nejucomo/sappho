@@ -1,12 +1,12 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::ExprProvider;
+use crate::AstProvider;
 
 #[derive(Debug, derive_new::new)]
 pub struct EffectExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub effect: FX,
@@ -15,12 +15,12 @@ where
 
 impl<XP, FX> EffectExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> EffectExpr<XPD, FX>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         EffectExpr {
@@ -32,7 +32,7 @@ where
 
 impl<XP, FX> Unparse for EffectExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -43,7 +43,7 @@ where
 
 impl<XP, FX> Clone for EffectExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -53,7 +53,7 @@ where
 
 impl<XP, FX> PartialEq for EffectExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

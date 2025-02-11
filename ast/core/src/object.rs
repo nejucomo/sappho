@@ -6,18 +6,18 @@ use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
-use crate::{ExprProvider, FuncDef, ProcDef, QueryDef};
+use crate::{AstProvider, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Debug, new)]
 pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>)
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect;
 
 impl<XP, FX> ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub fn new_from_parts(
@@ -50,7 +50,7 @@ where
 
     pub fn transform_into<XPD>(self) -> ObjectDef<XPD, FX>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
         XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
@@ -64,7 +64,7 @@ where
         self,
     ) -> Object<FuncDef<XPD>, QueryDef<XPD>, ProcDef<XPD>, XPD::Expr<FX>>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
         XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
@@ -96,7 +96,7 @@ where
 
 impl<XP, FX> Default for ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn default() -> Self {
@@ -106,7 +106,7 @@ where
 
 impl<XP, FX> Deref for ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     type Target = Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>;
@@ -119,7 +119,7 @@ where
 impl<XP, FX> AsRef<Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>>
     for ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
@@ -129,7 +129,7 @@ where
 
 impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
@@ -139,7 +139,7 @@ where
 
 impl<XP, FX> Unparse for ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
@@ -149,7 +149,7 @@ where
 
 impl<XP, FX> Clone for ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -159,7 +159,7 @@ where
 
 impl<XP, FX> PartialEq for ObjectDef<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {
