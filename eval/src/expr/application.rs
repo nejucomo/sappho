@@ -1,11 +1,12 @@
 use crate::{Eval, Result};
 use sappho_ast::Effect;
-use sappho_ast_reduced::{ApplicationExpr, EffectExpr};
+use sappho_ast_core::{ApplicationExpr, EffectExpr};
+use sappho_ast_reduced::AstRed;
 use sappho_value::{ScopeRef, ValRef};
 
-impl<FX> Eval for ApplicationExpr<FX>
+impl<FX> Eval for ApplicationExpr<AstRed, FX>
 where
-    EffectExpr<FX>: Eval,
+    EffectExpr<AstRed, FX>: Eval,
     FX: Effect,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {

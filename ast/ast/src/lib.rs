@@ -19,3 +19,7 @@ pub use self::expr::Expr;
 pub use self::listexpr::ListExpr;
 pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
 pub use self::provider::Ast;
+
+pub type PureExpr = Expr<PureEffect>;
+pub type QueryExpr = Expr<QueryEffect>;
+pub type ProcExpr = Expr<ProcEffect>;

@@ -11,8 +11,8 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{Expr, FuncDef, Identifier, ObjectDef, ProcDef, ProcExpr, QueryDef};
-use sappho_ast_core::ProcEffect;
+use sappho_ast::{Ast, Expr, Identifier, ProcExpr};
+use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, ProcEffect, QueryDef};
 use sappho_object::Element;
 
 pub(crate) fn object_expr(
@@ -21,7 +21,7 @@ pub(crate) fn object_expr(
     use Expr::{Func, Proc, Query};
 
     object_def(expr.clone())
-        .map(ProcExpr::from)
+        .map(Expr::from)
         .or(func_def(expr.clone()).map(Func))
         .or(query_def(expr.clone()).map(Query))
         .or(proc_def(expr).map(Proc))
@@ -29,7 +29,7 @@ pub(crate) fn object_expr(
 
 fn func_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, FuncDef, Error = BareError> + '_ {
+) -> impl Parser<char, FuncDef<Ast>, Error = BareError> + '_ {
     Keyword::Fn
         .parser()
         .ignore_then(pattern())
@@ -44,7 +44,7 @@ fn func_def(
 
 fn query_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, QueryDef, Error = BareError> + '_ {
+) -> impl Parser<char, QueryDef<Ast>, Error = BareError> + '_ {
     Keyword::Query
         .parser()
         .ignore_then(query_expr(expr))
@@ -56,7 +56,7 @@ fn query_def(
 
 fn object_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ObjectDef<ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<char, ObjectDef<Ast, ProcEffect>, Error = BareError> + '_ {
     let innards = object_clause(expr)
         .separated_by(just(',').then(ws().or_not()))
         .allow_trailing();
@@ -72,7 +72,7 @@ fn object_def(
         .labelled("object definition")
 }
 
-type ObjectClause = Element<FuncDef, QueryDef, ProcDef, ProcExpr>;
+type ObjectClause = Element<FuncDef<Ast>, QueryDef<Ast>, ProcDef<Ast>, ProcExpr>;
 
 fn object_clause(
     expr: Recursive<'_, char, ProcExpr, BareError>,

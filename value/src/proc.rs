@@ -1,11 +1,11 @@
 use crate::{GenThunk, ScopeRef};
-use sappho_ast_core::{EffectExpr, ProcEffect};
-use sappho_ast_reduced::{ObjectDef, ProcClause, ProcExpr};
+use sappho_ast_core::{EffectExpr, ObjectDef, ProcDef, ProcEffect};
+use sappho_ast_reduced::{AstRed, Expr};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_new::new)]
 pub struct Proc {
-    pdef: ProcClause,
+    pdef: ProcDef<AstRed>,
     defscope: ScopeRef,
 }
 
@@ -14,9 +14,9 @@ impl Proc {
         // FIXME: This is ugly: GenThunk requires an `Expr` so we synthsize `!proc { ... }` around
         // the proc definition.
         GenThunk::new(
-            ProcExpr::new(EffectExpr::new(
+            Expr::new(EffectExpr::new(
                 ProcEffect::Invoke,
-                Box::new(ProcExpr::new(ObjectDef::new_proc(self.pdef.clone()))),
+                Box::new(Expr::new(ObjectDef::new_proc(self.pdef.clone()))),
             )),
             self.defscope.clone(),
         )

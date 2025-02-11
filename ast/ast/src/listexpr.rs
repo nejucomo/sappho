@@ -35,6 +35,16 @@ where
     {
         self.0.map_elems(f)
     }
+
+    pub fn try_map<F, FXD, E>(self, f: F) -> Result<ListExpr<FXD>, E>
+    where
+        F: Fn(Expr<FX>) -> Result<Expr<FXD>, E>,
+        FXD: Effect,
+    {
+        self.0
+            .try_map(&f, |tail| f(*tail).map(Box::new))
+            .map(ListExpr::new)
+    }
 }
 
 impl<FX> Unparse for ListExpr<FX>
