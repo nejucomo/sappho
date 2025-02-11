@@ -34,13 +34,13 @@ where
     }
 }
 
-impl<FX> FromIterator<Expr<FX>> for Expr<FX>
+impl<FX> FromIterator<CommentedExpr<Ast, FX>> for Expr<FX>
 where
     FX: Effect,
 {
     fn from_iter<T>(iter: T) -> Self
     where
-        T: IntoIterator<Item = Expr<FX>>,
+        T: IntoIterator<Item = CommentedExpr<Ast, FX>>,
     {
         Expr::List(ListExpr::new_from_parts(iter, None))
     }

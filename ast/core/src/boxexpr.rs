@@ -15,6 +15,10 @@ where
     XP: AstProvider,
     FX: Effect,
 {
+    pub fn into_inner(self) -> CommentedExpr<XP, FX> {
+        *(self.0)
+    }
+
     pub fn map_expr<F, XPD>(self, f: F) -> BoxExpr<XPD, FX>
     where
         F: FnOnce(XP::Expr<FX>) -> XPD::Expr<FX>,

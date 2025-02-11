@@ -1,12 +1,12 @@
 use derive_new::new;
-use sappho_ast_core::Effect;
+use sappho_ast_core::{BoxExpr, CommentedExpr, Effect};
 use sappho_listform::ListForm;
 use sappho_unparse::Unparse;
 
-use crate::Expr;
+use crate::Ast;
 
 #[derive(Clone, Debug, PartialEq, new)]
-pub struct ListExpr<FX>(ListForm<Expr<FX>, Box<Expr<FX>>>)
+pub struct ListExpr<FX>(ListForm<CommentedExpr<Ast, FX>, BoxExpr<Ast, FX>>)
 where
     FX: Effect;
 
@@ -14,35 +14,35 @@ impl<FX> ListExpr<FX>
 where
     FX: Effect,
 {
-    pub fn new_from_parts<T>(iter: T, optail: Option<Box<Expr<FX>>>) -> Self
+    pub fn new_from_parts<T>(iter: T, optail: Option<BoxExpr<Ast, FX>>) -> Self
     where
-        T: IntoIterator<Item = Expr<FX>>,
+        T: IntoIterator<Item = CommentedExpr<Ast, FX>>,
     {
         Self::new(ListForm::new(iter, optail))
     }
 
     pub fn into_reverse_fold<S, TT, F>(self, ttail: TT, f: F) -> S
     where
-        TT: FnOnce(Option<Box<Expr<FX>>>) -> S,
-        F: Fn(S, Expr<FX>) -> S,
+        TT: FnOnce(Option<BoxExpr<Ast, FX>>) -> S,
+        F: Fn(S, CommentedExpr<Ast, FX>) -> S,
     {
         self.0.into_reverse_fold(ttail, f)
     }
 
-    pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, Box<Expr<FX>>>
+    pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, BoxExpr<Ast, FX>>
     where
-        F: Fn(Expr<FX>) -> DX,
+        F: Fn(CommentedExpr<Ast, FX>) -> DX,
     {
         self.0.map_elems(f)
     }
 
     pub fn try_map<F, FXD, E>(self, f: F) -> Result<ListExpr<FXD>, E>
     where
-        F: Fn(Expr<FX>) -> Result<Expr<FXD>, E>,
+        F: Fn(CommentedExpr<Ast, FX>) -> Result<CommentedExpr<Ast, FXD>, E>,
         FXD: Effect,
     {
         self.0
-            .try_map(&f, |tail| f(*tail).map(Box::new))
+            .try_map(&f, |tail| f(tail.into_inner()).map(BoxExpr::from))
             .map(ListExpr::new)
     }
 }

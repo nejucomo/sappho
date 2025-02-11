@@ -1,6 +1,7 @@
 use derive_new::new;
 use sappho_ast_comments::Commented;
 use sappho_ast_effect::Effect;
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::Unparse;
 
 use crate::AstProvider;
@@ -39,5 +40,16 @@ where
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
         self.0.unparse_into(s)
+    }
+}
+
+impl<XP, FX> TryIntoIdentMap<CommentedExpr<XP, FX>> for CommentedExpr<XP, FX>
+where
+    XP: AstProvider,
+    XP::Expr<FX>: TryIntoIdentMap<CommentedExpr<XP, FX>>,
+    FX: Effect,
+{
+    fn try_into_identmap(&self) -> Option<&IdentMap<CommentedExpr<XP, FX>>> {
+        self.0.item().try_into_identmap()
     }
 }

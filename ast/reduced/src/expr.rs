@@ -2,7 +2,7 @@ use std::fmt;
 use std::ops::Deref;
 
 use sappho_ast::{self as ast, ListExpr};
-use sappho_ast_core::{CoreExpr, ObjectDef};
+use sappho_ast_core::{CommentedExpr, CoreExpr, ObjectDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
@@ -67,8 +67,8 @@ where
             },
             |tail, head| {
                 Expr(Object(ObjectDef::new_attrs([
-                    ("head".to_string(), Expr::from(head)),
-                    ("tail".to_string(), tail),
+                    ("head".to_string(), CommentedExpr::new_bare(head)),
+                    ("tail".to_string(), CommentedExpr::new_bare(tail)),
                 ])))
             },
         )
@@ -105,8 +105,8 @@ where
             .map(|listform| {
                 List(ListExpr::new(
                     listform
-                        .map_elems(|x| ast::Expr::from(x.clone()))
-                        .map_tail(|x| Box::new(ast::Expr::from(x.clone()))),
+                        .map_elems(|x| x.map_expr(ast::Expr::from))
+                        .map_tail(|x| Box::new(x.map_expr(ast::Expr::from))),
                 ))
             })
             .unwrap_or_else(|| {
@@ -117,11 +117,11 @@ where
     }
 }
 
-impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
+impl<FX> TryIntoIdentMap<CommentedExpr<AstRed, FX>> for Expr<FX>
 where
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<CommentedExpr<AstRed, FX>>> {
         self.0.try_into_identmap()
     }
 }
