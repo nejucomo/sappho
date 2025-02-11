@@ -7,6 +7,8 @@ use crate::{
     LookupExpr, MatchExpr, ObjectDef,
 };
 
+// TODO: Enable comments for non-expr structures such as match clauses
+
 #[derive(Debug, derive_more::From)]
 pub enum CoreExpr<XP, FX>
 where
