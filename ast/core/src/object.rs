@@ -6,11 +6,11 @@ use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
-use crate::{AstProvider, FuncDef, ProcDef, QueryDef};
+use crate::{AstProvider, CommentedExpr, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Debug, new)]
-pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>)
+pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CommentedExpr<XP, FX>>)
 where
     XP: AstProvider,
     FX: Effect;
@@ -24,7 +24,7 @@ where
         f: Option<FuncDef<XP>>,
         q: Option<QueryDef<XP>>,
         p: Option<ProcDef<XP>>,
-        attrs: IdentMap<XP::Expr<FX>>,
+        attrs: IdentMap<CommentedExpr<XP, FX>>,
     ) -> Self {
         Self::new(Object::new(f, q, p, attrs))
     }
@@ -43,7 +43,7 @@ where
 
     pub fn new_attrs<T>(attrs: T) -> Self
     where
-        T: Into<IdentMap<XP::Expr<FX>>>,
+        T: Into<IdentMap<CommentedExpr<XP, FX>>>,
     {
         ObjectDef(Object::new_attrs(attrs))
     }
@@ -62,7 +62,7 @@ where
 
     pub fn transform_into_object<XPD>(
         self,
-    ) -> Object<FuncDef<XPD>, QueryDef<XPD>, ProcDef<XPD>, XPD::Expr<FX>>
+    ) -> Object<FuncDef<XPD>, QueryDef<XPD>, ProcDef<XPD>, CommentedExpr<XPD, FX>>
     where
         XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
@@ -75,19 +75,20 @@ where
             |func| func.transform_into(),
             |query| query.transform_into(),
             |proc| proc.transform_into(),
-            XPD::Expr::<FX>::from,
+            |x| x.map_expr(XPD::Expr::from),
         )
     }
 
     pub fn unbundle(
         self,
-    ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
+    ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CommentedExpr<XP, FX>>
+    {
         self.0.unbundle()
     }
 
     pub fn into_try_map_values<F, FXD, E>(self, f: F) -> Result<ObjectDef<XP, FXD>, E>
     where
-        F: Fn(XP::Expr<FX>) -> Result<XP::Expr<FXD>, E>,
+        F: Fn(CommentedExpr<XP, FX>) -> Result<CommentedExpr<XP, FXD>, E>,
         FXD: Effect,
     {
         self.0.into_try_map_values(f).map(ObjectDef)
@@ -109,30 +110,30 @@ where
     XP: AstProvider,
     FX: Effect,
 {
-    type Target = Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>;
+    type Target = Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CommentedExpr<XP, FX>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl<XP, FX> AsRef<Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>>
+impl<XP, FX> AsRef<Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CommentedExpr<XP, FX>>>
     for ObjectDef<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
+    fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CommentedExpr<XP, FX>> {
         &self.0
     }
 }
 
-impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for ObjectDef<XP, FX>
+impl<XP, FX> TryIntoIdentMap<CommentedExpr<XP, FX>> for ObjectDef<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<CommentedExpr<XP, FX>>> {
         self.0.try_into_identmap()
     }
 }

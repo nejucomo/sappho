@@ -1,10 +1,11 @@
 //! Top-level expression type `Expr`, generic over effects [PureEffect](sappho_ast_core::PureEffect), [QueryEffect](sappho_ast_core::QueryEffect), or [ProcEffect](sappho_ast_core::ProcEffect).
 
-use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
+use std::fmt;
+
+use sappho_ast_core::CommentedExpr;
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
-use std::fmt;
 
 use crate::{Ast, ListExpr};
 
@@ -45,11 +46,11 @@ where
     }
 }
 
-impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
+impl<FX> TryIntoIdentMap<CommentedExpr<Ast, FX>> for Expr<FX>
 where
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<CommentedExpr<Ast, FX>>> {
         match self {
             Expr::Core(c) => c.try_into_identmap(),
             _ => None,

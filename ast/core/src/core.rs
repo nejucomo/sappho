@@ -1,10 +1,11 @@
-use crate::{
-    ApplicationExpr, AstProvider, EffectExpr, Identifier, LetExpr, Literal, LookupExpr, MatchExpr,
-    ObjectDef,
-};
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
+
+use crate::{
+    ApplicationExpr, AstProvider, CommentedExpr, EffectExpr, Identifier, LetExpr, Literal,
+    LookupExpr, MatchExpr, ObjectDef,
+};
 
 #[derive(Debug, derive_more::From)]
 pub enum CoreExpr<XP, FX>
@@ -51,12 +52,12 @@ where
     }
 }
 
-impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for CoreExpr<XP, FX>
+impl<XP, FX> TryIntoIdentMap<CommentedExpr<XP, FX>> for CoreExpr<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<CommentedExpr<XP, FX>>> {
         match self {
             CoreExpr::Object(objdef) => objdef.try_into_identmap(),
             _ => None,

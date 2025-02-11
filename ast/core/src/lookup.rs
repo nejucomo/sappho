@@ -1,6 +1,7 @@
-use crate::{AstProvider, Identifier};
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
+
+use crate::{AstProvider, BoxExpr, Identifier};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Debug, derive_new::new)]
@@ -10,7 +11,7 @@ where
     FX: Effect,
 {
     /// The target expression of the lookup, ie `x` in `x.foo`.
-    pub target: Box<XP::Expr<FX>>,
+    pub target: BoxExpr<XP, FX>,
 
     /// An attribute name, ie: `foo` in `x.foo`.
     pub attr: Identifier,
@@ -27,7 +28,7 @@ where
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         LookupExpr {
-            target: Box::new(XPD::Expr::from(*self.target)),
+            target: self.target.map_expr(XPD::Expr::from),
             attr: self.attr,
         }
     }

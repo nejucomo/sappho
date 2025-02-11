@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, BoxExpr};
 
 #[derive(Debug, derive_new::new)]
 pub struct LetClause<XP, FX>
@@ -13,7 +13,7 @@ where
     pub binding: XP::Pattern,
 
     /// The expression to bind, ie: `42` in `let x = 42; f x`.
-    pub bindexpr: Box<XP::Expr<FX>>,
+    pub bindexpr: BoxExpr<XP, FX>,
 }
 
 impl<XP, FX> LetClause<XP, FX>
@@ -29,7 +29,7 @@ where
     {
         LetClause {
             binding: XPD::Pattern::from(self.binding),
-            bindexpr: Box::new(XPD::Expr::from(*self.bindexpr)),
+            bindexpr: self.bindexpr.map_expr(XPD::Expr::from),
         }
     }
 }

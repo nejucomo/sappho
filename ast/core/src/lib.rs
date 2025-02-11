@@ -1,4 +1,6 @@
 mod application;
+mod boxexpr;
+mod cmtexpr;
 mod core;
 mod effectexpr;
 mod func;
@@ -15,6 +17,8 @@ pub use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 pub use sappho_identmap::Identifier;
 
 pub use self::application::ApplicationExpr;
+pub use self::boxexpr::BoxExpr;
+pub use self::cmtexpr::CommentedExpr;
 pub use self::core::CoreExpr;
 pub use self::effectexpr::EffectExpr;
 pub use self::func::FuncDef;

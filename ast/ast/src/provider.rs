@@ -1,7 +1,7 @@
 use sappho_ast_core::AstProvider;
 use sappho_ast_effect::Effect;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Ast;
 
 impl AstProvider for Ast {
