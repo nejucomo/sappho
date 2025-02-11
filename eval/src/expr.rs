@@ -8,14 +8,14 @@ mod matchexpr;
 mod object;
 
 use crate::{Eval, Result};
+use sappho_ast::Effect;
 use sappho_ast_reduced::{EffectExpr, Expr};
-use sappho_unparse::Unparse;
 use sappho_value::{ScopeRef, ValRef};
 
 impl<FX> Eval for Expr<FX>
 where
     EffectExpr<FX>: Eval,
-    FX: Unparse,
+    FX: Effect,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use std::ops::Deref;
