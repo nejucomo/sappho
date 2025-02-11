@@ -1,30 +1,43 @@
+use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
+use crate::ExprProvider;
+
 /// Function application, ie `f x`.
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
-pub struct ApplicationExpr<Expr> {
+#[derive(Debug, derive_new::new)]
+pub struct ApplicationExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
     /// The target of application, ie `f` in `f x`.
-    pub target: Box<Expr>,
+    pub target: Box<XP::Expr<FX>>,
 
     /// The argument of application, ie `x` in `f x`.
-    pub argument: Box<Expr>,
+    pub argument: Box<XP::Expr<FX>>,
 }
 
-impl<X> ApplicationExpr<X> {
-    pub fn transform_into<Y>(self) -> ApplicationExpr<Y>
+impl<XP, FX> ApplicationExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    pub fn transform_into<XPD>(self) -> ApplicationExpr<XPD, FX>
     where
-        Y: From<X>,
+        XPD: ExprProvider,
+        XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         ApplicationExpr {
-            target: Box::new(Y::from(*self.target)),
-            argument: Box::new(Y::from(*self.argument)),
+            target: Box::new(XPD::Expr::from(*self.target)),
+            argument: Box::new(XPD::Expr::from(*self.argument)),
         }
     }
 }
 
-impl<Expr> Unparse for ApplicationExpr<Expr>
+impl<XP, FX> Unparse for ApplicationExpr<XP, FX>
 where
-    Expr: Unparse,
+    XP: ExprProvider,
+    FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::{
@@ -38,5 +51,25 @@ where
             subs.write(&OptSpace);
             subs.write(&self.argument);
         });
+    }
+}
+
+impl<XP, FX> Clone for ApplicationExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        ApplicationExpr::new(self.target.clone(), self.argument.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for ApplicationExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.target == other.target && self.argument == other.argument
     }
 }

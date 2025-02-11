@@ -1,7 +1,9 @@
-use crate::{Element, IntoIter, Unbundled};
 use derive_new::new;
+
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
+
+use crate::{Element, IntoIter, Unbundled};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, P, A> {

@@ -1,24 +1,36 @@
 mod clause;
 
+use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
+
+use crate::ExprProvider;
 
 pub use self::clause::LetClause;
 
 /// A `let` expression for local definitions, ie: `let x = 42; f x`.
-#[derive(Clone, Debug, PartialEq, derive_new::new)]
-pub struct LetExpr<Pattern, Expr> {
+#[derive(Debug, derive_new::new)]
+pub struct LetExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
     /// The let clauses:
-    pub clauses: Vec<LetClause<Pattern, Expr>>,
+    pub clauses: Vec<LetClause<XP, FX>>,
 
     /// The expression to evaluate with the binding in-scope, ie: `f x` in `let x = 42; f x`.
-    pub tail: Box<Expr>,
+    pub tail: Box<XP::Expr<FX>>,
 }
 
-impl<P, X> LetExpr<P, X> {
-    pub fn transform_into<PD, XD>(self) -> LetExpr<PD, XD>
+impl<XP, FX> LetExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    pub fn transform_into<XPD>(self) -> LetExpr<XPD, FX>
     where
-        PD: From<P>,
-        XD: From<X>,
+        XPD: ExprProvider,
+        XPD::Pattern: From<XP::Pattern>,
+        XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         LetExpr {
             clauses: self
@@ -26,15 +38,15 @@ impl<P, X> LetExpr<P, X> {
                 .into_iter()
                 .map(|c| c.transform_into())
                 .collect(),
-            tail: Box::new(XD::from(*self.tail)),
+            tail: Box::new(XPD::Expr::from(*self.tail)),
         }
     }
 }
 
-impl<P, X> Unparse for LetExpr<P, X>
+impl<XP, FX> Unparse for LetExpr<XP, FX>
 where
-    P: Unparse,
-    X: Unparse,
+    XP: ExprProvider,
+    FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::{Brackets::Parens, Break::Mandatory};
@@ -56,5 +68,25 @@ where
         } else {
             s.bracketed(Parens, unparse_clauses);
         }
+    }
+}
+
+impl<XP, FX> Clone for LetExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn clone(&self) -> Self {
+        LetExpr::new(self.clauses.clone(), self.tail.clone())
+    }
+}
+
+impl<XP, FX> PartialEq for LetExpr<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.tail == other.tail && self.clauses == other.clauses
     }
 }

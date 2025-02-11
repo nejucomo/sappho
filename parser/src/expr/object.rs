@@ -12,7 +12,7 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Expr, FuncDef, Identifier, ObjectDef, ProcDef, ProcExpr, QueryDef};
-use sappho_ast_core::ProcEffects;
+use sappho_ast_core::ProcEffect;
 use sappho_object::Element;
 
 pub(crate) fn object_expr(
@@ -56,7 +56,7 @@ fn query_def(
 
 fn object_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ObjectDef<ProcEffects>, Error = BareError> + '_ {
+) -> impl Parser<char, ObjectDef<ProcEffect>, Error = BareError> + '_ {
     let innards = object_clause(expr)
         .separated_by(just(',').then(ws().or_not()))
         .allow_trailing();
@@ -65,7 +65,8 @@ fn object_def(
         .try_map(|clauses, span| {
             clauses
                 .into_iter()
-                .collect::<Result<ObjectDef<ProcEffects>, String>>()
+                .collect::<Result<sappho_object::Object<_, _, _, _>, String>>()
+                .map(ObjectDef::new)
                 .map_err(|msg| BareError::custom(span, msg))
         })
         .labelled("object definition")

@@ -1,4 +1,6 @@
-use sappho_ast::{EffectExpr, Expr, FuncDef, ListPattern, Pattern, PureExpr, QueryDef, QueryExpr};
+use sappho_ast::{
+    Effect, EffectExpr, Expr, FuncDef, ListPattern, Pattern, PureExpr, QueryDef, QueryExpr,
+};
 use sappho_ast_core::{ApplicationExpr, LetClause, LetExpr, LookupExpr, ObjectDef};
 use sappho_identmap::IdentMap;
 use test_case::test_case;
@@ -7,7 +9,10 @@ fn num(f: f64) -> PureExpr {
     sappho_ast_core::Literal::Num(f).into()
 }
 
-fn refexpr<FX>(s: &str) -> Expr<FX> {
+fn refexpr<FX>(s: &str) -> Expr<FX>
+where
+    FX: Effect,
+{
     s.to_string().into()
 }
 
@@ -16,8 +21,8 @@ fn bind(s: &str) -> Pattern {
 }
 
 fn inquire(x: QueryExpr) -> QueryExpr {
-    use sappho_ast_core::QueryEffects;
-    QueryExpr::from(EffectExpr::new(QueryEffects::Inquire, Box::new(x)))
+    use sappho_ast_core::QueryEffect;
+    QueryExpr::from(EffectExpr::new(QueryEffect::Inquire, Box::new(x)))
 }
 
 fn list<T>(xs: T) -> PureExpr
@@ -55,12 +60,12 @@ fn query_def_expr(x: QueryExpr) -> PureExpr {
 }
 
 fn object_def(f: Option<FuncDef>, q: Option<QueryDef>) -> PureExpr {
-    ObjectDef::new(f, q, None, Default::default()).into()
+    ObjectDef::new_from_parts(f, q, None, Default::default()).into()
 }
 
 fn attrs_def<const K: usize>(attrs: [(&str, PureExpr); K]) -> PureExpr {
     let stringattrs = attrs.into_iter().map(|(s, x)| (s.to_string(), x));
-    ObjectDef::new(None, None, None, IdentMap::from_iter(stringattrs)).into()
+    ObjectDef::new_from_parts(None, None, None, IdentMap::from_iter(stringattrs)).into()
 }
 
 fn app_expr(t: PureExpr, a: PureExpr) -> PureExpr {
