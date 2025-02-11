@@ -65,7 +65,8 @@ fn object_def(
         .try_map(|clauses, span| {
             clauses
                 .into_iter()
-                .collect::<Result<ObjectDef<ProcEffect>, String>>()
+                .collect::<Result<sappho_object::Object<_, _, _, _>, String>>()
+                .map(ObjectDef::new)
                 .map_err(|msg| BareError::custom(span, msg))
         })
         .labelled("object definition")

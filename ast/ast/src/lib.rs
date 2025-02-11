@@ -12,7 +12,7 @@ mod expr;
 mod pattern;
 mod provider;
 
-pub use sappho_ast_core::{Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
+pub use sappho_ast_core::{Effect, Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
 
 pub use self::expr::Expr;
 pub use self::pattern::{ListPattern, Pattern, UnpackPattern};

@@ -20,6 +20,15 @@ where
     XP: ExprProvider,
     FX: Effect,
 {
+    pub fn new_from_parts(
+        f: Option<FuncDef<XP>>,
+        q: Option<QueryDef<XP>>,
+        p: Option<ProcDef<XP>>,
+        attrs: IdentMap<XP::Expr<FX>>,
+    ) -> Self {
+        Self::new(Object::new(f, q, p, attrs))
+    }
+
     pub fn new_func(func: FuncDef<XP>) -> Self {
         ObjectDef(Object::new_func(func))
     }
@@ -74,6 +83,14 @@ where
         self,
     ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
         self.0.unbundle()
+    }
+
+    pub fn into_try_map_values<F, FXD, E>(self, f: F) -> Result<ObjectDef<XP, FXD>, E>
+    where
+        F: Fn(XP::Expr<FX>) -> Result<XP::Expr<FXD>, E>,
+        FXD: Effect,
+    {
+        self.0.into_try_map_values(f).map(ObjectDef)
     }
 }
 

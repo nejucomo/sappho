@@ -1,8 +1,8 @@
 use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{
-    ApplicationExpr, CoreExpr, EffectExpr, Expr, LetClause, LetExpr, LookupExpr, MatchClause,
-    MatchExpr,
+    ApplicationExpr, CoreExpr, Effect, EffectExpr, Expr, LetClause, LetExpr, LookupExpr,
+    MatchClause, MatchExpr,
 };
 use sappho_ast_core::{ProcEffect, PureEffect, QueryEffect};
 
@@ -41,7 +41,8 @@ impl Restrict<ProcEffect> for QueryEffect {
 
 impl<FXS, FXD> Restrict<Expr<FXS>> for Expr<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: Expr<FXS>, span: Span) -> Result<Self, BareError> {
         use Expr::*;
@@ -64,7 +65,8 @@ where
 
 impl<FXS, FXD> Restrict<CoreExpr<FXS>> for CoreExpr<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: CoreExpr<FXS>, span: Span) -> Result<Self, BareError> {
         use sappho_ast_core::CoreExpr::*;
@@ -86,7 +88,8 @@ where
 
 impl<FXS, FXD> Restrict<LetExpr<FXS>> for LetExpr<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: LetExpr<FXS>, span: Span) -> Result<Self, BareError> {
         let clauses: Vec<LetClause<FXD>> = src
@@ -102,7 +105,8 @@ where
 
 impl<FXS, FXD> Restrict<LetClause<FXS>> for LetClause<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: LetClause<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(LetClause {
@@ -114,7 +118,8 @@ where
 
 impl<FXS, FXD> Restrict<MatchExpr<FXS>> for MatchExpr<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: MatchExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(MatchExpr {
@@ -130,7 +135,8 @@ where
 
 impl<FXS, FXD> Restrict<MatchClause<FXS>> for MatchClause<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: MatchClause<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(MatchClause {
@@ -142,7 +148,8 @@ where
 
 impl<FXS, FXD> Restrict<ApplicationExpr<FXS>> for ApplicationExpr<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: ApplicationExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(ApplicationExpr {
@@ -154,7 +161,8 @@ where
 
 impl<FXS, FXD> Restrict<LookupExpr<FXS>> for LookupExpr<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: LookupExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(LookupExpr {
@@ -166,7 +174,8 @@ where
 
 impl<FXS, FXD> Restrict<EffectExpr<FXS>> for EffectExpr<FXD>
 where
-    FXD: Restrict<FXS>,
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
 {
     fn restrict(src: EffectExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(EffectExpr {
