@@ -24,5 +24,5 @@ pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::object::ObjectDef;
 pub use self::proc::{ProcDef, Statements};
-pub use self::provider::ExprProvider;
+pub use self::provider::AstProvider;
 pub use self::query::QueryDef;

@@ -1,10 +1,12 @@
 //! Top-level expression type `Expr`, generic over effects [PureEffect](sappho_ast_core::PureEffect), [QueryEffect](sappho_ast_core::QueryEffect), or [ProcEffect](sappho_ast_core::ProcEffect).
 
-use crate::{CoreExpr, FuncDef, ListExpr, ProcDef, QueryDef};
+use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
+
+use crate::{Ast, ListExpr};
 
 /// The general top-level expression for all effects.
 #[derive(Clone, Debug, PartialEq)]
@@ -12,19 +14,19 @@ pub enum Expr<FX>
 where
     FX: Effect,
 {
-    Core(CoreExpr<FX>),
+    Core(CoreExpr<Ast, FX>),
 
     // Extensions from Core:
-    Func(FuncDef),
-    Query(QueryDef),
-    Proc(ProcDef),
+    Func(FuncDef<Ast>),
+    Query(QueryDef<Ast>),
+    Proc(ProcDef<Ast>),
     List(ListExpr<FX>),
 }
 
 impl<FX, T> From<T> for Expr<FX>
 where
     FX: Effect,
-    CoreExpr<FX>: From<T>,
+    CoreExpr<Ast, FX>: From<T>,
 {
     fn from(x: T) -> Self {
         Expr::Core(CoreExpr::from(x))
@@ -39,7 +41,7 @@ where
     where
         T: IntoIterator<Item = Expr<FX>>,
     {
-        Expr::List(ListExpr::new(iter, None))
+        Expr::List(ListExpr::new_from_parts(iter, None))
     }
 }
 

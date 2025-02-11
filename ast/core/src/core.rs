@@ -1,5 +1,5 @@
 use crate::{
-    ApplicationExpr, EffectExpr, ExprProvider, Identifier, LetExpr, Literal, LookupExpr, MatchExpr,
+    ApplicationExpr, AstProvider, EffectExpr, Identifier, LetExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef,
 };
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
@@ -9,7 +9,7 @@ use sappho_unparse::{Stream, Unparse};
 #[derive(Debug, derive_more::From)]
 pub enum CoreExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     Lit(Literal),
@@ -24,12 +24,12 @@ where
 
 impl<XP, FX> CoreExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> CoreExpr<XPD, FX>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
         XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
@@ -53,7 +53,7 @@ where
 
 impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for CoreExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
@@ -66,7 +66,7 @@ where
 
 impl<XP, FX> Unparse for CoreExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -87,7 +87,7 @@ where
 
 impl<XP, FX> Clone for CoreExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -108,7 +108,7 @@ where
 
 impl<XP, FX> PartialEq for CoreExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

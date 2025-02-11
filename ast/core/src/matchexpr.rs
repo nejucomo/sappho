@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::ExprProvider;
+use crate::AstProvider;
 
 pub use self::clause::MatchClause;
 
@@ -11,7 +11,7 @@ pub use self::clause::MatchClause;
 #[derive(Debug, derive_new::new)]
 pub struct MatchExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     /// The match target, ie: `x` in `match x { 3 -> 0, y -> y }`.
@@ -23,12 +23,12 @@ where
 
 impl<XP, FX> MatchExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> MatchExpr<XPD, FX>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
@@ -45,7 +45,7 @@ where
 
 impl<XP, FX> Unparse for MatchExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -66,7 +66,7 @@ where
 
 impl<XP, FX> Clone for MatchExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -76,7 +76,7 @@ where
 
 impl<XP, FX> PartialEq for MatchExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

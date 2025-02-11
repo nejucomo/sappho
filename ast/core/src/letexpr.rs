@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::ExprProvider;
+use crate::AstProvider;
 
 pub use self::clause::LetClause;
 
@@ -11,7 +11,7 @@ pub use self::clause::LetClause;
 #[derive(Debug, derive_new::new)]
 pub struct LetExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     /// The let clauses:
@@ -23,12 +23,12 @@ where
 
 impl<XP, FX> LetExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> LetExpr<XPD, FX>
     where
-        XPD: ExprProvider,
+        XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
@@ -45,7 +45,7 @@ where
 
 impl<XP, FX> Unparse for LetExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -73,7 +73,7 @@ where
 
 impl<XP, FX> Clone for LetExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -83,7 +83,7 @@ where
 
 impl<XP, FX> PartialEq for LetExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {
