@@ -5,7 +5,7 @@ use sappho_unparse::Unparse;
 
 /// # Note
 ///
-/// The supertraits [Debug], [Clone], and [PartialEq] are a hack to enable derivation for container types that wrap [ExprProvider::Expr] or [ExprProvider::Pattern].
+/// The supertraits [Debug], [Clone], and [PartialEq] are a hack to enable derivation for container types that wrap [AstProvider::Expr] or [AstProvider::Pattern].
 ///
 /// TODO: Replace hand-written impls of the above with derivations.
 pub trait AstProvider: Debug + Clone + PartialEq {

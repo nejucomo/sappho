@@ -3,17 +3,17 @@ use sappho_ast_comments::Commented;
 use sappho_ast_effect::Effect;
 use sappho_unparse::Unparse;
 
-use crate::ExprProvider;
+use crate::AstProvider;
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct CommentedExpr<XP, FX>(Commented<XP::Expr<FX>>)
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect;
 
 impl<XP, FX> CommentedExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     pub fn new_bare<X>(expr: X) -> Self
@@ -26,7 +26,7 @@ where
     pub fn map_expr<F, XPD>(self, f: F) -> CommentedExpr<XPD, FX>
     where
         F: FnOnce(XP::Expr<FX>) -> XPD::Expr<FX>,
-        XPD: ExprProvider,
+        XPD: AstProvider,
     {
         CommentedExpr::new(self.0.map(f))
     }
@@ -34,7 +34,7 @@ where
 
 impl<XP, FX> Unparse for CommentedExpr<XP, FX>
 where
-    XP: ExprProvider,
+    XP: AstProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
