@@ -2,7 +2,7 @@
 
 use std::fmt;
 
-use sappho_ast_core::CommentedExpr;
+use sappho_ast_core::{CommentedExpr, CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};

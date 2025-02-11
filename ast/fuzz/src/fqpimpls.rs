@@ -1,7 +1,7 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Ast, Expr};
-use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
+use sappho_ast::Ast;
+use sappho_ast_core::{CommentedExpr, FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
 use sappho_identmap::IdentMap;
 use sappho_object::Object;
 
@@ -15,7 +15,7 @@ where
 {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ObjectDef<Ast, FX> {
         ObjectDef::new(
-            rng.sample::<Object<FuncDef<Ast>, QueryDef<Ast>, ProcDef<Ast>, Expr<FX>>, _>(self),
+            rng.sample::<Object<FuncDef<Ast>, QueryDef<Ast>, ProcDef<Ast>, CommentedExpr<Ast, FX>>, _>(self),
         )
     }
 }

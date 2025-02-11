@@ -1,14 +1,35 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast::{Ast, Effect, Expr, Identifier, ListExpr, Literal};
+use sappho_ast_comments::Commented;
 use sappho_ast_core::{
-    ApplicationExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, LookupExpr, MatchExpr, ObjectDef,
-    ProcDef, QueryDef,
+    ApplicationExpr, BoxExpr, CommentedExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, LookupExpr,
+    MatchExpr, ObjectDef, ProcDef, QueryDef,
 };
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;
+
+impl<FX> Distribution<BoxExpr<Ast, FX>> for AstFuzz
+where
+    FX: Effect + FxFuzz,
+    AstFuzz: Distribution<FX>,
+{
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> BoxExpr<Ast, FX> {
+        BoxExpr::new(rng.sample::<Box<CommentedExpr<Ast, FX>>, _>(self))
+    }
+}
+
+impl<FX> Distribution<CommentedExpr<Ast, FX>> for AstFuzz
+where
+    FX: Effect + FxFuzz,
+    AstFuzz: Distribution<FX>,
+{
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> CommentedExpr<Ast, FX> {
+        CommentedExpr::new(rng.sample::<Commented<Expr<FX>>, _>(self))
+    }
+}
 
 impl<FX> Distribution<Expr<FX>> for AstFuzz
 where
