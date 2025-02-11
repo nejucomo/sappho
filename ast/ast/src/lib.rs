@@ -12,26 +12,27 @@ mod expr;
 mod pattern;
 mod provider;
 
+pub use sappho_ast_core::{Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
+
 pub use self::expr::Expr;
 pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
-pub use self::provider::AstProvider;
-pub use sappho_ast_core::{Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
+pub use self::provider::Ast;
 
 pub type ProcExpr = Expr<sappho_ast_core::ProcEffect>;
 pub type PureExpr = Expr<sappho_ast_core::PureEffect>;
 pub type QueryExpr = Expr<sappho_ast_core::QueryEffect>;
 
-pub type ApplicationExpr<FX> = sappho_ast_core::ApplicationExpr<AstProvider, FX>;
-pub type CoreExpr<FX> = sappho_ast_core::CoreExpr<AstProvider, FX>;
-pub type EffectExpr<FX> = sappho_ast_core::EffectExpr<AstProvider, FX>;
-pub type FuncDef = sappho_ast_core::FuncDef<AstProvider>;
-pub type LetClause<FX> = sappho_ast_core::LetClause<AstProvider, FX>;
-pub type LetExpr<FX> = sappho_ast_core::LetExpr<AstProvider, FX>;
+pub type ApplicationExpr<FX> = sappho_ast_core::ApplicationExpr<Ast, FX>;
+pub type CoreExpr<FX> = sappho_ast_core::CoreExpr<Ast, FX>;
+pub type EffectExpr<FX> = sappho_ast_core::EffectExpr<Ast, FX>;
+pub type FuncDef = sappho_ast_core::FuncDef<Ast>;
+pub type LetClause<FX> = sappho_ast_core::LetClause<Ast, FX>;
+pub type LetExpr<FX> = sappho_ast_core::LetExpr<Ast, FX>;
 pub type ListExpr<FX> = sappho_listform::ListForm<Expr<FX>, Box<Expr<FX>>>;
-pub type LookupExpr<FX> = sappho_ast_core::LookupExpr<AstProvider, FX>;
-pub type MatchClause<FX> = sappho_ast_core::MatchClause<AstProvider, FX>;
-pub type MatchExpr<FX> = sappho_ast_core::MatchExpr<AstProvider, FX>;
-pub type ObjectDef<FX> = sappho_ast_core::ObjectDef<AstProvider, FX>;
-pub type ProcDef = sappho_ast_core::ProcDef<AstProvider>;
-pub type QueryDef = sappho_ast_core::QueryDef<AstProvider>;
-pub type Statements = sappho_ast_core::Statements<AstProvider>;
+pub type LookupExpr<FX> = sappho_ast_core::LookupExpr<Ast, FX>;
+pub type MatchClause<FX> = sappho_ast_core::MatchClause<Ast, FX>;
+pub type MatchExpr<FX> = sappho_ast_core::MatchExpr<Ast, FX>;
+pub type ObjectDef<FX> = sappho_ast_core::ObjectDef<Ast, FX>;
+pub type ProcDef = sappho_ast_core::ProcDef<Ast>;
+pub type QueryDef = sappho_ast_core::QueryDef<Ast>;
+pub type Statements = sappho_ast_core::Statements<Ast>;

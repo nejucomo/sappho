@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use derive_new::new;
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
@@ -18,6 +20,25 @@ where
     XP: ExprProvider,
     FX: Effect,
 {
+    pub fn new_func(func: FuncDef<XP>) -> Self {
+        ObjectDef(Object::new_func(func))
+    }
+
+    pub fn new_query(query: QueryDef<XP>) -> Self {
+        ObjectDef(Object::new_query(query))
+    }
+
+    pub fn new_proc(proc: ProcDef<XP>) -> Self {
+        ObjectDef(Object::new_proc(proc))
+    }
+
+    pub fn new_attrs<T>(attrs: T) -> Self
+    where
+        T: Into<IdentMap<XP::Expr<FX>>>,
+    {
+        ObjectDef(Object::new_attrs(attrs))
+    }
+
     pub fn transform_into<XPD>(self) -> ObjectDef<XPD, FX>
     where
         XPD: ExprProvider,
@@ -33,6 +54,34 @@ where
             |proc| proc.transform_into(),
             XPD::Expr::<FX>::from,
         ))
+    }
+
+    pub fn unbundle(
+        self,
+    ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
+        self.0.unbundle()
+    }
+}
+
+impl<XP, FX> Default for ObjectDef<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn default() -> Self {
+        ObjectDef(Object::default())
+    }
+}
+
+impl<XP, FX> Deref for ObjectDef<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    type Target = Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

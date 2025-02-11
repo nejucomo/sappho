@@ -4,7 +4,6 @@ use sappho_ast::{
     ApplicationExpr, CoreExpr, EffectExpr, Expr, FuncDef, Identifier, LetExpr, ListExpr, Literal,
     LookupExpr, MatchExpr, ObjectDef, ProcDef, QueryDef,
 };
-use sappho_ast_effect::Effect;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::effectsimpls::FxFuzz;

@@ -1,14 +1,22 @@
-use crate::{CoreExpr, ObjectDef};
-use sappho_ast as ast;
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
-use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 use std::ops::Deref;
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Expr<Effect>(CoreExpr<Effect>);
+use sappho_ast as ast;
+use sappho_ast_effect::Effect;
+use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_unparse::{Stream, Unparse};
 
-impl<FX> Expr<FX> {
+use crate::{CoreExpr, ObjectDef};
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Expr<FX>(CoreExpr<FX>)
+where
+    FX: Effect;
+
+impl<FX> Expr<FX>
+where
+    FX: Effect,
+{
     pub fn new<T>(x: T) -> Self
     where
         CoreExpr<FX>: From<T>,
@@ -17,7 +25,10 @@ impl<FX> Expr<FX> {
     }
 }
 
-impl<FX> Deref for Expr<FX> {
+impl<FX> Deref for Expr<FX>
+where
+    FX: Effect,
+{
     type Target = CoreExpr<FX>;
 
     fn deref(&self) -> &Self::Target {
@@ -25,7 +36,10 @@ impl<FX> Deref for Expr<FX> {
     }
 }
 
-impl<FX> From<ast::Expr<FX>> for Expr<FX> {
+impl<FX> From<ast::Expr<FX>> for Expr<FX>
+where
+    FX: Effect,
+{
     fn from(x: ast::Expr<FX>) -> Self {
         match x {
             ast::Expr::Core(x) => Expr(x.transform_into()),
@@ -43,7 +57,10 @@ impl<FX> From<ast::Expr<FX>> for Expr<FX> {
     }
 }
 
-impl<FX> From<ast::ListExpr<FX>> for Expr<FX> {
+impl<FX> From<ast::ListExpr<FX>> for Expr<FX>
+where
+    FX: Effect,
+{
     fn from(x: ast::ListExpr<FX>) -> Self {
         use sappho_ast_core::CoreExpr::Object;
 
@@ -65,7 +82,7 @@ impl<FX> From<ast::ListExpr<FX>> for Expr<FX> {
 
 impl<FX> From<Expr<FX>> for ast::Expr<FX>
 where
-    FX: Clone,
+    FX: Effect,
 {
     fn from(x: Expr<FX>) -> Self {
         match x.0 {
@@ -77,15 +94,14 @@ where
 
 fn objdef_to_ast_expr<FX>(objdef: ObjectDef<FX>) -> ast::Expr<FX>
 where
-    FX: Clone,
+    FX: Effect,
 {
     use ast::Expr::{Core, Func, List, Proc, Query};
-    use sappho_ast_core::transform_object_def;
     use sappho_ast_core::CoreExpr::Object;
     use sappho_object::Unbundled as U;
 
     match objdef.unbundle() {
-        U::Bundled(obj) => Core(transform_object_def(obj).into()),
+        U::Bundled(obj) => Core(obj.transform_into()),
         U::Func(f) => Func(f.transform_into()),
         U::Query(q) => Query(q.transform_into()),
         U::Proc(p) => Proc(p.transform_into()),
@@ -98,11 +114,14 @@ where
                         .map_tail(|x| Box::new(ast::Expr::from(x.clone()))),
                 )
             })
-            .unwrap_or_else(|| Core(Object(transform_object_def(ObjectDef::new_attrs(a))))),
+            .unwrap_or_else(|| Core(Object(ObjectDef::new_attrs(a)))),
     }
 }
 
-impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
+impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
+where
+    FX: Effect,
+{
     fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
         self.0.try_into_identmap()
     }
@@ -110,7 +129,7 @@ impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
 
 impl<FX> Unparse for Expr<FX>
 where
-    FX: Unparse,
+    FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
         self.0.unparse_into(s);
@@ -119,7 +138,7 @@ where
 
 impl<FX> fmt::Display for Expr<FX>
 where
-    FX: Unparse,
+    FX: Effect,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.unparse().fmt(f)
