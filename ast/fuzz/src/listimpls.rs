@@ -1,6 +1,7 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Effect, Expr, ListExpr};
+use sappho_ast::{Ast, Effect, ListExpr};
+use sappho_ast_core::{BoxExpr, CommentedExpr};
 use sappho_listform::ListForm;
 
 use crate::effectsimpls::FxFuzz;
@@ -12,7 +13,7 @@ where
     AstFuzz: Distribution<FX>,
 {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ListExpr<FX> {
-        ListExpr::new(rng.sample::<ListForm<Expr<FX>, Box<Expr<FX>>>, _>(self))
+        ListExpr::new(rng.sample::<ListForm<CommentedExpr<Ast, FX>, BoxExpr<Ast, FX>>, _>(self))
     }
 }
 
