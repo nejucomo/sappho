@@ -23,6 +23,7 @@ where
 
 impl<FX, T> From<T> for Expr<FX>
 where
+    FX: Effect,
     CoreExpr<FX>: From<T>,
 {
     fn from(x: T) -> Self {
@@ -30,7 +31,10 @@ where
     }
 }
 
-impl<FX> FromIterator<Expr<FX>> for Expr<FX> {
+impl<FX> FromIterator<Expr<FX>> for Expr<FX>
+where
+    FX: Effect,
+{
     fn from_iter<T>(iter: T) -> Self
     where
         T: IntoIterator<Item = Expr<FX>>,
@@ -39,7 +43,10 @@ impl<FX> FromIterator<Expr<FX>> for Expr<FX> {
     }
 }
 
-impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
+impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
+where
+    FX: Effect,
+{
     fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
         match self {
             Expr::Core(c) => c.try_into_identmap(),
@@ -50,7 +57,7 @@ impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX> {
 
 impl<FX> Unparse for Expr<FX>
 where
-    FX: Unparse,
+    FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use Expr::*;
@@ -67,7 +74,7 @@ where
 
 impl<FX> fmt::Display for Expr<FX>
 where
-    FX: Unparse,
+    FX: Effect,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.unparse().fmt(f)

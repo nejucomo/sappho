@@ -36,6 +36,17 @@ where
     }
 }
 
+impl<XP, FX> AsRef<Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>>
+    for ObjectDef<XP, FX>
+where
+    XP: ExprProvider,
+    FX: Effect,
+{
+    fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
+        &self.0
+    }
+}
+
 impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for ObjectDef<XP, FX>
 where
     XP: ExprProvider,

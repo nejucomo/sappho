@@ -1,11 +1,12 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast::{ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_effect::Effect;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::AstFuzz;
 
-pub(crate) trait FxFuzz: Sized + std::fmt::Debug
+pub(crate) trait FxFuzz: Effect
 where
     AstFuzz: Distribution<Self>,
 {

@@ -1,10 +1,21 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{FuncDef, ProcDef, QueryDef, Statements};
+use sappho_ast::{Expr, FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
 use sappho_identmap::IdentMap;
 use sappho_object::Object;
 
+use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;
+
+impl<FX> Distribution<ObjectDef<FX>> for AstFuzz
+where
+    FX: FxFuzz,
+    AstFuzz: Distribution<FX>,
+{
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ObjectDef<FX> {
+        ObjectDef::new(rng.sample::<Object<FuncDef, QueryDef, ProcDef, Expr<FX>>, _>(self))
+    }
+}
 
 impl<F, Q, P, A> Distribution<Object<F, Q, P, A>> for AstFuzz
 where
