@@ -101,7 +101,7 @@ where
     use sappho_object::Unbundled as U;
 
     match objdef.unbundle() {
-        U::Bundled(obj) => Core(obj.transform_into()),
+        U::Bundled(obj) => Core(Object(ObjectDef::new(obj).transform_into())),
         U::Func(f) => Func(f.transform_into()),
         U::Query(q) => Query(q.transform_into()),
         U::Proc(p) => Proc(p.transform_into()),
@@ -114,7 +114,7 @@ where
                         .map_tail(|x| Box::new(ast::Expr::from(x.clone()))),
                 )
             })
-            .unwrap_or_else(|| Core(Object(ObjectDef::new_attrs(a)))),
+            .unwrap_or_else(|| Core(Object(ObjectDef::new_attrs(a).transform_into()))),
     }
 }
 

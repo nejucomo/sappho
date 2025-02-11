@@ -48,12 +48,26 @@ where
         XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
         XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
     {
-        ObjectDef(self.0.transform(
+        ObjectDef(self.transform_into_object())
+    }
+
+    pub fn transform_into_object<XPD>(
+        self,
+    ) -> Object<FuncDef<XPD>, QueryDef<XPD>, ProcDef<XPD>, XPD::Expr<FX>>
+    where
+        XPD: ExprProvider,
+        XPD::Pattern: From<XP::Pattern>,
+        XPD::Expr<FX>: From<XP::Expr<FX>>,
+        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
+        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
+        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
+    {
+        self.0.transform(
             |func| func.transform_into(),
             |query| query.transform_into(),
             |proc| proc.transform_into(),
             XPD::Expr::<FX>::from,
-        ))
+        )
     }
 
     pub fn unbundle(
