@@ -11,10 +11,10 @@ mod recoreimpls;
 
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
-use sappho_ast::PureExpr;
+use sappho_ast::{Expr, PureEffect};
 
 /// Return `(seed, expr)` where `expr` is a randomly generated expression using `seed`
-pub fn random_expr(max_depth: usize) -> (u64, PureExpr) {
+pub fn random_expr(max_depth: usize) -> (u64, Expr<PureEffect>) {
     let seed: u64 = rand::rng().random();
     let mut prng = StdRng::seed_from_u64(seed);
     let expr = prng.sample(AstFuzz::new(max_depth));
