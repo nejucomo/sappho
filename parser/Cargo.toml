@@ -8,7 +8,7 @@ homepage.workspace = true
 [dependencies]
 anyhow.workspace = true
 chumsky.workspace = true
-derive_more.workspace = true
+derive_more = { workspace = true, features = ["from"] }
 sappho-ast-core.workspace = true
 sappho-ast.workspace = true
 sappho-identmap.workspace = true

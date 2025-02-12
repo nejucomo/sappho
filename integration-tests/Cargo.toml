@@ -13,7 +13,7 @@ anyhow.workspace = true
 [dev-dependencies]
 anyhow-std.workspace = true
 anyhow.workspace = true
-derive_more.workspace = true
+derive_more = { workspace = true, features = ["from"] }
 sappho-interpreter.workspace = true
 sappho-parser.workspace = true
 sappho-transform.workspace = true

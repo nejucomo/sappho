@@ -6,5 +6,6 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+derive_more = { workspace = true, features = ["from", "into"] }
 sappho-listform.workspace = true
 sappho-unparse.workspace = true

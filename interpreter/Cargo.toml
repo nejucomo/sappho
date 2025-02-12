@@ -8,7 +8,7 @@ homepage.workspace = true
 [dependencies]
 anyhow-std.workspace = true
 anyhow.workspace = true
-derive_more.workspace = true
+derive_more = { workspace = true, features = ["from"] }
 sappho-eval.workspace = true
 sappho-parser.workspace = true
 sappho-source.workspace = true

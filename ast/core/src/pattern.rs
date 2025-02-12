@@ -1,0 +1,51 @@
+use crate::{Identifier, Literal};
+use sappho_identmap::{IdentMap, ListUnroll, TryIntoIdentMap};
+use sappho_listform::ListForm;
+use sappho_unparse::{Stream, Unparse};
+use std::fmt;
+
+#[derive(Clone, Debug, PartialEq, derive_more::From)]
+pub enum CorePattern {
+    Bind(Identifier),
+    LitEq(Literal),
+    Unpack(IdentMap<CorePattern>),
+}
+
+impl<X, T> From<ListForm<X, T>> for CorePattern
+where
+    CorePattern: From<T> + From<X>,
+{
+    fn from(lf: ListForm<X, T>) -> CorePattern {
+        ListUnroll::from(lf).into_inner()
+    }
+}
+
+impl Unparse for CorePattern {
+    fn unparse_into(&self, s: &mut Stream) {
+        use CorePattern::*;
+
+        match self {
+            Bind(x) => x.unparse_into(s),
+            LitEq(x) => x.unparse_into(s),
+            Unpack(x) => x.unparse_into(s),
+        }
+    }
+}
+
+impl fmt::Display for CorePattern {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.unparse().fmt(f)
+    }
+}
+
+impl TryIntoIdentMap<CorePattern> for CorePattern {
+    fn try_into_identmap(&self) -> Option<&IdentMap<CorePattern>> {
+        match self {
+            CorePattern::Unpack(up) => Some(up),
+            _ => None,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests;

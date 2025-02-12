@@ -6,7 +6,6 @@ members = [
   "ast/core",
   "ast/effect",
   "ast/fuzz",
-  "ast/reduced",
   "cli",
   "eval",
   "identmap",
@@ -33,7 +32,7 @@ anyhow = "1.0.71"
 anyhow-std = "0.1.4"
 chumsky = "0.9.3"
 clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
-derive_more = "0.99.17"
+derive_more = "2.0"
 derive-new = "0.5.9"
 include_dir = "0.7"
 indoc = "1.0.6"
@@ -44,7 +43,6 @@ sappho-ast-core = { path = "ast/core" }
 sappho-ast-effect = { path = "ast/effect" }
 sappho-ast-fuzz = { path = "ast/fuzz" }
 sappho-ast = { path = "ast/ast" }
-sappho-ast-reduced = { path = "ast/reduced" }
 sappho-cli = { path = "cli" }
 sappho-eval = { path = "eval" }
 sappho-identmap = { path = "identmap" }

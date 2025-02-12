@@ -6,7 +6,7 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-derive_more.workspace = true
+derive_more = { workspace = true, features = ["from"] }
 derive-new.workspace = true
 sappho-ast-core.workspace = true
 sappho-ast-effect.workspace = true
