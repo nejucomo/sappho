@@ -24,12 +24,26 @@ where
         CommentedExpr::new(Commented::from(XP::Expr::from(expr)))
     }
 
-    pub fn map_expr<F, XPD>(self, f: F) -> CommentedExpr<XPD, FX>
+    pub fn into_inner(self) -> (String, XP::Expr<FX>) {
+        self.0.into_inner()
+    }
+
+    pub fn map_expr<F, XPD, FXD>(self, f: F) -> CommentedExpr<XPD, FXD>
     where
-        F: FnOnce(XP::Expr<FX>) -> XPD::Expr<FX>,
+        F: FnOnce(XP::Expr<FX>) -> XPD::Expr<FXD>,
         XPD: AstProvider,
+        FXD: Effect,
     {
         CommentedExpr::new(self.0.map(f))
+    }
+
+    pub fn try_map_expr<F, XPD, FXD, E>(self, f: F) -> Result<CommentedExpr<XPD, FXD>, E>
+    where
+        F: FnOnce(XP::Expr<FX>) -> Result<XPD::Expr<FXD>, E>,
+        XPD: AstProvider,
+        FXD: Effect,
+    {
+        self.0.try_map(f).map(CommentedExpr::new)
     }
 }
 

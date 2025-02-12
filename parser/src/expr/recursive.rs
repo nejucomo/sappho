@@ -1,15 +1,17 @@
 use crate::error::BareError;
 use crate::expr::pattern::pattern;
+use crate::expr::ProcRecursion;
 use crate::keyword::Keyword;
 use crate::space::ws;
 use chumsky::primitive::just;
-use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Ast, Expr, ListExpr, ProcExpr};
-use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr, ProcEffect};
+use sappho_ast_core::{
+    BoxExpr, CommentedExpr, LetClause, LetExpr, MatchClause, MatchExpr, ProcEffect,
+};
 
 pub(crate) fn recursive_expr(
-    expr: Recursive<char, ProcExpr, BareError>,
+    expr: ProcRecursion,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     use Expr::List;
 
@@ -17,20 +19,21 @@ pub(crate) fn recursive_expr(
         .map(List)
         .or(let_expr(expr.clone()).map(Expr::from))
         .or(match_expr(expr).map(Expr::from))
+        .map(CommentedExpr::new_bare)
 }
 
 fn list_expr(
-    expr: Recursive<char, ProcExpr, BareError>,
+    expr: ProcRecursion,
 ) -> impl Parser<char, ListExpr<ProcEffect>, Error = BareError> + '_ {
     use crate::listform::list_form;
 
-    list_form(expr.clone(), expr.map(Box::new))
+    list_form(expr.clone(), expr.map(BoxExpr::from))
         .map(ListExpr::new)
         .labelled("list-expression")
 }
 
 fn let_expr(
-    expr: Recursive<char, ProcExpr, BareError>,
+    expr: ProcRecursion,
 ) -> impl Parser<char, LetExpr<Ast, ProcEffect>, Error = BareError> + '_ {
     let_clause(expr.clone())
         .then_ignore(ws())
@@ -39,13 +42,13 @@ fn let_expr(
         .then(expr)
         .map(|(clauses, tail)| LetExpr {
             clauses,
-            tail: Box::new(tail),
+            tail: BoxExpr::from(tail),
         })
         .labelled("let-expression")
 }
 
 fn let_clause(
-    expr: Recursive<char, ProcExpr, BareError>,
+    expr: ProcRecursion,
 ) -> impl Parser<char, LetClause<Ast, ProcEffect>, Error = BareError> + '_ {
     Keyword::Let
         .parser()
@@ -55,12 +58,12 @@ fn let_clause(
         .then_ignore(just(';'))
         .map(|(binding, bindexpr)| LetClause {
             binding,
-            bindexpr: Box::new(bindexpr),
+            bindexpr: BoxExpr::from(bindexpr),
         })
 }
 
 fn match_expr(
-    expr: Recursive<char, ProcExpr, BareError>,
+    expr: ProcRecursion,
 ) -> impl Parser<char, MatchExpr<Ast, ProcEffect>, Error = BareError> + '_ {
     use crate::delimited::delimited;
 
@@ -76,21 +79,21 @@ fn match_expr(
             '}',
         ))
         .map(|(target, clauses)| MatchExpr {
-            target: Box::new(target),
+            target: BoxExpr::from(target),
             clauses,
         })
         .labelled("match-expression")
 }
 
 fn match_clause(
-    expr: Recursive<char, ProcExpr, BareError>,
+    expr: ProcRecursion,
 ) -> impl Parser<char, MatchClause<Ast, ProcEffect>, Error = BareError> + '_ {
     pattern()
         .then_ignore(just("->").delimited_by(ws(), ws()))
         .then(expr)
         .map(|(pattern, body)| MatchClause {
             pattern,
-            body: Box::new(body),
+            body: BoxExpr::from(body),
         })
         .labelled("match-clause")
 }

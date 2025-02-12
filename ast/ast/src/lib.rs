@@ -13,6 +13,7 @@ mod listexpr;
 mod pattern;
 mod provider;
 
+use sappho_ast_core::CommentedExpr;
 pub use sappho_ast_core::{Effect, Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
 
 pub use self::expr::Expr;
@@ -20,6 +21,6 @@ pub use self::listexpr::ListExpr;
 pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
 pub use self::provider::Ast;
 
-pub type PureExpr = Expr<PureEffect>;
-pub type QueryExpr = Expr<QueryEffect>;
-pub type ProcExpr = Expr<ProcEffect>;
+pub type PureExpr = CommentedExpr<Ast, PureEffect>;
+pub type QueryExpr = CommentedExpr<Ast, QueryEffect>;
+pub type ProcExpr = CommentedExpr<Ast, ProcEffect>;

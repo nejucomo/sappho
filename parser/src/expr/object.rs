@@ -5,31 +5,33 @@ use crate::delimited::delimited;
 use crate::error::BareError;
 use crate::expr::pattern::pattern;
 use crate::expr::universal::identifier;
-use crate::expr::{pure_expr, query_expr};
+use crate::expr::{pure_expr, query_expr, ProcRecursion};
 use crate::keyword::Keyword;
 use crate::space::ws;
 use chumsky::primitive::just;
-use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Ast, Expr, Identifier, ProcExpr};
-use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, ProcEffect, QueryDef};
+use sappho_ast_core::{BoxExpr, CommentedExpr, FuncDef, ObjectDef, ProcDef, ProcEffect, QueryDef};
 use sappho_object::Element;
 
 pub(crate) fn object_expr(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: ProcRecursion<'_>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     use Expr::{Func, Proc, Query};
 
     object_def(expr.clone())
         .map(Expr::from)
-        .or(func_def(expr.clone()).map(Func))
-        .or(query_def(expr.clone()).map(Query))
-        .or(proc_def(expr).map(Proc))
+        .map(CommentedExpr::new_bare)
+        .or(func_def(expr.clone())
+            .map(Func)
+            .map(CommentedExpr::new_bare))
+        .or(query_def(expr.clone())
+            .map(Query)
+            .map(CommentedExpr::new_bare))
+        .or(proc_def(expr).map(Proc).map(CommentedExpr::new_bare))
 }
 
-fn func_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, FuncDef<Ast>, Error = BareError> + '_ {
+fn func_def(expr: ProcRecursion<'_>) -> impl Parser<char, FuncDef<Ast>, Error = BareError> + '_ {
     Keyword::Fn
         .parser()
         .ignore_then(pattern())
@@ -37,25 +39,23 @@ fn func_def(
         .then(pure_expr(expr))
         .map(|(binding, body)| FuncDef {
             binding,
-            body: Box::new(body),
+            body: BoxExpr::from(body),
         })
         .labelled("fn definition")
 }
 
-fn query_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, QueryDef<Ast>, Error = BareError> + '_ {
+fn query_def(expr: ProcRecursion<'_>) -> impl Parser<char, QueryDef<Ast>, Error = BareError> + '_ {
     Keyword::Query
         .parser()
         .ignore_then(query_expr(expr))
         .map(|body| QueryDef {
-            body: Box::new(body),
+            body: BoxExpr::from(body),
         })
         .labelled("query definition")
 }
 
 fn object_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: ProcRecursion<'_>,
 ) -> impl Parser<char, ObjectDef<Ast, ProcEffect>, Error = BareError> + '_ {
     let innards = object_clause(expr)
         .separated_by(just(',').then(ws().or_not()))
@@ -75,7 +75,7 @@ fn object_def(
 type ObjectClause = Element<FuncDef<Ast>, QueryDef<Ast>, ProcDef<Ast>, ProcExpr>;
 
 fn object_clause(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: ProcRecursion<'_>,
 ) -> impl Parser<char, ObjectClause, Error = BareError> + '_ {
     use Element::*;
 
@@ -87,7 +87,7 @@ fn object_clause(
 }
 
 fn attr_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: ProcRecursion<'_>,
 ) -> impl Parser<char, (Identifier, ProcExpr), Error = BareError> + '_ {
     identifier()
         .then_ignore(ws().or_not())

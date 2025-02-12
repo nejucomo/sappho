@@ -1,19 +1,20 @@
 use sappho_ast::{Ast, Effect, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_ast_core::{
-    ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
+    ApplicationExpr, BoxExpr, CommentedExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr,
+    ObjectDef, QueryDef,
 };
 use sappho_identmap::IdentMap;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
-    sappho_ast_core::Literal::Num(f).into()
+    CommentedExpr::new_bare(sappho_ast_core::Literal::Num(f))
 }
 
-fn refexpr<FX>(s: &str) -> Expr<FX>
+fn refexpr<FX>(s: &str) -> CommentedExpr<Ast, FX>
 where
     FX: Effect,
 {
-    s.to_string().into()
+    CommentedExpr::new_bare(s.to_string())
 }
 
 fn bind(s: &str) -> Pattern {
@@ -22,58 +23,65 @@ fn bind(s: &str) -> Pattern {
 
 fn inquire(x: QueryExpr) -> QueryExpr {
     use sappho_ast_core::QueryEffect;
-    QueryExpr::from(EffectExpr::new(QueryEffect::Inquire, Box::new(x)))
+    QueryExpr::from(CommentedExpr::new_bare(EffectExpr::new(
+        QueryEffect::Inquire,
+        BoxExpr::from(x),
+    )))
 }
 
 fn list<T>(xs: T) -> PureExpr
 where
     T: IntoIterator<Item = PureExpr>,
 {
-    Expr::from_iter(xs)
+    CommentedExpr::new_bare(Expr::from_iter(xs))
 }
 
 fn let_expr<const K: usize>(clauses: [(Pattern, PureExpr); K], bindexpr: PureExpr) -> PureExpr {
-    LetExpr::new(
+    CommentedExpr::new_bare(LetExpr::new(
         clauses
             .into_iter()
-            .map(|(p, x)| LetClause::new(p, Box::new(x)))
+            .map(|(p, x)| LetClause::new(p, BoxExpr::from(x)))
             .collect(),
-        Box::new(bindexpr),
-    )
-    .into()
+        BoxExpr::from(bindexpr),
+    ))
 }
 
 fn func_def(p: Pattern, x: PureExpr) -> FuncDef<Ast> {
-    FuncDef::new(p, Box::new(x))
+    FuncDef::new(p, BoxExpr::from(x))
 }
 
 fn func_def_expr(p: Pattern, x: PureExpr) -> PureExpr {
-    PureExpr::Func(func_def(p, x))
+    CommentedExpr::new_bare(Expr::Func(func_def(p, x)))
 }
 
 fn query_def(x: QueryExpr) -> QueryDef<Ast> {
-    QueryDef::new(Box::new(x))
+    QueryDef::new(BoxExpr::from(x))
 }
 
 fn query_def_expr(x: QueryExpr) -> PureExpr {
-    PureExpr::Query(query_def(x))
+    CommentedExpr::new_bare(Expr::Query(query_def(x)))
 }
 
 fn object_def(f: Option<FuncDef<Ast>>, q: Option<QueryDef<Ast>>) -> PureExpr {
-    ObjectDef::new_from_parts(f, q, None, Default::default()).into()
+    CommentedExpr::new_bare(ObjectDef::new_from_parts(f, q, None, Default::default()))
 }
 
 fn attrs_def<const K: usize>(attrs: [(&str, PureExpr); K]) -> PureExpr {
     let stringattrs = attrs.into_iter().map(|(s, x)| (s.to_string(), x));
-    ObjectDef::new_from_parts(None, None, None, IdentMap::from_iter(stringattrs)).into()
+    CommentedExpr::new_bare(ObjectDef::new_from_parts(
+        None,
+        None,
+        None,
+        IdentMap::from_iter(stringattrs),
+    ))
 }
 
 fn app_expr(t: PureExpr, a: PureExpr) -> PureExpr {
-    ApplicationExpr::new(Box::new(t), Box::new(a)).into()
+    CommentedExpr::new_bare(ApplicationExpr::new(BoxExpr::from(t), BoxExpr::from(a)))
 }
 
 fn lookup(t: PureExpr, attr: &str) -> PureExpr {
-    LookupExpr::new(Box::new(t), attr.to_string()).into()
+    CommentedExpr::new_bare(LookupExpr::new(BoxExpr::from(t), attr.to_string()))
 }
 
 fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&str>) -> Pattern {

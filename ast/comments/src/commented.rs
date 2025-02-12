@@ -9,7 +9,7 @@ pub struct Commented<T> {
 }
 
 impl<T> Commented<T> {
-    pub fn unwrap(self) -> (String, T) {
+    pub fn into_inner(self) -> (String, T) {
         (self.comment, self.item)
     }
 
@@ -29,6 +29,21 @@ impl<T> Commented<T> {
             comment: self.comment,
             item: f(self.item),
         }
+    }
+
+    pub fn try_map<F, U, E>(self, f: F) -> Result<Commented<U>, E>
+    where
+        F: FnOnce(T) -> Result<U, E>,
+    {
+        self.map(f).transpose()
+    }
+}
+
+impl<T, E> Commented<Result<T, E>> {
+    pub fn transpose(self) -> Result<Commented<T>, E> {
+        let (comment, res) = self.into_inner();
+        let item = res?;
+        Ok(Commented { comment, item })
     }
 }
 

@@ -19,12 +19,22 @@ where
         *(self.0)
     }
 
-    pub fn map_expr<F, XPD>(self, f: F) -> BoxExpr<XPD, FX>
+    pub fn map_expr<F, XPD, FXD>(self, f: F) -> BoxExpr<XPD, FXD>
     where
-        F: FnOnce(XP::Expr<FX>) -> XPD::Expr<FX>,
+        F: FnOnce(XP::Expr<FX>) -> XPD::Expr<FXD>,
         XPD: AstProvider,
+        FXD: Effect,
     {
-        BoxExpr(Box::new((*self.0).map_expr(f)))
+        BoxExpr::from(self.0.map_expr(f))
+    }
+
+    pub fn try_map_expr<F, XPD, FXD, E>(self, f: F) -> Result<BoxExpr<XPD, FXD>, E>
+    where
+        F: FnOnce(XP::Expr<FX>) -> Result<XPD::Expr<FXD>, E>,
+        XPD: AstProvider,
+        FXD: Effect,
+    {
+        self.0.try_map_expr(f).map(BoxExpr::from)
     }
 }
 

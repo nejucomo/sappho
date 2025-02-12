@@ -6,8 +6,9 @@ mod listform;
 mod restrict;
 mod space;
 
-use crate::error::Errors;
 use sappho_source::LoadSource;
+
+use crate::error::Errors;
 
 pub use self::error::LoadParseError;
 

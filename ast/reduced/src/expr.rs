@@ -1,8 +1,8 @@
 use std::fmt;
 use std::ops::Deref;
 
-use sappho_ast::{self as ast, ListExpr};
-use sappho_ast_core::{CommentedExpr, CoreExpr, ObjectDef};
+use sappho_ast::{self as ast, Ast, ListExpr};
+use sappho_ast_core::{BoxExpr, CommentedExpr, CoreExpr, ObjectDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
@@ -37,6 +37,16 @@ where
     }
 }
 
+impl<FX> From<CommentedExpr<Ast, FX>> for Expr<FX>
+where
+    FX: Effect,
+{
+    fn from(expr: CommentedExpr<Ast, FX>) -> Self {
+        let (_comment, astexpr) = expr.into_inner();
+        Expr::from(astexpr)
+    }
+}
+
 impl<FX> From<ast::Expr<FX>> for Expr<FX>
 where
     FX: Effect,
@@ -62,7 +72,7 @@ where
         x.into_reverse_fold(
             |opttail| {
                 opttail
-                    .map(|x| Expr::from(*x))
+                    .map(|x| Expr::from(x.into_inner()))
                     .unwrap_or_else(|| Expr(Object(ObjectDef::default())))
             },
             |tail, head| {
@@ -101,17 +111,18 @@ where
         U::Query(q) => Query(q.transform_into()),
         U::Proc(p) => Proc(p.transform_into()),
         U::Attrs(a) => a
+            // TODO: as_list_form is non-orthogonal for transformation vs reference; switch to orthogonal API so that it looks like `a.as_refs().into_list_form()` or in this call site, we just want `a.into_list_form()`
             .as_list_form()
             .map(|listform| {
                 List(ListExpr::new(
                     listform
-                        .map_elems(|x| x.map_expr(ast::Expr::from))
-                        .map_tail(|x| Box::new(x.map_expr(ast::Expr::from))),
+                        .map_elems(|x| x.clone().map_expr(ast::Expr::from))
+                        .map_tail(|x| BoxExpr::from(x.clone().map_expr(ast::Expr::from))),
                 ))
             })
             .unwrap_or_else(|| {
                 Core(Object(ObjectDef::new_attrs(
-                    a.into_map_values(ast::Expr::from),
+                    a.into_map_values(|cx| cx.map_expr(ast::Expr::from)),
                 )))
             }),
     }
