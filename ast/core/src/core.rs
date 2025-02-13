@@ -1,10 +1,10 @@
-use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{
-    ApplicationExpr, AstProvider, CommentedExpr, EffectExpr, Identifier, LetExpr, Literal,
-    LookupExpr, MatchExpr, ObjectDef,
+    ApplicationExpr, AstProvider, AstTransformInto, CommentedExpr, EffectExpr, Identifier, LetExpr,
+    Literal, LookupExpr, MatchExpr, ObjectDef,
 };
 
 // TODO: Enable comments for non-expr structures such as match clauses
@@ -25,31 +25,26 @@ where
     Effect(EffectExpr<XP, FX>),
 }
 
-impl<XP, FX> CoreExpr<XP, FX>
+impl<XPS, XPD, FX> AstTransformInto<CoreExpr<XPD, FX>> for CoreExpr<XPS, FX>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Pattern: AstTransformInto<XPD::Pattern>,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> CoreExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
+    fn ast_transform(self) -> CoreExpr<XPD, FX> {
         use CoreExpr::*;
 
         match self {
             Lit(x) => Lit(x),
             Ref(x) => Ref(x),
-            Object(x) => Object(x.transform_into()),
-            Let(x) => Let(x.transform_into()),
-            Match(x) => Match(x.transform_into()),
-            Application(x) => Application(x.transform_into()),
-            Lookup(x) => Lookup(x.transform_into()),
-            Effect(x) => Effect(x.transform_into()),
+            Object(x) => Object(x.ast_transform()),
+            Let(x) => Let(x.ast_transform()),
+            Match(x) => Match(x.ast_transform()),
+            Application(x) => Application(x.ast_transform()),
+            Lookup(x) => Lookup(x.ast_transform()),
+            Effect(x) => Effect(x.ast_transform()),
         }
     }
 }

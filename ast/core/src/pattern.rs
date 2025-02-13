@@ -1,4 +1,4 @@
-use crate::{Identifier, Literal};
+use crate::{AstTransformInto, Identifier, Literal};
 use sappho_identmap::{IdentMap, ListUnroll, TryIntoIdentMap};
 use sappho_listform::ListForm;
 use sappho_unparse::{Stream, Unparse};
@@ -11,12 +11,24 @@ pub enum CorePattern {
     Unpack(IdentMap<CorePattern>),
 }
 
+impl<'a> From<&'a str> for CorePattern {
+    fn from(s: &'a str) -> Self {
+        CorePattern::Bind(s.to_string())
+    }
+}
+
 impl<X, T> From<ListForm<X, T>> for CorePattern
 where
     CorePattern: From<T> + From<X>,
 {
     fn from(lf: ListForm<X, T>) -> CorePattern {
         ListUnroll::from(lf).into_inner()
+    }
+}
+
+impl AstTransformInto<CorePattern> for CorePattern {
+    fn ast_transform(self) -> CorePattern {
+        self
     }
 }
 

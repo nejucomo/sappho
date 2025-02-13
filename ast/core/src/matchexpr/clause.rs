@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{AstProvider, BoxExpr};
+use crate::{AstProvider, AstTransformInto, BoxExpr};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Debug, derive_new::new)]
@@ -17,20 +17,18 @@ where
     pub body: BoxExpr<XP, FX>,
 }
 
-impl<XP, FX> MatchClause<XP, FX>
+impl<XPS, XPD, FX> AstTransformInto<MatchClause<XPD, FX>> for MatchClause<XPS, FX>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Pattern: AstTransformInto<XPD::Pattern>,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> MatchClause<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
+    fn ast_transform(self) -> MatchClause<XPD, FX> {
         MatchClause {
-            pattern: XPD::Pattern::from(self.pattern),
-            body: self.body.map_expr(XPD::Expr::from),
+            pattern: self.pattern.ast_transform(),
+            body: self.body.ast_transform(),
         }
     }
 }

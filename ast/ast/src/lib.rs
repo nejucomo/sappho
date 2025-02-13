@@ -8,17 +8,17 @@
 //! expression type over all effects, [Expr]. The three bespoke effects are
 //! [PureEffect], [QueryEffect], and [ProcEffect].
 
+mod ast;
 mod expr;
 mod listexpr;
 mod pattern;
-mod provider;
 
 pub use sappho_ast_core::{Effect, Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
 
+pub use self::ast::Ast;
 pub use self::expr::Expr;
 pub use self::listexpr::ListExpr;
-pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
-pub use self::provider::Ast;
+pub use self::pattern::{ListPattern, Pattern};
 
 pub type PureExpr = Expr<PureEffect>;
 pub type QueryExpr = Expr<QueryEffect>;

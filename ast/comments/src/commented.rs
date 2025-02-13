@@ -30,6 +30,23 @@ impl<T> Commented<T> {
             item: f(self.item),
         }
     }
+
+    pub fn with_appended_comment<S>(self, s: S) -> Self
+    where
+        S: AsRef<str>,
+    {
+        let mut dst = self;
+        dst.comment.push_str(s.as_ref());
+        dst
+    }
+
+    pub fn with_appended_comment_section<N, B>(self, name: N, body: B) -> Self
+    where
+        N: std::fmt::Display,
+        B: std::fmt::Display,
+    {
+        self.with_appended_comment(format!("# {name}\n\n{body}\n"))
+    }
 }
 
 impl<T> From<T> for Commented<T> {

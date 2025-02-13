@@ -1,10 +1,9 @@
-mod unpack;
-
-use crate::{Identifier, Literal};
+use sappho_ast_core::CorePattern;
+use sappho_identmap::IdentMap;
 use sappho_listform::ListForm;
 use sappho_unparse::{Stream, Unparse};
 
-pub use self::unpack::UnpackPattern;
+use crate::{Identifier, Literal};
 
 pub type ListPattern = ListForm<Pattern, Identifier>;
 
@@ -12,8 +11,19 @@ pub type ListPattern = ListForm<Pattern, Identifier>;
 pub enum Pattern {
     Bind(Identifier),
     LitEq(Literal),
-    Unpack(UnpackPattern),
+    Unpack(IdentMap<Pattern>),
     List(ListPattern),
+}
+
+impl From<Pattern> for CorePattern {
+    fn from(p: Pattern) -> Self {
+        match p {
+            Pattern::Bind(x) => CorePattern::Bind(x),
+            Pattern::LitEq(x) => CorePattern::LitEq(x),
+            Pattern::Unpack(x) => CorePattern::Unpack(x.into_map_values(Pattern::into)),
+            Pattern::List(x) => x.into(),
+        }
+    }
 }
 
 impl Unparse for Pattern {

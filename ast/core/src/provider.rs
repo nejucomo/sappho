@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use sappho_ast_effect::Effect;
 use sappho_unparse::Unparse;
 
-use crate::{CoreExpr, CorePattern};
+use crate::{AstRed, AstTransformInto, CoreExpr, CorePattern};
 
 /// # Note
 ///
@@ -11,21 +11,9 @@ use crate::{CoreExpr, CorePattern};
 ///
 /// TODO: Replace hand-written impls of the above with derivations.
 pub trait AstProvider: Debug + Clone + PartialEq {
-    type Pattern: Into<CorePattern> + Unparse + Debug + Clone + PartialEq;
+    type Pattern: AstTransformInto<CorePattern> + Unparse + Debug + Clone + PartialEq;
 
-    type Expr<FX>: Into<CoreExpr<AstCore, FX>> + Unparse + Debug + Clone + PartialEq
-    where
-        FX: Effect;
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct AstCore;
-
-impl AstProvider for AstCore {
-    type Pattern = CorePattern;
-
-    type Expr<FX>
-        = CoreExpr<AstCore, FX>
+    type Expr<FX>: AstTransformInto<CoreExpr<AstRed, FX>> + Unparse + Debug + Clone + PartialEq
     where
         FX: Effect;
 }

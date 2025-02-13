@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{AstProvider, BoxExpr, Identifier};
+use crate::{AstProvider, AstTransformInto, BoxExpr, Identifier};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Debug, derive_new::new)]
@@ -17,18 +17,16 @@ where
     pub attr: Identifier,
 }
 
-impl<XP, FX> LookupExpr<XP, FX>
+impl<XPS, XPD, FX> AstTransformInto<LookupExpr<XPD, FX>> for LookupExpr<XPS, FX>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> LookupExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
+    fn ast_transform(self) -> LookupExpr<XPD, FX> {
         LookupExpr {
-            target: self.target.map_expr(XPD::Expr::from),
+            target: self.target.ast_transform(),
             attr: self.attr,
         }
     }

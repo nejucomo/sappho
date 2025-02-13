@@ -4,7 +4,7 @@ use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::Unparse;
 
-use crate::AstProvider;
+use crate::{AstProvider, AstTransformInto};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct CommentedExpr<XP, FX>(Commented<XP::Expr<FX>>)
@@ -30,6 +30,18 @@ where
         XPD: AstProvider,
     {
         CommentedExpr::new(self.0.map(f))
+    }
+}
+
+impl<XPD, XPS, FX> AstTransformInto<CommentedExpr<XPD, FX>> for CommentedExpr<XPS, FX>
+where
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
+    FX: Effect,
+{
+    fn ast_transform(self) -> CommentedExpr<XPD, FX> {
+        CommentedExpr(self.0.ast_transform())
     }
 }
 

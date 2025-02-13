@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{AstProvider, BoxExpr};
+use crate::{AstProvider, AstTransformInto, BoxExpr};
 
 pub use self::clause::LetClause;
 
@@ -21,24 +21,22 @@ where
     pub tail: BoxExpr<XP, FX>,
 }
 
-impl<XP, FX> LetExpr<XP, FX>
+impl<XPD, XPS, FX> AstTransformInto<LetExpr<XPD, FX>> for LetExpr<XPS, FX>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Pattern: AstTransformInto<XPD::Pattern>,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> LetExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
+    fn ast_transform(self) -> LetExpr<XPD, FX> {
         LetExpr {
             clauses: self
                 .clauses
                 .into_iter()
-                .map(|c| c.transform_into())
+                .map(|c| c.ast_transform())
                 .collect(),
-            tail: self.tail.map_expr(XPD::Expr::from),
+            tail: self.tail.ast_transform(),
         }
     }
 }

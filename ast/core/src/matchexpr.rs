@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{AstProvider, BoxExpr};
+use crate::{AstProvider, AstTransformInto, BoxExpr};
 
 pub use self::clause::MatchClause;
 
@@ -21,23 +21,21 @@ where
     pub clauses: Vec<MatchClause<XP, FX>>,
 }
 
-impl<XP, FX> MatchExpr<XP, FX>
+impl<XPD, XPS, FX> AstTransformInto<MatchExpr<XPD, FX>> for MatchExpr<XPS, FX>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Pattern: AstTransformInto<XPD::Pattern>,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> MatchExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
+    fn ast_transform(self) -> MatchExpr<XPD, FX> {
         MatchExpr {
-            target: self.target.map_expr(XPD::Expr::from),
+            target: self.target.ast_transform(),
             clauses: self
                 .clauses
                 .into_iter()
-                .map(|c| c.transform_into())
+                .map(|c| c.ast_transform())
                 .collect(),
         }
     }

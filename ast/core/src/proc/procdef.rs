@@ -1,4 +1,4 @@
-use crate::{AstProvider, Statements};
+use crate::{AstProvider, AstTransformInto, Statements};
 use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
@@ -7,16 +7,14 @@ pub struct ProcDef<XP>(Statements<XP>)
 where
     XP: AstProvider;
 
-impl<XP> ProcDef<XP>
+impl<XPS, XPD> AstTransformInto<ProcDef<XPD>> for ProcDef<XPS>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Expr<ProcEffect>: AstTransformInto<XPD::Expr<ProcEffect>>,
 {
-    pub fn transform_into<XPD>(self) -> ProcDef<XPD>
-    where
-        XPD: AstProvider,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        ProcDef(self.0.transform_into())
+    fn ast_transform(self) -> ProcDef<XPD> {
+        ProcDef(self.0.ast_transform())
     }
 }
 

@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{AstProvider, BoxExpr};
+use crate::{AstProvider, AstTransformInto, BoxExpr};
 
 #[derive(Debug, derive_new::new)]
 pub struct LetClause<XP, FX>
@@ -16,20 +16,18 @@ where
     pub bindexpr: BoxExpr<XP, FX>,
 }
 
-impl<XP, FX> LetClause<XP, FX>
+impl<XPD, XPS, FX> AstTransformInto<LetClause<XPD, FX>> for LetClause<XPS, FX>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Pattern: AstTransformInto<XPD::Pattern>,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> LetClause<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
+    fn ast_transform(self) -> LetClause<XPD, FX> {
         LetClause {
-            binding: XPD::Pattern::from(self.binding),
-            bindexpr: self.bindexpr.map_expr(XPD::Expr::from),
+            binding: self.binding.ast_transform(),
+            bindexpr: self.bindexpr.ast_transform(),
         }
     }
 }

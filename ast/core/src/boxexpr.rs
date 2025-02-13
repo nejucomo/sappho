@@ -2,7 +2,7 @@ use derive_new::new;
 use sappho_ast_effect::Effect;
 use sappho_unparse::Unparse;
 
-use crate::{AstProvider, CommentedExpr};
+use crate::{AstProvider, AstTransformInto, CommentedExpr};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct BoxExpr<XP, FX>(Box<CommentedExpr<XP, FX>>)
@@ -28,13 +28,15 @@ where
     }
 }
 
-impl<XP, FX> From<CommentedExpr<XP, FX>> for BoxExpr<XP, FX>
+impl<XPD, XPS, FX> AstTransformInto<BoxExpr<XPD, FX>> for BoxExpr<XPS, FX>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
     FX: Effect,
 {
-    fn from(value: CommentedExpr<XP, FX>) -> Self {
-        Self(Box::new(value))
+    fn ast_transform(self) -> BoxExpr<XPD, FX> {
+        BoxExpr(Box::new(self.into_inner().ast_transform()))
     }
 }
 

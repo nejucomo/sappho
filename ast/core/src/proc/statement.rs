@@ -1,7 +1,7 @@
 use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{AstProvider, BoxExpr};
+use crate::{AstProvider, AstTransformInto, BoxExpr};
 
 #[derive(Debug)]
 pub enum Statements<XP>
@@ -11,19 +11,17 @@ where
     Return(BoxExpr<XP, ProcEffect>),
 }
 
-impl<XP> Statements<XP>
+impl<XPS, XPD> AstTransformInto<Statements<XPD>> for Statements<XPS>
 where
-    XP: AstProvider,
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Expr<ProcEffect>: AstTransformInto<XPD::Expr<ProcEffect>>,
 {
-    pub fn transform_into<XPD>(self) -> Statements<XPD>
-    where
-        XPD: AstProvider,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
+    fn ast_transform(self) -> Statements<XPD> {
         use Statements::*;
 
         match self {
-            Return(x) => Return(x.map_expr(XPD::Expr::from)),
+            Return(x) => Return(x.ast_transform()),
         }
     }
 }

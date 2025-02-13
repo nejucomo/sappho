@@ -2,7 +2,7 @@
 
 use std::fmt;
 
-use sappho_ast_core::{CommentedExpr, CoreExpr, FuncDef, ProcDef, QueryDef};
+use sappho_ast_core::{AstCore, CommentedExpr, CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
@@ -31,6 +31,23 @@ where
 {
     fn from(x: T) -> Self {
         Expr::Core(CoreExpr::from(x))
+    }
+}
+
+impl<FX> From<Expr<FX>> for CoreExpr<AstCore, FX>
+where
+    FX: Effect,
+{
+    fn from(x: Expr<FX>) -> Self {
+        use Expr::*;
+
+        match x {
+            Core(x) => x.into(),
+            Func(x) => x.into(),
+            Query(x) => x.into(),
+            Proc(x) => x.into(),
+            List(x) => x.into(),
+        }
     }
 }
 

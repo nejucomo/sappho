@@ -1,12 +1,12 @@
 use std::ops::Deref;
 
 use derive_new::new;
-use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
-use crate::{AstProvider, CommentedExpr, FuncDef, ProcDef, QueryDef};
+use crate::{AstProvider, AstTransformInto, CommentedExpr, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Debug, new)]
@@ -48,37 +48,6 @@ where
         ObjectDef(Object::new_attrs(attrs))
     }
 
-    pub fn transform_into<XPD>(self) -> ObjectDef<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        ObjectDef(self.transform_into_object())
-    }
-
-    pub fn transform_into_object<XPD>(
-        self,
-    ) -> Object<FuncDef<XPD>, QueryDef<XPD>, ProcDef<XPD>, CommentedExpr<XPD, FX>>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        self.0.transform(
-            |func| func.transform_into(),
-            |query| query.transform_into(),
-            |proc| proc.transform_into(),
-            |x| x.map_expr(XPD::Expr::from),
-        )
-    }
-
     pub fn unbundle(
         self,
     ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CommentedExpr<XP, FX>>
@@ -102,6 +71,39 @@ where
 {
     fn default() -> Self {
         ObjectDef(Object::default())
+    }
+}
+
+impl<XPS, XPD, FX> AstTransformInto<ObjectDef<XPD, FX>> for ObjectDef<XPS, FX>
+where
+    XPD: AstProvider,
+    XPS: AstProvider,
+    XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
+    FuncDef<XPS>: AstTransformInto<FuncDef<XPD>>,
+    QueryDef<XPS>: AstTransformInto<QueryDef<XPD>>,
+    ProcDef<XPS>: AstTransformInto<ProcDef<XPD>>,
+    FX: Effect,
+{
+    fn ast_transform(self) -> ObjectDef<XPD, FX> {
+        ObjectDef(self.0.ast_transform())
+    }
+}
+
+impl<FD, QD, PD, AD, FS, QS, PS, AS> AstTransformInto<Object<FD, QD, PD, AD>>
+    for Object<FS, QS, PS, AS>
+where
+    FS: AstTransformInto<FD>,
+    QS: AstTransformInto<QD>,
+    PS: AstTransformInto<PD>,
+    AS: AstTransformInto<AD>,
+{
+    fn ast_transform(self) -> Object<FD, QD, PD, AD> {
+        self.transform(
+            FS::ast_transform,
+            QS::ast_transform,
+            PS::ast_transform,
+            AS::ast_transform,
+        )
     }
 }
 
