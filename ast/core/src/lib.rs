@@ -1,4 +1,5 @@
 mod application;
+mod astcore;
 mod boxexpr;
 mod cmtexpr;
 mod core;
@@ -19,6 +20,7 @@ pub use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 pub use sappho_identmap::Identifier;
 
 pub use self::application::ApplicationExpr;
+pub use self::astcore::AstCore;
 pub use self::boxexpr::BoxExpr;
 pub use self::cmtexpr::CommentedExpr;
 pub use self::core::CoreExpr;
