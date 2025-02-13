@@ -1,5 +1,4 @@
 mod application;
-mod astred;
 mod boxexpr;
 mod cmtexpr;
 mod core;
@@ -14,14 +13,12 @@ mod pattern;
 mod proc;
 mod provider;
 mod query;
-mod redexpr;
 mod xform;
 
 pub use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 pub use sappho_identmap::Identifier;
 
 pub use self::application::ApplicationExpr;
-pub use self::astred::AstRed;
 pub use self::boxexpr::BoxExpr;
 pub use self::cmtexpr::CommentedExpr;
 pub use self::core::CoreExpr;
@@ -36,5 +33,4 @@ pub use self::pattern::CorePattern;
 pub use self::proc::{ProcDef, Statements};
 pub use self::provider::AstProvider;
 pub use self::query::QueryDef;
-pub use self::redexpr::RedExpr;
 pub use self::xform::AstTransformInto;

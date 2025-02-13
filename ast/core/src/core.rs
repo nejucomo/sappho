@@ -3,8 +3,8 @@ use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{
-    ApplicationExpr, AstProvider, AstTransformInto, CommentedExpr, EffectExpr, Identifier, LetExpr,
-    Literal, LookupExpr, MatchExpr, ObjectDef,
+    ApplicationExpr, AstProvider, AstTransformInto, CommentedExpr, EffectExpr, FuncDef, Identifier,
+    LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef, ProcDef, QueryDef,
 };
 
 // TODO: Enable comments for non-expr structures such as match clauses
@@ -31,6 +31,9 @@ where
     XPS: AstProvider,
     XPS::Pattern: AstTransformInto<XPD::Pattern>,
     XPS::Expr<FX>: AstTransformInto<XPD::Expr<FX>>,
+    FuncDef<XPS>: AstTransformInto<FuncDef<XPD>>,
+    QueryDef<XPS>: AstTransformInto<QueryDef<XPD>>,
+    ProcDef<XPS>: AstTransformInto<ProcDef<XPD>>,
     FX: Effect,
 {
     fn ast_transform(self) -> CoreExpr<XPD, FX> {
