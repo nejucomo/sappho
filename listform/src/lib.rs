@@ -1,3 +1,5 @@
+// TODO: Replace a lot of this API with a generic Iter<X, T> type which can be instantiated as Iter<&X, &T> and has `Item=Either` for iterators.
+
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
@@ -63,6 +65,19 @@ impl<X, T> ListForm<X, T> {
             body: bodyres?,
             tail: self.tail.map(ttail).transpose()?,
         })
+    }
+
+    pub fn for_each<FX, FT>(&self, mut do_elem: FX, do_tail: FT)
+    where
+        FX: FnMut(&X),
+        FT: FnOnce(&T),
+    {
+        for elem in &self.body {
+            do_elem(elem);
+        }
+        if let Some(tail) = self.tail.as_ref() {
+            do_tail(tail);
+        }
     }
 }
 

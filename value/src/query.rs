@@ -1,6 +1,5 @@
 use crate::{GenThunk, ScopeRef};
-use sappho_ast_core::{QueryDef, QueryEffect};
-use sappho_ast_reduced::{AstRed, QueryExpr};
+use sappho_ast::{QueryDef, QueryEffect, QueryExpr};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug)]
@@ -10,7 +9,7 @@ pub struct Query {
 }
 
 impl Query {
-    pub fn new(qc: &QueryDef<AstRed>, defscope: &ScopeRef) -> Self {
+    pub fn new(qc: &QueryDef, defscope: &ScopeRef) -> Self {
         Query {
             body: (*qc.body).clone(),
             defscope: defscope.clone(),

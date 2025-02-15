@@ -1,9 +1,0 @@
-[package]
-name = "sappho-transform"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-homepage.workspace = true
-
-[dependencies]
-sappho-ast.workspace = true

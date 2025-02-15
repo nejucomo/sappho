@@ -2,13 +2,14 @@ mod frame;
 mod sref;
 mod unbound;
 
+use sappho_ast::Pattern;
+use sappho_identmap::IdentRef;
+
+use crate::ValRef;
+
 pub use self::frame::{BindFailure, BindFailureReason, Frame};
 pub use self::sref::ScopeRef;
 pub use self::unbound::{Unbound, UnboundKind};
-
-use crate::ValRef;
-use sappho_ast_reduced::Pattern;
-use sappho_identmap::IdentRef;
 
 #[derive(Debug)]
 pub enum Scope {

@@ -1,7 +1,7 @@
 mod bindfailure;
 
 use crate::{Attrs, Unbound, UnboundKind::Unfulfilled, ValRef};
-use sappho_ast_reduced::{Literal, Pattern, UnpackPattern};
+use sappho_ast::{Literal, Pattern, UnpackPattern};
 use sappho_identmap::{IdentMap, IdentRef};
 use std::cell::RefCell;
 
@@ -25,6 +25,12 @@ impl Frame {
                     self.declare(subpat);
                 }
             }
+            List(list_form) => {
+                list_form.for_each(
+                    |subpat| self.declare(subpat),
+                    |tail| self.0.define(tail.clone(), RefCell::new(None)).unwrap(),
+                );
+            }
         }
     }
 
@@ -34,9 +40,10 @@ impl Frame {
         let into_bf = |r| BindFailure::new(pattern, value, r);
 
         match pattern {
-            Bind(ident) => self.bind_ident(ident.as_str(), value).map_err(into_bf),
+            Bind(ident) => Ok(self.bind_ident(ident.as_str(), value)),
             LitEq(lit) => bind_lit_eq(lit, value).map_err(into_bf),
             Unpack(unpack) => self.bind_unpack(unpack, value),
+            List(list_form) => self.bind_list(list_form, value),
         }
     }
 
@@ -53,31 +60,18 @@ impl Frame {
             .transpose()
     }
 
-    fn bind_ident(&self, ident: &IdentRef, value: &ValRef) -> Result<(), BindFailureReason> {
+    fn bind_ident(&self, ident: &IdentRef, value: &ValRef) {
         let cell = self
             .0
             .get(ident)
             .unwrap_or_else(|| panic!("attempt to bind undeclared binding: {:?}", ident));
 
-        if cell.borrow_mut().replace(value.clone()).is_none() {
-            Ok(())
-        } else {
+        if cell.borrow_mut().replace(value.clone()).is_some() {
             panic!("redefinition of {:?}", ident);
         }
     }
 
-    fn bind_unpack(&self, unpack: &UnpackPattern, value: &ValRef) -> Result<(), BindFailure> {
-        self.bind_unpack_inner(unpack, value).map_err(|e| match e {
-            Failure(bf) => bf,
-            Reason(r) => BindFailure::new(&Pattern::Unpack(unpack.clone()), value, r),
-        })
-    }
-
-    fn bind_unpack_inner(
-        &self,
-        unpack: &UnpackPattern,
-        value: &ValRef,
-    ) -> Result<(), InnerFailure> {
+    fn bind_unpack(&self, unpack: &UnpackPattern, value: &ValRef) -> Result<(), InnerFailure> {
         use BindFailureReason::MissingAttr;
 
         let srcattrs: &Attrs = value.coerce()?;
@@ -95,12 +89,12 @@ impl Frame {
     }
 }
 
-fn bind_lit_eq(lit: &Literal, value: &ValRef) -> Result<(), BindFailureReason> {
+fn bind_lit_eq(lit: &Literal, value: &ValRef) -> Result<(), InnerFailure> {
     use Literal::Num;
 
     match lit {
         Num(expected) if value.coerce::<f64>()? == expected => Ok(()),
-        _ => Err(BindFailureReason::LitNotEqual),
+        _ => Err(BindFailureReason::LitNotEqual.into()),
     }
 }
 
@@ -110,6 +104,18 @@ enum InnerFailure {
     Reason(BindFailureReason),
 }
 use InnerFailure::*;
+
+impl InnerFailure {
+    fn attribute_pattern<P>(self, pattern: &P, value: &ValRef) -> BindFailure
+    where
+        P: Clone + Into<Pattern>,
+    {
+        match self {
+            Failure(bf) => bf,
+            Reason(reason) => BindFailure::new(pattern.clone().into(), value.clone(), reason),
+        }
+    }
+}
 
 impl From<BindFailure> for InnerFailure {
     fn from(bf: BindFailure) -> InnerFailure {
@@ -125,10 +131,11 @@ where
         Reason(x.into())
     }
 }
+
 fn check_unexpected_source_attrs(
     unpack: &UnpackPattern,
     srcattrs: &Attrs,
-) -> Result<(), BindFailureReason> {
+) -> Result<(), InnerFailure> {
     use std::collections::BTreeSet;
     use BindFailureReason::UnexpectedAttrs;
 

@@ -1,8 +1,10 @@
-use crate::{CoercionFailure, ValRef};
-use sappho_ast_reduced::Pattern;
+use derive_new::new;
+use sappho_ast::Pattern;
 use std::fmt;
 
-#[derive(Debug)]
+use crate::{CoercionFailure, ValRef};
+
+#[derive(Debug, new)]
 pub struct BindFailure(Pattern, ValRef, BindFailureReason);
 
 #[derive(Debug, derive_more::From)]
@@ -11,12 +13,6 @@ pub enum BindFailureReason {
     Coercion(CoercionFailure),
     MissingAttr(String),
     UnexpectedAttrs(Vec<String>),
-}
-
-impl BindFailure {
-    pub fn new(pattern: &Pattern, val: &ValRef, reason: BindFailureReason) -> Self {
-        BindFailure(pattern.clone(), val.clone(), reason)
-    }
 }
 
 impl fmt::Display for BindFailure {

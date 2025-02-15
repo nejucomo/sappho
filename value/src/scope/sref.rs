@@ -1,7 +1,9 @@
-use crate::{BindFailure, Frame, Scope, ValRef};
-use sappho_ast_reduced::Pattern;
 use std::ops::Deref;
 use std::rc::Rc;
+
+use sappho_ast::Pattern;
+
+use crate::{BindFailure, Frame, Scope, ValRef};
 
 #[derive(Clone, Debug)]
 pub struct ScopeRef(Rc<Scope>);

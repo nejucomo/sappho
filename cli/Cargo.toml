@@ -15,5 +15,4 @@ sappho-ast.workspace = true
 sappho-interpreter.workspace = true
 sappho-parser.workspace = true
 sappho-source.workspace = true
-sappho-transform.workspace = true
 simplelog.workspace = true

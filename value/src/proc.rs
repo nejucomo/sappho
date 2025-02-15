@@ -1,11 +1,10 @@
 use crate::{GenThunk, ScopeRef};
-use sappho_ast_core::{EffectExpr, ObjectDef, ProcDef, ProcEffect};
-use sappho_ast_reduced::{AstRed, Expr};
+use sappho_ast::{EffectExpr, Expr, ObjectDef, ProcDef, ProcEffect};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_new::new)]
 pub struct Proc {
-    pdef: ProcDef<AstRed>,
+    pdef: ProcDef,
     defscope: ScopeRef,
 }
 

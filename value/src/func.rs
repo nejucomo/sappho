@@ -1,5 +1,4 @@
-use sappho_ast_core::{FuncDef, PureEffect};
-use sappho_ast_reduced::{AstRed, Pattern, PureExpr};
+use sappho_ast::{FuncDef, Pattern, PureEffect, PureExpr};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
@@ -12,7 +11,7 @@ pub struct Func {
 }
 
 impl Func {
-    pub fn new(fc: &FuncDef<AstRed>, defscope: &ScopeRef) -> Self {
+    pub fn new(fc: &FuncDef, defscope: &ScopeRef) -> Self {
         Func {
             binding: fc.binding.clone(),
             body: (*fc.body).clone(),
