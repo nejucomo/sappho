@@ -47,6 +47,15 @@ where
     }
 }
 
+impl<FX> FromIterator<Expr<FX>> for ListExpr<FX>
+where
+    FX: Effect,
+{
+    fn from_iter<I: IntoIterator<Item = Expr<FX>>>(iter: I) -> Self {
+        ListExpr(ListForm::from_iter(iter))
+    }
+}
+
 impl<FX> Unparse for ListExpr<FX>
 where
     FX: Effect,

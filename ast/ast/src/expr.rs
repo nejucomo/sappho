@@ -25,6 +25,15 @@ where
     Effect(EffectExpr<FX>),
 }
 
+impl<FX> FromIterator<Expr<FX>> for Expr<FX>
+where
+    FX: Effect,
+{
+    fn from_iter<I: IntoIterator<Item = Expr<FX>>>(iter: I) -> Self {
+        Expr::List(ListExpr::from_iter(iter))
+    }
+}
+
 impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
 where
     FX: Effect,

@@ -1,11 +1,9 @@
 use crate::error::BareError;
 use crate::error::Span;
-use sappho_ast::{Ast, Expr};
-use sappho_ast_core::{
-    ApplicationExpr, CoreExpr, Effect, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause,
-    MatchExpr,
+use sappho_ast::{
+    ApplicationExpr, Effect, EffectExpr, Expr, LetClause, LetExpr, LookupExpr, MatchClause,
+    MatchExpr, ProcEffect, PureEffect, QueryEffect,
 };
-use sappho_ast_core::{ProcEffect, PureEffect, QueryEffect};
 
 pub(crate) trait Restrict<S>: Sized {
     fn restrict(src: S, span: Span) -> Result<Self, BareError>;
@@ -49,7 +47,11 @@ where
         use Expr::*;
 
         match src {
-            Core(x) => CoreExpr::restrict(x, span).map(Core),
+            Lit(x) => Ok(Lit(x)),
+            Ref(x) => Ok(Ref(x)),
+            Object(x) => x
+                .into_try_map_values(|expr| Expr::<FXD>::restrict(expr, span.clone()))
+                .map(Object),
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
             Proc(x) => Ok(Proc(x)),
@@ -58,24 +60,6 @@ where
                     Expr::<FXD>::restrict(expr, span.clone())
                 })?))
             }
-        }
-    }
-}
-
-impl<FXS, FXD> Restrict<CoreExpr<Ast, FXS>> for CoreExpr<Ast, FXD>
-where
-    FXD: Effect + Restrict<FXS>,
-    FXS: Effect,
-{
-    fn restrict(src: CoreExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
-        use sappho_ast_core::CoreExpr::*;
-
-        match src {
-            Lit(x) => Ok(Lit(x)),
-            Ref(x) => Ok(Ref(x)),
-            Object(x) => x
-                .into_try_map_values(|expr| Expr::<FXD>::restrict(expr, span.clone()))
-                .map(Object),
             Let(x) => LetExpr::restrict(x, span).map(Let),
             Match(x) => MatchExpr::restrict(x, span).map(Match),
             Application(x) => ApplicationExpr::restrict(x, span).map(Application),
@@ -85,16 +69,16 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<LetExpr<Ast, FXS>> for LetExpr<Ast, FXD>
+impl<FXS, FXD> Restrict<LetExpr<FXS>> for LetExpr<FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: LetExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
-        let clauses: Vec<LetClause<Ast, FXD>> = src
+    fn restrict(src: LetExpr<FXS>, span: Span) -> Result<Self, BareError> {
+        let clauses: Vec<LetClause<FXD>> = src
             .clauses
             .into_iter()
-            .map(|lc| LetClause::<Ast, FXD>::restrict(lc, span.clone()))
+            .map(|lc| LetClause::<FXD>::restrict(lc, span.clone()))
             .collect::<Result<_, BareError>>()?;
         let tail = Box::new(Expr::<FXD>::restrict(*src.tail, span)?);
 
@@ -102,12 +86,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<LetClause<Ast, FXS>> for LetClause<Ast, FXD>
+impl<FXS, FXD> Restrict<LetClause<FXS>> for LetClause<FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: LetClause<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+    fn restrict(src: LetClause<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(LetClause {
             binding: src.binding,
             bindexpr: Box::new(Expr::<FXD>::restrict(*src.bindexpr, span)?),
@@ -115,12 +99,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<MatchExpr<Ast, FXS>> for MatchExpr<Ast, FXD>
+impl<FXS, FXD> Restrict<MatchExpr<FXS>> for MatchExpr<FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: MatchExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+    fn restrict(src: MatchExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(MatchExpr {
             target: Box::new(Expr::<FXD>::restrict(*src.target, span.clone())?),
             clauses: src
@@ -132,12 +116,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<MatchClause<Ast, FXS>> for MatchClause<Ast, FXD>
+impl<FXS, FXD> Restrict<MatchClause<FXS>> for MatchClause<FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: MatchClause<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+    fn restrict(src: MatchClause<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(MatchClause {
             pattern: src.pattern,
             body: Box::new(Expr::<FXD>::restrict(*src.body, span)?),
@@ -145,12 +129,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<ApplicationExpr<Ast, FXS>> for ApplicationExpr<Ast, FXD>
+impl<FXS, FXD> Restrict<ApplicationExpr<FXS>> for ApplicationExpr<FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: ApplicationExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+    fn restrict(src: ApplicationExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(ApplicationExpr {
             target: Box::new(Expr::<FXD>::restrict(*src.target, span.clone())?),
             argument: Box::new(Expr::<FXD>::restrict(*src.argument, span)?),
@@ -158,12 +142,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<LookupExpr<Ast, FXS>> for LookupExpr<Ast, FXD>
+impl<FXS, FXD> Restrict<LookupExpr<FXS>> for LookupExpr<FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: LookupExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+    fn restrict(src: LookupExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(LookupExpr {
             target: Box::new(Expr::<FXD>::restrict(*src.target, span)?),
             attr: src.attr,
@@ -171,12 +155,12 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<EffectExpr<Ast, FXS>> for EffectExpr<Ast, FXD>
+impl<FXS, FXD> Restrict<EffectExpr<FXS>> for EffectExpr<FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: EffectExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+    fn restrict(src: EffectExpr<FXS>, span: Span) -> Result<Self, BareError> {
         Ok(EffectExpr {
             effect: FXD::restrict(src.effect, span.clone())?,
             expr: Box::new(Expr::<FXD>::restrict(*src.expr, span)?),

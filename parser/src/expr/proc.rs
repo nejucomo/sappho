@@ -19,7 +19,7 @@ pub(super) fn proc_expr_def(
             exprs
                 .into_iter()
                 .reduce(|t, a| {
-                    use sappho_ast_core::ApplicationExpr;
+                    use sappho_ast::ApplicationExpr;
 
                     ProcExpr::from(ApplicationExpr::new(Box::new(t), Box::new(a)))
                 })
@@ -34,7 +34,7 @@ fn non_application(
         .then(attr_lookup().repeated())
         .map(|(x, lookups)| {
             lookups.into_iter().fold(x, |x, attr| {
-                use sappho_ast_core::LookupExpr;
+                use sappho_ast::LookupExpr;
 
                 LookupExpr::new(Box::new(x), attr).into()
             })

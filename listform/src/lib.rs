@@ -75,6 +75,13 @@ impl<X, T, E> ListForm<X, Result<T, E>> {
     }
 }
 
+impl<X, T> FromIterator<X> for ListForm<X, T> {
+    fn from_iter<I: IntoIterator<Item = X>>(iter: I) -> Self {
+        let v = Vec::from_iter(iter);
+        ListForm::new(v, None)
+    }
+}
+
 impl<X, T> Unparse for ListForm<X, T>
 where
     X: Unparse,
