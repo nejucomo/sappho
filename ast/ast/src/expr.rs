@@ -2,7 +2,9 @@
 
 use std::fmt;
 
-use sappho_ast_core::{AstCore, CommentedExpr, CoreExpr, FuncDef, ProcDef, QueryDef};
+use sappho_ast_core::{
+    AstCore, AstTransformInto, CommentedExpr, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef,
+};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
@@ -34,19 +36,19 @@ where
     }
 }
 
-impl<FX> From<Expr<FX>> for CoreExpr<AstCore, FX>
+impl<FX> AstTransformInto<CommentedExpr<AstCore, FX>> for Expr<FX>
 where
     FX: Effect,
 {
-    fn from(x: Expr<FX>) -> Self {
+    fn ast_transform(self) -> CommentedExpr<AstCore, FX> {
         use Expr::*;
 
-        match x {
-            Core(x) => x.into(),
-            Func(x) => x.into(),
-            Query(x) => x.into(),
-            Proc(x) => x.into(),
-            List(x) => x.into(),
+        match self {
+            Core(x) => x.ast_transform(),
+            Func(x) => CoreExpr::from(ObjectDef::new_func(x)).ast_transform(),
+            Query(x) => CoreExpr::from(ObjectDef::new_query(x)).ast_transform(),
+            Proc(x) => CoreExpr::from(ObjectDef::new_proc(x)).ast_transform(),
+            List(x) => x.ast_transform(),
         }
     }
 }

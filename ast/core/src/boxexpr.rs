@@ -28,6 +28,16 @@ where
     }
 }
 
+impl<XP, FX> From<CommentedExpr<XP, FX>> for BoxExpr<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: CommentedExpr<XP, FX>) -> Self {
+        BoxExpr::new(Box::new(value))
+    }
+}
+
 impl<XPD, XPS, FX> AstTransformInto<BoxExpr<XPD, FX>> for BoxExpr<XPS, FX>
 where
     XPD: AstProvider,

@@ -1,5 +1,8 @@
 use derive_new::new;
-use sappho_ast_core::{BoxExpr, CommentedExpr, Effect};
+use sappho_ast_core::{
+    AstCore, AstTransformInto, BoxExpr, CommentedExpr, CoreExpr, Effect, ObjectDef,
+};
+use sappho_identmap::HeadTailUnrollable;
 use sappho_listform::ListForm;
 use sappho_unparse::Unparse;
 
@@ -44,6 +47,19 @@ where
         self.0
             .try_map(&f, |tail| f(tail.into_inner()).map(BoxExpr::from))
             .map(ListExpr::new)
+    }
+}
+
+impl<FX> AstTransformInto<CommentedExpr<AstCore, FX>> for ListExpr<FX>
+where
+    FX: Effect,
+{
+    fn ast_transform(self) -> CommentedExpr<AstCore, FX> {
+        self.0.unroll(
+            |cmtexpr| cmtexpr.ast_transform(),
+            |boxexpr| boxexpr.into_inner().ast_transform(),
+            |idmap| CommentedExpr::new_bare(CoreExpr::Object(ObjectDef::new_attrs(idmap))),
+        )
     }
 }
 

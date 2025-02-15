@@ -1,4 +1,5 @@
 use sappho_ast_comments::Commented;
+use sappho_identmap::IdentMap;
 use sappho_unparse::Unparse;
 
 /// A trait approximating [From] for transforming AST types
@@ -6,21 +7,6 @@ use sappho_unparse::Unparse;
 /// We would rather use `MyCoreAstThingy<XPD, FX>: From<MyCoreAstThingy<XPS, FX>>`, but the blanket impl of `From<T>` prevents this.
 pub trait AstTransformInto<T> {
     fn ast_transform(self) -> T;
-}
-
-/// When a type already provides a suitable [Into] impl, use this to impl [AstTransformInto] via [Into] delegation
-#[macro_export]
-macro_rules! ast_transform_into_via_into {
-    ( $t:ty ) => {
-        impl<T> AstProvider<T> for $t
-        where
-            Self: Into<T>,
-        {
-            fn ast_transform(self) -> T {
-                self.into()
-            }
-        }
-    };
 }
 
 impl<S, T> AstTransformInto<Box<T>> for Box<S>
@@ -41,5 +27,14 @@ where
         let unparse = self.unparse();
         self.map(S::ast_transform)
             .with_appended_comment_section("AST Transform Source", unparse)
+    }
+}
+
+impl<S, T> AstTransformInto<IdentMap<T>> for IdentMap<S>
+where
+    S: AstTransformInto<T>,
+{
+    fn ast_transform(self) -> IdentMap<T> {
+        self.into_map_values(S::ast_transform)
     }
 }

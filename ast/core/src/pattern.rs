@@ -1,5 +1,5 @@
 use crate::{AstTransformInto, Identifier, Literal};
-use sappho_identmap::{IdentMap, ListUnroll, TryIntoIdentMap};
+use sappho_identmap::{HeadTailUnrollable, IdentMap, TryIntoIdentMap};
 use sappho_listform::ListForm;
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
@@ -17,18 +17,18 @@ impl<'a> From<&'a str> for CorePattern {
     }
 }
 
-impl<X, T> From<ListForm<X, T>> for CorePattern
-where
-    CorePattern: From<T> + From<X>,
-{
-    fn from(lf: ListForm<X, T>) -> CorePattern {
-        ListUnroll::from(lf).into_inner()
-    }
-}
-
 impl AstTransformInto<CorePattern> for CorePattern {
     fn ast_transform(self) -> CorePattern {
         self
+    }
+}
+
+impl<X, T> AstTransformInto<CorePattern> for ListForm<X, T>
+where
+    CorePattern: From<T> + From<X>,
+{
+    fn ast_transform(self) -> CorePattern {
+        self.unroll_via_froms()
     }
 }
 

@@ -1,35 +1,46 @@
-use derive_more::From;
 use sappho_listform::ListForm;
 
 use crate::IdentMap;
 
-/// This is a translation helper type for "unrolling" [ListForm] into an [IdentMap] with `"head"`, and `"tail"` keys
-#[derive(Debug, From)]
-pub struct ListUnroll<T>(T);
+pub trait HeadTailUnrollable<X, T>: Sized {
+    /// Translate a [ListForm] into a container which may contain [IdentMap]s with the Head/Tail Convention
+    ///
+    /// # The Head/Tail Convention
+    ///
+    /// This convention maps the empty list to the empty [IdentMap], and every element to `{"head": elem, "tail": tail}` converted into the target container type.
+    fn unroll<V, ME, MT, WM>(self, map_elem: ME, map_tail: MT, wrap_map: WM) -> V
+    where
+        ME: Fn(X) -> V,
+        MT: FnOnce(T) -> V,
+        WM: Fn(IdentMap<V>) -> V;
 
-impl<T> ListUnroll<T> {
-    pub fn into_inner(self) -> T {
-        self.0
+    fn unroll_via_froms<V>(self) -> V
+    where
+        V: From<X> + From<T> + From<IdentMap<V>>,
+    {
+        self.unroll(V::from, V::from, V::from)
     }
 }
 
-impl<T, X, Z> From<ListForm<X, Z>> for ListUnroll<T>
-where
-    T: From<Z> + From<X> + From<IdentMap<T>>,
-{
-    fn from(lf: ListForm<X, Z>) -> Self {
-        ListUnroll(lf.into_reverse_fold(
+impl<X, T> HeadTailUnrollable<X, T> for ListForm<X, T> {
+    fn unroll<V, ME, MT, WM>(self, map_elem: ME, map_tail: MT, wrap_map: WM) -> V
+    where
+        ME: Fn(X) -> V,
+        MT: FnOnce(T) -> V,
+        WM: Fn(IdentMap<V>) -> V,
+    {
+        self.into_reverse_fold(
             |optail| {
                 optail
-                    .map(T::from)
-                    .unwrap_or_else(|| T::from(IdentMap::default()))
+                    .map(map_tail)
+                    .unwrap_or_else(|| wrap_map(IdentMap::default()))
             },
             |tail, head| {
-                T::from(IdentMap::from([
+                wrap_map(IdentMap::from([
                     ("tail".to_string(), tail),
-                    ("head".to_string(), T::from(head)),
+                    ("head".to_string(), map_elem(head)),
                 ]))
             },
-        ))
+        )
     }
 }

@@ -1,5 +1,5 @@
-use sappho_ast_core::CorePattern;
-use sappho_identmap::IdentMap;
+use sappho_ast_core::{AstTransformInto, CorePattern};
+use sappho_identmap::{HeadTailUnrollable, IdentMap};
 use sappho_listform::ListForm;
 use sappho_unparse::{Stream, Unparse};
 
@@ -15,13 +15,13 @@ pub enum Pattern {
     List(ListPattern),
 }
 
-impl From<Pattern> for CorePattern {
-    fn from(p: Pattern) -> Self {
-        match p {
+impl AstTransformInto<CorePattern> for Pattern {
+    fn ast_transform(self) -> CorePattern {
+        match self {
             Pattern::Bind(x) => CorePattern::Bind(x),
             Pattern::LitEq(x) => CorePattern::LitEq(x),
-            Pattern::Unpack(x) => CorePattern::Unpack(x.into_map_values(Pattern::into)),
-            Pattern::List(x) => x.into(),
+            Pattern::Unpack(x) => CorePattern::Unpack(x.ast_transform()),
+            Pattern::List(x) => x.unroll_via_froms::<Pattern>().ast_transform(),
         }
     }
 }

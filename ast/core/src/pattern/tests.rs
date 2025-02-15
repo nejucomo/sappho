@@ -1,4 +1,4 @@
-use crate::CorePattern;
+use crate::{AstTransformInto, CorePattern};
 use sappho_identmap::IdentMap;
 use sappho_listform::ListForm;
 use test_case::test_case;
@@ -49,5 +49,5 @@ fn cons_pat(head: &str, tail: CorePattern) -> CorePattern {
     )
 )]
 fn ast_to_core<const K: usize>(body: [&str; K], tail: Option<&str>) -> CorePattern {
-    CorePattern::from(ListForm::new(body, tail))
+    ListForm::new(body, tail).ast_transform()
 }
