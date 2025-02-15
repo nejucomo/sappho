@@ -1,11 +1,11 @@
 use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::CoreExpr;
+use crate::Expr;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Statements {
-    Return(Box<CoreExpr<ProcEffect>>),
+    Return(Box<Expr<ProcEffect>>),
 }
 
 impl Unparse for Statements {

@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::CoreExpr;
+use crate::Expr;
 
 pub use self::clause::MatchClause;
 
@@ -14,7 +14,7 @@ where
     FX: Effect,
 {
     /// The match target, ie: `x` in `match x { 3 -> 0, y -> y }`.
-    pub target: Box<CoreExpr<FX>>,
+    pub target: Box<Expr<FX>>,
 
     /// The match clauses, ie: `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
     pub clauses: Vec<MatchClause<FX>>,

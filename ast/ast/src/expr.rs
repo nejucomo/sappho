@@ -7,7 +7,7 @@ use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
-pub enum CoreExpr<FX>
+pub enum Expr<FX>
 where
     FX: Effect,
 {
@@ -25,24 +25,24 @@ where
     Effect(EffectExpr<FX>),
 }
 
-impl<FX> TryIntoIdentMap<CoreExpr<FX>> for CoreExpr<FX>
+impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
 where
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<CoreExpr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
         match self {
-            CoreExpr::Object(objdef) => objdef.try_into_identmap(),
+            Expr::Object(objdef) => objdef.try_into_identmap(),
             _ => None,
         }
     }
 }
 
-impl<FX> Unparse for CoreExpr<FX>
+impl<FX> Unparse for Expr<FX>
 where
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use CoreExpr::*;
+        use Expr::*;
 
         match self {
             Lit(x) => x.unparse_into(s),

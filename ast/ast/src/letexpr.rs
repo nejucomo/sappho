@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::CoreExpr;
+use crate::Expr;
 
 pub use self::clause::LetClause;
 
@@ -17,7 +17,7 @@ where
     pub clauses: Vec<LetClause<FX>>,
 
     /// The expression to evaluate with the binding in-scope, ie: `f x` in `let x = 42; f x`.
-    pub tail: Box<CoreExpr<FX>>,
+    pub tail: Box<Expr<FX>>,
 }
 
 impl<FX> Unparse for LetExpr<FX>

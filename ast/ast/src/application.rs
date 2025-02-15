@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::CoreExpr;
+use crate::Expr;
 
 /// Function application, ie `f x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -10,10 +10,10 @@ where
     FX: Effect,
 {
     /// The target of application, ie `f` in `f x`.
-    pub target: Box<CoreExpr<FX>>,
+    pub target: Box<Expr<FX>>,
 
     /// The argument of application, ie `x` in `f x`.
-    pub argument: Box<CoreExpr<FX>>,
+    pub argument: Box<Expr<FX>>,
 }
 
 impl<FX> Unparse for ApplicationExpr<FX>

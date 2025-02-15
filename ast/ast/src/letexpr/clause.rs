@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{CoreExpr, Pattern};
+use crate::{Expr, Pattern};
 
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct LetClause<FX>
@@ -12,7 +12,7 @@ where
     pub binding: Pattern,
 
     /// The expression to bind, ie: `42` in `let x = 42; f x`.
-    pub bindexpr: Box<CoreExpr<FX>>,
+    pub bindexpr: Box<Expr<FX>>,
 }
 
 impl<FX> Unparse for LetClause<FX>

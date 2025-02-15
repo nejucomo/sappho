@@ -1,7 +1,7 @@
 use sappho_ast_effect::PureEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{CoreExpr, Pattern};
+use crate::{Expr, Pattern};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -10,7 +10,7 @@ pub struct FuncDef {
     pub binding: Pattern,
 
     /// The body, ie the final `x` in `fn x -> x`.
-    pub body: Box<CoreExpr<PureEffect>>,
+    pub body: Box<Expr<PureEffect>>,
 }
 
 impl Unparse for FuncDef {

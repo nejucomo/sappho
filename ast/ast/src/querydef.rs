@@ -1,13 +1,13 @@
 use sappho_ast_effect::QueryEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::CoreExpr;
+use crate::Expr;
 
 /// A query definition, ie `query $x`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
 pub struct QueryDef {
     /// The `QueryExpr` definition, ie the `$x` in `query $x`.
-    pub body: Box<CoreExpr<QueryEffect>>,
+    pub body: Box<Expr<QueryEffect>>,
 }
 
 impl Unparse for QueryDef {

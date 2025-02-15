@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{CoreExpr, Identifier};
+use crate::{Expr, Identifier};
 
 /// An attribute lookup expression, ie: `x.foo`.
 #[derive(Clone, Debug, PartialEq, derive_new::new)]
@@ -10,7 +10,7 @@ where
     FX: Effect,
 {
     /// The target expression of the lookup, ie `x` in `x.foo`.
-    pub target: Box<CoreExpr<FX>>,
+    pub target: Box<Expr<FX>>,
 
     /// An attribute name, ie: `foo` in `x.foo`.
     pub attr: Identifier,

@@ -1,6 +1,6 @@
 mod application;
-mod core;
 mod effectexpr;
+mod expr;
 mod funcdef;
 mod letexpr;
 mod listexpr;
@@ -16,8 +16,8 @@ pub use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 pub use sappho_identmap::Identifier;
 
 pub use self::application::ApplicationExpr;
-pub use self::core::CoreExpr;
 pub use self::effectexpr::EffectExpr;
+pub use self::expr::Expr;
 pub use self::funcdef::FuncDef;
 pub use self::letexpr::{LetClause, LetExpr};
 pub use self::listexpr::ListExpr;

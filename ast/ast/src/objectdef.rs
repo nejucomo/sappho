@@ -6,11 +6,11 @@ use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
-use crate::{CoreExpr, FuncDef, ProcDef, QueryDef};
+use crate::{Expr, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
 #[derive(Clone, Default, PartialEq, Debug, new)]
-pub struct ObjectDef<FX>(Object<FuncDef, QueryDef, ProcDef, CoreExpr<FX>>)
+pub struct ObjectDef<FX>(Object<FuncDef, QueryDef, ProcDef, Expr<FX>>)
 where
     FX: Effect;
 
@@ -22,7 +22,7 @@ where
         f: Option<FuncDef>,
         q: Option<QueryDef>,
         p: Option<ProcDef>,
-        attrs: IdentMap<CoreExpr<FX>>,
+        attrs: IdentMap<Expr<FX>>,
     ) -> Self {
         Self::new(Object::new(f, q, p, attrs))
     }
@@ -41,18 +41,18 @@ where
 
     pub fn new_attrs<T>(attrs: T) -> Self
     where
-        T: Into<IdentMap<CoreExpr<FX>>>,
+        T: Into<IdentMap<Expr<FX>>>,
     {
         ObjectDef(Object::new_attrs(attrs))
     }
 
-    pub fn unbundle(self) -> sappho_object::Unbundled<FuncDef, QueryDef, ProcDef, CoreExpr<FX>> {
+    pub fn unbundle(self) -> sappho_object::Unbundled<FuncDef, QueryDef, ProcDef, Expr<FX>> {
         self.0.unbundle()
     }
 
     pub fn into_try_map_values<F, FXD, E>(self, f: F) -> Result<ObjectDef<FXD>, E>
     where
-        F: Fn(CoreExpr<FX>) -> Result<CoreExpr<FXD>, E>,
+        F: Fn(Expr<FX>) -> Result<Expr<FXD>, E>,
         FXD: Effect,
     {
         self.0.into_try_map_values(f).map(ObjectDef)
@@ -63,27 +63,27 @@ impl<FX> Deref for ObjectDef<FX>
 where
     FX: Effect,
 {
-    type Target = Object<FuncDef, QueryDef, ProcDef, CoreExpr<FX>>;
+    type Target = Object<FuncDef, QueryDef, ProcDef, Expr<FX>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl<FX> AsRef<Object<FuncDef, QueryDef, ProcDef, CoreExpr<FX>>> for ObjectDef<FX>
+impl<FX> AsRef<Object<FuncDef, QueryDef, ProcDef, Expr<FX>>> for ObjectDef<FX>
 where
     FX: Effect,
 {
-    fn as_ref(&self) -> &Object<FuncDef, QueryDef, ProcDef, CoreExpr<FX>> {
+    fn as_ref(&self) -> &Object<FuncDef, QueryDef, ProcDef, Expr<FX>> {
         &self.0
     }
 }
 
-impl<FX> TryIntoIdentMap<CoreExpr<FX>> for ObjectDef<FX>
+impl<FX> TryIntoIdentMap<Expr<FX>> for ObjectDef<FX>
 where
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<CoreExpr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
         self.0.try_into_identmap()
     }
 }
