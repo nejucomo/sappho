@@ -15,6 +15,9 @@ mod querydef;
 pub use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 pub use sappho_identmap::Identifier;
 
+pub type PureExpr = Expr<PureEffect>;
+pub type ProcExpr = Expr<ProcEffect>;
+
 pub use self::application::ApplicationExpr;
 pub use self::effectexpr::EffectExpr;
 pub use self::expr::Expr;
@@ -25,6 +28,6 @@ pub use self::literal::Literal;
 pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::objectdef::ObjectDef;
-pub use self::pattern::Pattern;
+pub use self::pattern::{Pattern, UnpackPattern};
 pub use self::proc::{ProcDef, Statements};
 pub use self::querydef::QueryDef;
