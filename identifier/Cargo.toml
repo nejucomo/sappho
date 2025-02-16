@@ -1,0 +1,11 @@
+[package]
+name = "sappho-identifier"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+derive_more.workspace = true
+aliri_braid.workspace = true
+thiserror.workspace = true
