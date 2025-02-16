@@ -7,6 +7,7 @@ use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
+use crate::lfreduce::reduce_listform;
 use crate::AstRed;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -59,18 +60,12 @@ where
     fn from(x: ast::ListExpr<FX>) -> Self {
         use sappho_ast_core::CoreExpr::Object;
 
-        x.into_reverse_fold(
-            |opttail| {
-                opttail
-                    .map(|x| Expr::from(*x))
-                    .unwrap_or_else(|| Expr(Object(ObjectDef::default())))
-            },
-            |tail, head| {
-                Expr(Object(ObjectDef::new_attrs([
-                    ("head".to_string(), Expr::from(head)),
-                    ("tail".to_string(), tail),
-                ])))
-            },
+        reduce_listform(
+            x,
+            Expr(Object(ObjectDef::default())),
+            |tail| Expr::from(*tail),
+            Expr::from,
+            |attrs| Expr(Object(ObjectDef::new_attrs(attrs))),
         )
     }
 }

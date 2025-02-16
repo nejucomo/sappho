@@ -22,14 +22,6 @@ impl<X, T> ListForm<X, T> {
         self.0.xs.is_empty() && self.0.optail.is_none()
     }
 
-    pub fn into_reverse_fold<S, TT, F>(self, ttail: TT, f: F) -> S
-    where
-        TT: FnOnce(Option<T>) -> S,
-        F: Fn(S, X) -> S,
-    {
-        self.0.xs.into_iter().rev().fold(ttail(self.0.optail), f)
-    }
-
     pub fn try_map<TX, DX, TT, DT, E>(self, telem: TX, ttail: TT) -> Result<ListForm<DX, DT>, E>
     where
         DX: std::fmt::Debug,

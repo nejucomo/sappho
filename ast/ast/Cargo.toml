@@ -8,6 +8,7 @@ homepage.workspace = true
 [dependencies]
 derive_more.workspace = true
 derive-new.workspace = true
+either.workspace = true
 sappho-ast-core.workspace = true
 sappho-ast-effect.workspace = true
 sappho-identmap.workspace = true

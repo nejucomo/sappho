@@ -1,5 +1,6 @@
 mod unpack;
 
+use crate::lfreduce::reduce_listform;
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
@@ -32,18 +33,12 @@ impl From<ast::ListPattern> for Pattern {
     fn from(alp: ast::ListPattern) -> Pattern {
         use Pattern::Unpack;
 
-        alp.into_reverse_fold(
-            |opttail| {
-                opttail
-                    .map(Pattern::Bind)
-                    .unwrap_or_else(|| Unpack(UnpackPattern::default()))
-            },
-            |tail, head| {
-                Unpack(UnpackPattern::from_iter([
-                    ("head".to_string(), Pattern::from(head)),
-                    ("tail".to_string(), tail),
-                ]))
-            },
+        reduce_listform(
+            alp,
+            Unpack(UnpackPattern::default()),
+            Pattern::Bind,
+            Pattern::from,
+            |unpack| Unpack(unpack.into_iter().collect()),
         )
     }
 }

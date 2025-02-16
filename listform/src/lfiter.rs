@@ -23,3 +23,16 @@ where
             .or_else(|| self.0.optail.take().map(Right))
     }
 }
+
+impl<XI, T> DoubleEndedIterator for ListFormIter<XI, T>
+where
+    XI: DoubleEndedIterator,
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.0
+            .optail
+            .take()
+            .map(Right)
+            .or(self.0.xs.next_back().map(Left))
+    }
+}

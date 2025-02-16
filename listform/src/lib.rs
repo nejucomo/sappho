@@ -4,3 +4,6 @@ mod listform;
 
 pub use crate::lfiter::ListFormIter;
 pub use crate::listform::ListForm;
+
+#[cfg(test)]
+mod tests;

@@ -1,4 +1,5 @@
 use derive_new::new;
+use either::Either;
 use sappho_ast_core::Effect;
 use sappho_listform::ListForm;
 use sappho_unparse::Unparse;
@@ -21,14 +22,6 @@ where
         Self::new(ListForm::new(iter, optail))
     }
 
-    pub fn into_reverse_fold<S, TT, F>(self, ttail: TT, f: F) -> S
-    where
-        TT: FnOnce(Option<Box<Expr<FX>>>) -> S,
-        F: Fn(S, Expr<FX>) -> S,
-    {
-        self.0.into_reverse_fold(ttail, f)
-    }
-
     pub fn try_map<F, FXD, E>(self, f: F) -> Result<ListExpr<FXD>, E>
     where
         F: Fn(Expr<FX>) -> Result<Expr<FXD>, E>,
@@ -37,6 +30,18 @@ where
         self.0
             .try_map(&f, |tail| f(*tail).map(Box::new))
             .map(ListExpr::new)
+    }
+}
+
+impl<FX> IntoIterator for ListExpr<FX>
+where
+    FX: Effect,
+{
+    type Item = Either<Expr<FX>, Box<Expr<FX>>>;
+    type IntoIter = <ListForm<Expr<FX>, Box<Expr<FX>>> as IntoIterator>::IntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
     }
 }
 
