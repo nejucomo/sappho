@@ -1,47 +1,41 @@
+use either::Either::{Left, Right};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
+
+use crate::lfg::ListFormGeneric;
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
 #[derive(Clone, Debug, PartialEq)]
-pub struct ListForm<Elem, Tail> {
-    body: Vec<Elem>,
-    tail: Option<Tail>,
-}
+pub struct ListForm<Elem, Tail>(ListFormGeneric<Vec<Elem>, Tail>);
 
 impl<X, T> ListForm<X, T> {
     pub fn new<I>(body: I, tail: Option<T>) -> Self
     where
         I: IntoIterator<Item = X>,
     {
-        ListForm {
-            body: body.into_iter().collect(),
-            tail,
-        }
+        ListForm(ListFormGeneric::new(body.into_iter().collect(), tail))
     }
 
     pub fn is_empty(&self) -> bool {
-        self.body.is_empty() && self.tail.is_none()
+        self.0.xs.is_empty() && self.0.optail.is_none()
     }
 
     pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, T>
     where
         F: Fn(X) -> DX,
     {
-        ListForm {
-            body: self.body.into_iter().map(f).collect(),
-            tail: self.tail,
-        }
+        ListForm(
+            self.0
+                .map_elem_container(|v| v.into_iter().map(&f).collect()),
+        )
     }
 
     pub fn map_tail<F, DT>(self, f: F) -> ListForm<X, DT>
     where
         F: Fn(T) -> DT,
     {
-        ListForm {
-            body: self.body,
-            tail: self.tail.map(f),
-        }
+        ListForm(self.0.map_tail(f))
     }
 
     pub fn into_reverse_fold<S, TT, F>(self, ttail: TT, f: F) -> S
@@ -49,7 +43,7 @@ impl<X, T> ListForm<X, T> {
         TT: FnOnce(Option<T>) -> S,
         F: Fn(S, X) -> S,
     {
-        self.body.into_iter().rev().fold(ttail(self.tail), f)
+        self.0.xs.into_iter().rev().fold(ttail(self.0.optail), f)
     }
 
     pub fn try_map<TX, DX, TT, DT, E>(self, telem: TX, ttail: TT) -> Result<ListForm<DX, DT>, E>
@@ -57,21 +51,18 @@ impl<X, T> ListForm<X, T> {
         TX: Fn(X) -> Result<DX, E>,
         TT: FnOnce(T) -> Result<DT, E>,
     {
-        let bodyres: Result<Vec<DX>, E> = self.body.into_iter().map(telem).collect();
+        let bodyres: Result<Vec<DX>, E> = self.0.xs.into_iter().map(telem).collect();
 
-        Ok(ListForm {
-            body: bodyres?,
-            tail: self.tail.map(ttail).transpose()?,
-        })
+        Ok(ListForm::new(
+            bodyres?,
+            self.0.optail.map(ttail).transpose()?,
+        ))
     }
 }
 
 impl<X, T, E> ListForm<X, Result<T, E>> {
     pub fn transpose_tail(self) -> Result<ListForm<X, T>, E> {
-        Ok(ListForm {
-            body: self.body,
-            tail: self.tail.transpose()?,
-        })
+        Ok(ListForm::new(self.0.xs, self.0.optail.transpose()?))
     }
 }
 
@@ -90,23 +81,26 @@ where
             s.bracketed(Square, |subs| {
                 let mut first = true;
 
-                for elem in self.body.iter() {
-                    if first {
-                        first = false;
-                    } else {
-                        subs.write(",");
+                for xort in self.0.as_ref() {
+                    match xort {
+                        Left(elem) => {
+                            if first {
+                                first = false;
+                            } else {
+                                subs.write(",");
+                            }
+                            subs.write(&OptSpace);
+                            subs.write(elem);
+                        }
+                        Right(tail) => {
+                            if !first {
+                                subs.write(",");
+                            }
+                            subs.write(&OptSpace);
+                            subs.write("..");
+                            subs.write(tail);
+                        }
                     }
-                    subs.write(&OptSpace);
-                    subs.write(elem);
-                }
-
-                if let Some(tail) = &self.tail {
-                    if !first {
-                        subs.write(",");
-                    }
-                    subs.write(&OptSpace);
-                    subs.write("..");
-                    subs.write(tail);
                 }
             });
         }
