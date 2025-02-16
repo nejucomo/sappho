@@ -1,7 +1,7 @@
 use std::fmt;
 use std::ops::Deref;
 
-use sappho_ast::{self as ast, ListExpr};
+use sappho_ast::{self as ast};
 use sappho_ast_core::{CoreExpr, ObjectDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
@@ -98,7 +98,7 @@ where
         U::Attrs(a) => a
             .as_list_form()
             .map(|listform| {
-                List(ListExpr::new(
+                List(
                     listform
                         .into_iter()
                         .map(|ei| {
@@ -108,7 +108,7 @@ where
                                 .map_right(Box::new)
                         })
                         .collect(),
-                ))
+                )
             })
             .unwrap_or_else(|| {
                 Core(Object(ObjectDef::new_attrs(
