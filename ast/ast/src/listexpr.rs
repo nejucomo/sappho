@@ -6,6 +6,7 @@ use sappho_unparse::Unparse;
 
 use crate::Expr;
 
+// TODO: Remove this type and use `ListForm` directly (maybe with alias).
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct ListExpr<FX>(ListForm<Expr<FX>, Box<Expr<FX>>>)
 where
@@ -21,16 +22,6 @@ where
     {
         Self::new(ListForm::new(iter, optail))
     }
-
-    pub fn try_map<F, FXD, E>(self, f: F) -> Result<ListExpr<FXD>, E>
-    where
-        F: Fn(Expr<FX>) -> Result<Expr<FXD>, E>,
-        FXD: Effect,
-    {
-        self.0
-            .try_map(&f, |tail| f(*tail).map(Box::new))
-            .map(ListExpr::new)
-    }
 }
 
 impl<FX> IntoIterator for ListExpr<FX>
@@ -42,6 +33,15 @@ where
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
+    }
+}
+
+impl<FX> FromIterator<Either<Expr<FX>, Box<Expr<FX>>>> for ListExpr<FX>
+where
+    FX: Effect,
+{
+    fn from_iter<I: IntoIterator<Item = Either<Expr<FX>, Box<Expr<FX>>>>>(iter: I) -> Self {
+        ListExpr(iter.into_iter().collect())
     }
 }
 
