@@ -105,8 +105,14 @@ where
             .map(|listform| {
                 List(ListExpr::new(
                     listform
-                        .map_elems(|x| ast::Expr::from(x.clone()))
-                        .map_tail(|x| Box::new(ast::Expr::from(x.clone()))),
+                        .into_iter()
+                        .map(|ei| {
+                            ei.cloned()
+                                .map_left(ast::Expr::from)
+                                .map_right(ast::Expr::from)
+                                .map_right(Box::new)
+                        })
+                        .collect(),
                 ))
             })
             .unwrap_or_else(|| {

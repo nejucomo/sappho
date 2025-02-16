@@ -22,24 +22,6 @@ impl<X, T> ListForm<X, T> {
         self.0.xs.is_empty() && self.0.optail.is_none()
     }
 
-    pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, T>
-    where
-        F: Fn(X) -> DX,
-        DX: std::fmt::Debug,
-        T: std::fmt::Debug,
-    {
-        self.into_iter().map(|ei| ei.map_left(&f)).collect()
-    }
-
-    pub fn map_tail<F, DT>(self, f: F) -> ListForm<X, DT>
-    where
-        F: Fn(T) -> DT,
-        X: std::fmt::Debug,
-        DT: std::fmt::Debug,
-    {
-        self.into_iter().map(|ei| ei.map_right(&f)).collect()
-    }
-
     pub fn into_reverse_fold<S, TT, F>(self, ttail: TT, f: F) -> S
     where
         TT: FnOnce(Option<T>) -> S,

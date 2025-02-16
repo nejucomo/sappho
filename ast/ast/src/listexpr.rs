@@ -29,14 +29,6 @@ where
         self.0.into_reverse_fold(ttail, f)
     }
 
-    pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, Box<Expr<FX>>>
-    where
-        F: Fn(Expr<FX>) -> DX,
-        DX: std::fmt::Debug,
-    {
-        self.0.map_elems(f)
-    }
-
     pub fn try_map<F, FXD, E>(self, f: F) -> Result<ListExpr<FXD>, E>
     where
         F: Fn(Expr<FX>) -> Result<Expr<FXD>, E>,

@@ -59,15 +59,20 @@ impl From<Pattern> for ast::Pattern {
                 .as_list_form()
                 .and_then(|listform| {
                     listform
-                        .map_elems(|p| ast::Pattern::from(p.clone()))
-                        .map_tail(|t| match t {
-                            Bind(b) => Ok(b.to_string()),
-                            _ => {
-                                // Non-empty, non-Bind tails disallowed:
-                                Err(())
-                            }
+                        .into_iter()
+                        .map(|ei| {
+                            ei.cloned()
+                                .map_left(|p| Ok(ast::Pattern::from(p)))
+                                .map_right(|t| match t {
+                                    Bind(b) => Ok(b),
+                                    _ => {
+                                        // Non-empty, non-Bind tails disallowed:
+                                        Err(())
+                                    }
+                                })
+                                .factor_err()
                         })
-                        .transpose_tail()
+                        .collect::<Result<_, _>>()
                         .ok()
                         .map(ast::Pattern::List)
                 })
