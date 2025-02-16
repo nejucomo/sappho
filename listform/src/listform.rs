@@ -1,8 +1,9 @@
-use either::Either::{Left, Right};
+use either::Either::{self, Left, Right};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
 use crate::lfg::ListFormGeneric;
+use crate::ListFormIter;
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -24,18 +25,19 @@ impl<X, T> ListForm<X, T> {
     pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, T>
     where
         F: Fn(X) -> DX,
+        DX: std::fmt::Debug,
+        T: std::fmt::Debug,
     {
-        ListForm(
-            self.0
-                .map_elem_container(|v| v.into_iter().map(&f).collect()),
-        )
+        self.into_iter().map(|ei| ei.map_left(&f)).collect()
     }
 
     pub fn map_tail<F, DT>(self, f: F) -> ListForm<X, DT>
     where
         F: Fn(T) -> DT,
+        X: std::fmt::Debug,
+        DT: std::fmt::Debug,
     {
-        ListForm(self.0.map_tail(f))
+        self.into_iter().map(|ei| ei.map_right(&f)).collect()
     }
 
     pub fn into_reverse_fold<S, TT, F>(self, ttail: TT, f: F) -> S
@@ -48,21 +50,42 @@ impl<X, T> ListForm<X, T> {
 
     pub fn try_map<TX, DX, TT, DT, E>(self, telem: TX, ttail: TT) -> Result<ListForm<DX, DT>, E>
     where
+        DX: std::fmt::Debug,
+        DT: std::fmt::Debug,
         TX: Fn(X) -> Result<DX, E>,
-        TT: FnOnce(T) -> Result<DT, E>,
+        TT: Fn(T) -> Result<DT, E>,
     {
-        let bodyres: Result<Vec<DX>, E> = self.0.xs.into_iter().map(telem).collect();
-
-        Ok(ListForm::new(
-            bodyres?,
-            self.0.optail.map(ttail).transpose()?,
-        ))
+        self.into_iter()
+            .map(|ei| ei.map_left(&telem).map_right(&ttail).factor_err())
+            .collect()
     }
 }
 
 impl<X, T, E> ListForm<X, Result<T, E>> {
     pub fn transpose_tail(self) -> Result<ListForm<X, T>, E> {
         Ok(ListForm::new(self.0.xs, self.0.optail.transpose()?))
+    }
+}
+
+impl<X, T> IntoIterator for ListForm<X, T> {
+    type Item = Either<X, T>;
+    type IntoIter = ListFormIter<std::vec::IntoIter<X>, T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+/// # Panic
+///
+/// This panics if a `Right` is ever encountered in any position besides the last element
+impl<X, T> FromIterator<Either<X, T>> for ListForm<X, T>
+where
+    X: std::fmt::Debug,
+    T: std::fmt::Debug,
+{
+    fn from_iter<I: IntoIterator<Item = Either<X, T>>>(iter: I) -> Self {
+        ListForm(ListFormGeneric::from_iter(iter))
     }
 }
 

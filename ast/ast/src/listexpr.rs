@@ -32,6 +32,7 @@ where
     pub fn map_elems<F, DX>(self, f: F) -> ListForm<DX, Box<Expr<FX>>>
     where
         F: Fn(Expr<FX>) -> DX,
+        DX: std::fmt::Debug,
     {
         self.0.map_elems(f)
     }

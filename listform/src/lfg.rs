@@ -1,5 +1,5 @@
 use derive_new::new;
-use either::Either;
+use either::Either::{self, Left, Right};
 
 use crate::ListFormIter;
 
@@ -11,30 +11,10 @@ pub(crate) struct ListFormGeneric<XS, T> {
 }
 
 impl<XS, T> ListFormGeneric<XS, T> {
-    pub fn as_ref(&self) -> ListFormGeneric<&XS, &T> {
+    pub(crate) fn as_ref(&self) -> ListFormGeneric<&XS, &T> {
         ListFormGeneric {
             xs: &self.xs,
             optail: self.optail.as_ref(),
-        }
-    }
-
-    pub fn map_elem_container<F, YS>(self, f: F) -> ListFormGeneric<YS, T>
-    where
-        F: Fn(XS) -> YS,
-    {
-        ListFormGeneric {
-            xs: f(self.xs),
-            optail: self.optail,
-        }
-    }
-
-    pub fn map_tail<F, U>(self, f: F) -> ListFormGeneric<XS, U>
-    where
-        F: Fn(T) -> U,
-    {
-        ListFormGeneric {
-            xs: self.xs,
-            optail: self.optail.map(f),
         }
     }
 }
@@ -44,9 +24,39 @@ where
     XS: IntoIterator,
 {
     type Item = Either<<XS::IntoIter as Iterator>::Item, T>;
-    type IntoIter = ListFormIter<std::iter::Fuse<XS::IntoIter>, T>;
+    type IntoIter = ListFormIter<XS::IntoIter, T>;
 
     fn into_iter(self) -> Self::IntoIter {
-        ListFormIter::new(self.map_elem_container(|xs| xs.into_iter().fuse()))
+        ListFormIter::new(ListFormGeneric {
+            xs: self.xs.into_iter().fuse(),
+            optail: self.optail,
+        })
+    }
+}
+
+/// # Panic
+///
+/// This panics if a `Right` is ever encountered in any position besides the last element.
+///
+/// Note: The std `impl<A, E, V> FromIterator<Result<A, E> for Result<V, E>` impl cannot help us here. :-(
+impl<X, T> FromIterator<Either<X, T>> for ListFormGeneric<Vec<X>, T>
+where
+    X: std::fmt::Debug,
+    T: std::fmt::Debug,
+{
+    fn from_iter<I: IntoIterator<Item = Either<X, T>>>(iter: I) -> Self {
+        let mut xs = vec![];
+        let mut optail = None;
+
+        for ei in iter {
+            // BUG: A better API would cause this to be an `Err` somehow:
+            assert!(optail.is_none(), "out-of-order tail: {ei:?}");
+            match ei {
+                Left(x) => xs.push(x),
+                Right(t) => optail = Some(t),
+            }
+        }
+
+        ListFormGeneric { xs, optail }
     }
 }
