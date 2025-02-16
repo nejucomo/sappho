@@ -6,3 +6,6 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+derive_more.workspace = true
+thiserror.workspace = true
+sappho-identifier.workspace = true
