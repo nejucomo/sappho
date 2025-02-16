@@ -33,6 +33,6 @@ where
             .optail
             .take()
             .map(Right)
-            .or(self.0.xs.next_back().map(Left))
+            .or_else(|| self.0.xs.next_back().map(Left))
     }
 }
