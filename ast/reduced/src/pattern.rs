@@ -1,5 +1,6 @@
 mod unpack;
 
+use crate::lfreduce::reduce_listform;
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
@@ -32,18 +33,12 @@ impl From<ast::ListPattern> for Pattern {
     fn from(alp: ast::ListPattern) -> Pattern {
         use Pattern::Unpack;
 
-        alp.into_reverse_fold(
-            |opttail| {
-                opttail
-                    .map(Pattern::Bind)
-                    .unwrap_or_else(|| Unpack(UnpackPattern::default()))
-            },
-            |tail, head| {
-                Unpack(UnpackPattern::from_iter([
-                    ("head".to_string(), Pattern::from(head)),
-                    ("tail".to_string(), tail),
-                ]))
-            },
+        reduce_listform(
+            alp,
+            Unpack(UnpackPattern::default()),
+            Pattern::Bind,
+            Pattern::from,
+            |unpack| Unpack(unpack.into_iter().collect()),
         )
     }
 }
@@ -59,15 +54,20 @@ impl From<Pattern> for ast::Pattern {
                 .as_list_form()
                 .and_then(|listform| {
                     listform
-                        .map_elems(|p| ast::Pattern::from(p.clone()))
-                        .map_tail(|t| match t {
-                            Bind(b) => Ok(b.to_string()),
-                            _ => {
-                                // Non-empty, non-Bind tails disallowed:
-                                Err(())
-                            }
+                        .into_iter()
+                        .map(|ei| {
+                            ei.cloned()
+                                .map_left(|p| Ok(ast::Pattern::from(p)))
+                                .map_right(|t| match t {
+                                    Bind(b) => Ok(b),
+                                    _ => {
+                                        // Non-empty, non-Bind tails disallowed:
+                                        Err(())
+                                    }
+                                })
+                                .factor_err()
                         })
-                        .transpose_tail()
+                        .collect::<Result<_, _>>()
                         .ok()
                         .map(ast::Pattern::List)
                 })

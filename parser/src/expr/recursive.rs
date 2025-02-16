@@ -24,9 +24,7 @@ fn list_expr(
 ) -> impl Parser<char, ListExpr<ProcEffect>, Error = BareError> + '_ {
     use crate::listform::list_form;
 
-    list_form(expr.clone(), expr.map(Box::new))
-        .map(ListExpr::new)
-        .labelled("list-expression")
+    list_form(expr.clone(), expr.map(Box::new)).labelled("list-expression")
 }
 
 fn let_expr(

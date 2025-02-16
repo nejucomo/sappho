@@ -1,12 +1,13 @@
 use std::fmt;
 use std::ops::Deref;
 
-use sappho_ast::{self as ast, ListExpr};
+use sappho_ast::{self as ast};
 use sappho_ast_core::{CoreExpr, ObjectDef};
 use sappho_ast_effect::Effect;
 use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
+use crate::lfreduce::reduce_listform;
 use crate::AstRed;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -59,18 +60,12 @@ where
     fn from(x: ast::ListExpr<FX>) -> Self {
         use sappho_ast_core::CoreExpr::Object;
 
-        x.into_reverse_fold(
-            |opttail| {
-                opttail
-                    .map(|x| Expr::from(*x))
-                    .unwrap_or_else(|| Expr(Object(ObjectDef::default())))
-            },
-            |tail, head| {
-                Expr(Object(ObjectDef::new_attrs([
-                    ("head".to_string(), Expr::from(head)),
-                    ("tail".to_string(), tail),
-                ])))
-            },
+        reduce_listform(
+            x,
+            Expr(Object(ObjectDef::default())),
+            |tail| Expr::from(*tail),
+            Expr::from,
+            |attrs| Expr(Object(ObjectDef::new_attrs(attrs))),
         )
     }
 }
@@ -103,11 +98,17 @@ where
         U::Attrs(a) => a
             .as_list_form()
             .map(|listform| {
-                List(ListExpr::new(
+                List(
                     listform
-                        .map_elems(|x| ast::Expr::from(x.clone()))
-                        .map_tail(|x| Box::new(ast::Expr::from(x.clone()))),
-                ))
+                        .into_iter()
+                        .map(|ei| {
+                            ei.cloned()
+                                .map_left(ast::Expr::from)
+                                .map_right(ast::Expr::from)
+                                .map_right(Box::new)
+                        })
+                        .collect(),
+                )
             })
             .unwrap_or_else(|| {
                 Core(Object(ObjectDef::new_attrs(

@@ -9,17 +9,18 @@
 //! [PureEffect], [QueryEffect], and [ProcEffect].
 
 mod expr;
-mod listexpr;
 mod pattern;
 mod provider;
 
 pub use sappho_ast_core::{Effect, Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
+use sappho_listform::ListForm;
 
 pub use self::expr::Expr;
-pub use self::listexpr::ListExpr;
 pub use self::pattern::{ListPattern, Pattern, UnpackPattern};
 pub use self::provider::Ast;
 
 pub type PureExpr = Expr<PureEffect>;
 pub type QueryExpr = Expr<QueryEffect>;
 pub type ProcExpr = Expr<ProcEffect>;
+
+pub type ListExpr<FX> = ListForm<Expr<FX>, Box<Expr<FX>>>;

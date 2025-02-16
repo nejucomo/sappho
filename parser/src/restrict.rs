@@ -53,11 +53,16 @@ where
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
             Proc(x) => Ok(Proc(x)),
-            List(x) => {
-                Ok(List(x.try_map(|expr| {
-                    Expr::<FXD>::restrict(expr, span.clone())
-                })?))
-            }
+            List(x) => Ok(List(
+                x.into_iter()
+                    .map(|ei| {
+                        ei.map_right(|bx| *bx)
+                            .map(|expr| Expr::<FXD>::restrict(expr, span.clone()))
+                            .map_right(|res| res.map(Box::new))
+                            .factor_err()
+                    })
+                    .collect::<Result<_, _>>()?,
+            )),
         }
     }
 }

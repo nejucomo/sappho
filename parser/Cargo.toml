@@ -9,6 +9,7 @@ homepage.workspace = true
 anyhow.workspace = true
 chumsky.workspace = true
 derive_more.workspace = true
+either.workspace = true
 sappho-ast-core.workspace = true
 sappho-ast.workspace = true
 sappho-identmap.workspace = true

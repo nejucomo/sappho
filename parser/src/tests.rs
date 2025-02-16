@@ -1,3 +1,4 @@
+use either::Either::Left;
 use sappho_ast::{Ast, Effect, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
@@ -29,7 +30,7 @@ fn list<T>(xs: T) -> PureExpr
 where
     T: IntoIterator<Item = PureExpr>,
 {
-    Expr::from_iter(xs)
+    Expr::from_iter(xs.into_iter().map(Left))
 }
 
 fn let_expr<const K: usize>(clauses: [(Pattern, PureExpr); K], bindexpr: PureExpr) -> PureExpr {
