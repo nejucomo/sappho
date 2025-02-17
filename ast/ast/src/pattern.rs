@@ -1,16 +1,17 @@
 mod unpack;
 
-use crate::{Identifier, Literal};
+use crate::Literal;
+use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_unparse::{Stream, Unparse};
 
 pub use self::unpack::UnpackPattern;
 
-pub type ListPattern = ListForm<Pattern, Identifier>;
+pub type ListPattern = ListForm<Pattern, RcId>;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum Pattern {
-    Bind(Identifier),
+    Bind(RcId),
     LitEq(Literal),
     Unpack(UnpackPattern),
     List(ListPattern),

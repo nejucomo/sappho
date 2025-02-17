@@ -12,7 +12,7 @@ mod expr;
 mod pattern;
 mod provider;
 
-pub use sappho_ast_core::{Effect, Identifier, Literal, ProcEffect, PureEffect, QueryEffect};
+pub use sappho_ast_core::{Effect, Literal, ProcEffect, PureEffect, QueryEffect};
 use sappho_listform::ListForm;
 
 pub use self::expr::Expr;

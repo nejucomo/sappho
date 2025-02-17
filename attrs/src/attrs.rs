@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 use sappho_identifier::{IdentRef, RcId};
+use sappho_unparse::Unparse;
 
 use crate::Redefinition;
 
@@ -69,5 +70,28 @@ impl<T> IntoIterator for Attrs<T> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
+    }
+}
+
+impl<T> Unparse for Attrs<T>
+where
+    T: Unparse,
+{
+    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
+        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
+
+        if self.0.is_empty() {
+            s.write("{}");
+        } else {
+            s.bracketed(Squiggle, |subs| {
+                for (k, v) in self.iter() {
+                    subs.write(&OptSpace);
+                    subs.write(k);
+                    subs.write(": ");
+                    subs.write(v);
+                    subs.write(",");
+                }
+            });
+        }
     }
 }

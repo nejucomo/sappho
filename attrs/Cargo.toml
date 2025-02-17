@@ -9,3 +9,4 @@ homepage.workspace = true
 derive_more.workspace = true
 thiserror.workspace = true
 sappho-identifier.workspace = true
+sappho-unparse.workspace = true

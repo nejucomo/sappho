@@ -1,9 +1,8 @@
 use crate::{
-    ApplicationExpr, AstProvider, EffectExpr, Identifier, LetExpr, Literal, LookupExpr, MatchExpr,
-    ObjectDef,
+    ApplicationExpr, AstProvider, EffectExpr, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
 };
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
-use sappho_attrs::{Attrs, TryIntoAttrs};
+use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]
@@ -13,7 +12,7 @@ where
     FX: Effect,
 {
     Lit(Literal),
-    Ref(Identifier),
+    Ref(RcId),
     Object(ObjectDef<XP, FX>),
     Let(LetExpr<XP, FX>),
     Match(MatchExpr<XP, FX>),

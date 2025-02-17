@@ -1,5 +1,6 @@
 use crate::Pattern;
-use sappho_attrs::{Attrs, Identifier};
+use sappho_attrs::Attrs;
+use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
 use std::ops::Deref;
 
@@ -12,13 +13,13 @@ impl UnpackPattern {
     }
 }
 
-impl FromIterator<(Identifier, Pattern)> for UnpackPattern
+impl FromIterator<(RcId, Pattern)> for UnpackPattern
 where
-    Attrs<Pattern>: FromIterator<(Identifier, Pattern)>,
+    Attrs<Pattern>: FromIterator<(RcId, Pattern)>,
 {
     fn from_iter<I>(iter: I) -> Self
     where
-        I: IntoIterator<Item = (Identifier, Pattern)>,
+        I: IntoIterator<Item = (RcId, Pattern)>,
     {
         UnpackPattern(Attrs::from_iter(iter))
     }
