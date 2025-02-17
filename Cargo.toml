@@ -10,7 +10,6 @@ members = [
   "cli",
   "eval",
   "identifier",
-  "identmap",
   "integration-tests",
   "interpreter",
   "listform",
@@ -51,7 +50,6 @@ sappho-attrs = { path = "attrs" }
 sappho-cli = { path = "cli" }
 sappho-eval = { path = "eval" }
 sappho-identifier = { path = "identifier" }
-sappho-identmap = { path = "identmap" }
 sappho-integration-tests = { path = "integration-tests" }
 sappho-interpreter = { path = "interpreter" }
 sappho-listform = { path = "listform" }
