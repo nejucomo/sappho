@@ -1,5 +1,5 @@
 use crate::{Object, ValRef};
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]

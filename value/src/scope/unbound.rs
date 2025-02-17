@@ -1,4 +1,4 @@
-use sappho_identmap::{IdentRef, Identifier};
+use sappho_attrs::{IdentRef, Identifier};
 use std::fmt;
 
 #[derive(Debug)]

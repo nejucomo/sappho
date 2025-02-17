@@ -2,7 +2,7 @@ use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast::{Ast, Expr};
 use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
-use sappho_identmap::IdentMap;
+use sappho_attrs::IdentMap;
 use sappho_object::Object;
 
 use crate::effectsimpls::FxFuzz;

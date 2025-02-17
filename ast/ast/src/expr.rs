@@ -3,7 +3,7 @@
 use either::Either;
 use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 

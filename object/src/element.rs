@@ -1,4 +1,4 @@
-use sappho_identmap::Identifier;
+use sappho_attrs::Identifier;
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug)]

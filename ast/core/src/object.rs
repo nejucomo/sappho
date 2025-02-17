@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use derive_new::new;
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 

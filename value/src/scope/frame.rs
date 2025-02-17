@@ -2,7 +2,7 @@ mod bindfailure;
 
 use crate::{Attrs, Unbound, UnboundKind::Unfulfilled, ValRef};
 use sappho_ast_reduced::{Literal, Pattern, UnpackPattern};
-use sappho_identmap::{IdentMap, IdentRef};
+use sappho_attrs::{IdentMap, IdentRef};
 use std::cell::RefCell;
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};

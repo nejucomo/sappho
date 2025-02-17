@@ -1,6 +1,6 @@
 use derive_new::new;
 
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{Element, IntoIter, Unbundled};

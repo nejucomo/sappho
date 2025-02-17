@@ -1,7 +1,7 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast::Identifier;
-use sappho_identmap::IdentMap;
+use sappho_attrs::IdentMap;
 
 use crate::AstFuzz;
 

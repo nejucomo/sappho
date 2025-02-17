@@ -1,5 +1,5 @@
 use crate::Object;
-use sappho_identmap::IdentMap;
+use sappho_attrs::IdentMap;
 
 /// An object containing exactly one of func, query, proc, or attrs can be "unbundled" into that
 /// component. This is used for canonicalization, e.g. `{ fn x -> x }` -> `fn x -> x`.

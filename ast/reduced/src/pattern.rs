@@ -3,7 +3,7 @@ mod unpack;
 use crate::lfreduce::reduce_listform;
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 

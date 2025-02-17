@@ -4,7 +4,7 @@ use std::ops::Deref;
 use sappho_ast::{self as ast};
 use sappho_ast_core::{CoreExpr, ObjectDef};
 use sappho_ast_effect::Effect;
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::lfreduce::reduce_listform;

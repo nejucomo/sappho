@@ -12,7 +12,7 @@ mod provider;
 mod query;
 
 pub use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
-pub use sappho_identmap::Identifier;
+pub use sappho_attrs::Identifier;
 
 pub use self::application::ApplicationExpr;
 pub use self::core::CoreExpr;

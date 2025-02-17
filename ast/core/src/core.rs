@@ -3,7 +3,7 @@ use crate::{
     ObjectDef,
 };
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]

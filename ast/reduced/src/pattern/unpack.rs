@@ -1,6 +1,6 @@
 use crate::Pattern;
 use sappho_ast as ast;
-use sappho_identmap::{IdentMap, Identifier};
+use sappho_attrs::{IdentMap, Identifier};
 use sappho_unparse::{Stream, Unparse};
 use std::ops::Deref;
 

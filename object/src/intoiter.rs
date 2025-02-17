@@ -1,5 +1,5 @@
 use crate::Element;
-use sappho_identmap::IdentMap;
+use sappho_attrs::IdentMap;
 
 pub struct IntoIter<F, Q, P, A> {
     pub(crate) f: Option<F>,

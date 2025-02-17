@@ -1,5 +1,5 @@
 use crate::{Coerce, CoercionFailure, Value};
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
 use std::fmt;

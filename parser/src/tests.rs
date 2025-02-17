@@ -3,7 +3,7 @@ use sappho_ast::{Ast, Effect, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
 };
-use sappho_identmap::IdentMap;
+use sappho_attrs::IdentMap;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
