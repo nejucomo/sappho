@@ -2,7 +2,7 @@ mod bindfailure;
 
 use crate::{Attrs, Unbound, UnboundKind::Unfulfilled, ValRef};
 use sappho_ast_reduced::{Literal, Pattern, UnpackPattern};
-use sappho_attrs::{IdentMap, IdentRef};
+use sappho_attrs::{Attrs, IdentRef};
 use std::cell::RefCell;
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};
@@ -10,7 +10,7 @@ pub use self::bindfailure::{BindFailure, BindFailureReason};
 /// A `Frame` maps in-scope bindings to [Option]<[ValRef]> where `None` indicates a
 /// forward-reference is not yet fulfilled, while `Some(v)` provides a defined value.
 #[derive(Debug, Default)]
-pub struct Frame(IdentMap<RefCell<Option<ValRef>>>);
+pub struct Frame(Attrs<RefCell<Option<ValRef>>>);
 
 impl Frame {
     pub fn declare(&mut self, pattern: &Pattern) {

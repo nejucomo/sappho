@@ -1,7 +1,7 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast::{Pattern, UnpackPattern};
-use sappho_attrs::IdentMap;
+use sappho_attrs::Attrs;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::AstFuzz;
@@ -19,6 +19,6 @@ impl Distribution<Pattern> for AstFuzz {
 
 impl Distribution<UnpackPattern> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> UnpackPattern {
-        UnpackPattern::from(rng.sample::<IdentMap<_>, _>(self))
+        UnpackPattern::from(rng.sample::<Attrs<_>, _>(self))
     }
 }

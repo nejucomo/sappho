@@ -3,7 +3,7 @@ use sappho_ast::{Ast, Effect, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
 };
-use sappho_attrs::IdentMap;
+use sappho_attrs::Attrs;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
@@ -66,7 +66,7 @@ fn object_def(f: Option<FuncDef<Ast>>, q: Option<QueryDef<Ast>>) -> PureExpr {
 
 fn attrs_def<const K: usize>(attrs: [(&str, PureExpr); K]) -> PureExpr {
     let stringattrs = attrs.into_iter().map(|(s, x)| (s.to_string(), x));
-    ObjectDef::new_from_parts(None, None, None, IdentMap::from_iter(stringattrs)).into()
+    ObjectDef::new_from_parts(None, None, None, Attrs::from_iter(stringattrs)).into()
 }
 
 fn app_expr(t: PureExpr, a: PureExpr) -> PureExpr {

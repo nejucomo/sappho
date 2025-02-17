@@ -3,7 +3,7 @@ mod unpack;
 use crate::lfreduce::reduce_listform;
 use crate::{Identifier, Literal};
 use sappho_ast as ast;
-use sappho_attrs::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
@@ -94,8 +94,8 @@ impl fmt::Display for Pattern {
     }
 }
 
-impl TryIntoIdentMap<Pattern> for Pattern {
-    fn try_into_identmap(&self) -> Option<&IdentMap<Pattern>> {
+impl TryIntoAttrs<Pattern> for Pattern {
+    fn try_into_identmap(&self) -> Option<&Attrs<Pattern>> {
         use std::ops::Deref;
 
         match self {

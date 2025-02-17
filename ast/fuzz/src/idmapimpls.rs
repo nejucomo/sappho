@@ -1,16 +1,16 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast::Identifier;
-use sappho_attrs::IdentMap;
+use sappho_attrs::Attrs;
 
 use crate::AstFuzz;
 
-impl<T> Distribution<IdentMap<T>> for AstFuzz
+impl<T> Distribution<Attrs<T>> for AstFuzz
 where
     AstFuzz: Distribution<T>,
 {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> IdentMap<T> {
-        let mut idmap = IdentMap::default();
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Attrs<T> {
+        let mut idmap = Attrs::default();
         while rng.random_ratio(2, 3) {
             let id = rng.sample::<Identifier, _>(self);
             let value = rng.sample::<T, _>(self);

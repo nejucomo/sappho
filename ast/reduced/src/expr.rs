@@ -4,7 +4,7 @@ use std::ops::Deref;
 use sappho_ast::{self as ast};
 use sappho_ast_core::{CoreExpr, ObjectDef};
 use sappho_ast_effect::Effect;
-use sappho_attrs::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::lfreduce::reduce_listform;
@@ -118,11 +118,11 @@ where
     }
 }
 
-impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
+impl<FX> TryIntoAttrs<Expr<FX>> for Expr<FX>
 where
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&Attrs<Expr<FX>>> {
         self.0.try_into_identmap()
     }
 }

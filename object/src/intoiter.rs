@@ -1,11 +1,11 @@
 use crate::Element;
-use sappho_attrs::IdentMap;
+use sappho_attrs::Attrs;
 
 pub struct IntoIter<F, Q, P, A> {
     pub(crate) f: Option<F>,
     pub(crate) q: Option<Q>,
     pub(crate) p: Option<P>,
-    pub(crate) a: <IdentMap<A> as IntoIterator>::IntoIter,
+    pub(crate) a: <Attrs<A> as IntoIterator>::IntoIter,
 }
 
 impl<F, Q, P, A> Iterator for IntoIter<F, Q, P, A> {

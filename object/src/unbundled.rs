@@ -1,5 +1,5 @@
 use crate::Object;
-use sappho_attrs::IdentMap;
+use sappho_attrs::Attrs;
 
 /// An object containing exactly one of func, query, proc, or attrs can be "unbundled" into that
 /// component. This is used for canonicalization, e.g. `{ fn x -> x }` -> `fn x -> x`.
@@ -9,5 +9,5 @@ pub enum Unbundled<F, Q, P, A> {
     Func(F),
     Query(Q),
     Proc(P),
-    Attrs(IdentMap<A>),
+    Attrs(Attrs<A>),
 }

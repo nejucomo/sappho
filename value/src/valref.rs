@@ -1,5 +1,5 @@
 use crate::{Coerce, CoercionFailure, Value};
-use sappho_attrs::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
 use std::fmt;
@@ -41,8 +41,8 @@ where
     }
 }
 
-impl TryIntoIdentMap<ValRef> for ValRef {
-    fn try_into_identmap(&self) -> Option<&IdentMap<ValRef>> {
+impl TryIntoAttrs<ValRef> for ValRef {
+    fn try_into_identmap(&self) -> Option<&Attrs<ValRef>> {
         self.deref().try_into_identmap()
     }
 }

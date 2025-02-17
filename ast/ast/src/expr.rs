@@ -3,7 +3,7 @@
 use either::Either;
 use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
-use sappho_attrs::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
@@ -46,11 +46,11 @@ where
     }
 }
 
-impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
+impl<FX> TryIntoAttrs<Expr<FX>> for Expr<FX>
 where
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&Attrs<Expr<FX>>> {
         match self {
             Expr::Core(c) => c.try_into_identmap(),
             _ => None,

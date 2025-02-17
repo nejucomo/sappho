@@ -1,5 +1,5 @@
 use crate::{Object, ValRef};
-use sappho_attrs::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]
@@ -8,8 +8,8 @@ pub enum Value {
     Object(Box<Object>),
 }
 
-impl TryIntoIdentMap<ValRef> for Value {
-    fn try_into_identmap(&self) -> Option<&IdentMap<ValRef>> {
+impl TryIntoAttrs<ValRef> for Value {
+    fn try_into_identmap(&self) -> Option<&Attrs<ValRef>> {
         match self {
             Value::Object(obj) => obj.try_into_identmap(),
             _ => None,

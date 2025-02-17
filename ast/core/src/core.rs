@@ -3,7 +3,7 @@ use crate::{
     ObjectDef,
 };
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
-use sappho_attrs::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]
@@ -51,12 +51,12 @@ where
     }
 }
 
-impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for CoreExpr<XP, FX>
+impl<XP, FX> TryIntoAttrs<XP::Expr<FX>> for CoreExpr<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&Attrs<XP::Expr<FX>>> {
         match self {
             CoreExpr::Object(objdef) => objdef.try_into_identmap(),
             _ => None,

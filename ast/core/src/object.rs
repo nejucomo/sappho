@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use derive_new::new;
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
-use sappho_attrs::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
@@ -24,7 +24,7 @@ where
         f: Option<FuncDef<XP>>,
         q: Option<QueryDef<XP>>,
         p: Option<ProcDef<XP>>,
-        attrs: IdentMap<XP::Expr<FX>>,
+        attrs: Attrs<XP::Expr<FX>>,
     ) -> Self {
         Self::new(Object::new(f, q, p, attrs))
     }
@@ -43,7 +43,7 @@ where
 
     pub fn new_attrs<T>(attrs: T) -> Self
     where
-        T: Into<IdentMap<XP::Expr<FX>>>,
+        T: Into<Attrs<XP::Expr<FX>>>,
     {
         ObjectDef(Object::new_attrs(attrs))
     }
@@ -127,12 +127,12 @@ where
     }
 }
 
-impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for ObjectDef<XP, FX>
+impl<XP, FX> TryIntoAttrs<XP::Expr<FX>> for ObjectDef<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
+    fn try_into_identmap(&self) -> Option<&Attrs<XP::Expr<FX>>> {
         self.0.try_into_identmap()
     }
 }

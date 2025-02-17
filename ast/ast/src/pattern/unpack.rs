@@ -1,33 +1,33 @@
 use crate::Pattern;
-use sappho_attrs::{IdentMap, Identifier};
+use sappho_attrs::{Attrs, Identifier};
 use sappho_unparse::{Stream, Unparse};
 use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
-pub struct UnpackPattern(IdentMap<Pattern>);
+pub struct UnpackPattern(Attrs<Pattern>);
 
 impl UnpackPattern {
-    pub fn unwrap(self) -> IdentMap<Pattern> {
+    pub fn unwrap(self) -> Attrs<Pattern> {
         self.0
     }
 }
 
 impl FromIterator<(Identifier, Pattern)> for UnpackPattern
 where
-    IdentMap<Pattern>: FromIterator<(Identifier, Pattern)>,
+    Attrs<Pattern>: FromIterator<(Identifier, Pattern)>,
 {
     fn from_iter<I>(iter: I) -> Self
     where
         I: IntoIterator<Item = (Identifier, Pattern)>,
     {
-        UnpackPattern(IdentMap::from_iter(iter))
+        UnpackPattern(Attrs::from_iter(iter))
     }
 }
 
 impl Deref for UnpackPattern {
-    type Target = IdentMap<Pattern>;
+    type Target = Attrs<Pattern>;
 
-    fn deref(&self) -> &IdentMap<Pattern> {
+    fn deref(&self) -> &Attrs<Pattern> {
         &self.0
     }
 }
