@@ -94,16 +94,5 @@ impl fmt::Display for Pattern {
     }
 }
 
-impl TryIntoAttrs<Pattern> for Pattern {
-    fn try_into_identmap(&self) -> Option<&Attrs<Pattern>> {
-        use std::ops::Deref;
-
-        match self {
-            Pattern::Unpack(up) => Some(up.deref()),
-            _ => None,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests;

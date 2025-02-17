@@ -8,15 +8,6 @@ pub enum Value {
     Object(Box<Object>),
 }
 
-impl TryIntoAttrs<ValRef> for Value {
-    fn try_into_identmap(&self) -> Option<&Attrs<ValRef>> {
-        match self {
-            Value::Object(obj) => obj.try_into_identmap(),
-            _ => None,
-        }
-    }
-}
-
 impl Unparse for Value {
     fn unparse_into(&self, s: &mut Stream) {
         use Value::*;

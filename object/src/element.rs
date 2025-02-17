@@ -1,4 +1,4 @@
-use sappho_attrs::Identifier;
+use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug)]
@@ -6,7 +6,7 @@ pub enum Element<F, Q, P, A> {
     Func(F),
     Query(Q),
     Proc(P),
-    Attr(Identifier, A),
+    Attr(RcId, A),
 }
 
 impl<'a, F, Q, P, A> Unparse for Element<&'a F, &'a Q, &'a P, &'a A>

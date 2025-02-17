@@ -6,6 +6,7 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-derive_more.workspace = true
 aliri_braid.workspace = true
+derive_more.workspace = true
+sappho-unparse.workspace = true
 thiserror.workspace = true

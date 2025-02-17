@@ -1,6 +1,6 @@
 use derive_new::new;
 
-use sappho_attrs::{Attrs, TryIntoAttrs};
+use sappho_attrs::Attrs;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{Element, IntoIter, Unbundled};
@@ -112,7 +112,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
             f: self.f.map(tfunc),
             q: self.q.map(tquery),
             p: self.p.map(tproc),
-            a: self.a.into_map_values(tattr),
+            a: self.a.map(tattr),
         }
     }
 
@@ -185,16 +185,6 @@ impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>
             }
         }
         Ok(obj)
-    }
-}
-
-impl<F, Q, P, A> TryIntoAttrs<A> for Object<F, Q, P, A> {
-    fn try_into_identmap(&self) -> Option<&Attrs<A>> {
-        if self.f.is_none() && self.q.is_none() && self.p.is_none() {
-            Some(self.attrs())
-        } else {
-            None
-        }
     }
 }
 

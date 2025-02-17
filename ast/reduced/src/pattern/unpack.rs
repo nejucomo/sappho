@@ -9,13 +9,13 @@ pub struct UnpackPattern(Attrs<Pattern>);
 
 impl From<ast::UnpackPattern> for UnpackPattern {
     fn from(aup: ast::UnpackPattern) -> Self {
-        UnpackPattern::from(aup.unwrap().into_map_values(Pattern::from))
+        UnpackPattern::from(aup.unwrap().map(Pattern::from))
     }
 }
 
 impl From<UnpackPattern> for ast::UnpackPattern {
     fn from(eup: UnpackPattern) -> Self {
-        ast::UnpackPattern::from(eup.0.into_map_values(ast::Pattern::from))
+        ast::UnpackPattern::from(eup.0.map(ast::Pattern::from))
     }
 }
 

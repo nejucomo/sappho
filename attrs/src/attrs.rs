@@ -4,10 +4,14 @@ use sappho_identifier::{IdentRef, RcId};
 
 use crate::Redefinition;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Attrs<T>(BTreeMap<RcId, T>);
 
 impl<T> Attrs<T> {
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     pub fn define<K>(&mut self, id: K, val: T) -> Result<(), Redefinition>
     where
         RcId: From<K>,
@@ -29,6 +33,13 @@ impl<T> Attrs<T> {
 
     pub fn iter(&self) -> impl Iterator<Item = (&RcId, &T)> {
         self.0.iter()
+    }
+
+    pub fn map<F, U>(self, f: F) -> Attrs<U>
+    where
+        F: Fn(T) -> U,
+    {
+        self.into_iter().map(|(id, t)| (id, f(t))).collect()
     }
 }
 

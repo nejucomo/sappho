@@ -110,20 +110,7 @@ where
                         .collect(),
                 )
             })
-            .unwrap_or_else(|| {
-                Core(Object(ObjectDef::new_attrs(
-                    a.into_map_values(ast::Expr::from),
-                )))
-            }),
-    }
-}
-
-impl<FX> TryIntoAttrs<Expr<FX>> for Expr<FX>
-where
-    FX: Effect,
-{
-    fn try_into_identmap(&self) -> Option<&Attrs<Expr<FX>>> {
-        self.0.try_into_identmap()
+            .unwrap_or_else(|| Core(Object(ObjectDef::new_attrs(a.map(ast::Expr::from))))),
     }
 }
 

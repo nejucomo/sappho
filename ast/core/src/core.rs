@@ -51,19 +51,6 @@ where
     }
 }
 
-impl<XP, FX> TryIntoAttrs<XP::Expr<FX>> for CoreExpr<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    fn try_into_identmap(&self) -> Option<&Attrs<XP::Expr<FX>>> {
-        match self {
-            CoreExpr::Object(objdef) => objdef.try_into_identmap(),
-            _ => None,
-        }
-    }
-}
-
 impl<XP, FX> Unparse for CoreExpr<XP, FX>
 where
     XP: AstProvider,

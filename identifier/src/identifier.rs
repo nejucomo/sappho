@@ -1,4 +1,5 @@
 use aliri_braid::braid;
+use sappho_unparse::Unparse;
 
 use crate::InvalidIdentifier;
 
@@ -15,5 +16,11 @@ impl aliri_braid::Validator for Identifier {
             }
         }
         Ok(())
+    }
+}
+
+impl Unparse for &IdentRef {
+    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
+        self.as_str().unparse_into(s)
     }
 }

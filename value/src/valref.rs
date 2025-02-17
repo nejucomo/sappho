@@ -41,12 +41,6 @@ where
     }
 }
 
-impl TryIntoAttrs<ValRef> for ValRef {
-    fn try_into_identmap(&self) -> Option<&Attrs<ValRef>> {
-        self.deref().try_into_identmap()
-    }
-}
-
 impl fmt::Display for ValRef {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.unparse().fmt(f)

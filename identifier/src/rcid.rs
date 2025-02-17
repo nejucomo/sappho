@@ -2,6 +2,7 @@ use std::borrow::Borrow;
 use std::rc::Rc;
 
 use derive_more::From;
+use sappho_unparse::Unparse;
 
 use crate::{IdentRef, Identifier};
 
@@ -18,5 +19,12 @@ impl Borrow<IdentRef> for RcId {
     fn borrow(&self) -> &IdentRef {
         let r: &Identifier = self.borrow();
         r.borrow()
+    }
+}
+
+impl Unparse for RcId {
+    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
+        let idr: &IdentRef = self.borrow();
+        idr.unparse_into(s)
     }
 }

@@ -127,16 +127,6 @@ where
     }
 }
 
-impl<XP, FX> TryIntoAttrs<XP::Expr<FX>> for ObjectDef<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    fn try_into_identmap(&self) -> Option<&Attrs<XP::Expr<FX>>> {
-        self.0.try_into_identmap()
-    }
-}
-
 impl<XP, FX> Unparse for ObjectDef<XP, FX>
 where
     XP: AstProvider,

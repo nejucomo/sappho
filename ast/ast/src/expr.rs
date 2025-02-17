@@ -46,18 +46,6 @@ where
     }
 }
 
-impl<FX> TryIntoAttrs<Expr<FX>> for Expr<FX>
-where
-    FX: Effect,
-{
-    fn try_into_identmap(&self) -> Option<&Attrs<Expr<FX>>> {
-        match self {
-            Expr::Core(c) => c.try_into_identmap(),
-            _ => None,
-        }
-    }
-}
-
 impl<FX> Unparse for Expr<FX>
 where
     FX: Effect,
