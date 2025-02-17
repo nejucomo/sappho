@@ -9,6 +9,12 @@ use crate::{IdentRef, Identifier};
 #[derive(Clone, Debug, From, Eq, Ord, PartialEq, PartialOrd)]
 pub struct RcId(Rc<Identifier>);
 
+impl From<Identifier> for RcId {
+    fn from(id: Identifier) -> Self {
+        RcId::from(Rc::from(id))
+    }
+}
+
 impl Borrow<Identifier> for RcId {
     fn borrow(&self) -> &Identifier {
         self.0.borrow()

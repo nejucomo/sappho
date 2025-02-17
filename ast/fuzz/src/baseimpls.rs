@@ -1,6 +1,7 @@
 use rand::distr::{Distribution, StandardUniform};
 use rand::Rng;
-use sappho_ast::{Identifier, Literal};
+use sappho_ast::Literal;
+use sappho_identifier::{Identifier, RcId};
 
 use crate::AstFuzz;
 
@@ -26,13 +27,19 @@ impl Distribution<Literal> for AstFuzz {
     }
 }
 
+impl Distribution<RcId> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> RcId {
+        RcId::from(rng.sample::<Identifier, _>(self))
+    }
+}
+
 impl Distribution<Identifier> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Identifier {
         let mut id = "".to_string();
         while id.is_empty() || rng.random_ratio(1, 3) {
             id.push(rng.random_range('a'..='z'));
         }
-        id
+        Identifier::new(id).unwrap()
     }
 }
 
