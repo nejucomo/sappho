@@ -15,6 +15,12 @@ impl From<Identifier> for RcId {
     }
 }
 
+impl<'a> From<&'a IdentRef> for RcId {
+    fn from(idr: &'a IdentRef) -> Self {
+        RcId::from(Identifier::from(idr))
+    }
+}
+
 impl Borrow<Identifier> for RcId {
     fn borrow(&self) -> &Identifier {
         self.0.borrow()

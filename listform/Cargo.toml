@@ -8,6 +8,8 @@ homepage.workspace = true
 [dependencies]
 derive-new.workspace = true
 either.workspace = true
+sappho-attrs.workspace = true
+sappho-identifier.workspace = true
 sappho-unparse.workspace = true
 
 [dev-dependencies]

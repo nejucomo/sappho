@@ -1,4 +1,5 @@
 use either::Either::{self, Left, Right};
+use sappho_attrs::{Attrs, AttrsError, AttrsTailAdapter};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
@@ -21,18 +22,6 @@ impl<X, T> ListForm<X, T> {
     pub fn is_empty(&self) -> bool {
         self.0.xs.is_empty() && self.0.optail.is_none()
     }
-
-    // pub fn try_map<TX, DX, TT, DT, E>(self, telem: TX, ttail: TT) -> Result<ListForm<DX, DT>, E>
-    // where
-    //     DX: std::fmt::Debug,
-    //     DT: std::fmt::Debug,
-    //     TX: Fn(X) -> Result<DX, E>,
-    //     TT: Fn(T) -> Result<DT, E>,
-    // {
-    //     self.into_iter()
-    //         .map(|ei| ei.map_left(&telem).map_right(&ttail).factor_err())
-    //         .collect()
-    // }
 }
 
 impl<X, T, E> ListForm<X, Result<T, E>> {
@@ -60,6 +49,22 @@ where
 {
     fn from_iter<I: IntoIterator<Item = Either<X, T>>>(iter: I) -> Self {
         ListForm(ListFormGeneric::from_iter(iter))
+    }
+}
+
+impl<A, X, T> TryFrom<Attrs<A>> for ListForm<X, T>
+where
+    A: AttrsTailAdapter,
+    X: From<A> + std::fmt::Debug,
+    T: From<A> + std::fmt::Debug,
+{
+    type Error = AttrsError;
+
+    fn try_from(attrs: Attrs<A>) -> Result<Self, Self::Error> {
+        attrs
+            .into_head_and_tail_iter()
+            .map(|eires| eires.map(|ei| ei.map_left(X::from).map_right(T::from)))
+            .collect()
     }
 }
 

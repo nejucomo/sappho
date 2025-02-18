@@ -3,29 +3,47 @@ use std::collections::BTreeMap;
 use sappho_identifier::{IdentRef, RcId};
 use sappho_unparse::Unparse;
 
-use crate::Redefinition;
+use crate::error::AttrsResult;
+use crate::{AttrsError, AttrsTailAdapter, HeadAndTailIter};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Attrs<T>(BTreeMap<RcId, T>);
 
+/// TODO: Change the `&IdentRef` looksup to `&RcId` after introducing an Identifier "interning" facility.
 impl<T> Attrs<T> {
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 
-    pub fn define<K>(&mut self, id: K, val: T) -> Result<(), Redefinition>
+    pub fn define<K>(&mut self, id: K, val: T) -> AttrsResult<()>
     where
         RcId: From<K>,
     {
         let rcid = RcId::from(id);
         match self.0.insert(rcid.clone(), val) {
             None => Ok(()),
-            Some(_) => Err(Redefinition::from(rcid)),
+            Some(_) => Err(AttrsError::Redefinition(rcid)),
         }
     }
 
-    pub fn get(&self, id: &IdentRef) -> Option<&T> {
-        self.0.get(id)
+    pub fn get(&self, id: &IdentRef) -> AttrsResult<&T> {
+        self.0
+            .get(id)
+            .ok_or_else(|| AttrsError::Missing(RcId::from(id)))
+    }
+
+    pub fn remove(&mut self, id: &IdentRef) -> AttrsResult<T> {
+        self.0
+            .remove(id)
+            .ok_or_else(|| AttrsError::Missing(RcId::from(id)))
+    }
+
+    pub fn expect_empty(self) -> AttrsResult<()> {
+        if self.is_empty() {
+            Ok(())
+        } else {
+            Err(AttrsError::Unexpected(self.0.into_keys().collect()))
+        }
     }
 
     pub fn as_refs(&self) -> Attrs<&T> {
@@ -41,6 +59,13 @@ impl<T> Attrs<T> {
         F: Fn(T) -> U,
     {
         self.into_iter().map(|(id, t)| (id, f(t))).collect()
+    }
+
+    pub fn into_head_and_tail_iter(self) -> HeadAndTailIter<T>
+    where
+        T: AttrsTailAdapter,
+    {
+        HeadAndTailIter::from(self)
     }
 }
 

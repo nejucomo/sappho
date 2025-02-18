@@ -7,6 +7,7 @@ homepage.workspace = true
 
 [dependencies]
 derive_more.workspace = true
+either.workspace = true
 thiserror.workspace = true
 sappho-identifier.workspace = true
 sappho-unparse.workspace = true
