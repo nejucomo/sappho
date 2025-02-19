@@ -26,6 +26,27 @@ impl<T> AttrsKey<T> for &'static str {
     }
 }
 
+/// Allow _fully empty_ attrs to result in a `None` output, otherwise take the full key
+///
+/// # Panics
+///
+/// The key must be `Some`, or else this impl panics
+impl<T, K> AttrsKey<T> for Option<K>
+where
+    K: AttrsKey<T>,
+{
+    type Output = Option<K::Output>;
+
+    fn take_from(self, attrs: &mut Attrs<T>) -> AttrsResult<Self::Output> {
+        let k = self.unwrap();
+        if attrs.is_empty() {
+            Ok(None)
+        } else {
+            attrs.take(k).map(Some)
+        }
+    }
+}
+
 impl<T, K, const S: usize> AttrsKey<T> for [K; S]
 where
     K: AttrsKey<T>,

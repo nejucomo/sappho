@@ -4,7 +4,7 @@ use crate::error::AttrsResult;
 use crate::Attrs;
 
 pub trait AttrsTailAdapter: Sized {
-    fn into_attrs_tail(self) -> Either<Attrs<Self>, Self>;
+    fn try_into_attrs_tail(self) -> Either<Attrs<Self>, Self>;
 }
 
 #[derive(Clone, Debug)]
@@ -28,7 +28,7 @@ where
     fn next_inner(&mut self) -> AttrsResult<Option<Either<T, T>>> {
         if let Some(ei) = self.0.take() {
             match ei {
-                Left(attrs) => self.next_attrs(attrs),
+                Left(attrs) => self.next_attrs(attrs).map(|opt| opt.map(Left)),
                 Right(tail) => Ok(Some(Right(tail))),
             }
         } else {
@@ -36,14 +36,13 @@ where
         }
     }
 
-    fn next_attrs(&mut self, attrs: Attrs<T>) -> AttrsResult<Option<Either<T, T>>> {
-        if attrs.is_empty() {
-            Ok(None)
-        } else {
-            let [elem, tail] = attrs.unpack(["head", "tail"])?;
-            self.0 = Some(tail.into_attrs_tail());
-            Ok(Some(Left(elem)))
-        }
+    fn next_attrs(&mut self, attrs: Attrs<T>) -> AttrsResult<Option<T>> {
+        let opt = attrs.unpack(Some(["head", "tail"]))?;
+
+        Ok(opt.map(|[head, tail]| {
+            self.0 = Some(tail.try_into_attrs_tail());
+            head
+        }))
     }
 }
 
