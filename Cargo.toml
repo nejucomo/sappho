@@ -32,6 +32,7 @@ homepage = "https://github.com/nathan-at-least/sappho"
 aliri_braid = "0.4.0"
 anyhow = "1.0.71"
 anyhow-std = "0.1.4"
+array-init = "2.1.0"
 chumsky = "0.9.3"
 clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
 derive_more = "0.99.17"

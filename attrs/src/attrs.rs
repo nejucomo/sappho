@@ -4,7 +4,7 @@ use sappho_identifier::{IdentRef, RcId};
 use sappho_unparse::Unparse;
 
 use crate::error::AttrsResult;
-use crate::{AttrsError, AttrsTailAdapter, HeadAndTailIter};
+use crate::{AttrsError, AttrsKey, AttrsTailAdapter, HeadAndTailIter};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Attrs<T>(BTreeMap<RcId, T>);
@@ -26,13 +26,47 @@ impl<T> Attrs<T> {
         }
     }
 
-    pub fn get(&self, id: &IdentRef) -> AttrsResult<&T> {
-        self.0
-            .get(id)
-            .ok_or_else(|| AttrsError::Missing(RcId::from(id)))
+    /// Get an output for any key, `K`, which includes `&IdentRef`
+    ///
+    /// Three common impls are `&IdentRef`, `&'static str`, and `(k1, k2)` which is a tuple of keys.
+    ///
+    /// For non-tuple keys, the output is just `&T`. For tuple keys the output is a tuple of the sub-key outputs.
+    ///
+    /// # Panics
+    ///
+    /// A `&'static str` key must be valid as an [IdentRef] and will cause a panic if not.
+    ///
+    /// # Performance
+    ///
+    /// This method is `self.as_refs().take(key)` which is nicely composable and terribly inefficient.
+    pub fn get<'a, K>(&'a self, key: K) -> AttrsResult<K::Output>
+    where
+        K: AttrsKey<&'a T>,
+    {
+        self.as_refs().take(key)
     }
 
-    pub fn remove(&mut self, id: &IdentRef) -> AttrsResult<T> {
+    /// Take the value(s) for the given `key`
+    ///
+    /// See [Attrs::get] for the semantics of keys, their outputs, and panic conditions. However, the performance issue of [Attrs::get] is not present here.
+    pub fn take<K>(&mut self, key: K) -> AttrsResult<K::Output>
+    where
+        K: AttrsKey<T>,
+    {
+        key.take_from(self)
+    }
+
+    /// Take the value(s) for the given `key` and ensure the remaining `self` is empty
+    pub fn unpack<K>(mut self, key: K) -> AttrsResult<K::Output>
+    where
+        K: AttrsKey<T>,
+    {
+        let out = self.take(key)?;
+        self.expect_empty()?;
+        Ok(out)
+    }
+
+    pub(crate) fn take_basic(&mut self, id: &IdentRef) -> AttrsResult<T> {
         self.0
             .remove(id)
             .ok_or_else(|| AttrsError::Missing(RcId::from(id)))

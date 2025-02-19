@@ -1,5 +1,4 @@
 use either::Either::{self, Left, Right};
-use sappho_identifier::IdentRef;
 
 use crate::error::AttrsResult;
 use crate::Attrs;
@@ -37,13 +36,11 @@ where
         }
     }
 
-    fn next_attrs(&mut self, mut attrs: Attrs<T>) -> AttrsResult<Option<Either<T, T>>> {
+    fn next_attrs(&mut self, attrs: Attrs<T>) -> AttrsResult<Option<Either<T, T>>> {
         if attrs.is_empty() {
             Ok(None)
         } else {
-            let elem = attrs.remove(IdentRef::from_static("head"))?;
-            let tail = attrs.remove(IdentRef::from_static("tail"))?;
-            attrs.expect_empty()?;
+            let [elem, tail] = attrs.unpack(["head", "tail"])?;
             self.0 = Some(tail.into_attrs_tail());
             Ok(Some(Left(elem)))
         }
