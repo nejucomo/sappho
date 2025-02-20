@@ -11,4 +11,4 @@ either.workspace = true
 thiserror.workspace = true
 sappho-identifier.workspace = true
 sappho-unparse.workspace = true
-array-init.workspace = true
+arrayvec.workspace = true
