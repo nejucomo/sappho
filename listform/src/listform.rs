@@ -1,5 +1,4 @@
 use either::Either::{self, Left, Right};
-use sappho_attrs::{Attrs, AttrsError, AttrsTailAdapter};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
@@ -49,22 +48,6 @@ where
 {
     fn from_iter<I: IntoIterator<Item = Either<X, T>>>(iter: I) -> Self {
         ListForm(ListFormGeneric::from_iter(iter))
-    }
-}
-
-impl<A, X, T> TryFrom<Attrs<A>> for ListForm<X, T>
-where
-    A: AttrsTailAdapter,
-    X: From<A> + std::fmt::Debug,
-    T: From<A> + std::fmt::Debug,
-{
-    type Error = AttrsError;
-
-    fn try_from(attrs: Attrs<A>) -> Result<Self, Self::Error> {
-        attrs
-            .into_head_and_tail_iter()
-            .map(|eires| eires.map(|ei| ei.map_left(X::from).map_right(T::from)))
-            .collect()
     }
 }
 
