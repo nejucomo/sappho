@@ -6,7 +6,8 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Ast, Expr, ListExpr, ProcExpr};
-use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr, ProcEffect};
+use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr};
+use sappho_ast_effect::ProcEffect;
 
 pub(crate) fn recursive_expr(
     expr: Recursive<char, ProcExpr, BareError>,

@@ -1,4 +1,5 @@
 use std::borrow::Borrow;
+use std::fmt;
 use std::rc::Rc;
 
 use derive_more::From;
@@ -58,5 +59,12 @@ impl Unparse for RcId {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
         let idr: &IdentRef = self.borrow();
         idr.unparse_into(s)
+    }
+}
+
+impl fmt::Display for RcId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let idr: &IdentRef = self.borrow();
+        idr.fmt(f)
     }
 }

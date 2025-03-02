@@ -3,7 +3,8 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Ast, ProcExpr};
-use sappho_ast_core::{EffectExpr, ProcEffect};
+use sappho_ast_core::EffectExpr;
+use sappho_ast_effect::ProcEffect;
 
 pub(crate) fn proc_effect(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,

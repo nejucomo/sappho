@@ -113,6 +113,14 @@ impl<T> Attrs<T> {
         self.0.iter()
     }
 
+    pub fn identifiers(&self) -> impl Iterator<Item = &RcId> {
+        self.iter().map(|(idr, _)| idr)
+    }
+
+    pub fn values(&self) -> impl Iterator<Item = &T> {
+        self.iter().map(|(_, v)| v)
+    }
+
     pub fn map<F, U>(self, f: F) -> Attrs<U>
     where
         F: Fn(T) -> U,

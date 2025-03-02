@@ -4,7 +4,8 @@ use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{Ast, Expr, ProcExpr};
-use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, ProcEffect, QueryDef};
+use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef};
+use sappho_ast_effect::ProcEffect;
 use sappho_identifier::RcId;
 use sappho_object::Element;
 

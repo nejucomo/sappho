@@ -1,5 +1,4 @@
-use crate::{Object, ValRef};
-use sappho_attrs::{Attrs, TryIntoAttrs};
+use crate::Object;
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From)]

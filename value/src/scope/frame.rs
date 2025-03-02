@@ -1,8 +1,11 @@
 mod bindfailure;
 
-use crate::{Attrs, Unbound, UnboundKind::Unfulfilled, ValRef};
-use sappho_ast_reduced::{Literal, Pattern, UnpackPattern};
-use sappho_attrs::{Attrs, IdentRef};
+use crate::object::AttrVals;
+use crate::{Unbound, UnboundKind::Unfulfilled, ValRef};
+use sappho_ast_core::Literal;
+use sappho_ast_reduced::Pattern;
+use sappho_attrs::Attrs;
+use sappho_identifier::{IdentRef, RcId};
 use std::cell::RefCell;
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};
@@ -34,7 +37,7 @@ impl Frame {
         let into_bf = |r| BindFailure::new(pattern, value, r);
 
         match pattern {
-            Bind(ident) => self.bind_ident(ident.as_str(), value).map_err(into_bf),
+            Bind(ident) => self.bind_ident(ident.as_ref(), value).map_err(into_bf),
             LitEq(lit) => bind_lit_eq(lit, value).map_err(into_bf),
             Unpack(unpack) => self.bind_unpack(unpack, value),
         }
@@ -43,9 +46,10 @@ impl Frame {
     /// Return [Result]<[Option]<[ValRef]>, [Unbound]> where `None` indicates the binding is not
     /// declared in this frame. If a binding is declared, but not defined, this is an
     /// [Unfulfilled] error.
-    pub fn deref(&self, ident: &IdentRef) -> Result<Option<ValRef>, Unbound> {
+    pub fn deref(&self, ident: &RcId) -> Result<Option<ValRef>, Unbound> {
         self.0
             .get(ident)
+            .ok()
             .map(|rcell| {
                 let optval: Option<ValRef> = rcell.borrow().clone();
                 optval.ok_or_else(|| Unfulfilled.make(ident))
@@ -57,7 +61,7 @@ impl Frame {
         let cell = self
             .0
             .get(ident)
-            .unwrap_or_else(|| panic!("attempt to bind undeclared binding: {:?}", ident));
+            .unwrap_or_else(|_| panic!("attempt to bind undeclared binding: {:?}", ident));
 
         if cell.borrow_mut().replace(value.clone()).is_none() {
             Ok(())
@@ -66,7 +70,7 @@ impl Frame {
         }
     }
 
-    fn bind_unpack(&self, unpack: &UnpackPattern, value: &ValRef) -> Result<(), BindFailure> {
+    fn bind_unpack(&self, unpack: &Attrs<Pattern>, value: &ValRef) -> Result<(), BindFailure> {
         self.bind_unpack_inner(unpack, value).map_err(|e| match e {
             Failure(bf) => bf,
             Reason(r) => BindFailure::new(&Pattern::Unpack(unpack.clone()), value, r),
@@ -75,18 +79,18 @@ impl Frame {
 
     fn bind_unpack_inner(
         &self,
-        unpack: &UnpackPattern,
+        unpack: &Attrs<Pattern>,
         value: &ValRef,
     ) -> Result<(), InnerFailure> {
         use BindFailureReason::MissingAttr;
 
-        let srcattrs: &Attrs = value.coerce()?;
+        let srcattrs: &AttrVals = value.coerce()?;
         check_unexpected_source_attrs(unpack, srcattrs)?;
 
         for (ident, pat) in unpack.iter() {
             let v = srcattrs
                 .get(ident)
-                .ok_or_else(|| MissingAttr(ident.to_string()))?;
+                .map_err(|_| MissingAttr(ident.clone()))?;
 
             self.bind_pattern(pat, v)?;
         }
@@ -126,18 +130,15 @@ where
     }
 }
 fn check_unexpected_source_attrs(
-    unpack: &UnpackPattern,
-    srcattrs: &Attrs,
+    unpack: &Attrs<Pattern>,
+    srcattrs: &AttrVals,
 ) -> Result<(), BindFailureReason> {
     use std::collections::BTreeSet;
     use BindFailureReason::UnexpectedAttrs;
 
-    let unpacknames: BTreeSet<_> = unpack.keys().collect();
-    let srcnames: BTreeSet<_> = srcattrs.keys().collect();
-    let unexpected: Vec<String> = srcnames
-        .difference(&unpacknames)
-        .map(|s| s.to_string())
-        .collect();
+    let unpacknames: BTreeSet<_> = unpack.identifiers().cloned().collect();
+    let srcnames: BTreeSet<_> = srcattrs.identifiers().cloned().collect();
+    let unexpected: Vec<RcId> = srcnames.difference(&unpacknames).cloned().collect();
 
     if unexpected.is_empty() {
         Ok(())

@@ -11,11 +11,11 @@ where
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
         use crate::Error::MissingAttr;
-        use sappho_value::Attrs;
+        use sappho_value::AttrsVals;
 
         let LookupExpr { target, attr } = self;
         let tval = target.eval(scope)?;
-        let attrs: &Attrs = tval.coerce()?;
+        let attrs: &AttrsVals = tval.coerce()?;
         attrs
             .get(attr)
             .cloned()

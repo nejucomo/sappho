@@ -1,5 +1,4 @@
 use crate::{Coerce, CoercionFailure, Value};
-use sappho_attrs::{Attrs, TryIntoAttrs};
 use sappho_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
 use std::fmt;

@@ -2,7 +2,7 @@ use crate::{Eval, EvalV, Result};
 use sappho_ast::Effect;
 use sappho_ast_core::{EffectExpr, ObjectDef};
 use sappho_ast_reduced::AstRed;
-use sappho_value::{Attrs, Func, Object, Proc, Query, ScopeRef, Value};
+use sappho_value::{AttrsVals, Func, Object, Proc, Query, ScopeRef, Value};
 
 impl<FX> EvalV for ObjectDef<AstRed, FX>
 where
@@ -10,7 +10,7 @@ where
     FX: Effect,
 {
     fn eval_val(&self, scope: &ScopeRef) -> Result<Value> {
-        let mut attrs = Attrs::default();
+        let mut attrs = AttrsVals::default();
         for (id, attrexpr) in self.attrs().iter() {
             let v = attrexpr.eval(scope)?;
             attrs.define(id.clone(), v).unwrap();
