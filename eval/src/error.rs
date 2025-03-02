@@ -1,5 +1,6 @@
 use derive_more::From;
-use sappho_ast_reduced::{Identifier, Pattern};
+use sappho_ast_reduced::Pattern;
+use sappho_identifier::RcId;
 use sappho_value::{BindFailure, CoercionFailure, Unbound, ValRef};
 use std::fmt;
 
@@ -7,7 +8,7 @@ use std::fmt;
 #[derive(Debug, From)]
 pub enum Error {
     Unbound(Unbound),
-    MissingAttr(ValRef, Identifier),
+    MissingAttr(ValRef, RcId),
     Mismatch(ValRef, Vec<Pattern>),
     CoercionFailure(CoercionFailure),
     BindFailure(BindFailure),

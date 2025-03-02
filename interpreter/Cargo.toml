@@ -12,3 +12,4 @@ derive_more.workspace = true
 sappho-eval.workspace = true
 sappho-parser.workspace = true
 sappho-source.workspace = true
+sappho-transform.workspace = true
