@@ -129,6 +129,18 @@ impl<T> Attrs<T> {
     }
 }
 
+impl<T> Attrs<&T>
+where
+    T: Clone,
+{
+    pub fn cloned(self) -> Attrs<T>
+    where
+        T: Clone,
+    {
+        self.map(T::clone)
+    }
+}
+
 impl<T> Default for Attrs<T> {
     fn default() -> Self {
         Attrs(BTreeMap::default())

@@ -5,6 +5,7 @@ mod proc;
 mod query;
 mod scope;
 mod thunk;
+mod tryaslist;
 mod valref;
 mod value;
 

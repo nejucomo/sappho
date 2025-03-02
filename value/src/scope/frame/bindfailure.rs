@@ -39,7 +39,7 @@ impl fmt::Display for BindFailureReason {
                 f,
                 "unexpected attrs {}",
                 // Hrm... `RcId` is cumbersome here unless we could `impl std::slice::Join<&str> for [RcId]` ?
-                v.into_iter()
+                v.iter()
                     .map(|rcid| rcid.to_string())
                     .collect::<Vec<_>>()
                     .join(", ")
