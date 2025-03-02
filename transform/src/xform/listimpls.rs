@@ -19,7 +19,7 @@ where
                 asteither
                     .map_right(T::transform)
                     .map_left(|x| {
-                        V::from(Attrs::from_iter([("head", x.transform()), ("tail ", red)]))
+                        V::from(Attrs::from_iter([("head", x.transform()), ("tail", red)]))
                     })
                     .into_inner()
             })
