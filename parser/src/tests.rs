@@ -1,24 +1,26 @@
 use either::Either::Left;
-use sappho_ast::{Ast, Effect, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
+use sappho_ast::{Ast, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_ast_core::{
-    ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
+    ApplicationExpr, Effect, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef,
+    QueryDef,
 };
 use sappho_attrs::Attrs;
+use sappho_identifier::RcId;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
     sappho_ast_core::Literal::Num(f).into()
 }
 
-fn refexpr<FX>(s: &str) -> Expr<FX>
+fn refexpr<FX>(s: &'static str) -> Expr<FX>
 where
     FX: Effect,
 {
-    s.to_string().into()
+    Expr::from(RcId::from(s))
 }
 
-fn bind(s: &str) -> Pattern {
-    Pattern::Bind(s.to_string())
+fn bind(s: &'static str) -> Pattern {
+    Pattern::Bind(RcId::from(s))
 }
 
 fn inquire(x: QueryExpr) -> QueryExpr {
@@ -64,8 +66,8 @@ fn object_def(f: Option<FuncDef<Ast>>, q: Option<QueryDef<Ast>>) -> PureExpr {
     ObjectDef::new_from_parts(f, q, None, Default::default()).into()
 }
 
-fn attrs_def<const K: usize>(attrs: [(&str, PureExpr); K]) -> PureExpr {
-    let stringattrs = attrs.into_iter().map(|(s, x)| (s.to_string(), x));
+fn attrs_def<const K: usize>(attrs: [(&'static str, PureExpr); K]) -> PureExpr {
+    let stringattrs = attrs.into_iter().map(|(s, x)| (RcId::from(s), x));
     ObjectDef::new_from_parts(None, None, None, Attrs::from_iter(stringattrs)).into()
 }
 
@@ -73,12 +75,12 @@ fn app_expr(t: PureExpr, a: PureExpr) -> PureExpr {
     ApplicationExpr::new(Box::new(t), Box::new(a)).into()
 }
 
-fn lookup(t: PureExpr, attr: &str) -> PureExpr {
-    LookupExpr::new(Box::new(t), attr.to_string()).into()
+fn lookup(t: PureExpr, attr: &'static str) -> PureExpr {
+    LookupExpr::new(Box::new(t), RcId::from(attr)).into()
 }
 
-fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&str>) -> Pattern {
-    Pattern::List(ListPattern::new(pats, tail.map(|s| s.to_string())))
+fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&'static str>) -> Pattern {
+    Pattern::List(ListPattern::new(pats, tail.map(RcId::from)))
 }
 
 #[test_case("42" => num(42.0) ; "forty-two")]

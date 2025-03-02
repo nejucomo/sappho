@@ -19,6 +19,15 @@ impl<XS, T> ListFormGeneric<XS, T> {
     }
 }
 
+impl<XS, T> Default for ListFormGeneric<XS, T>
+where
+    XS: Default,
+{
+    fn default() -> Self {
+        ListFormGeneric::new(XS::default(), None)
+    }
+}
+
 impl<XS, T> IntoIterator for ListFormGeneric<XS, T>
 where
     XS: IntoIterator,

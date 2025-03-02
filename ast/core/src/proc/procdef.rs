@@ -1,24 +1,10 @@
 use crate::{AstProvider, Statements};
-use sappho_ast_effect::ProcEffect;
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, derive_more::From, derive_more::Into)]
 pub struct ProcDef<XP>(Statements<XP>)
 where
     XP: AstProvider;
-
-impl<XP> ProcDef<XP>
-where
-    XP: AstProvider,
-{
-    pub fn transform_into<XPD>(self) -> ProcDef<XPD>
-    where
-        XPD: AstProvider,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        ProcDef(self.0.transform_into())
-    }
-}
 
 impl<XP> Unparse for ProcDef<XP>
 where

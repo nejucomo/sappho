@@ -1,9 +1,13 @@
 use crate::{
-    ApplicationExpr, AstProvider, EffectExpr, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
+    ApplicationExpr, AstProvider, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
+    ObjectDef, ProcDef, QueryDef,
 };
-use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_effect::Effect;
+use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
+
+// TODO: Remove Clone/PartialEq impls in favor of derivations w/ XP impl hack
 
 #[derive(Debug, derive_more::From)]
 pub enum CoreExpr<XP, FX>
@@ -21,32 +25,43 @@ where
     Effect(EffectExpr<XP, FX>),
 }
 
-impl<XP, FX> CoreExpr<XP, FX>
+impl<XP, FX> From<FuncDef<XP>> for CoreExpr<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> CoreExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        use CoreExpr::*;
+    fn from(value: FuncDef<XP>) -> Self {
+        CoreExpr::Object(ObjectDef::from(value))
+    }
+}
 
-        match self {
-            Lit(x) => Lit(x),
-            Ref(x) => Ref(x),
-            Object(x) => Object(x.transform_into()),
-            Let(x) => Let(x.transform_into()),
-            Match(x) => Match(x.transform_into()),
-            Application(x) => Application(x.transform_into()),
-            Lookup(x) => Lookup(x.transform_into()),
-            Effect(x) => Effect(x.transform_into()),
-        }
+impl<XP, FX> From<QueryDef<XP>> for CoreExpr<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: QueryDef<XP>) -> Self {
+        CoreExpr::Object(ObjectDef::from(value))
+    }
+}
+
+impl<XP, FX> From<ProcDef<XP>> for CoreExpr<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: ProcDef<XP>) -> Self {
+        CoreExpr::Object(ObjectDef::from(value))
+    }
+}
+
+impl<XP, FX> From<Attrs<XP::Expr<FX>>> for CoreExpr<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: Attrs<XP::Expr<FX>>) -> Self {
+        CoreExpr::Object(ObjectDef::from(value))
     }
 }
 

@@ -21,6 +21,17 @@ impl<X, T> ListForm<X, T> {
     pub fn is_empty(&self) -> bool {
         self.0.xs.is_empty() && self.0.optail.is_none()
     }
+
+    pub fn prepend(mut self, head: X) -> Self {
+        self.0.xs.insert(0, head);
+        self
+    }
+}
+
+impl<X, T> Default for ListForm<X, T> {
+    fn default() -> Self {
+        ListForm(ListFormGeneric::default())
+    }
 }
 
 impl<X, T, E> ListForm<X, Result<T, E>> {

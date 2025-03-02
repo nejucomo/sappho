@@ -7,7 +7,8 @@ use crate::expr::universal::universal_expr;
 use crate::space::ws;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{Identifier, ProcExpr};
+use sappho_ast::ProcExpr;
+use sappho_identifier::RcId;
 
 pub(super) fn proc_expr_def(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
@@ -41,7 +42,7 @@ fn non_application(
         })
 }
 
-fn attr_lookup() -> impl Parser<char, Identifier, Error = BareError> {
+fn attr_lookup() -> impl Parser<char, RcId, Error = BareError> {
     use crate::expr::universal::identifier;
     use chumsky::primitive::just;
 

@@ -95,7 +95,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
         self.f.is_none() && self.q.is_none() && self.p.is_none() && self.a.is_empty()
     }
 
-    pub fn transform<TF, FR, TQ, QR, TP, PR, TA, AR>(
+    pub fn map_parts<TF, FR, TQ, QR, TP, PR, TA, AR>(
         self,
         tfunc: TF,
         tquery: TQ,

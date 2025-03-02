@@ -1,6 +1,13 @@
 mod procdef;
 
-use self::procdef::proc_def;
+use chumsky::primitive::just;
+use chumsky::recursive::Recursive;
+use chumsky::Parser;
+use sappho_ast::{Ast, Expr, ProcExpr};
+use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, ProcEffect, QueryDef};
+use sappho_identifier::RcId;
+use sappho_object::Element;
+
 use crate::delimited::delimited;
 use crate::error::BareError;
 use crate::expr::pattern::pattern;
@@ -8,12 +15,8 @@ use crate::expr::universal::identifier;
 use crate::expr::{pure_expr, query_expr};
 use crate::keyword::Keyword;
 use crate::space::ws;
-use chumsky::primitive::just;
-use chumsky::recursive::Recursive;
-use chumsky::Parser;
-use sappho_ast::{Ast, Expr, Identifier, ProcExpr};
-use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, ProcEffect, QueryDef};
-use sappho_object::Element;
+
+use self::procdef::proc_def;
 
 pub(crate) fn object_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
@@ -88,7 +91,7 @@ fn object_clause(
 
 fn attr_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, (Identifier, ProcExpr), Error = BareError> + '_ {
+) -> impl Parser<char, (RcId, ProcExpr), Error = BareError> + '_ {
     identifier()
         .then_ignore(ws().or_not())
         .then_ignore(just(':'))

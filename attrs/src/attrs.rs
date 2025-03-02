@@ -1,11 +1,12 @@
 use std::collections::BTreeMap;
 
 use arrayvec::ArrayVec;
+use either::Either::{self, Left, Right};
 use sappho_identifier::{IdentRef, RcId};
 use sappho_unparse::Unparse;
 
 use crate::error::AttrsResult;
-use crate::{AttrsError, Key};
+use crate::AttrsError;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Attrs<T>(BTreeMap<RcId, T>);
@@ -27,6 +28,17 @@ impl<T> Attrs<T> {
         }
     }
 
+    pub fn define_many<I, K>(&mut self, pairs: I) -> AttrsResult<()>
+    where
+        I: IntoIterator<Item = (K, T)>,
+        RcId: From<K>,
+    {
+        for (k, v) in pairs {
+            self.define(k, v)?;
+        }
+        Ok(())
+    }
+
     /// Get an output for any key, `K`, which includes `&IdentRef`
     ///
     /// Three common impls are `&IdentRef`, `&'static str`, and `(k1, k2)` which is a tuple of keys.
@@ -42,7 +54,7 @@ impl<T> Attrs<T> {
     /// This method is `self.as_refs().take(key)` which is nicely composable and terribly inefficient.
     pub fn get<K>(&self, key: K) -> AttrsResult<&T>
     where
-        K: Key,
+        RcId: From<K>,
     {
         with_id(key, |id| self.0.get(id))
     }
@@ -52,31 +64,37 @@ impl<T> Attrs<T> {
     /// See [Attrs::get] for the semantics of keys, their outputs, and panic conditions. However, the performance issue of [Attrs::get] is not present here.
     pub fn take<K>(&mut self, key: K) -> AttrsResult<T>
     where
-        K: Key,
+        RcId: From<K>,
     {
         with_id(key, |id| self.0.remove(id))
     }
 
     /// Take the value(s) for the given `key` and ensure the remaining `self` is empty
-    pub fn unpack<K, const N: usize>(mut self, keys: [K; N]) -> AttrsResult<[T; N]>
+    pub fn unpack<K, const N: usize>(mut self, keys: [K; N]) -> Either<[T; N], Self>
     where
         T: std::fmt::Debug,
-        K: Key,
+        RcId: From<K>,
     {
-        // First we ensure all keys are present before mutating:
-        for k in keys.iter() {
-            let idr = k.as_ident_ref();
-            if !self.0.contains_key(idr) {
-                return Err(AttrsError::Missing(RcId::from(idr)));
+        let mut av = ArrayVec::default();
+        for key in keys {
+            let rcid = RcId::from(key);
+            match self.take::<&RcId>(&rcid) {
+                Ok(v) => av.push((rcid, v)),
+                Err(_) => {
+                    // Unwind mutations:
+                    self.define_many::<_, RcId>(av).unwrap();
+                    return Right(self);
+                }
             }
         }
 
-        let mut av = ArrayVec::default();
-        for k in keys {
-            av.push(self.take(k).unwrap());
+        if self.is_empty() {
+            Left(av.into_inner().unwrap().map(|(_, v)| v))
+        } else {
+            // Unwind mutations:
+            self.define_many::<_, RcId>(av).unwrap();
+            Right(self)
         }
-
-        Ok(av.into_inner().unwrap())
     }
 
     pub fn expect_empty(self) -> AttrsResult<()> {
@@ -109,17 +127,12 @@ impl<T> Default for Attrs<T> {
     }
 }
 
-impl<T> FromIterator<(RcId, T)> for Attrs<T> {
-    fn from_iter<I: IntoIterator<Item = (RcId, T)>>(iter: I) -> Self {
-        Attrs(iter.into_iter().collect())
-    }
-}
-
-impl<'a, T> FromIterator<(&'a RcId, &'a T)> for Attrs<&'a T> {
-    fn from_iter<I: IntoIterator<Item = (&'a RcId, &'a T)>>(iter: I) -> Self {
-        iter.into_iter()
-            .map(|(rcid, tref)| (rcid.clone(), tref))
-            .collect()
+impl<S, T> FromIterator<(S, T)> for Attrs<T>
+where
+    RcId: From<S>,
+{
+    fn from_iter<I: IntoIterator<Item = (S, T)>>(iter: I) -> Self {
+        Attrs(iter.into_iter().map(|(s, v)| (RcId::from(s), v)).collect())
     }
 }
 
@@ -157,9 +170,9 @@ where
 
 fn with_id<K, F, T>(key: K, f: F) -> AttrsResult<T>
 where
-    K: Key,
+    RcId: From<K>,
     F: FnOnce(&IdentRef) -> Option<T>,
 {
-    let id = key.as_ident_ref();
-    f(id).ok_or_else(|| AttrsError::Missing(RcId::from(id)))
+    let id = RcId::from(key);
+    f(id.as_ref()).ok_or(AttrsError::Missing(id))
 }

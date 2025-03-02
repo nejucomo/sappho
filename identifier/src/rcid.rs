@@ -9,9 +9,23 @@ use crate::{IdentRef, Identifier};
 #[derive(Clone, Debug, From, Eq, Ord, PartialEq, PartialOrd)]
 pub struct RcId(Rc<Identifier>);
 
+impl TryFrom<String> for RcId {
+    type Error = <Identifier as TryFrom<String>>::Error;
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        Identifier::try_from(s).map(RcId::from)
+    }
+}
+
 impl From<Identifier> for RcId {
     fn from(id: Identifier) -> Self {
         RcId::from(Rc::from(id))
+    }
+}
+
+impl<'a> From<&'a RcId> for RcId {
+    fn from(rcid: &'a RcId) -> Self {
+        (*rcid).clone()
     }
 }
 
@@ -21,16 +35,22 @@ impl<'a> From<&'a IdentRef> for RcId {
     }
 }
 
-impl Borrow<Identifier> for RcId {
-    fn borrow(&self) -> &Identifier {
-        self.0.borrow()
+impl From<&'static str> for RcId {
+    fn from(s: &'static str) -> Self {
+        RcId::from(Identifier::from_static(s))
     }
 }
 
 impl Borrow<IdentRef> for RcId {
     fn borrow(&self) -> &IdentRef {
-        let r: &Identifier = self.borrow();
+        let r: &Identifier = self.0.borrow();
         r.borrow()
+    }
+}
+
+impl AsRef<IdentRef> for RcId {
+    fn as_ref(&self) -> &IdentRef {
+        self.borrow()
     }
 }
 

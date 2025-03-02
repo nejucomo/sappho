@@ -1,11 +1,8 @@
-mod unpack;
-
 use crate::Literal;
+use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_unparse::{Stream, Unparse};
-
-pub use self::unpack::UnpackPattern;
 
 pub type ListPattern = ListForm<Pattern, RcId>;
 
@@ -13,7 +10,7 @@ pub type ListPattern = ListForm<Pattern, RcId>;
 pub enum Pattern {
     Bind(RcId),
     LitEq(Literal),
-    Unpack(UnpackPattern),
+    Unpack(Attrs<Pattern>),
     List(ListPattern),
 }
 

@@ -1,7 +1,8 @@
 use std::ops::Deref;
 
+use derive_more::{From, Into};
 use derive_new::new;
-use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
 use sappho_object::Object;
 use sappho_unparse::Unparse;
@@ -9,7 +10,7 @@ use sappho_unparse::Unparse;
 use crate::{AstProvider, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
-#[derive(Debug, new)]
+#[derive(Debug, new, From, Into)]
 pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>)
 where
     XP: AstProvider,
@@ -48,37 +49,6 @@ where
         ObjectDef(Object::new_attrs(attrs))
     }
 
-    pub fn transform_into<XPD>(self) -> ObjectDef<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        ObjectDef(self.transform_into_object())
-    }
-
-    pub fn transform_into_object<XPD>(
-        self,
-    ) -> Object<FuncDef<XPD>, QueryDef<XPD>, ProcDef<XPD>, XPD::Expr<FX>>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        self.0.transform(
-            |func| func.transform_into(),
-            |query| query.transform_into(),
-            |proc| proc.transform_into(),
-            XPD::Expr::<FX>::from,
-        )
-    }
-
     pub fn unbundle(
         self,
     ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
@@ -101,6 +71,46 @@ where
 {
     fn default() -> Self {
         ObjectDef(Object::default())
+    }
+}
+
+impl<XP, FX> From<FuncDef<XP>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: FuncDef<XP>) -> Self {
+        ObjectDef(Object::new_func(value))
+    }
+}
+
+impl<XP, FX> From<QueryDef<XP>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: QueryDef<XP>) -> Self {
+        ObjectDef(Object::new_query(value))
+    }
+}
+
+impl<XP, FX> From<ProcDef<XP>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: ProcDef<XP>) -> Self {
+        ObjectDef(Object::new_proc(value))
+    }
+}
+
+impl<XP, FX> From<Attrs<XP::Expr<FX>>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: Attrs<XP::Expr<FX>>) -> Self {
+        ObjectDef(Object::new_attrs(value))
     }
 }
 
