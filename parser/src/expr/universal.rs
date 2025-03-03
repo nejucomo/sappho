@@ -17,22 +17,20 @@ pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError>
 pub(super) fn identifier() -> impl Parser<char, RcId, Error = BareError> + Clone {
     use crate::keyword::Keyword;
 
-    text::ident()
-        .try_map(|ident, span| {
-            for kw in Keyword::iter() {
-                if ident == kw.as_str() {
-                    return Err(BareError::custom(
-                        span,
-                        format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
-                    ));
-                }
+    text::ident().try_map(|ident, span| {
+        for kw in Keyword::iter() {
+            if ident == kw.as_str() {
+                return Err(BareError::custom(
+                    span,
+                    format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
+                ));
             }
+        }
 
-            let rcid = RcId::try_from(ident).map_err(|e| BareError::custom(span, e.to_string()))?;
+        let rcid = RcId::try_from(ident).map_err(|e| BareError::custom(span, e.to_string()))?;
 
-            Ok(rcid)
-        })
-        .labelled("identifier reference")
+        Ok(rcid)
+    })
 }
 
 pub(super) fn literal() -> impl Parser<char, Literal, Error = BareError> {
