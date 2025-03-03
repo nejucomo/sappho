@@ -181,7 +181,7 @@ impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>
                 Attr(k, v) => obj
                     .a
                     .define(k.clone(), v)
-                    .map_err(|_| format!("duplicate attribute {:?}", k))?,
+                    .map_err(|_| format!("duplicate attribute {:?}", k.as_str()))?,
             }
         }
         Ok(obj)

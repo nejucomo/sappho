@@ -10,6 +10,12 @@ use crate::{IdentRef, Identifier};
 #[derive(Clone, Debug, From, Eq, Ord, PartialEq, PartialOrd)]
 pub struct RcId(Rc<Identifier>);
 
+impl RcId {
+    pub fn as_str(&self) -> &str {
+        self.as_ref()
+    }
+}
+
 impl TryFrom<String> for RcId {
     type Error = <Identifier as TryFrom<String>>::Error;
 
@@ -52,6 +58,13 @@ impl Borrow<IdentRef> for RcId {
 impl AsRef<IdentRef> for RcId {
     fn as_ref(&self) -> &IdentRef {
         self.borrow()
+    }
+}
+
+impl AsRef<str> for RcId {
+    fn as_ref(&self) -> &str {
+        let id: &IdentRef = self.as_ref();
+        id.as_str()
     }
 }
 
