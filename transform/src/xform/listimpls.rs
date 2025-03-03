@@ -26,9 +26,14 @@ where
     }
 }
 
+pub(crate) enum TailOrAttrs<T, A> {
+    Tail(T),
+    TailAttrs(Attrs<A>),
+}
+
 impl<V, X, T> TryTransformInto<ListForm<X, T>> for Attrs<V>
 where
-    V: TransformInto<X> + TryTransformInto<Either<T, Attrs<V>>> + From<Attrs<V>> + Debug,
+    V: TransformInto<X> + TryTransformInto<TailOrAttrs<T, V>> + From<Attrs<V>> + Debug,
 {
     fn try_transform(self) -> Either<ListForm<X, T>, Self> {
         if self.is_empty() {
@@ -36,15 +41,14 @@ where
         } else {
             self.unpack(["head", "tail"])
                 .left_and_then(|[head, vtail]| {
-                    let ei = vtail
-                        .try_transform()
-                        .left_and_then(|ei: Either<T, Attrs<V>>| {
-                            ei.either(
-                                |t| Left(ListForm::new(None, Some(t))),
-                                |attrs| attrs.try_transform(),
-                            )
-                            .map_right(V::from)
-                        });
+                    let ei = vtail.try_transform().left_and_then(|toa| {
+                        use TailOrAttrs::*;
+
+                        match toa {
+                            Tail(t) => Left(ListForm::new(None, Some(t))),
+                            TailAttrs(attrs) => attrs.try_transform().map_right(V::from),
+                        }
+                    });
 
                     match ei {
                         Left(lf) => Left(lf.prepend(head.transform())),
