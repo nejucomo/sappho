@@ -1,5 +1,6 @@
 use crate::{GenThunk, ScopeRef};
-use sappho_ast_core::{QueryDef, QueryEffect};
+use sappho_ast_core::QueryDef;
+use sappho_ast_effect::QueryEffect;
 use sappho_ast_reduced::{AstRed, QueryExpr};
 use sappho_unparse::{Stream, Unparse};
 

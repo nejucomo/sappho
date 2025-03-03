@@ -1,6 +1,8 @@
 use crate::error::BareError;
 use chumsky::{text, Parser};
-use sappho_ast::{Identifier, Literal, ProcExpr};
+use sappho_ast::ProcExpr;
+use sappho_ast_core::Literal;
+use sappho_identifier::RcId;
 use std::str::FromStr;
 
 pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError> {
@@ -12,23 +14,23 @@ pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError>
         .map(ProcExpr::from)
 }
 
-pub(super) fn identifier() -> impl Parser<char, Identifier, Error = BareError> {
+pub(super) fn identifier() -> impl Parser<char, RcId, Error = BareError> + Clone {
     use crate::keyword::Keyword;
 
-    text::ident()
-        .try_map(|ident, span| {
-            for kw in Keyword::iter() {
-                if ident == kw.as_str() {
-                    return Err(BareError::custom(
-                        span,
-                        format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
-                    ));
-                }
+    text::ident().try_map(|ident, span| {
+        for kw in Keyword::iter() {
+            if ident == kw.as_str() {
+                return Err(BareError::custom(
+                    span,
+                    format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
+                ));
             }
+        }
 
-            Ok(ident)
-        })
-        .labelled("identifier reference")
+        let rcid = RcId::try_from(ident).map_err(|e| BareError::custom(span, e.to_string()))?;
+
+        Ok(rcid)
+    })
 }
 
 pub(super) fn literal() -> impl Parser<char, Literal, Error = BareError> {

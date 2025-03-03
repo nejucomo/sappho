@@ -1,5 +1,6 @@
 use crate::{CoercionFailure, ValRef};
 use sappho_ast_reduced::Pattern;
+use sappho_identifier::RcId;
 use std::fmt;
 
 #[derive(Debug)]
@@ -9,8 +10,8 @@ pub struct BindFailure(Pattern, ValRef, BindFailureReason);
 pub enum BindFailureReason {
     LitNotEqual,
     Coercion(CoercionFailure),
-    MissingAttr(String),
-    UnexpectedAttrs(Vec<String>),
+    MissingAttr(RcId),
+    UnexpectedAttrs(Vec<RcId>),
 }
 
 impl BindFailure {
@@ -34,7 +35,15 @@ impl fmt::Display for BindFailureReason {
             LitNotEqual => write!(f, "not equal"),
             Coercion(x) => x.fmt(f),
             MissingAttr(s) => write!(f, "missing attr {}", s),
-            UnexpectedAttrs(v) => write!(f, "unexpected attrs {}", v.join(", ")),
+            UnexpectedAttrs(v) => write!(
+                f,
+                "unexpected attrs {}",
+                // Hrm... `RcId` is cumbersome here unless we could `impl std::slice::Join<&str> for [RcId]` ?
+                v.iter()
+                    .map(|rcid| rcid.to_string())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ),
         }
     }
 }

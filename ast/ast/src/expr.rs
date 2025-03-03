@@ -3,7 +3,6 @@
 use either::Either;
 use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
@@ -43,18 +42,6 @@ where
         T: IntoIterator<Item = Either<Expr<FX>, Box<Expr<FX>>>>,
     {
         Expr::List(ListExpr::from_iter(iter))
-    }
-}
-
-impl<FX> TryIntoIdentMap<Expr<FX>> for Expr<FX>
-where
-    FX: Effect,
-{
-    fn try_into_identmap(&self) -> Option<&IdentMap<Expr<FX>>> {
-        match self {
-            Expr::Core(c) => c.try_into_identmap(),
-            _ => None,
-        }
     }
 }
 

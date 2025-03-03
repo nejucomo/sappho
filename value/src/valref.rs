@@ -1,12 +1,13 @@
 use crate::{Coerce, CoercionFailure, Value};
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
 use sappho_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
 use std::fmt;
 use std::ops::Deref;
 use std::rc::Rc;
 
-#[derive(Clone, Debug)]
+// TODO: Replace `ValRef` with `Value::Object(Rc<...>)`
+
+#[derive(Debug)]
 pub struct ValRef(Rc<Value>);
 
 impl ValRef {
@@ -15,6 +16,12 @@ impl ValRef {
         T: Coerce,
     {
         T::coerce_from_value(&self.0).ok_or_else(|| CoercionFailure::new::<T>(self))
+    }
+}
+
+impl Clone for ValRef {
+    fn clone(&self) -> Self {
+        ValRef(self.0.clone())
     }
 }
 
@@ -38,12 +45,6 @@ where
 {
     fn from(v: T) -> Self {
         ValRef(Rc::new(Value::from(v)))
-    }
-}
-
-impl TryIntoIdentMap<ValRef> for ValRef {
-    fn try_into_identmap(&self) -> Option<&IdentMap<ValRef>> {
-        self.deref().try_into_identmap()
     }
 }
 

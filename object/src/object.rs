@@ -1,6 +1,6 @@
 use derive_new::new;
 
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_attrs::Attrs;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{Element, IntoIter, Unbundled};
@@ -10,31 +10,31 @@ pub struct Object<F, Q, P, A> {
     f: Option<F>,
     q: Option<Q>,
     p: Option<P>,
-    a: IdentMap<A>,
+    a: Attrs<A>,
 }
 
 impl<F, Q, P, A> Default for Object<F, Q, P, A> {
     fn default() -> Self {
-        Object::new(None, None, None, IdentMap::default())
+        Object::new(None, None, None, Attrs::default())
     }
 }
 
 impl<F, Q, P, A> Object<F, Q, P, A> {
     pub fn new_func(func: F) -> Self {
-        Self::new(Some(func), None, None, IdentMap::default())
+        Self::new(Some(func), None, None, Attrs::default())
     }
 
     pub fn new_query(query: Q) -> Self {
-        Self::new(None, Some(query), None, IdentMap::default())
+        Self::new(None, Some(query), None, Attrs::default())
     }
 
     pub fn new_proc(proc: P) -> Self {
-        Self::new(None, None, Some(proc), IdentMap::default())
+        Self::new(None, None, Some(proc), Attrs::default())
     }
 
     pub fn new_attrs<T>(attrs: T) -> Self
     where
-        T: Into<IdentMap<A>>,
+        T: Into<Attrs<A>>,
     {
         Self::new(None, None, None, attrs.into())
     }
@@ -51,7 +51,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
         self.p.as_ref()
     }
 
-    pub fn attrs(&self) -> &IdentMap<A> {
+    pub fn attrs(&self) -> &Attrs<A> {
         &self.a
     }
 
@@ -95,7 +95,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
         self.f.is_none() && self.q.is_none() && self.p.is_none() && self.a.is_empty()
     }
 
-    pub fn transform<TF, FR, TQ, QR, TP, PR, TA, AR>(
+    pub fn map_parts<TF, FR, TQ, QR, TP, PR, TA, AR>(
         self,
         tfunc: TF,
         tquery: TQ,
@@ -112,7 +112,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
             f: self.f.map(tfunc),
             q: self.q.map(tquery),
             p: self.p.map(tproc),
-            a: self.a.into_map_values(tattr),
+            a: self.a.map(tattr),
         }
     }
 
@@ -120,7 +120,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
     where
         TA: Fn(A) -> Result<DA, E>,
     {
-        let mut dsta = IdentMap::default();
+        let mut dsta = Attrs::default();
         for (aname, x) in self.a {
             let dx = tattr(x)?;
             dsta.define(aname, dx).unwrap();
@@ -181,20 +181,10 @@ impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>
                 Attr(k, v) => obj
                     .a
                     .define(k.clone(), v)
-                    .map_err(|_| format!("duplicate attribute {:?}", k))?,
+                    .map_err(|_| format!("duplicate attribute {:?}", k.as_str()))?,
             }
         }
         Ok(obj)
-    }
-}
-
-impl<F, Q, P, A> TryIntoIdentMap<A> for Object<F, Q, P, A> {
-    fn try_into_identmap(&self) -> Option<&IdentMap<A>> {
-        if self.f.is_none() && self.q.is_none() && self.p.is_none() {
-            Some(self.attrs())
-        } else {
-            None
-        }
     }
 }
 

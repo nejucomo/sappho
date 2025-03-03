@@ -1,6 +1,6 @@
 mod failure;
 
-use crate::{Attrs, Func, Object, Query, Value};
+use crate::{AttrVals, Func, Object, Query, Value};
 
 pub use self::failure::CoercionFailure;
 
@@ -55,12 +55,12 @@ impl Coerce for Query {
     }
 }
 
-impl Coerce for Attrs {
+impl Coerce for AttrVals {
     fn sappho_type_name() -> &'static str {
         "attributes"
     }
 
-    fn coerce_from_value(v: &Value) -> Option<&Attrs> {
+    fn coerce_from_value(v: &Value) -> Option<&AttrVals> {
         Object::coerce_from_value(v).map(|obj| obj.attrs())
     }
 }

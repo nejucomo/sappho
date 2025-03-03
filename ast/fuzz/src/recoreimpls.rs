@@ -1,10 +1,11 @@
 //! The _Rec_ursive _Core_ subset
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Ast, Expr, Identifier, Pattern};
+use sappho_ast::{Ast, Expr, Pattern};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
+use sappho_identifier::RcId;
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;
@@ -82,7 +83,7 @@ where
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> LookupExpr<Ast, FX> {
         LookupExpr::new(
             rng.sample::<Box<Expr<FX>>, _>(self),
-            rng.sample::<Identifier, _>(self),
+            rng.sample::<RcId, _>(self),
         )
     }
 }

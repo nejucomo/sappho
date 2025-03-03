@@ -22,17 +22,16 @@ impl<X, T> ListForm<X, T> {
         self.0.xs.is_empty() && self.0.optail.is_none()
     }
 
-    // pub fn try_map<TX, DX, TT, DT, E>(self, telem: TX, ttail: TT) -> Result<ListForm<DX, DT>, E>
-    // where
-    //     DX: std::fmt::Debug,
-    //     DT: std::fmt::Debug,
-    //     TX: Fn(X) -> Result<DX, E>,
-    //     TT: Fn(T) -> Result<DT, E>,
-    // {
-    //     self.into_iter()
-    //         .map(|ei| ei.map_left(&telem).map_right(&ttail).factor_err())
-    //         .collect()
-    // }
+    pub fn prepend(mut self, head: X) -> Self {
+        self.0.xs.insert(0, head);
+        self
+    }
+}
+
+impl<X, T> Default for ListForm<X, T> {
+    fn default() -> Self {
+        ListForm(ListFormGeneric::default())
+    }
 }
 
 impl<X, T, E> ListForm<X, Result<T, E>> {

@@ -10,8 +10,8 @@ derive_more.workspace = true
 either.workspace = true
 sappho-ast-core.workspace = true
 sappho-ast-effect.workspace = true
-sappho-ast.workspace = true
-sappho-identmap.workspace = true
+sappho-attrs.workspace = true
+sappho-identifier.workspace = true
 sappho-object.workspace = true
 sappho-unparse.workspace = true
 

@@ -1,15 +1,13 @@
 //! The Reduced Abstract Syntax Tree is a subset of [`sappho-ast`] for evaluation
 
 mod expr;
-mod lfreduce;
 mod pattern;
 mod provider;
 
-use sappho_ast::{ProcEffect, PureEffect, QueryEffect};
-pub use sappho_ast_core::{Identifier, Literal};
+use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
 
 pub use crate::expr::Expr;
-pub use crate::pattern::{Pattern, UnpackPattern};
+pub use crate::pattern::Pattern;
 pub use crate::provider::AstRed;
 
 pub type PureExpr = Expr<PureEffect>;

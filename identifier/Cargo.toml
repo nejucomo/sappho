@@ -1,10 +1,12 @@
 [package]
-name = "sappho-identmap"
+name = "sappho-identifier"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-sappho-listform.workspace = true
+aliri_braid.workspace = true
+derive_more.workspace = true
 sappho-unparse.workspace = true
+thiserror.workspace = true

@@ -5,12 +5,13 @@ mod proc;
 mod query;
 mod scope;
 mod thunk;
+mod tryaslist;
 mod valref;
 mod value;
 
 pub use self::coerce::{Coerce, CoercionFailure};
 pub use self::func::Func;
-pub use self::object::{Attrs, Object};
+pub use self::object::{AttrVals, Object};
 pub use self::proc::Proc;
 pub use self::query::Query;
 pub use self::scope::{

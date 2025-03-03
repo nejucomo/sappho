@@ -8,8 +8,8 @@ mod matchexpr;
 mod object;
 
 use crate::{Eval, Result};
-use sappho_ast::Effect;
 use sappho_ast_core::EffectExpr;
+use sappho_ast_effect::Effect;
 use sappho_ast_reduced::{AstRed, Expr};
 use sappho_value::{ScopeRef, ValRef};
 

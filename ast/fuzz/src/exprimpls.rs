@@ -1,10 +1,12 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Ast, Effect, Expr, Identifier, ListExpr, Literal};
+use sappho_ast::{Ast, Expr, ListExpr};
 use sappho_ast_core::{
-    ApplicationExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, LookupExpr, MatchExpr, ObjectDef,
-    ProcDef, QueryDef,
+    ApplicationExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
+    ObjectDef, ProcDef, QueryDef,
 };
+use sappho_ast_effect::Effect;
+use sappho_identifier::RcId;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::effectsimpls::FxFuzz;
@@ -45,7 +47,7 @@ where
 
         <Self as Distribution<Literal>>::map(*self, Lit)
             .weighted_case(1)
-            .or(<Self as Distribution<Identifier>>::map(*self, Ref).weighted_case(3))
+            .or(<Self as Distribution<RcId>>::map(*self, Ref).weighted_case(3))
             .or(<Self as Distribution<ObjectDef<Ast, FX>>>::map(*self, Object).weighted_case(rwf))
             .or(<Self as Distribution<LetExpr<Ast, FX>>>::map(*self, Let).weighted_case(rwf))
             .or(<Self as Distribution<MatchExpr<Ast, FX>>>::map(*self, Match).weighted_case(rwf))

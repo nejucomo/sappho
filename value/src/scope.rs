@@ -8,7 +8,7 @@ pub use self::unbound::{Unbound, UnboundKind};
 
 use crate::ValRef;
 use sappho_ast_reduced::Pattern;
-use sappho_identmap::IdentRef;
+use sappho_identifier::RcId;
 
 #[derive(Debug)]
 pub enum Scope {
@@ -26,7 +26,7 @@ impl Scope {
         }
     }
 
-    pub fn deref(&self, ident: &IdentRef) -> Result<ValRef, Unbound> {
+    pub fn deref(&self, ident: &RcId) -> Result<ValRef, Unbound> {
         use crate::UnboundKind::Undeclared;
 
         self.deref_opt(ident)
@@ -34,7 +34,7 @@ impl Scope {
             .and_then(|optval| optval.ok_or_else(|| Undeclared.make(ident)))
     }
 
-    fn deref_opt(&self, ident: &IdentRef) -> Result<Option<ValRef>, Unbound> {
+    fn deref_opt(&self, ident: &RcId) -> Result<Option<ValRef>, Unbound> {
         match self {
             Scope::Empty => Ok(None),
             Scope::Frame(map, lower) => match map.deref(ident) {

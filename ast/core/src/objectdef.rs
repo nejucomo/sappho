@@ -1,15 +1,16 @@
 use std::ops::Deref;
 
+use derive_more::{From, Into};
 use derive_new::new;
-use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
-use sappho_identmap::{IdentMap, TryIntoIdentMap};
+use sappho_ast_effect::Effect;
+use sappho_attrs::Attrs;
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
 use crate::{AstProvider, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
-#[derive(Debug, new)]
+#[derive(Debug, new, From, Into)]
 pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>)
 where
     XP: AstProvider,
@@ -24,7 +25,7 @@ where
         f: Option<FuncDef<XP>>,
         q: Option<QueryDef<XP>>,
         p: Option<ProcDef<XP>>,
-        attrs: IdentMap<XP::Expr<FX>>,
+        attrs: Attrs<XP::Expr<FX>>,
     ) -> Self {
         Self::new(Object::new(f, q, p, attrs))
     }
@@ -43,40 +44,9 @@ where
 
     pub fn new_attrs<T>(attrs: T) -> Self
     where
-        T: Into<IdentMap<XP::Expr<FX>>>,
+        T: Into<Attrs<XP::Expr<FX>>>,
     {
         ObjectDef(Object::new_attrs(attrs))
-    }
-
-    pub fn transform_into<XPD>(self) -> ObjectDef<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        ObjectDef(self.transform_into_object())
-    }
-
-    pub fn transform_into_object<XPD>(
-        self,
-    ) -> Object<FuncDef<XPD>, QueryDef<XPD>, ProcDef<XPD>, XPD::Expr<FX>>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-        XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
-    {
-        self.0.transform(
-            |func| func.transform_into(),
-            |query| query.transform_into(),
-            |proc| proc.transform_into(),
-            XPD::Expr::<FX>::from,
-        )
     }
 
     pub fn unbundle(
@@ -104,6 +74,46 @@ where
     }
 }
 
+impl<XP, FX> From<FuncDef<XP>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: FuncDef<XP>) -> Self {
+        ObjectDef(Object::new_func(value))
+    }
+}
+
+impl<XP, FX> From<QueryDef<XP>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: QueryDef<XP>) -> Self {
+        ObjectDef(Object::new_query(value))
+    }
+}
+
+impl<XP, FX> From<ProcDef<XP>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: ProcDef<XP>) -> Self {
+        ObjectDef(Object::new_proc(value))
+    }
+}
+
+impl<XP, FX> From<Attrs<XP::Expr<FX>>> for ObjectDef<XP, FX>
+where
+    XP: AstProvider,
+    FX: Effect,
+{
+    fn from(value: Attrs<XP::Expr<FX>>) -> Self {
+        ObjectDef(Object::new_attrs(value))
+    }
+}
+
 impl<XP, FX> Deref for ObjectDef<XP, FX>
 where
     XP: AstProvider,
@@ -124,16 +134,6 @@ where
 {
     fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
         &self.0
-    }
-}
-
-impl<XP, FX> TryIntoIdentMap<XP::Expr<FX>> for ObjectDef<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    fn try_into_identmap(&self) -> Option<&IdentMap<XP::Expr<FX>>> {
-        self.0.try_into_identmap()
     }
 }
 
