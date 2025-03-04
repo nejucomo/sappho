@@ -13,7 +13,7 @@ pub struct Query {
 impl Query {
     pub fn new(qc: &QueryDef<AstRed>, defscope: &ScopeRef) -> Self {
         Query {
-            body: (*qc.body).clone(),
+            body: qc.body.clone(),
             defscope: defscope.clone(),
         }
     }

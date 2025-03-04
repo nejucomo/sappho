@@ -2,7 +2,7 @@ use std::fmt;
 use std::ops::Deref;
 
 use derive_more::{From, Into};
-use sappho_ast_core::{CmtExpr, CoreExpr};
+use sappho_ast_core::{CmtExpr, CoreExpr, ProcDef};
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
 use sappho_unparse::{Stream, Unparse};
@@ -23,6 +23,15 @@ where
         CoreExpr<AstRed, FX>: From<T>,
     {
         Expr(CoreExpr::from(x))
+    }
+}
+
+impl<FX> From<ProcDef<AstRed>> for Expr<FX>
+where
+    FX: Effect,
+{
+    fn from(pd: ProcDef<AstRed>) -> Self {
+        Expr(CoreExpr::from(pd))
     }
 }
 

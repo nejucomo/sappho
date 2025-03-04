@@ -11,7 +11,7 @@ where
     XPS::Pattern: TransformInto<XPD::Pattern>,
 {
     fn transform(self) -> FuncDef<XPD> {
-        FuncDef::new(self.binding.transform(), Box::new(self.body.transform()))
+        FuncDef::new(self.binding.transform(), self.body.transform())
     }
 }
 
@@ -22,7 +22,7 @@ where
     XPS::Expr<QueryEffect>: TransformInto<XPD::Expr<QueryEffect>>,
 {
     fn transform(self) -> QueryDef<XPD> {
-        QueryDef::new(Box::new(self.body.transform()))
+        QueryDef::new(self.body.transform())
     }
 }
 

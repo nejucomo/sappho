@@ -4,12 +4,13 @@ mod expr;
 mod pattern;
 mod provider;
 
+use sappho_ast_core::CmtExpr;
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
 
 pub use crate::expr::Expr;
 pub use crate::pattern::Pattern;
 pub use crate::provider::AstRed;
 
-pub type PureExpr = Expr<PureEffect>;
-pub type QueryExpr = Expr<QueryEffect>;
-pub type ProcExpr = Expr<ProcEffect>;
+pub type PureExpr = CmtExpr<AstRed, PureEffect>;
+pub type QueryExpr = CmtExpr<AstRed, QueryEffect>;
+pub type ProcExpr = CmtExpr<AstRed, ProcEffect>;

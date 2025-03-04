@@ -13,7 +13,7 @@ where
         use Statements::Return;
 
         match self {
-            Return(x) => Return(Box::new(x.transform())),
+            Return(x) => Return(x.transform()),
         }
     }
 }

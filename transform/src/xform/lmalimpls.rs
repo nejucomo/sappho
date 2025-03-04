@@ -17,7 +17,7 @@ where
     fn transform(self) -> LetExpr<XPD, FX> {
         LetExpr::new(
             self.clauses.into_iter().map(LetClause::transform).collect(),
-            Box::new(self.tail.transform()),
+            self.tail.transform(),
         )
     }
 }
@@ -31,10 +31,7 @@ where
     XPS::Pattern: TransformInto<XPD::Pattern>,
 {
     fn transform(self) -> LetClause<XPD, FX> {
-        LetClause::new(
-            self.binding.transform(),
-            Box::new(self.bindexpr.transform()),
-        )
+        LetClause::new(self.binding.transform(), self.bindexpr.transform())
     }
 }
 
@@ -48,7 +45,7 @@ where
 {
     fn transform(self) -> MatchExpr<XPD, FX> {
         MatchExpr::new(
-            Box::new(self.target.transform()),
+            self.target.transform(),
             self.clauses
                 .into_iter()
                 .map(MatchClause::transform)
@@ -66,7 +63,7 @@ where
     XPS::Pattern: TransformInto<XPD::Pattern>,
 {
     fn transform(self) -> MatchClause<XPD, FX> {
-        MatchClause::new(self.pattern.transform(), Box::new(self.body.transform()))
+        MatchClause::new(self.pattern.transform(), self.body.transform())
     }
 }
 
@@ -78,10 +75,7 @@ where
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
 {
     fn transform(self) -> ApplicationExpr<XPD, FX> {
-        ApplicationExpr::new(
-            Box::new(self.target.transform()),
-            Box::new(self.argument.transform()),
-        )
+        ApplicationExpr::new(self.target.transform(), self.argument.transform())
     }
 }
 
@@ -93,7 +87,7 @@ where
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
 {
     fn transform(self) -> LookupExpr<XPD, FX> {
-        LookupExpr::new(Box::new(self.target.transform()), self.attr)
+        LookupExpr::new(self.target.transform(), self.attr)
     }
 }
 
@@ -105,6 +99,6 @@ where
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
 {
     fn transform(self) -> EffectExpr<XPD, FX> {
-        EffectExpr::new(self.effect, Box::new(self.expr.transform()))
+        EffectExpr::new(self.effect, self.expr.transform())
     }
 }

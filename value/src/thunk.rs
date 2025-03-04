@@ -1,6 +1,7 @@
 use derive_new::new;
+use sappho_ast_core::CmtExpr;
 use sappho_ast_effect::Effect;
-use sappho_ast_reduced::Expr;
+use sappho_ast_reduced::AstRed;
 
 use crate::ScopeRef;
 
@@ -24,7 +25,7 @@ pub struct GenThunk<FX>
 where
     FX: Effect,
 {
-    expr: Expr<FX>,
+    expr: CmtExpr<AstRed, FX>,
     scope: ScopeRef,
 }
 
@@ -32,7 +33,7 @@ impl<FX> GenThunk<FX>
 where
     FX: Effect,
 {
-    pub fn peek(&self) -> (&Expr<FX>, &ScopeRef) {
+    pub fn peek(&self) -> (&CmtExpr<AstRed, FX>, &ScopeRef) {
         (&self.expr, &self.scope)
     }
 }

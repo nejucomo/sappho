@@ -16,7 +16,7 @@ impl Func {
     pub fn new(fc: &FuncDef<AstRed>, defscope: &ScopeRef) -> Self {
         Func {
             binding: fc.binding.clone(),
-            body: (*fc.body).clone(),
+            body: fc.body.clone(),
             defscope: defscope.clone(),
         }
     }
