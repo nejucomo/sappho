@@ -24,5 +24,4 @@ pub type PureExpr = CmtExpr<Ast, PureEffect>;
 pub type QueryExpr = CmtExpr<Ast, QueryEffect>;
 pub type ProcExpr = CmtExpr<Ast, ProcEffect>;
 
-// TODO: Remove `Box` because `CmtExpr` contains the only necessary box.
-pub type ListExpr<FX> = ListForm<CmtExpr<Ast, FX>, Box<CmtExpr<Ast, FX>>>;
+pub type ListExpr<FX> = ListForm<CmtExpr<Ast, FX>, CmtExpr<Ast, FX>>;

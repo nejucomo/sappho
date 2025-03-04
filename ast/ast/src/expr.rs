@@ -33,13 +33,13 @@ where
     }
 }
 
-impl<FX> FromIterator<Either<CmtExpr<Ast, FX>, Box<CmtExpr<Ast, FX>>>> for Expr<FX>
+impl<FX> FromIterator<Either<CmtExpr<Ast, FX>, CmtExpr<Ast, FX>>> for Expr<FX>
 where
     FX: Effect,
 {
     fn from_iter<T>(iter: T) -> Self
     where
-        T: IntoIterator<Item = Either<CmtExpr<Ast, FX>, Box<CmtExpr<Ast, FX>>>>,
+        T: IntoIterator<Item = Either<CmtExpr<Ast, FX>, CmtExpr<Ast, FX>>>,
     {
         Expr::List(ListExpr::from_iter(iter))
     }

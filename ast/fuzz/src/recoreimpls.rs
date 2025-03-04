@@ -1,9 +1,9 @@
 //! The _Rec_ursive _Core_ subset
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Ast, Expr, Pattern};
+use sappho_ast::{Ast, Pattern};
 use sappho_ast_core::{
-    ApplicationExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
+    ApplicationExpr, CmtExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
 use sappho_identifier::RcId;
 
@@ -18,7 +18,7 @@ where
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> LetExpr<Ast, FX> {
         LetExpr::new(
             rng.sample::<Vec<LetClause<Ast, FX>>, _>(self),
-            rng.sample::<Box<Expr<FX>>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
         )
     }
 }
@@ -31,7 +31,7 @@ where
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> LetClause<Ast, FX> {
         LetClause::new(
             rng.sample::<Pattern, _>(self),
-            rng.sample::<Box<Expr<FX>>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
         )
     }
 }
@@ -43,7 +43,7 @@ where
 {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> MatchExpr<Ast, FX> {
         MatchExpr::new(
-            rng.sample::<Box<Expr<FX>>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
             rng.sample::<Vec<MatchClause<Ast, FX>>, _>(self),
         )
     }
@@ -57,7 +57,7 @@ where
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> MatchClause<Ast, FX> {
         MatchClause::new(
             rng.sample::<Pattern, _>(self),
-            rng.sample::<Box<Expr<FX>>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
         )
     }
 }
@@ -69,8 +69,8 @@ where
 {
     fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> ApplicationExpr<Ast, FX> {
         ApplicationExpr::new(
-            rng.sample::<Box<Expr<FX>>, _>(self),
-            rng.sample::<Box<Expr<FX>>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
         )
     }
 }
@@ -82,7 +82,7 @@ where
 {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> LookupExpr<Ast, FX> {
         LookupExpr::new(
-            rng.sample::<Box<Expr<FX>>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
             rng.sample::<RcId, _>(self),
         )
     }
@@ -96,7 +96,7 @@ where
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> EffectExpr<Ast, FX> {
         EffectExpr::new(
             rng.sample::<FX, _>(self),
-            rng.sample::<Box<Expr<FX>>, _>(self),
+            rng.sample::<CmtExpr<Ast, FX>, _>(self),
         )
     }
 }
