@@ -1,4 +1,5 @@
 mod application;
+mod cmtexpr;
 mod core;
 mod effectexpr;
 mod funcdef;
@@ -12,6 +13,7 @@ mod provider;
 mod querydef;
 
 pub use self::application::ApplicationExpr;
+pub use self::cmtexpr::CmtExpr;
 pub use self::core::CoreExpr;
 pub use self::effectexpr::EffectExpr;
 pub use self::funcdef::FuncDef;

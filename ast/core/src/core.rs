@@ -1,6 +1,6 @@
 use crate::{
-    ApplicationExpr, AstProvider, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
-    ObjectDef, ProcDef, QueryDef,
+    ApplicationExpr, AstProvider, CmtExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr,
+    MatchExpr, ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
@@ -55,12 +55,12 @@ where
     }
 }
 
-impl<XP, FX> From<Attrs<XP::Expr<FX>>> for CoreExpr<XP, FX>
+impl<XP, FX> From<Attrs<CmtExpr<XP, FX>>> for CoreExpr<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn from(value: Attrs<XP::Expr<FX>>) -> Self {
+    fn from(value: Attrs<CmtExpr<XP, FX>>) -> Self {
         CoreExpr::Object(ObjectDef::from(value))
     }
 }

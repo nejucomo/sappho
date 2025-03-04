@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, CmtExpr};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Debug, derive_new::new)]
@@ -14,7 +14,7 @@ where
     pub pattern: XP::Pattern,
 
     /// The match body expression, ie `0` in `3 -> 0` and the second `y` in `y -> y`.
-    pub body: Box<XP::Expr<FX>>,
+    pub body: CmtExpr<XP, FX>,
 }
 
 impl<XP, FX> MatchClause<XP, FX>
@@ -26,11 +26,11 @@ where
     where
         XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
+        CmtExpr<XPD, FX>: From<CmtExpr<XP, FX>>,
     {
         MatchClause {
             pattern: XPD::Pattern::from(self.pattern),
-            body: Box::new(XPD::Expr::from(*self.body)),
+            body: CmtExpr::from(self.body),
         }
     }
 }

@@ -1,7 +1,7 @@
 use sappho_ast_effect::PureEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, CmtExpr};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Debug, derive_new::new)]
@@ -13,7 +13,7 @@ where
     pub binding: XP::Pattern,
 
     /// The body, ie the final `x` in `fn x -> x`.
-    pub body: Box<XP::Expr<PureEffect>>,
+    pub body: CmtExpr<XP, PureEffect>,
 }
 
 impl<XP> FuncDef<XP>
@@ -24,11 +24,11 @@ where
     where
         XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
+        CmtExpr<XPD, PureEffect>: From<CmtExpr<XP, PureEffect>>,
     {
         FuncDef {
             binding: XPD::Pattern::from(self.binding),
-            body: Box::new(XPD::Expr::from(*self.body)),
+            body: CmtExpr::from(self.body),
         }
     }
 }

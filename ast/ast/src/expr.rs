@@ -1,7 +1,7 @@
 //! Top-level expression type `Expr`, generic over effects [PureEffect](sappho_ast_core::PureEffect), [QueryEffect](sappho_ast_core::QueryEffect), or [ProcEffect](sappho_ast_core::ProcEffect).
 
 use either::Either;
-use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
+use sappho_ast_core::{CmtExpr, CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
@@ -33,13 +33,13 @@ where
     }
 }
 
-impl<FX> FromIterator<Either<Expr<FX>, Box<Expr<FX>>>> for Expr<FX>
+impl<FX> FromIterator<Either<CmtExpr<Ast, FX>, Box<CmtExpr<Ast, FX>>>> for Expr<FX>
 where
     FX: Effect,
 {
     fn from_iter<T>(iter: T) -> Self
     where
-        T: IntoIterator<Item = Either<Expr<FX>, Box<Expr<FX>>>>,
+        T: IntoIterator<Item = Either<CmtExpr<Ast, FX>, Box<CmtExpr<Ast, FX>>>>,
     {
         Expr::List(ListExpr::from_iter(iter))
     }

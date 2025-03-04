@@ -1,5 +1,5 @@
 use either::Either::{self, Left, Right};
-use sappho_ast_core::{AstProvider, FuncDef, ObjectDef, ProcDef, QueryDef};
+use sappho_ast_core::{AstProvider, CmtExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
 use sappho_object::{Object, Unbundled};
@@ -34,12 +34,12 @@ where
     }
 }
 
-impl<XP, FX> TryTransformInto<Attrs<XP::Expr<FX>>> for ObjectDef<XP, FX>
+impl<XP, FX> TryTransformInto<Attrs<CmtExpr<XP, FX>>> for ObjectDef<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn try_transform(self) -> Either<Attrs<XP::Expr<FX>>, Self> {
+    fn try_transform(self) -> Either<Attrs<CmtExpr<XP, FX>>, Self> {
         Object::from(self)
             .try_transform()
             .map_right(ObjectDef::from)

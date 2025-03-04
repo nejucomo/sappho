@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, CmtExpr};
 
 /// Function application, ie `f x`.
 #[derive(Debug, derive_new::new)]
@@ -11,10 +11,10 @@ where
     FX: Effect,
 {
     /// The target of application, ie `f` in `f x`.
-    pub target: Box<XP::Expr<FX>>,
+    pub target: CmtExpr<XP, FX>,
 
     /// The argument of application, ie `x` in `f x`.
-    pub argument: Box<XP::Expr<FX>>,
+    pub argument: CmtExpr<XP, FX>,
 }
 
 impl<XP, FX> ApplicationExpr<XP, FX>
@@ -25,11 +25,11 @@ where
     pub fn transform_into<XPD>(self) -> ApplicationExpr<XPD, FX>
     where
         XPD: AstProvider,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
+        CmtExpr<XPD, FX>: From<CmtExpr<XP, FX>>,
     {
         ApplicationExpr {
-            target: Box::new(XPD::Expr::from(*self.target)),
-            argument: Box::new(XPD::Expr::from(*self.argument)),
+            target: CmtExpr::from(self.target),
+            argument: CmtExpr::from(self.argument),
         }
     }
 }

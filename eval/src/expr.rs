@@ -8,7 +8,7 @@ mod matchexpr;
 mod object;
 
 use crate::{Eval, Result};
-use sappho_ast_core::EffectExpr;
+use sappho_ast_core::{CmtExpr, EffectExpr};
 use sappho_ast_effect::Effect;
 use sappho_ast_reduced::{AstRed, Expr};
 use sappho_value::{ScopeRef, ValRef};
@@ -32,5 +32,15 @@ where
             }
         );
         r
+    }
+}
+
+impl<FX> Eval for CmtExpr<AstRed, FX>
+where
+    EffectExpr<AstRed, FX>: Eval,
+    FX: Effect,
+{
+    fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
+        self.expr().eval(scope)
     }
 }

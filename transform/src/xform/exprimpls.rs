@@ -1,8 +1,8 @@
-use either::Either::{self, Left};
-use sappho_ast::{self as ast};
-use sappho_ast_core::{AstProvider, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
+use either::Either::{self, Left, Right};
+use sappho_ast::{self as ast, Ast};
+use sappho_ast_core::{AstProvider, CmtExpr, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
-use sappho_ast_reduced::{self as astred};
+use sappho_ast_reduced::{self as astred, AstRed};
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};
@@ -17,7 +17,12 @@ where
             ast::Expr::Func(x) => astred::Expr::new(x.transform()),
             ast::Expr::Query(x) => astred::Expr::new(x.transform()),
             ast::Expr::Proc(x) => astred::Expr::new(x.transform()),
-            ast::Expr::List(x) => x.transform(),
+            ast::Expr::List(x) => {
+                let cx: CmtExpr<AstRed, FX> = x.transform();
+                let (optcmt, inner) = cx.into();
+                assert!(optcmt.is_none(), "{optcmt:?}");
+                inner
+            }
         }
     }
 }
@@ -31,7 +36,6 @@ where
         use CoreExpr::*;
 
         let cx: CoreExpr<_, _> = self.into();
-        // ast::Expr::Core(cx.transform())
         match cx {
             Object(obj) => match obj.unbundle() {
                 Bundled(obj) => ObjectDef::new(obj.transform()).into(),
@@ -50,11 +54,31 @@ where
     }
 }
 
-impl<FX> TryTransformInto<TailOrAttrs<Box<ast::Expr<FX>>, astred::Expr<FX>>> for astred::Expr<FX>
+impl<FX> TryTransformInto<TailOrAttrs<CmtExpr<Ast, FX>, CmtExpr<AstRed, FX>>>
+    for CmtExpr<AstRed, FX>
 where
     FX: Effect,
 {
-    fn try_transform(self) -> Either<TailOrAttrs<Box<ast::Expr<FX>>, astred::Expr<FX>>, Self> {
+    fn try_transform(self) -> Either<TailOrAttrs<CmtExpr<Ast, FX>, CmtExpr<AstRed, FX>>, Self> {
+        use TailOrAttrs::*;
+
+        let (optcmt, expr) = self.into();
+
+        match expr.try_transform() {
+            Left(toa) => Left(match toa {
+                Tail(t) => Tail((optcmt, t).into()),
+                TailAttrs(attrs) => TailAttrs(attrs),
+            }),
+            Right(expr) => Right((optcmt, expr).into()),
+        }
+    }
+}
+
+impl<FX> TryTransformInto<TailOrAttrs<ast::Expr<FX>, CmtExpr<AstRed, FX>>> for astred::Expr<FX>
+where
+    FX: Effect,
+{
+    fn try_transform(self) -> Either<TailOrAttrs<ast::Expr<FX>, CmtExpr<AstRed, FX>>, Self> {
         use CoreExpr::*;
         use TailOrAttrs::*;
 
@@ -63,7 +87,7 @@ where
                 .try_transform()
                 .map_left(TailAttrs)
                 .map_right(|obj| astred::Expr::from(Object(obj))),
-            other => Left(Tail(Box::new(ast::Expr::Core(other.transform())))),
+            other => Left(Tail(ast::Expr::Core(other.transform()))),
         }
     }
 }

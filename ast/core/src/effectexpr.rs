@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, CmtExpr};
 
 #[derive(Debug, derive_new::new)]
 pub struct EffectExpr<XP, FX>
@@ -10,7 +10,7 @@ where
     FX: Effect,
 {
     pub effect: FX,
-    pub expr: Box<XP::Expr<FX>>,
+    pub expr: CmtExpr<XP, FX>,
 }
 
 impl<XP, FX> EffectExpr<XP, FX>
@@ -21,11 +21,11 @@ where
     pub fn transform_into<XPD>(self) -> EffectExpr<XPD, FX>
     where
         XPD: AstProvider,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
+        CmtExpr<XPD, FX>: From<CmtExpr<XP, FX>>,
     {
         EffectExpr {
             effect: self.effect,
-            expr: Box::new(XPD::Expr::from(*self.expr)),
+            expr: CmtExpr::from(self.expr),
         }
     }
 }

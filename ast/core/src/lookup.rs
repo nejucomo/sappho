@@ -1,4 +1,4 @@
-use crate::AstProvider;
+use crate::{AstProvider, CmtExpr};
 use sappho_ast_effect::Effect;
 use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
@@ -11,7 +11,7 @@ where
     FX: Effect,
 {
     /// The target expression of the lookup, ie `x` in `x.foo`.
-    pub target: Box<XP::Expr<FX>>,
+    pub target: CmtExpr<XP, FX>,
 
     /// An attribute name, ie: `foo` in `x.foo`.
     pub attr: RcId,
@@ -25,10 +25,10 @@ where
     pub fn transform_into<XPD>(self) -> LookupExpr<XPD, FX>
     where
         XPD: AstProvider,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
+        CmtExpr<XPD, FX>: From<CmtExpr<XP, FX>>,
     {
         LookupExpr {
-            target: Box::new(XPD::Expr::from(*self.target)),
+            target: CmtExpr::from(self.target),
             attr: self.attr,
         }
     }

@@ -7,11 +7,11 @@ use sappho_attrs::Attrs;
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
-use crate::{AstProvider, FuncDef, ProcDef, QueryDef};
+use crate::{AstProvider, CmtExpr, FuncDef, ProcDef, QueryDef};
 
 /// An object definition expression, ie `{ x: 42, y: 7, fn x -> x }`.
-#[derive(Debug, new, From, Into)]
-pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>)
+#[derive(Clone, Debug, new, From, Into, PartialEq)]
+pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CmtExpr<XP, FX>>)
 where
     XP: AstProvider,
     FX: Effect;
@@ -25,7 +25,7 @@ where
         f: Option<FuncDef<XP>>,
         q: Option<QueryDef<XP>>,
         p: Option<ProcDef<XP>>,
-        attrs: Attrs<XP::Expr<FX>>,
+        attrs: Attrs<CmtExpr<XP, FX>>,
     ) -> Self {
         Self::new(Object::new(f, q, p, attrs))
     }
@@ -44,20 +44,20 @@ where
 
     pub fn new_attrs<T>(attrs: T) -> Self
     where
-        T: Into<Attrs<XP::Expr<FX>>>,
+        T: Into<Attrs<CmtExpr<XP, FX>>>,
     {
         ObjectDef(Object::new_attrs(attrs))
     }
 
     pub fn unbundle(
         self,
-    ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
+    ) -> sappho_object::Unbundled<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CmtExpr<XP, FX>> {
         self.0.unbundle()
     }
 
     pub fn into_try_map_values<F, FXD, E>(self, f: F) -> Result<ObjectDef<XP, FXD>, E>
     where
-        F: Fn(XP::Expr<FX>) -> Result<XP::Expr<FXD>, E>,
+        F: Fn(CmtExpr<XP, FX>) -> Result<CmtExpr<XP, FXD>, E>,
         FXD: Effect,
     {
         self.0.into_try_map_values(f).map(ObjectDef)
@@ -104,12 +104,12 @@ where
     }
 }
 
-impl<XP, FX> From<Attrs<XP::Expr<FX>>> for ObjectDef<XP, FX>
+impl<XP, FX> From<Attrs<CmtExpr<XP, FX>>> for ObjectDef<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn from(value: Attrs<XP::Expr<FX>>) -> Self {
+    fn from(value: Attrs<CmtExpr<XP, FX>>) -> Self {
         ObjectDef(Object::new_attrs(value))
     }
 }
@@ -119,20 +119,20 @@ where
     XP: AstProvider,
     FX: Effect,
 {
-    type Target = Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>;
+    type Target = Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CmtExpr<XP, FX>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl<XP, FX> AsRef<Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>>
+impl<XP, FX> AsRef<Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CmtExpr<XP, FX>>>
     for ObjectDef<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
+    fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, CmtExpr<XP, FX>> {
         &self.0
     }
 }
@@ -144,25 +144,5 @@ where
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
         self.0.unparse_into(s)
-    }
-}
-
-impl<XP, FX> Clone for ObjectDef<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    fn clone(&self) -> Self {
-        ObjectDef(self.0.clone())
-    }
-}
-
-impl<XP, FX> PartialEq for ObjectDef<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    fn eq(&self, other: &Self) -> bool {
-        self.0 == other.0
     }
 }

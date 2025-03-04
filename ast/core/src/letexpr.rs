@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, CmtExpr};
 
 pub use self::clause::LetClause;
 
@@ -18,7 +18,7 @@ where
     pub clauses: Vec<LetClause<XP, FX>>,
 
     /// The expression to evaluate with the binding in-scope, ie: `f x` in `let x = 42; f x`.
-    pub tail: Box<XP::Expr<FX>>,
+    pub tail: CmtExpr<XP, FX>,
 }
 
 impl<XP, FX> LetExpr<XP, FX>
@@ -30,7 +30,7 @@ where
     where
         XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
+        CmtExpr<XPD, FX>: From<CmtExpr<XP, FX>>,
     {
         LetExpr {
             clauses: self
@@ -38,7 +38,7 @@ where
                 .into_iter()
                 .map(|c| c.transform_into())
                 .collect(),
-            tail: Box::new(XPD::Expr::from(*self.tail)),
+            tail: CmtExpr::from(self.tail),
         }
     }
 }

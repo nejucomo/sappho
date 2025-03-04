@@ -1,9 +1,10 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast::{Ast, Expr, ListExpr};
+use sappho_ast_comment::CmtPrefixed;
 use sappho_ast_core::{
-    ApplicationExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
-    ObjectDef, ProcDef, QueryDef,
+    ApplicationExpr, CmtExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr,
+    MatchExpr, ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_effect::Effect;
 use sappho_identifier::RcId;
@@ -11,6 +12,16 @@ use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;
+
+impl<FX> Distribution<CmtExpr<Ast, FX>> for AstFuzz
+where
+    FX: Effect + FxFuzz,
+    AstFuzz: Distribution<FX>,
+{
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> CmtExpr<Ast, FX> {
+        CmtExpr::new(rng.sample::<CmtPrefixed<Box<Expr<FX>>>, _>(self))
+    }
+}
 
 impl<FX> Distribution<Expr<FX>> for AstFuzz
 where

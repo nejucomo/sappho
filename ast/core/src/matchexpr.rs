@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, CmtExpr};
 
 pub use self::clause::MatchClause;
 
@@ -15,7 +15,7 @@ where
     FX: Effect,
 {
     /// The match target, ie: `x` in `match x { 3 -> 0, y -> y }`.
-    pub target: Box<XP::Expr<FX>>,
+    pub target: CmtExpr<XP, FX>,
 
     /// The match clauses, ie: `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
     pub clauses: Vec<MatchClause<XP, FX>>,
@@ -30,10 +30,10 @@ where
     where
         XPD: AstProvider,
         XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
+        CmtExpr<XPD, FX>: From<CmtExpr<XP, FX>>,
     {
         MatchExpr {
-            target: Box::new(XPD::Expr::from(*self.target)),
+            target: CmtExpr::from(self.target),
             clauses: self
                 .clauses
                 .into_iter()

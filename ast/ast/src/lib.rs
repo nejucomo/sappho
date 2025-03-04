@@ -12,7 +12,7 @@ mod expr;
 mod pattern;
 mod provider;
 
-use sappho_ast_core::Literal;
+use sappho_ast_core::{CmtExpr, Literal};
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
 use sappho_listform::ListForm;
 
@@ -20,8 +20,9 @@ pub use self::expr::Expr;
 pub use self::pattern::{ListPattern, Pattern};
 pub use self::provider::Ast;
 
-pub type PureExpr = Expr<PureEffect>;
-pub type QueryExpr = Expr<QueryEffect>;
-pub type ProcExpr = Expr<ProcEffect>;
+pub type PureExpr = CmtExpr<Ast, PureEffect>;
+pub type QueryExpr = CmtExpr<Ast, QueryEffect>;
+pub type ProcExpr = CmtExpr<Ast, ProcEffect>;
 
-pub type ListExpr<FX> = ListForm<Expr<FX>, Box<Expr<FX>>>;
+// TODO: Remove `Box` because `CmtExpr` contains the only necessary box.
+pub type ListExpr<FX> = ListForm<CmtExpr<Ast, FX>, Box<CmtExpr<Ast, FX>>>;

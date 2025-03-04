@@ -2,7 +2,8 @@ use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast::{Ast, Expr};
 use sappho_ast_core::{
-    ApplicationExpr, CoreExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
+    ApplicationExpr, CmtExpr, CoreExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause,
+    MatchExpr,
 };
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 
@@ -36,6 +37,16 @@ impl Restrict<ProcEffect> for QueryEffect {
                 "query expressions cannot contain evoke effects, e.g. `!…`".to_string(),
             )),
         }
+    }
+}
+
+impl<FXS, FXD> Restrict<CmtExpr<Ast, FXS>> for CmtExpr<Ast, FXD>
+where
+    FXD: Effect + Restrict<FXS>,
+    FXS: Effect,
+{
+    fn restrict(src: CmtExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+        src.try_map_expr(|x| Expr::<FXD>::restrict(x, span))
     }
 }
 
