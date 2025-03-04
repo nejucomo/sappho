@@ -5,14 +5,15 @@ use crate::expr::object::object_expr;
 use crate::expr::recursive::recursive_expr;
 use crate::expr::universal::universal_expr;
 use crate::space::ws;
-use chumsky::recursive::Recursive;
+use crate::RecExpr;
 use chumsky::Parser;
-use sappho_ast::ProcExpr;
+use sappho_ast::{Expr, ProcExpr};
+use sappho_ast_effect::ProcEffect;
 use sappho_identifier::RcId;
 
 pub(super) fn proc_expr_def(
-    pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+    pexpr: RecExpr<'_>,
+) -> impl Parser<char, Expr<ProcEffect>, Error = BareError> + '_ {
     non_application(pexpr)
         .separated_by(ws())
         .at_least(1)
@@ -29,8 +30,8 @@ pub(super) fn proc_expr_def(
 }
 
 fn non_application(
-    pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+    pexpr: RecExpr<'_>,
+) -> impl Parser<char, Expr<ProcEffect>, Error = BareError> + '_ {
     non_app_non_lookup(pexpr)
         .then(attr_lookup().repeated())
         .map(|(x, lookups)| {
@@ -50,17 +51,15 @@ fn attr_lookup() -> impl Parser<char, RcId, Error = BareError> {
 }
 
 fn non_app_non_lookup(
-    pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
-    parens_expr(pexpr.clone())
-        .or(proc_effect(pexpr.clone()).map(ProcExpr::from))
+    rec: RecExpr<'_>,
+) -> impl Parser<char, Expr<ProcEffect>, Error = BareError> + '_ {
+    parens_expr(rec.clone())
+        .or(proc_effect(rec.clone()).map(ProcExpr::from))
         .or(universal_expr())
-        .or(object_expr(pexpr.clone()))
-        .or(recursive_expr(pexpr))
+        .or(object_expr(rec.clone()))
+        .or(recursive_expr(rec))
 }
 
-fn parens_expr(
-    pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+fn parens_expr(pexpr: RecExpr<'_>) -> impl Parser<char, Expr<ProcEffect>, Error = BareError> + '_ {
     delimited('(', pexpr, ')').labelled("parenthetical-expression")
 }

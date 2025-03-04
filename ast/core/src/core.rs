@@ -1,3 +1,4 @@
+use crate::parensexpr::ParensExpr;
 use crate::{
     ApplicationExpr, AstProvider, CmtExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr,
     MatchExpr, ObjectDef, ProcDef, QueryDef,
@@ -9,7 +10,7 @@ use sappho_unparse::{Stream, Unparse};
 
 // TODO: Remove Clone/PartialEq impls in favor of derivations w/ XP impl hack
 
-#[derive(Debug, derive_more::From)]
+#[derive(Clone, Debug, derive_more::From, PartialEq)]
 pub enum CoreExpr<XP, FX>
 where
     XP: AstProvider,
@@ -23,6 +24,7 @@ where
     Application(ApplicationExpr<XP, FX>),
     Lookup(LookupExpr<XP, FX>),
     Effect(EffectExpr<XP, FX>),
+    Parens(ParensExpr<XP, FX>),
 }
 
 impl<XP, FX> From<FuncDef<XP>> for CoreExpr<XP, FX>
@@ -82,49 +84,6 @@ where
             Application(x) => x.unparse_into(s),
             Lookup(x) => x.unparse_into(s),
             Effect(x) => x.unparse_into(s),
-        }
-    }
-}
-
-impl<XP, FX> Clone for CoreExpr<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    fn clone(&self) -> Self {
-        use CoreExpr::*;
-
-        match self {
-            Lit(x) => Lit(*x),
-            Ref(x) => Ref(x.clone()),
-            Object(x) => Object(x.clone()),
-            Let(x) => Let(x.clone()),
-            Match(x) => Match(x.clone()),
-            Application(x) => Application(x.clone()),
-            Lookup(x) => Lookup(x.clone()),
-            Effect(x) => Effect(x.clone()),
-        }
-    }
-}
-
-impl<XP, FX> PartialEq for CoreExpr<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    fn eq(&self, other: &Self) -> bool {
-        use CoreExpr::*;
-
-        match (self, other) {
-            (Lit(l), Lit(r)) => l == r,
-            (Ref(l), Ref(r)) => l == r,
-            (Object(l), Object(r)) => l == r,
-            (Let(l), Let(r)) => l == r,
-            (Match(l), Match(r)) => l == r,
-            (Application(l), Application(r)) => l == r,
-            (Lookup(l), Lookup(r)) => l == r,
-            (Effect(l), Effect(r)) => l == r,
-            _ => false,
         }
     }
 }

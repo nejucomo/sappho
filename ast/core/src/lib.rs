@@ -8,6 +8,7 @@ mod literal;
 mod lookup;
 mod matchexpr;
 mod objectdef;
+mod parensexpr;
 mod proc;
 mod provider;
 mod querydef;

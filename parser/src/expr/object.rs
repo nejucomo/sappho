@@ -20,7 +20,7 @@ use crate::space::ws;
 use self::procdef::proc_def;
 
 pub(crate) fn object_expr(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: RecExpr<'_>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     use Expr::{Func, Proc, Query};
 
@@ -31,9 +31,7 @@ pub(crate) fn object_expr(
         .or(proc_def(expr).map(Proc))
 }
 
-fn func_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, FuncDef<Ast>, Error = BareError> + '_ {
+fn func_def(expr: RecExpr<'_>) -> impl Parser<char, FuncDef<Ast>, Error = BareError> + '_ {
     Keyword::Fn
         .parser()
         .ignore_then(pattern())
@@ -46,9 +44,7 @@ fn func_def(
         .labelled("fn definition")
 }
 
-fn query_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, QueryDef<Ast>, Error = BareError> + '_ {
+fn query_def(expr: RecExpr<'_>) -> impl Parser<char, QueryDef<Ast>, Error = BareError> + '_ {
     Keyword::Query
         .parser()
         .ignore_then(query_expr(expr))
@@ -59,7 +55,7 @@ fn query_def(
 }
 
 fn object_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: RecExpr<'_>,
 ) -> impl Parser<char, ObjectDef<Ast, ProcEffect>, Error = BareError> + '_ {
     let innards = object_clause(expr)
         .separated_by(just(',').then(ws().or_not()))
@@ -78,9 +74,7 @@ fn object_def(
 
 type ObjectClause = Element<FuncDef<Ast>, QueryDef<Ast>, ProcDef<Ast>, ProcExpr>;
 
-fn object_clause(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ObjectClause, Error = BareError> + '_ {
+fn object_clause(expr: RecExpr<'_>) -> impl Parser<char, ObjectClause, Error = BareError> + '_ {
     use Element::*;
 
     attr_def(expr.clone())
@@ -90,9 +84,7 @@ fn object_clause(
         .or(proc_def(expr).map(Proc))
 }
 
-fn attr_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, (RcId, ProcExpr), Error = BareError> + '_ {
+fn attr_def(expr: RecExpr<'_>) -> impl Parser<char, (RcId, ProcExpr), Error = BareError> + '_ {
     identifier()
         .then_ignore(ws().or_not())
         .then_ignore(just(':'))

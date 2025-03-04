@@ -5,7 +5,7 @@ use sappho_ast::{Ast, ProcExpr};
 use sappho_ast_core::{ProcDef, Statements};
 
 pub(crate) fn proc_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: RecExpr<'_>,
 ) -> impl Parser<char, ProcDef<Ast>, Error = BareError> + '_ {
     use crate::delimited::delimited;
     use crate::keyword::Keyword;
@@ -17,7 +17,7 @@ pub(crate) fn proc_def(
 }
 
 pub(crate) fn statements(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
+    expr: RecExpr<'_>,
 ) -> impl Parser<char, Statements<Ast>, Error = BareError> + '_ {
     use crate::keyword::Keyword;
     use crate::space::ws;

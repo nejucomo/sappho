@@ -1,3 +1,4 @@
+mod comment;
 mod delimited;
 mod error;
 mod expr;
@@ -6,8 +7,14 @@ mod listform;
 mod restrict;
 mod space;
 
-use crate::error::Errors;
+use chumsky::prelude::Recursive;
+use sappho_ast::Expr;
+use sappho_ast_effect::ProcEffect;
 use sappho_source::LoadSource;
+
+use crate::error::{BareError, Errors};
+
+pub(crate) type RecExpr<'a> = Recursive<'a, char, Expr<ProcEffect>, BareError>;
 
 pub use self::error::LoadParseError;
 

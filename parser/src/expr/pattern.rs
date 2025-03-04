@@ -5,13 +5,13 @@ use chumsky::Parser;
 use sappho_ast::{ListPattern, Pattern};
 use sappho_attrs::Attrs;
 
+type RecursivePat<'a> = Recursive<'a, char, Pattern, BareError>;
+
 pub(crate) fn pattern() -> impl Parser<char, Pattern, Error = BareError> {
     chumsky::recursive::recursive(pattern_rec)
 }
 
-fn pattern_rec(
-    pat: Recursive<'_, char, Pattern, BareError>,
-) -> impl Parser<char, Pattern, Error = BareError> + '_ {
+fn pattern_rec(pat: RecursivePat<'_>) -> impl Parser<char, Pattern, Error = BareError> + '_ {
     use Pattern::*;
 
     identifier()
@@ -23,7 +23,7 @@ fn pattern_rec(
 }
 
 fn unpack_attrs(
-    pat: Recursive<'_, char, Pattern, BareError>,
+    pat: RecursivePat<'_>,
 ) -> impl Parser<char, Attrs<Pattern>, Error = BareError> + '_ {
     use crate::delimited::delimited;
     use crate::space::ws;
@@ -41,9 +41,7 @@ fn unpack_attrs(
     .map(Attrs::from_iter)
 }
 
-fn list_pattern(
-    pat: Recursive<'_, char, Pattern, BareError>,
-) -> impl Parser<char, ListPattern, Error = BareError> + '_ {
+fn list_pattern(pat: RecursivePat<'_>) -> impl Parser<char, ListPattern, Error = BareError> + '_ {
     use crate::listform::list_form;
 
     list_form(pat, identifier()).labelled("list-pattern")
