@@ -14,10 +14,11 @@ members = [
   "interpreter",
   "listform",
   "object",
-  "parsable",
   "old-parser",
+  "parsable",
   "rand-dcomp",
   "source",
+  "syntax/keyword",
   "transform",
   "unparse",
   "value",
@@ -60,6 +61,7 @@ sappho-parsable = { path = "parsable" }
 sappho-parser = { path = "old-parser" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
+sappho-syntax-keyword = { path = "syntax/keyword" }
 sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
