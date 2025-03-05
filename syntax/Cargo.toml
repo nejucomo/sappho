@@ -8,3 +8,4 @@ homepage.workspace = true
 [dependencies]
 chumsky.workspace = true
 sappho-unparse.workspace = true
+thiserror.workspace = true
