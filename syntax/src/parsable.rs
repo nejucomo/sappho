@@ -1,7 +1,5 @@
-use crate::Syntax;
+use crate::Parser;
 
-pub trait Parsable: From<<Self::Syntax as Syntax>::Parsed> {
-    type Syntax: Syntax;
-
-    fn syntax() -> Self::Syntax;
+pub trait Parsable: Sized {
+    fn parser() -> impl Parser<Self>;
 }
