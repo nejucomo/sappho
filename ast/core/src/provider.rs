@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use sappho_ast_effect::Effect;
-use sappho_unparse::Unparse;
+use sappho_syntax_unparse::Unparse;
 
 pub trait AstProvider {
     type Pattern: Unparse + Debug + Clone + PartialEq;

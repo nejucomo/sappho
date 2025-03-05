@@ -1,7 +1,7 @@
 mod clause;
 
 use sappho_ast_effect::Effect;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::AstProvider;
 
@@ -49,7 +49,7 @@ where
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Brackets::Parens, Break::Mandatory};
+        use sappho_syntax_unparse::{Brackets::Parens, Break::Mandatory};
 
         let unparse_clauses = |s: &mut Stream| {
             for (ix, clause) in self.clauses.iter().enumerate() {

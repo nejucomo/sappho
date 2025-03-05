@@ -1,5 +1,5 @@
 use sappho_ast_effect::QueryEffect;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::AstProvider;
 

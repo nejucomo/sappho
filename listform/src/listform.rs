@@ -1,5 +1,5 @@
 use either::Either::{self, Left, Right};
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 use std::fmt;
 
 use crate::lfg::ListFormGeneric;
@@ -68,8 +68,8 @@ where
     T: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Square;
-        use sappho_unparse::Break::OptSpace;
+        use sappho_syntax_unparse::Brackets::Square;
+        use sappho_syntax_unparse::Break::OptSpace;
 
         if self.is_empty() {
             s.write("[]")
@@ -117,7 +117,7 @@ where
 mod tests {
     use crate::ListForm;
     use indoc::indoc;
-    use sappho_unparse::{Stream, Unparse};
+    use sappho_syntax_unparse::{Stream, Unparse};
     use test_case::test_case;
 
     struct X;

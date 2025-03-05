@@ -10,5 +10,5 @@ derive_more.workspace = true
 either.workspace = true
 thiserror.workspace = true
 sappho-identifier.workspace = true
-sappho-unparse.workspace = true
+sappho-syntax-unparse.workspace = true
 arrayvec.workspace = true

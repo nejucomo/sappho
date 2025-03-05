@@ -3,7 +3,7 @@
 use either::Either;
 use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 use std::fmt;
 
 use crate::{Ast, ListExpr};

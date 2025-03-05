@@ -1,4 +1,4 @@
-use sappho_unparse::Unparse;
+use sappho_syntax_unparse::Unparse;
 
 use crate::Parser;
 

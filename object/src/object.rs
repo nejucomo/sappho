@@ -1,7 +1,7 @@
 use derive_new::new;
 
 use sappho_attrs::Attrs;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::{Element, IntoIter, Unbundled};
 
@@ -196,8 +196,8 @@ where
     A: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Squiggle;
-        use sappho_unparse::Break::OptSpace;
+        use sappho_syntax_unparse::Brackets::Squiggle;
+        use sappho_syntax_unparse::Break::OptSpace;
 
         if self.is_empty() {
             s.write("{}");

@@ -8,5 +8,5 @@ homepage.workspace = true
 [dependencies]
 aliri_braid.workspace = true
 derive_more.workspace = true
-sappho-unparse.workspace = true
+sappho-syntax-unparse.workspace = true
 thiserror.workspace = true

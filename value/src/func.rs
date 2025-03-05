@@ -1,7 +1,7 @@
 use sappho_ast_core::FuncDef;
 use sappho_ast_effect::PureEffect;
 use sappho_ast_reduced::{AstRed, Pattern, PureExpr};
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 

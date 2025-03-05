@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use arrayvec::ArrayVec;
 use either::Either::{self, Left, Right};
 use sappho_identifier::{IdentRef, RcId};
-use sappho_unparse::Unparse;
+use sappho_syntax_unparse::Unparse;
 
 use crate::error::AttrsResult;
 use crate::AttrsError;
@@ -169,8 +169,8 @@ impl<T> Unparse for Attrs<T>
 where
     T: Unparse,
 {
-    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
-        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
+    fn unparse_into(&self, s: &mut sappho_syntax_unparse::Stream) {
+        use sappho_syntax_unparse::{Brackets::Squiggle, Break::OptSpace};
 
         if self.0.is_empty() {
             s.write("{}");

@@ -1,5 +1,5 @@
 use crate::{Coerce, CoercionFailure, Value};
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 use std::borrow::Borrow;
 use std::fmt;
 use std::ops::Deref;

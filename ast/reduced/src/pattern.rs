@@ -1,7 +1,7 @@
 use sappho_ast_core::Literal;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]

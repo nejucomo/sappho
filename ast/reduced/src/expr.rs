@@ -5,7 +5,7 @@ use derive_more::{From, Into};
 use sappho_ast_core::CoreExpr;
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::AstRed;
 

@@ -9,7 +9,7 @@ homepage.workspace = true
 derive-new.workspace = true
 either.workspace = true
 sappho-identifier.workspace = true
-sappho-unparse.workspace = true
+sappho-syntax-unparse.workspace = true
 
 [dev-dependencies]
 indoc.workspace = true

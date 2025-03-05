@@ -1,5 +1,5 @@
 use sappho_ast_effect::Effect;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::AstProvider;
 
@@ -40,7 +40,7 @@ where
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{
+        use sappho_syntax_unparse::{
             Brackets::Parens,
             Break::{Opt, OptSpace},
         };

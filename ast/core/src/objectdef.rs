@@ -5,7 +5,7 @@ use derive_new::new;
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
 use sappho_object::Object;
-use sappho_unparse::Unparse;
+use sappho_syntax_unparse::Unparse;
 
 use crate::{AstProvider, FuncDef, ProcDef, QueryDef};
 
@@ -142,7 +142,7 @@ where
     XP: AstProvider,
     FX: Effect,
 {
-    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
+    fn unparse_into(&self, s: &mut sappho_syntax_unparse::Stream) {
         self.0.unparse_into(s)
     }
 }

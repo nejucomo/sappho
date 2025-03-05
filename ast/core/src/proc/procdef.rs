@@ -1,5 +1,5 @@
 use crate::{AstProvider, Statements};
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_more::From, derive_more::Into)]
 pub struct ProcDef<XP>(Statements<XP>)
@@ -11,8 +11,8 @@ where
     XP: AstProvider,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Squiggle;
-        use sappho_unparse::Break;
+        use sappho_syntax_unparse::Brackets::Squiggle;
+        use sappho_syntax_unparse::Break;
 
         s.write("proc ");
         s.bracketed(Squiggle, |subs| {

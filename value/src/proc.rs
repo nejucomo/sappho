@@ -2,7 +2,7 @@ use crate::{GenThunk, ScopeRef};
 use sappho_ast_core::{EffectExpr, ObjectDef, ProcDef};
 use sappho_ast_effect::ProcEffect;
 use sappho_ast_reduced::{AstRed, Expr};
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_new::new)]
 pub struct Proc {

@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 /// A literal value, such as `3.1415`.
 #[derive(Copy, Clone, Debug, PartialEq, derive_more::From)]

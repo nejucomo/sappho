@@ -1,4 +1,4 @@
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::tryaslist::TryAsList;
 use crate::Object;

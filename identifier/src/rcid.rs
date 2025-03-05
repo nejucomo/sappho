@@ -3,7 +3,7 @@ use std::fmt;
 use std::rc::Rc;
 
 use derive_more::From;
-use sappho_unparse::Unparse;
+use sappho_syntax_unparse::Unparse;
 
 use crate::{IdentRef, Identifier};
 
@@ -69,7 +69,7 @@ impl AsRef<str> for RcId {
 }
 
 impl Unparse for RcId {
-    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
+    fn unparse_into(&self, s: &mut sappho_syntax_unparse::Stream) {
         let idr: &IdentRef = self.borrow();
         idr.unparse_into(s)
     }

@@ -15,12 +15,12 @@ members = [
   "listform",
   "object",
   "old-parser",
-  "parsable",
   "rand-dcomp",
   "source",
   "syntax/keyword",
+  "syntax/parsable",
+  "syntax/unparse",
   "transform",
-  "unparse",
   "value",
 ]
 
@@ -57,13 +57,13 @@ sappho-integration-tests = { path = "integration-tests" }
 sappho-interpreter = { path = "interpreter" }
 sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
-sappho-parsable = { path = "parsable" }
 sappho-parser = { path = "old-parser" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
 sappho-syntax-keyword = { path = "syntax/keyword" }
+sappho-syntax-parsable = { path = "syntax/parsable" }
+sappho-syntax-unparse = { path = "syntax/unparse" }
 sappho-transform = { path = "transform" }
-sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
 simplelog = "0.12.0"
 test-case = "2.0"

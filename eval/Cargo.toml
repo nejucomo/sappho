@@ -14,7 +14,7 @@ sappho-ast-reduced.workspace = true
 sappho-ast.workspace = true
 sappho-identifier.workspace = true
 sappho-listform.workspace = true
-sappho-unparse.workspace = true
+sappho-syntax-unparse.workspace = true
 sappho-value.workspace = true
 
 [dev-dependencies]

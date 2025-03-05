@@ -1,11 +1,8 @@
 [package]
-name = "sappho-parsable"
+name = "sappho-syntax-unparse"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-chumsky.workspace = true
-sappho-unparse.workspace = true
-thiserror.workspace = true

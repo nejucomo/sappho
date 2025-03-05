@@ -1,5 +1,5 @@
 use sappho_identifier::RcId;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 #[derive(Debug)]
 pub enum Element<F, Q, P, A> {

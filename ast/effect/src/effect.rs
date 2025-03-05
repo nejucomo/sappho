@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use sappho_unparse::Unparse;
+use sappho_syntax_unparse::Unparse;
 
 use self::sealed::Sealed;
 

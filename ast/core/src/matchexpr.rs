@@ -1,7 +1,7 @@
 mod clause;
 
 use sappho_ast_effect::Effect;
-use sappho_unparse::{Stream, Unparse};
+use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::AstProvider;
 
@@ -49,7 +49,7 @@ where
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
+        use sappho_syntax_unparse::{Brackets::Squiggle, Break::OptSpace};
 
         s.write("match ");
         s.write(&self.target);
