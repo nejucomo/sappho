@@ -1,7 +1,7 @@
 use crate::Literal;
 use sappho_attrs::Attrs;
-use sappho_identifier::RcId;
 use sappho_listform::ListForm;
+use sappho_syntax_identifier::RcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 
 pub type ListPattern = ListForm<Pattern, RcId>;

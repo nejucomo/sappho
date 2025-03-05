@@ -1,5 +1,5 @@
 [package]
-name = "sappho-identifier"
+name = "sappho-syntax-identifier"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

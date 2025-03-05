@@ -1,4 +1,4 @@
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 
 #[derive(Debug)]

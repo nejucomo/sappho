@@ -1,6 +1,6 @@
 use derive_more::From;
 use sappho_ast_reduced::Pattern;
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 use sappho_value::{BindFailure, CoercionFailure, Unbound, ValRef};
 use std::fmt;
 

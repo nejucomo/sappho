@@ -5,7 +5,7 @@ use sappho_ast_core::{
 };
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {

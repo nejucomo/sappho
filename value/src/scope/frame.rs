@@ -5,7 +5,7 @@ use crate::{Unbound, UnboundKind::Unfulfilled, ValRef};
 use sappho_ast_core::Literal;
 use sappho_ast_reduced::Pattern;
 use sappho_attrs::Attrs;
-use sappho_identifier::{IdentRef, RcId};
+use sappho_syntax_identifier::{IdentRef, RcId};
 use std::cell::RefCell;
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};

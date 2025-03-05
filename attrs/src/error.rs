@@ -1,4 +1,4 @@
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 use thiserror::Error;
 
 pub type AttrsResult<T> = Result<T, AttrsError>;

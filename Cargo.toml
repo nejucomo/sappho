@@ -9,7 +9,6 @@ members = [
   "attrs",
   "cli",
   "eval",
-  "identifier",
   "integration-tests",
   "interpreter",
   "listform",
@@ -17,6 +16,7 @@ members = [
   "old-parser",
   "rand-dcomp",
   "source",
+  "syntax/identifier",
   "syntax/keyword",
   "syntax/parsable",
   "syntax/unparse",
@@ -53,7 +53,6 @@ sappho-ast-reduced = { path = "ast/reduced" }
 sappho-attrs = { path = "attrs" }
 sappho-cli = { path = "cli" }
 sappho-eval = { path = "eval" }
-sappho-identifier = { path = "identifier" }
 sappho-integration-tests = { path = "integration-tests" }
 sappho-interpreter = { path = "interpreter" }
 sappho-listform = { path = "listform" }
@@ -61,6 +60,7 @@ sappho-object = { path = "object" }
 sappho-parser = { path = "old-parser" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
+sappho-syntax-identifier = { path = "syntax/identifier" }
 sappho-syntax-keyword = { path = "syntax/keyword" }
 sappho-syntax-parsable = { path = "syntax/parsable" }
 sappho-syntax-unparse = { path = "syntax/unparse" }

@@ -2,7 +2,7 @@ use crate::error::BareError;
 use chumsky::{text, Parser};
 use sappho_ast::ProcExpr;
 use sappho_ast_core::Literal;
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 use std::str::FromStr;
 
 pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError> {

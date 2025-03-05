@@ -1,7 +1,7 @@
 use either::Either::{self, Left, Right};
 use sappho_ast::{self as ast};
 use sappho_ast_reduced::{self as astred};
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};

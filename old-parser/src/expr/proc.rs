@@ -8,7 +8,7 @@ use crate::space::ws;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::ProcExpr;
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 
 pub(super) fn proc_expr_def(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,

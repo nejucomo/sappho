@@ -2,7 +2,7 @@ use sappho_ast as ast;
 use sappho_ast_core::{AstProvider, CoreExpr};
 use sappho_ast_effect::Effect;
 use sappho_ast_reduced as astred;
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 
 use crate::xform::TransformInto;
 

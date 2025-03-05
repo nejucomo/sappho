@@ -6,8 +6,8 @@ use chumsky::Parser;
 use sappho_ast::{Ast, Expr, ProcExpr};
 use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::ProcEffect;
-use sappho_identifier::RcId;
 use sappho_object::Element;
+use sappho_syntax_identifier::RcId;
 
 use crate::delimited::delimited;
 use crate::error::BareError;

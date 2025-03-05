@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use arrayvec::ArrayVec;
 use either::Either::{self, Left, Right};
-use sappho_identifier::{IdentRef, RcId};
+use sappho_syntax_identifier::{IdentRef, RcId};
 use sappho_syntax_unparse::Unparse;
 
 use crate::error::AttrsResult;

@@ -6,8 +6,8 @@ use sappho_ast_core::{
     ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_effect::Effect;
-use sappho_identifier::RcId;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
+use sappho_syntax_identifier::RcId;
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;

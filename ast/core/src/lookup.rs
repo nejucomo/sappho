@@ -1,6 +1,6 @@
 use crate::AstProvider;
 use sappho_ast_effect::Effect;
-use sappho_identifier::RcId;
+use sappho_syntax_identifier::RcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 
 /// An attribute lookup expression, ie: `x.foo`.
