@@ -6,9 +6,9 @@ license.workspace = true
 homepage.workspace = true
 
 [build-dependencies]
-indoc.workspace = true
 anyhow-std.workspace = true
 anyhow.workspace = true
+indoc.workspace = true
 
 [dev-dependencies]
 anyhow-std.workspace = true

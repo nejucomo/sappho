@@ -20,5 +20,5 @@ sappho-object.workspace = true
 sappho-source.workspace = true
 
 [dev-dependencies]
-test-case.workspace = true
 include_dir.workspace = true
+test-case.workspace = true

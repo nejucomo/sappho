@@ -6,5 +6,5 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-anyhow.workspace = true
 anyhow-std.workspace = true
+anyhow.workspace = true
