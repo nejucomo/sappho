@@ -1,5 +1,15 @@
-use std::ops::Range;
-use std::path::PathBuf;
+mod parse;
 
-pub type Error = chumsky::error::Simple<char, Span>;
-pub type Span = (Option<PathBuf>, Range<usize>);
+use std::ops::Range;
+
+pub use self::parse::{ChumskyError, ParseError};
+
+pub type Span = Range<usize>;
+
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("io error: {0}")]
+    Load(#[from] anyhow::Error),
+    #[error("parse error: {0}")]
+    Parse(#[from] ParseError),
+}

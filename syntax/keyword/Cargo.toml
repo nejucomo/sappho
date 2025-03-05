@@ -10,3 +10,6 @@ chumsky.workspace = true
 enum-iterator.workspace = true
 sappho-syntax-parsable.workspace = true
 sappho-syntax-unparse.workspace = true
+
+[dev-dependencies]
+test-case.workspace = true
