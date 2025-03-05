@@ -17,6 +17,7 @@ members = [
   "parser",
   "rand-dcomp",
   "source",
+  "syntax",
   "transform",
   "unparse",
   "value",
@@ -58,6 +59,7 @@ sappho-object = { path = "object" }
 sappho-parser = { path = "parser" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
+sappho-syntax = { path = "syntax" }
 sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
