@@ -7,13 +7,13 @@ members = [
   "ast/fuzz",
   "ast/reduced",
   "attrs",
-  "cli",
-  "eval",
-  "integration-tests",
-  "interpreter",
+#   "cli",
+#   "eval",
+#   "integration-tests",
+#   "interpreter",
   "listform",
   "object",
-  "old-parser",
+#   "old-parser",
   "rand-dcomp",
   "source",
   "syntax/identifier",
@@ -51,13 +51,13 @@ sappho-ast-fuzz = { path = "ast/fuzz" }
 sappho-ast = { path = "ast/ast" }
 sappho-ast-reduced = { path = "ast/reduced" }
 sappho-attrs = { path = "attrs" }
-sappho-cli = { path = "cli" }
-sappho-eval = { path = "eval" }
-sappho-integration-tests = { path = "integration-tests" }
-sappho-interpreter = { path = "interpreter" }
+# sappho-cli = { path = "cli" }
+# sappho-eval = { path = "eval" }
+# sappho-integration-tests = { path = "integration-tests" }
+# sappho-interpreter = { path = "interpreter" }
 sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
-sappho-parser = { path = "old-parser" }
+# sappho-parser = { path = "old-parser" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
 sappho-syntax-identifier = { path = "syntax/identifier" }
