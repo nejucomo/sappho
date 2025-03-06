@@ -17,6 +17,7 @@ members = [
   "primval",
   "rand-dcomp",
   "source",
+  "syntax/expr",
   "syntax/identifier",
   "syntax/idstore",
   "syntax/keyword",
@@ -63,6 +64,7 @@ sappho-object = { path = "object" }
 sappho-primval = { path = "primval" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
+sappho-syntax-expr = { path = "syntax/expr" }
 sappho-syntax-identifier = { path = "syntax/identifier" }
 sappho-syntax-idstore = { path = "syntax/idstore" }
 sappho-syntax-keyword = { path = "syntax/keyword" }
