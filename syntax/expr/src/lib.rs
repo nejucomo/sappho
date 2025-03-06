@@ -9,3 +9,6 @@ pub use self::base::Base;
 pub use self::expr::Expr;
 pub use self::inner::InnerExpr;
 pub use self::lookups::Lookups;
+
+#[cfg(test)]
+mod tests;

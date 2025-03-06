@@ -12,3 +12,6 @@ sappho-primval.workspace = true
 sappho-syntax-idstore.workspace = true
 sappho-syntax-parsable.workspace = true
 sappho-syntax-unparse.workspace = true
+
+[dev-dependencies]
+test-case.workspace = true

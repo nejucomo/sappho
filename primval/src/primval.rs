@@ -15,10 +15,10 @@ use self::PrimVal::*;
 /// - Runtime values
 /// - Immutable
 /// - Literal syntax
-#[derive(Copy, Clone, Debug, PartialEq, derive_more::From)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub enum PrimVal {
     /// A literal number value, such as `42`.
-    Num(f64),
+    Num(i64),
 }
 
 impl Parsable for PrimVal {

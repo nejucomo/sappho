@@ -4,10 +4,16 @@ use sappho_syntax_idstore::ArcId;
 use sappho_syntax_parsable::{Parsable, Parser};
 use sappho_syntax_unparse::{Stream, Unparse};
 
-#[derive(Debug, derive_more::From)]
+#[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub enum Base {
     PrimVal(PrimVal),
     Deref(ArcId),
+}
+
+impl From<i64> for Base {
+    fn from(i: i64) -> Self {
+        Base::PrimVal(PrimVal::from(i))
+    }
 }
 
 impl Parsable for Base {
