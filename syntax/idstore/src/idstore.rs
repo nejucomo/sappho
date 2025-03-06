@@ -1,17 +1,8 @@
 use std::collections::BTreeMap;
-use std::sync::{LazyLock, Mutex};
 
-use crate::{ArcId, InvalidIdentifier};
+use sappho_syntax_identifier::InvalidIdentifier;
 
-pub fn resolve<S>(candidate: S) -> Result<ArcId, InvalidIdentifier>
-where
-    String: From<S>,
-{
-    static STORE: LazyLock<Mutex<IdStore>> = LazyLock::new(|| Mutex::new(IdStore::default()));
-
-    let mut store = STORE.lock().unwrap();
-    store.resolve(candidate)
-}
+use crate::ArcId;
 
 #[derive(Debug, Default)]
 pub struct IdStore(BTreeMap<ArcId, ArcId>);

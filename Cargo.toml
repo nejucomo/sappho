@@ -17,6 +17,7 @@ members = [
   "rand-dcomp",
   "source",
   "syntax/identifier",
+  "syntax/idstore",
   "syntax/keyword",
   "syntax/parsable",
   "syntax/unparse",
@@ -61,6 +62,7 @@ sappho-object = { path = "object" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
 sappho-syntax-identifier = { path = "syntax/identifier" }
+sappho-syntax-idstore = { path = "syntax/idstore" }
 sappho-syntax-keyword = { path = "syntax/keyword" }
 sappho-syntax-parsable = { path = "syntax/parsable" }
 sappho-syntax-unparse = { path = "syntax/unparse" }

@@ -1,17 +1,15 @@
 [package]
-name = "sappho-syntax-identifier"
+name = "sappho-syntax-idstore"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-aliri_braid.workspace = true
-derive_more.workspace = true
-sappho-syntax-keyword.workspace = true
+chumsky.workspace = true
+sappho-syntax-identifier.workspace = true
 sappho-syntax-parsable.workspace = true
 sappho-syntax-unparse.workspace = true
-thiserror.workspace = true
 
 [dev-dependencies]
 test-case.workspace = true

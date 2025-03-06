@@ -2,13 +2,13 @@ use std::borrow::Borrow;
 use std::fmt;
 use std::sync::Arc;
 
-use derive_more::From;
+use sappho_syntax_identifier::{IdentRef, Identifier, InvalidIdentifier};
 use sappho_syntax_parsable::Parsable;
 use sappho_syntax_unparse::Unparse;
 
-use crate::{resolve, IdentRef, Identifier, InvalidIdentifier};
+use crate::resolve;
 
-#[derive(Clone, Debug, From, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct ArcId(Arc<Identifier>);
 
 impl ArcId {
