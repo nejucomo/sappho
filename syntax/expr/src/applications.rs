@@ -1,9 +1,9 @@
 use chumsky::Parser as _;
 use sappho_primval::PrimVal;
-use sappho_syntax_parsable::{Parsable, Parser};
+use sappho_syntax_parsable::{Parser, Recursive, RecursiveParsable};
 use sappho_syntax_unparse::{Stream, Unparse};
 
-use crate::{InnerExpr, Lookups};
+use crate::{Expr, InnerExpr, Lookups};
 
 #[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub struct Applications {
@@ -11,10 +11,10 @@ pub struct Applications {
     args: Vec<InnerExpr>,
 }
 
-impl Parsable for Applications {
-    fn parser() -> impl Parser<Self> {
-        Lookups::parser()
-            .then(InnerExpr::parser().repeated())
+impl RecursiveParsable<Expr> for Applications {
+    fn recursive_parser(rec: Recursive<'_, Expr>) -> impl Parser<Self> {
+        Lookups::recursive_parser(rec.clone())
+            .then(InnerExpr::recursive_parser(rec).repeated())
             .map(Applications::from)
     }
 }

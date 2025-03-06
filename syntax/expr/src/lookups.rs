@@ -2,10 +2,10 @@ use chumsky::prelude::just;
 use chumsky::Parser as _;
 use sappho_primval::PrimVal;
 use sappho_syntax_idstore::ArcId;
-use sappho_syntax_parsable::{Parsable, Parser};
+use sappho_syntax_parsable::{Parsable, Parser, Recursive, RecursiveParsable};
 use sappho_syntax_unparse::{Stream, Unparse};
 
-use crate::InnerExpr;
+use crate::{Expr, InnerExpr};
 
 #[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub struct Lookups {
@@ -13,9 +13,9 @@ pub struct Lookups {
     lookups: Vec<ArcId>,
 }
 
-impl Parsable for Lookups {
-    fn parser() -> impl Parser<Self> {
-        InnerExpr::parser()
+impl RecursiveParsable<Expr> for Lookups {
+    fn recursive_parser(rec: Recursive<'_, Expr>) -> impl Parser<Self> {
+        InnerExpr::recursive_parser(rec)
             .then(just('.').ignore_then(ArcId::parser()).repeated())
             .map(Lookups::from)
     }

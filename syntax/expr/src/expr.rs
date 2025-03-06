@@ -1,6 +1,7 @@
+use chumsky::recursive::recursive;
 use chumsky::Parser as _;
 use sappho_primval::PrimVal;
-use sappho_syntax_parsable::{Parsable, Parser};
+use sappho_syntax_parsable::{Parsable, Parser, Recursive, RecursiveParsable};
 use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::{Applications, InnerExpr, Lookups};
@@ -10,7 +11,13 @@ pub struct Expr(Applications);
 
 impl Parsable for Expr {
     fn parser() -> impl Parser<Self> {
-        Applications::parser().map(Expr::from)
+        recursive(Self::recursive_parser)
+    }
+}
+
+impl RecursiveParsable<Expr> for Expr {
+    fn recursive_parser(rec: Recursive<'_, Expr>) -> impl Parser<Self> {
+        Applications::recursive_parser(rec).map(Expr::from)
     }
 }
 
