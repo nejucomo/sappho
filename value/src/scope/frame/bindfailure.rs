@@ -1,6 +1,6 @@
 use crate::{CoercionFailure, ValRef};
 use sappho_ast_reduced::Pattern;
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 use std::fmt;
 
 #[derive(Debug)]
@@ -10,8 +10,8 @@ pub struct BindFailure(Pattern, ValRef, BindFailureReason);
 pub enum BindFailureReason {
     LitNotEqual,
     Coercion(CoercionFailure),
-    MissingAttr(RcId),
-    UnexpectedAttrs(Vec<RcId>),
+    MissingAttr(ArcId),
+    UnexpectedAttrs(Vec<ArcId>),
 }
 
 impl BindFailure {

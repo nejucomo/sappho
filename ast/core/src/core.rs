@@ -4,7 +4,7 @@ use crate::{
 };
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 
 // TODO: Remove Clone/PartialEq impls in favor of derivations w/ XP impl hack
@@ -16,7 +16,7 @@ where
     FX: Effect,
 {
     Lit(Literal),
-    Ref(RcId),
+    Ref(ArcId),
     Object(ObjectDef<XP, FX>),
     Let(LetExpr<XP, FX>),
     Match(MatchExpr<XP, FX>),

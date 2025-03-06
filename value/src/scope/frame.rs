@@ -5,7 +5,7 @@ use crate::{Unbound, UnboundKind::Unfulfilled, ValRef};
 use sappho_ast_core::Literal;
 use sappho_ast_reduced::Pattern;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::{IdentRef, RcId};
+use sappho_syntax_identifier::{IdentRef, ArcId};
 use std::cell::RefCell;
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};
@@ -46,7 +46,7 @@ impl Frame {
     /// Return [Result]<[Option]<[ValRef]>, [Unbound]> where `None` indicates the binding is not
     /// declared in this frame. If a binding is declared, but not defined, this is an
     /// [Unfulfilled] error.
-    pub fn deref(&self, ident: &RcId) -> Result<Option<ValRef>, Unbound> {
+    pub fn deref(&self, ident: &ArcId) -> Result<Option<ValRef>, Unbound> {
         self.0
             .get(ident)
             .ok()
@@ -138,7 +138,7 @@ fn check_unexpected_source_attrs(
 
     let unpacknames: BTreeSet<_> = unpack.identifiers().cloned().collect();
     let srcnames: BTreeSet<_> = srcattrs.identifiers().cloned().collect();
-    let unexpected: Vec<RcId> = srcnames.difference(&unpacknames).cloned().collect();
+    let unexpected: Vec<ArcId> = srcnames.difference(&unpacknames).cloned().collect();
 
     if unexpected.is_empty() {
         Ok(())

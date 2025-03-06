@@ -5,7 +5,7 @@ use sappho_ast::{Ast, Expr, Pattern};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;
@@ -83,7 +83,7 @@ where
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> LookupExpr<Ast, FX> {
         LookupExpr::new(
             rng.sample::<Box<Expr<FX>>, _>(self),
-            rng.sample::<RcId, _>(self),
+            rng.sample::<ArcId, _>(self),
         )
     }
 }

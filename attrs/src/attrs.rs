@@ -2,14 +2,14 @@ use std::collections::BTreeMap;
 
 use arrayvec::ArrayVec;
 use either::Either::{self, Left, Right};
-use sappho_syntax_identifier::{IdentRef, RcId};
+use sappho_syntax_identifier::{IdentRef, ArcId};
 use sappho_syntax_unparse::Unparse;
 
 use crate::error::AttrsResult;
 use crate::AttrsError;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Attrs<T>(BTreeMap<RcId, T>);
+pub struct Attrs<T>(BTreeMap<ArcId, T>);
 
 /// TODO: Change the `&IdentRef` looksup to `&RcId` after introducing an Identifier "interning" facility.
 impl<T> Attrs<T> {
@@ -19,9 +19,9 @@ impl<T> Attrs<T> {
 
     pub fn define<K>(&mut self, id: K, val: T) -> AttrsResult<()>
     where
-        RcId: From<K>,
+        ArcId: From<K>,
     {
-        let rcid = RcId::from(id);
+        let rcid = ArcId::from(id);
         match self.0.insert(rcid.clone(), val) {
             None => Ok(()),
             Some(_) => Err(AttrsError::Redefinition(rcid)),
@@ -31,7 +31,7 @@ impl<T> Attrs<T> {
     pub fn define_many<I, K>(&mut self, pairs: I) -> AttrsResult<()>
     where
         I: IntoIterator<Item = (K, T)>,
-        RcId: From<K>,
+        ArcId: From<K>,
     {
         for (k, v) in pairs {
             self.define(k, v)?;
@@ -54,7 +54,7 @@ impl<T> Attrs<T> {
     /// This method is `self.as_refs().take(key)` which is nicely composable and terribly inefficient.
     pub fn get<K>(&self, key: K) -> AttrsResult<&T>
     where
-        RcId: From<K>,
+        ArcId: From<K>,
     {
         with_id(key, |id| self.0.get(id))
     }
@@ -64,7 +64,7 @@ impl<T> Attrs<T> {
     /// See [Attrs::get] for the semantics of keys, their outputs, and panic conditions. However, the performance issue of [Attrs::get] is not present here.
     pub fn take<K>(&mut self, key: K) -> AttrsResult<T>
     where
-        RcId: From<K>,
+        ArcId: From<K>,
     {
         with_id(key, |id| self.0.remove(id))
     }
@@ -73,16 +73,16 @@ impl<T> Attrs<T> {
     pub fn unpack<K, const N: usize>(mut self, keys: [K; N]) -> Either<[T; N], Self>
     where
         T: std::fmt::Debug,
-        RcId: From<K>,
+        ArcId: From<K>,
     {
         let mut av = ArrayVec::default();
         for key in keys {
-            let rcid = RcId::from(key);
-            match self.take::<&RcId>(&rcid) {
+            let rcid = ArcId::from(key);
+            match self.take::<&ArcId>(&rcid) {
                 Ok(v) => av.push((rcid, v)),
                 Err(_) => {
                     // Unwind mutations:
-                    self.define_many::<_, RcId>(av).unwrap();
+                    self.define_many::<_, ArcId>(av).unwrap();
                     return Right(self);
                 }
             }
@@ -92,7 +92,7 @@ impl<T> Attrs<T> {
             Left(av.into_inner().unwrap().map(|(_, v)| v))
         } else {
             // Unwind mutations:
-            self.define_many::<_, RcId>(av).unwrap();
+            self.define_many::<_, ArcId>(av).unwrap();
             Right(self)
         }
     }
@@ -109,11 +109,11 @@ impl<T> Attrs<T> {
         self.iter().collect()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&RcId, &T)> {
+    pub fn iter(&self) -> impl Iterator<Item = (&ArcId, &T)> {
         self.0.iter()
     }
 
-    pub fn identifiers(&self) -> impl Iterator<Item = &RcId> {
+    pub fn identifiers(&self) -> impl Iterator<Item = &ArcId> {
         self.iter().map(|(idr, _)| idr)
     }
 
@@ -149,16 +149,16 @@ impl<T> Default for Attrs<T> {
 
 impl<S, T> FromIterator<(S, T)> for Attrs<T>
 where
-    RcId: From<S>,
+    ArcId: From<S>,
 {
     fn from_iter<I: IntoIterator<Item = (S, T)>>(iter: I) -> Self {
-        Attrs(iter.into_iter().map(|(s, v)| (RcId::from(s), v)).collect())
+        Attrs(iter.into_iter().map(|(s, v)| (ArcId::from(s), v)).collect())
     }
 }
 
 impl<T> IntoIterator for Attrs<T> {
-    type Item = (RcId, T);
-    type IntoIter = <BTreeMap<RcId, T> as IntoIterator>::IntoIter;
+    type Item = (ArcId, T);
+    type IntoIter = <BTreeMap<ArcId, T> as IntoIterator>::IntoIter;
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
@@ -190,9 +190,9 @@ where
 
 fn with_id<K, F, T>(key: K, f: F) -> AttrsResult<T>
 where
-    RcId: From<K>,
+    ArcId: From<K>,
     F: FnOnce(&IdentRef) -> Option<T>,
 {
-    let id = RcId::from(key);
+    let id = ArcId::from(key);
     f(id.as_ref()).ok_or(AttrsError::Missing(id))
 }

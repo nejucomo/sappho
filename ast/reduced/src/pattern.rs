@@ -1,12 +1,12 @@
 use sappho_ast_core::Literal;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum Pattern {
-    Bind(RcId),
+    Bind(ArcId),
     LitEq(Literal),
     Unpack(Attrs<Pattern>),
 }

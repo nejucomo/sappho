@@ -2,13 +2,13 @@ use sappho_ast as ast;
 use sappho_ast_core::Literal;
 use sappho_ast_reduced as astred;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 use test_case::test_case;
 
 use crate::TransformInto;
 
 fn bind(s: &'static str) -> astred::Pattern {
-    astred::Pattern::Bind(RcId::from(s))
+    astred::Pattern::Bind(ArcId::from(s))
 }
 
 fn unpack_empty() -> astred::Pattern {
@@ -57,8 +57,8 @@ fn ast_to_red<const K: usize>(
     tail: Option<&'static str>,
 ) -> astred::Pattern {
     ast::ListPattern::new(
-        body.map(RcId::from).map(ast::Pattern::Bind),
-        tail.map(RcId::from),
+        body.map(ArcId::from).map(ast::Pattern::Bind),
+        tail.map(ArcId::from),
     )
     .transform()
 }
@@ -68,8 +68,8 @@ where
     I: IntoIterator<Item = &'static str>,
 {
     ast::ListPattern::new(
-        bindpats.into_iter().map(RcId::from).map(ast::Pattern::Bind),
-        tailbind.map(RcId::from),
+        bindpats.into_iter().map(ArcId::from).map(ast::Pattern::Bind),
+        tailbind.map(ArcId::from),
     )
     .into()
 }
@@ -97,7 +97,7 @@ where
         Attrs::from_iter([
             (
                 "head",
-                ast::Pattern::Bind(RcId::from("a")),
+                ast::Pattern::Bind(ArcId::from("a")),
             ),
             (
                 "tail",

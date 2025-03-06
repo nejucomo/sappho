@@ -1,14 +1,14 @@
 use crate::Literal;
 use sappho_attrs::Attrs;
 use sappho_listform::ListForm;
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 
-pub type ListPattern = ListForm<Pattern, RcId>;
+pub type ListPattern = ListForm<Pattern, ArcId>;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum Pattern {
-    Bind(RcId),
+    Bind(ArcId),
     LitEq(Literal),
     Unpack(Attrs<Pattern>),
     List(ListPattern),

@@ -1,7 +1,7 @@
 use either::Either::{self, Left, Right};
 use sappho_ast::{self as ast};
 use sappho_ast_reduced::{self as astred};
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};
@@ -31,8 +31,8 @@ impl TransformInto<ast::Pattern> for astred::Pattern {
     }
 }
 
-impl TryTransformInto<TailOrAttrs<RcId, astred::Pattern>> for astred::Pattern {
-    fn try_transform(self) -> Either<TailOrAttrs<RcId, astred::Pattern>, Self> {
+impl TryTransformInto<TailOrAttrs<ArcId, astred::Pattern>> for astred::Pattern {
+    fn try_transform(self) -> Either<TailOrAttrs<ArcId, astred::Pattern>, Self> {
         use TailOrAttrs::*;
 
         match self {

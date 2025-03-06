@@ -1,4 +1,4 @@
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 use thiserror::Error;
 
 pub type AttrsResult<T> = Result<T, AttrsError>;
@@ -6,9 +6,9 @@ pub type AttrsResult<T> = Result<T, AttrsError>;
 #[derive(Clone, Debug, Error)]
 pub enum AttrsError {
     #[error("attempt to redefine attr {0:?}")]
-    Redefinition(RcId),
+    Redefinition(ArcId),
     #[error("missing expected attr {0:?}")]
-    Missing(RcId),
+    Missing(ArcId),
     #[error("unexpected attrs {0:?}")]
-    Unexpected(Vec<RcId>),
+    Unexpected(Vec<ArcId>),
 }

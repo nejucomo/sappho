@@ -7,7 +7,7 @@ use sappho_ast_core::{
 };
 use sappho_ast_effect::Effect;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;
@@ -47,7 +47,7 @@ where
 
         <Self as Distribution<Literal>>::map(*self, Lit)
             .weighted_case(1)
-            .or(<Self as Distribution<RcId>>::map(*self, Ref).weighted_case(3))
+            .or(<Self as Distribution<ArcId>>::map(*self, Ref).weighted_case(3))
             .or(<Self as Distribution<ObjectDef<Ast, FX>>>::map(*self, Object).weighted_case(rwf))
             .or(<Self as Distribution<LetExpr<Ast, FX>>>::map(*self, Let).weighted_case(rwf))
             .or(<Self as Distribution<MatchExpr<Ast, FX>>>::map(*self, Match).weighted_case(rwf))

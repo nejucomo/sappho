@@ -1,9 +1,9 @@
-use sappho_syntax_identifier::RcId;
+use sappho_syntax_identifier::ArcId;
 use std::fmt;
 
 #[derive(Debug)]
 pub struct Unbound {
-    ident: RcId,
+    ident: ArcId,
     kind: UnboundKind,
 }
 
@@ -14,7 +14,7 @@ pub enum UnboundKind {
 }
 
 impl UnboundKind {
-    pub fn make(self, ident: &RcId) -> Unbound {
+    pub fn make(self, ident: &ArcId) -> Unbound {
         Unbound {
             ident: ident.clone(),
             kind: self,
