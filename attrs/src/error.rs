@@ -1,4 +1,4 @@
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 use thiserror::Error;
 
 pub type AttrsResult<T> = Result<T, AttrsError>;

@@ -4,7 +4,7 @@ use crate::{
 };
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 
 // TODO: Remove Clone/PartialEq impls in favor of derivations w/ XP impl hack

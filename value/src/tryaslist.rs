@@ -2,6 +2,7 @@ use std::borrow::Borrow;
 
 use sappho_listform::ListForm;
 use sappho_object::Unbundled;
+use sappho_syntax_idstore::resolve_static;
 
 use crate::{AttrVals, Object, ValRef, Value};
 
@@ -14,7 +15,10 @@ impl TryAsList for AttrVals {
         if self.is_empty() {
             Some(ListForm::default())
         } else {
-            let [head, tail] = self.as_refs().unpack(["head", "tail"]).left()?;
+            let [head, tail] = self
+                .as_refs()
+                .unpack([&resolve_static("head"), &resolve_static("tail")])
+                .left()?;
             let lf = tail.try_as_list()?;
             Some(lf.prepend(head.clone()))
         }

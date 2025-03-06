@@ -8,7 +8,7 @@ pub use self::unbound::{Unbound, UnboundKind};
 
 use crate::ValRef;
 use sappho_ast_reduced::Pattern;
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 
 #[derive(Debug)]
 pub enum Scope {

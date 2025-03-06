@@ -1,7 +1,7 @@
 use rand::distr::{Distribution, StandardUniform};
 use rand::Rng;
 use sappho_ast_core::Literal;
-use sappho_syntax_identifier::{Identifier, ArcId};
+use sappho_syntax_idstore::{resolve, ArcId};
 
 use crate::AstFuzz;
 
@@ -29,17 +29,11 @@ impl Distribution<Literal> for AstFuzz {
 
 impl Distribution<ArcId> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ArcId {
-        ArcId::from(rng.sample::<Identifier, _>(self))
-    }
-}
-
-impl Distribution<Identifier> for AstFuzz {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Identifier {
         let mut id = "".to_string();
         while id.is_empty() || rng.random_ratio(1, 3) {
             id.push(rng.random_range('a'..='z'));
         }
-        Identifier::new(id).unwrap()
+        resolve(id).unwrap()
     }
 }
 

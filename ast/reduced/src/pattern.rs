@@ -1,6 +1,6 @@
 use sappho_ast_core::Literal;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 use std::fmt;
 

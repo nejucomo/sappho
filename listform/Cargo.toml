@@ -8,7 +8,7 @@ homepage.workspace = true
 [dependencies]
 derive-new.workspace = true
 either.workspace = true
-sappho-syntax-identifier.workspace = true
+sappho-syntax-idstore.workspace = true
 sappho-syntax-unparse.workspace = true
 
 [dev-dependencies]

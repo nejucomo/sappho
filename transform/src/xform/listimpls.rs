@@ -3,6 +3,7 @@ use std::fmt::Debug;
 use either::Either::{self, Left, Right};
 use sappho_attrs::Attrs;
 use sappho_listform::ListForm;
+use sappho_syntax_idstore::resolve_static;
 
 use crate::xform::{TransformInto, TryTransformInto};
 
@@ -19,7 +20,10 @@ where
                 asteither
                     .map_right(T::transform)
                     .map_left(|x| {
-                        V::from(Attrs::from_iter([("head", x.transform()), ("tail", red)]))
+                        V::from(Attrs::from_iter([
+                            (resolve_static("head"), x.transform()),
+                            (resolve_static("tail"), red),
+                        ]))
                     })
                     .into_inner()
             })
@@ -39,7 +43,7 @@ where
         if self.is_empty() {
             Left(ListForm::default())
         } else {
-            self.unpack(["head", "tail"])
+            self.unpack([&resolve_static("head"), &resolve_static("tail")])
                 .left_and_then(|[head, vtail]| {
                     let ei = vtail.try_transform().left_and_then(|toa| {
                         use TailOrAttrs::*;
@@ -52,7 +56,10 @@ where
 
                     match ei {
                         Left(lf) => Left(lf.prepend(head.transform())),
-                        Right(vtail) => Right(Attrs::from_iter([("head", head), ("tail", vtail)])),
+                        Right(vtail) => Right(Attrs::from_iter([
+                            (resolve_static("head"), head),
+                            (resolve_static("tail"), vtail),
+                        ])),
                     }
                 })
         }

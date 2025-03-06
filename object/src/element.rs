@@ -1,4 +1,4 @@
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 use sappho_syntax_unparse::{Stream, Unparse};
 
 #[derive(Debug)]

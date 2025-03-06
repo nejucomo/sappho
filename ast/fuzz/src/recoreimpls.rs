@@ -5,7 +5,7 @@ use sappho_ast::{Ast, Expr, Pattern};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;

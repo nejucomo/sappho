@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use arrayvec::ArrayVec;
 use either::Either::{self, Left, Right};
-use sappho_syntax_identifier::{IdentRef, ArcId};
+use sappho_syntax_idstore::ArcId;
 use sappho_syntax_unparse::Unparse;
 
 use crate::error::AttrsResult;
@@ -11,78 +11,50 @@ use crate::AttrsError;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Attrs<T>(BTreeMap<ArcId, T>);
 
-/// TODO: Change the `&IdentRef` looksup to `&RcId` after introducing an Identifier "interning" facility.
 impl<T> Attrs<T> {
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 
-    pub fn define<K>(&mut self, id: K, val: T) -> AttrsResult<()>
-    where
-        ArcId: From<K>,
-    {
-        let rcid = ArcId::from(id);
-        match self.0.insert(rcid.clone(), val) {
+    pub fn define(&mut self, id: ArcId, val: T) -> AttrsResult<()> {
+        match self.0.insert(id.clone(), val) {
             None => Ok(()),
-            Some(_) => Err(AttrsError::Redefinition(rcid)),
+            Some(_) => Err(AttrsError::Redefinition(id)),
         }
     }
 
-    pub fn define_many<I, K>(&mut self, pairs: I) -> AttrsResult<()>
+    pub fn define_many<'a, I>(&mut self, pairs: I) -> AttrsResult<()>
     where
-        I: IntoIterator<Item = (K, T)>,
-        ArcId: From<K>,
+        I: IntoIterator<Item = (&'a ArcId, T)>,
     {
         for (k, v) in pairs {
-            self.define(k, v)?;
+            self.define(k.clone(), v)?;
         }
         Ok(())
     }
 
-    /// Get an output for any key, `K`, which includes `&IdentRef`
-    ///
-    /// Three common impls are `&IdentRef`, `&'static str`, and `(k1, k2)` which is a tuple of keys.
-    ///
-    /// For non-tuple keys, the output is just `&T`. For tuple keys the output is a tuple of the sub-key outputs.
-    ///
-    /// # Panics
-    ///
-    /// A `&'static str` key must be valid as an [IdentRef] and will cause a panic if not.
-    ///
-    /// # Performance
-    ///
-    /// This method is `self.as_refs().take(key)` which is nicely composable and terribly inefficient.
-    pub fn get<K>(&self, key: K) -> AttrsResult<&T>
-    where
-        ArcId: From<K>,
-    {
-        with_id(key, |id| self.0.get(id))
+    /// Get the value with the given key
+    pub fn get(&self, idref: &ArcId) -> AttrsResult<&T> {
+        with_id(idref, |id| self.0.get(id))
     }
 
     /// Take the value(s) for the given `key`
-    ///
-    /// See [Attrs::get] for the semantics of keys, their outputs, and panic conditions. However, the performance issue of [Attrs::get] is not present here.
-    pub fn take<K>(&mut self, key: K) -> AttrsResult<T>
-    where
-        ArcId: From<K>,
-    {
-        with_id(key, |id| self.0.remove(id))
+    pub fn take(&mut self, idref: &ArcId) -> AttrsResult<T> {
+        with_id(idref, |id| self.0.remove(id))
     }
 
-    /// Take the value(s) for the given `key` and ensure the remaining `self` is empty
-    pub fn unpack<K, const N: usize>(mut self, keys: [K; N]) -> Either<[T; N], Self>
+    /// Take the value(s) for the given `idrefs` and ensure the remaining `self` is empty
+    pub fn unpack<const N: usize>(mut self, idrefs: [&ArcId; N]) -> Either<[T; N], Self>
     where
         T: std::fmt::Debug,
-        ArcId: From<K>,
     {
         let mut av = ArrayVec::default();
-        for key in keys {
-            let rcid = ArcId::from(key);
-            match self.take::<&ArcId>(&rcid) {
-                Ok(v) => av.push((rcid, v)),
+        for idref in idrefs {
+            match self.take(idref) {
+                Ok(v) => av.push((idref, v)),
                 Err(_) => {
                     // Unwind mutations:
-                    self.define_many::<_, ArcId>(av).unwrap();
+                    self.define_many(av).unwrap();
                     return Right(self);
                 }
             }
@@ -92,7 +64,7 @@ impl<T> Attrs<T> {
             Left(av.into_inner().unwrap().map(|(_, v)| v))
         } else {
             // Unwind mutations:
-            self.define_many::<_, ArcId>(av).unwrap();
+            self.define_many(av).unwrap();
             Right(self)
         }
     }
@@ -147,12 +119,12 @@ impl<T> Default for Attrs<T> {
     }
 }
 
-impl<S, T> FromIterator<(S, T)> for Attrs<T>
+impl<K, T> FromIterator<(K, T)> for Attrs<T>
 where
-    ArcId: From<S>,
+    ArcId: From<K>,
 {
-    fn from_iter<I: IntoIterator<Item = (S, T)>>(iter: I) -> Self {
-        Attrs(iter.into_iter().map(|(s, v)| (ArcId::from(s), v)).collect())
+    fn from_iter<I: IntoIterator<Item = (K, T)>>(iter: I) -> Self {
+        Attrs(iter.into_iter().map(|(k, v)| (ArcId::from(k), v)).collect())
     }
 }
 
@@ -188,11 +160,9 @@ where
     }
 }
 
-fn with_id<K, F, T>(key: K, f: F) -> AttrsResult<T>
+fn with_id<F, T>(idref: &ArcId, f: F) -> AttrsResult<T>
 where
-    ArcId: From<K>,
-    F: FnOnce(&IdentRef) -> Option<T>,
+    F: FnOnce(&ArcId) -> Option<T>,
 {
-    let id = ArcId::from(key);
-    f(id.as_ref()).ok_or(AttrsError::Missing(id))
+    f(idref).ok_or_else(|| AttrsError::Missing(idref.clone()))
 }

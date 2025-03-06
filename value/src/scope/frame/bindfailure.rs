@@ -1,6 +1,6 @@
 use crate::{CoercionFailure, ValRef};
 use sappho_ast_reduced::Pattern;
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 use std::fmt;
 
 #[derive(Debug)]

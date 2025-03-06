@@ -7,7 +7,7 @@ use sappho_ast_core::{
 };
 use sappho_ast_effect::Effect;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 
 use crate::effectsimpls::FxFuzz;
 use crate::AstFuzz;

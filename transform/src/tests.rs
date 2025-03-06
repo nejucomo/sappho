@@ -2,13 +2,13 @@ use sappho_ast as ast;
 use sappho_ast_core::Literal;
 use sappho_ast_reduced as astred;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::resolve_static;
 use test_case::test_case;
 
 use crate::TransformInto;
 
 fn bind(s: &'static str) -> astred::Pattern {
-    astred::Pattern::Bind(ArcId::from(s))
+    astred::Pattern::Bind(resolve_static(s))
 }
 
 fn unpack_empty() -> astred::Pattern {
@@ -16,7 +16,11 @@ fn unpack_empty() -> astred::Pattern {
 }
 
 fn cons_pat(head: &'static str, tail: astred::Pattern) -> astred::Pattern {
-    Attrs::from_iter([("head", bind(head)), ("tail", tail)]).into()
+    Attrs::from_iter([
+        (resolve_static("head"), bind(head)),
+        (resolve_static("tail"), tail),
+    ])
+    .into()
 }
 
 #[test_case([], None => unpack_empty())]
@@ -57,8 +61,8 @@ fn ast_to_red<const K: usize>(
     tail: Option<&'static str>,
 ) -> astred::Pattern {
     ast::ListPattern::new(
-        body.map(ArcId::from).map(ast::Pattern::Bind),
-        tail.map(ArcId::from),
+        body.map(resolve_static).map(ast::Pattern::Bind),
+        tail.map(resolve_static),
     )
     .transform()
 }
@@ -68,8 +72,11 @@ where
     I: IntoIterator<Item = &'static str>,
 {
     ast::ListPattern::new(
-        bindpats.into_iter().map(ArcId::from).map(ast::Pattern::Bind),
-        tailbind.map(ArcId::from),
+        bindpats
+            .into_iter()
+            .map(resolve_static)
+            .map(ast::Pattern::Bind),
+        tailbind.map(resolve_static),
     )
     .into()
 }
@@ -96,11 +103,11 @@ where
     => ast::Pattern::Unpack(
         Attrs::from_iter([
             (
-                "head",
-                ast::Pattern::Bind(ArcId::from("a")),
+                resolve_static("head"),
+                ast::Pattern::Bind(resolve_static("a")),
             ),
             (
-                "tail",
+                resolve_static("tail"),
                 ast::Pattern::LitEq(Literal::Num(42.0)),
             )
         ]),

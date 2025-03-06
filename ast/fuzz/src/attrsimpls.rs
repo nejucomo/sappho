@@ -1,7 +1,7 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_attrs::Attrs;
-use sappho_syntax_identifier::ArcId;
+use sappho_syntax_idstore::ArcId;
 
 use crate::AstFuzz;
 
