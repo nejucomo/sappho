@@ -8,8 +8,8 @@ pub type Span = Range<usize>;
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
-    #[error("io error: {0}")]
+    #[error(transparent)]
     Load(#[from] anyhow::Error),
-    #[error("parse error: {0}")]
+    #[error(transparent)]
     Parse(#[from] ParseError),
 }

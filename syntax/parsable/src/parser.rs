@@ -17,7 +17,11 @@ pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyE
     where
         C: AsRef<str>,
     {
-        self.parse(sc.code())
+        use chumsky::primitive::end;
+        use chumsky::Parser as _;
+
+        self.then_ignore(end())
+            .parse(sc.code())
             .map_err(|errors| ParseError::new(sc.source().clone(), errors))
     }
 }

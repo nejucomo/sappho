@@ -13,9 +13,11 @@ pub struct ParseError {
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        assert!(!self.errors.is_empty());
+
         write!(f, "Parse errors in {}:", self.origin)?;
         for (i, ce) in self.errors.iter().enumerate() {
-            write!(f, "  Error {}: {}", i, ce.0)?;
+            write!(f, "\n  Error {}: {}", i, ce.0)?;
         }
         Ok(())
     }
@@ -23,6 +25,12 @@ impl fmt::Display for ParseError {
 
 #[derive(Debug, derive_more::From)]
 pub struct ChumskyError(Simple<char, Span>);
+
+impl ChumskyError {
+    pub fn custom<M: ToString>(span: Span, msg: M) -> Self {
+        ChumskyError(Simple::custom(span, msg))
+    }
+}
 
 impl chumsky::Error<char> for ChumskyError {
     type Span = Span;

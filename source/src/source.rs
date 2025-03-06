@@ -21,7 +21,7 @@ impl fmt::Display for Source {
         if let Some(p) = self.0.as_ref() {
             write!(f, "{:?}", p.display())
         } else {
-            write!(f, "<in-memory>")
+            write!(f, "<memory>")
         }
     }
 }
