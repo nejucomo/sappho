@@ -1,6 +1,6 @@
 use chumsky::primitive::just;
 use chumsky::Parser as _;
-use sappho_syntax_parsable::{Parsable, Parser, Recursive, RecursiveParsable};
+use sappho_syntax_parsable::{Parsable, ParsableWith, Parser, Recursive};
 use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::{Base, Expr};
@@ -17,8 +17,8 @@ impl From<Expr> for InnerExpr {
     }
 }
 
-impl RecursiveParsable<Expr> for InnerExpr {
-    fn recursive_parser(recurse: Recursive<'_, Expr>) -> impl Parser<Self> {
+impl<'r> ParsableWith<Recursive<'r, Expr>> for InnerExpr {
+    fn parser_with(recurse: Recursive<'r, Expr>) -> impl Parser<Self> {
         Base::parser().map(InnerExpr::from).or(just('(')
             .ignore_then(recurse)
             .then_ignore(just(')'))

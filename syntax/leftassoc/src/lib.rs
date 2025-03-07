@@ -1,7 +1,7 @@
 use chumsky::Parser as _;
 use derive_more::{Constructor, From};
 use either::Either;
-use sappho_syntax_parsable::{Parser, Recursive, RecursiveParsable};
+use sappho_syntax_parsable::{ParsableWith, Parser};
 use sappho_syntax_unparse::{Stream, Unparse};
 use sappho_try_transform::TryTransformInto;
 
@@ -11,14 +11,14 @@ pub struct LeftAssoc<L, R> {
     pub rights: Vec<R>,
 }
 
-impl<X, L, R> RecursiveParsable<X> for LeftAssoc<L, R>
+impl<L, LP, R, RP> ParsableWith<(LP, RP)> for LeftAssoc<L, R>
 where
-    L: RecursiveParsable<X>,
-    R: RecursiveParsable<X>,
+    L: ParsableWith<LP>,
+    R: ParsableWith<RP>,
 {
-    fn recursive_parser(rec: Recursive<'_, X>) -> impl Parser<Self> {
-        L::recursive_parser(rec.clone())
-            .then(R::recursive_parser(rec).repeated())
+    fn parser_with((pl, pr): (LP, RP)) -> impl Parser<Self> {
+        L::parser_with(pl)
+            .then(R::parser_with(pr).repeated())
             .map(LeftAssoc::from)
     }
 }

@@ -2,9 +2,12 @@ pub mod error;
 mod intoparser;
 mod parsable;
 mod parser;
-mod recpar;
+mod with;
 
+pub type Recursive<'a, O> = chumsky::recursive::Recursive<'a, char, O, ChumskyError>;
+
+use crate::error::ChumskyError;
 pub use crate::intoparser::IntoParser;
 pub use crate::parsable::Parsable;
 pub use crate::parser::Parser;
-pub use crate::recpar::{Recursive, RecursiveParsable};
+pub use crate::with::ParsableWith;
