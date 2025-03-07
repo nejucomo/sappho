@@ -24,6 +24,7 @@ members = [
   "syntax/parsable",
   "syntax/unparse",
   "transform",
+  "try-transform",
   "value",
 ]
 
@@ -71,6 +72,7 @@ sappho-syntax-keyword = { path = "syntax/keyword" }
 sappho-syntax-parsable = { path = "syntax/parsable" }
 sappho-syntax-unparse = { path = "syntax/unparse" }
 sappho-transform = { path = "transform" }
+sappho-try-transform = { path = "try-transform" }
 sappho-value = { path = "value" }
 simplelog = "0.12.0"
 test-case = "2.0"
