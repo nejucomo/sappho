@@ -1,5 +1,5 @@
 use either::Either::{Left, Right};
-use sappho_syntax_parsable::{Parsable, Parser};
+use sappho_syntax_parsable::Parser;
 use sappho_try_transform::TryTransformFrom;
 use test_case::test_case;
 

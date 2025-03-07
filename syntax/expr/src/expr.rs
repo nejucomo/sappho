@@ -1,15 +1,20 @@
 use chumsky::recursive::recursive;
 use chumsky::Parser as _;
-use sappho_syntax_parsable::{Parsable, Parser, Recursive, RecursiveParsable};
+use sappho_syntax_leftassoc::LeftAssoc;
+use sappho_syntax_parsable::{Parser, Recursive, RecursiveParsable};
 use sappho_syntax_unparse::{Stream, Unparse};
 
-use crate::Applications;
+use crate::{AttrLookup, InnerExpr};
 
 #[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub struct Expr(Applications);
 
-impl Parsable for Expr {
-    fn parser() -> impl Parser<Self> {
+pub type Applications = LeftAssoc<Lookups, InnerExpr>;
+
+pub type Lookups = LeftAssoc<InnerExpr, AttrLookup>;
+
+impl Expr {
+    pub fn parser() -> impl Parser<Self> {
         recursive(Self::recursive_parser)
     }
 }
@@ -48,7 +53,19 @@ mod test_conversions {
 
     impl TryTransformFrom<Expr> for i32 {
         fn try_transform_from(src: Expr) -> Either<Self, Expr> {
-            Self::try_transform_from(src.0).map_right(Expr::from)
+            // the Scream, Edvard Munch .jpg
+            src.0
+                .try_into_left()
+                .left_and_then(|lookups| {
+                    lookups
+                        .try_into_left()
+                        .left_and_then(|inner| {
+                            <i32 as TryTransformFrom<InnerExpr>>::try_transform_from(inner)
+                                .map_right(Lookups::from)
+                        })
+                        .map_right(Applications::from)
+                })
+                .map_right(Expr::from)
         }
     }
 }

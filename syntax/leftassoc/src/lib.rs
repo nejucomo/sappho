@@ -1,14 +1,57 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use chumsky::Parser as _;
+use derive_more::{Constructor, From};
+use sappho_syntax_parsable::{Parser, Recursive, RecursiveParsable};
+use sappho_syntax_unparse::{Stream, Unparse};
+
+#[derive(Clone, Debug, Eq, PartialEq, From, Constructor)]
+pub struct LeftAssoc<L, R> {
+    pub left: L,
+    pub rights: Vec<R>,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl<X, L, R> RecursiveParsable<X> for LeftAssoc<L, R>
+where
+    L: RecursiveParsable<X>,
+    R: RecursiveParsable<X>,
+{
+    fn recursive_parser(rec: Recursive<'_, X>) -> impl Parser<Self> {
+        L::recursive_parser(rec.clone())
+            .then(R::recursive_parser(rec).repeated())
+            .map(LeftAssoc::from)
+    }
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+impl<L, R> Unparse for LeftAssoc<L, R>
+where
+    L: Unparse,
+    R: Unparse,
+{
+    fn unparse_into(&self, s: &mut Stream) {
+        s.write(&self.left);
+        for r in &self.rights {
+            s.write(r);
+        }
+    }
+}
+
+// Test Conversions:
+impl<L, R> From<L> for LeftAssoc<L, R> {
+    fn from(left: L) -> Self {
+        Self::from((left, vec![]))
+    }
+}
+
+// Uncovered foreign type:
+// impl<L, R> TryTransformFrom<LeftAssoc<L, R>> for L {
+// So we do it by hand:
+impl<L, R> LeftAssoc<L, R> {
+    pub fn try_into_left(self) -> either::Either<L, Self> {
+        use either::Either::{Left, Right};
+
+        if self.rights.is_empty() {
+            Left(self.left)
+        } else {
+            Right(self)
+        }
     }
 }
