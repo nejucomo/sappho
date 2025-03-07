@@ -1,6 +1,6 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_listform::ListForm;
+use sappho_syntax_listform::ListForm;
 
 use crate::AstFuzz;
 

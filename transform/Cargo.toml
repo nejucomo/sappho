@@ -13,7 +13,7 @@ sappho-ast-reduced.workspace = true
 sappho-ast.workspace = true
 sappho-attrs.workspace = true
 sappho-syntax-idstore.workspace = true
-sappho-listform.workspace = true
+sappho-syntax-listform.workspace = true
 sappho-object.workspace = true
 
 [dev-dependencies]

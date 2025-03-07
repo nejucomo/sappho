@@ -11,7 +11,6 @@ members = [
 #   "eval",
 #   "integration-tests",
 #   "interpreter",
-  "listform",
   "object",
 #   "old-parser",
   "primval",
@@ -22,6 +21,7 @@ members = [
   "syntax/idstore",
   "syntax/keyword",
   "syntax/leftassoc",
+  "syntax/listform",
   "syntax/parsable",
   "syntax/primitives",
   "syntax/unparse",
@@ -61,7 +61,6 @@ sappho-attrs = { path = "attrs" }
 # sappho-eval = { path = "eval" }
 # sappho-integration-tests = { path = "integration-tests" }
 # sappho-interpreter = { path = "interpreter" }
-sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
 # sappho-parser = { path = "old-parser" }
 sappho-primval = { path = "primval" }
@@ -72,6 +71,7 @@ sappho-syntax-identifier = { path = "syntax/identifier" }
 sappho-syntax-idstore = { path = "syntax/idstore" }
 sappho-syntax-keyword = { path = "syntax/keyword" }
 sappho-syntax-leftassoc = { path = "syntax/leftassoc" }
+sappho-syntax-listform = { path = "syntax/listform" }
 sappho-syntax-parsable = { path = "syntax/parsable" }
 sappho-syntax-primitives = { path = "syntax/primitives" }
 sappho-syntax-unparse = { path = "syntax/unparse" }

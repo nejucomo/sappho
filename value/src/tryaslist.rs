@@ -1,8 +1,8 @@
 use std::borrow::Borrow;
 
-use sappho_listform::ListForm;
 use sappho_object::Unbundled;
 use sappho_syntax_idstore::resolve_static;
+use sappho_syntax_listform::ListForm;
 
 use crate::{AttrVals, Object, ValRef, Value};
 
