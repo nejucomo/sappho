@@ -21,6 +21,7 @@ members = [
   "syntax/identifier",
   "syntax/idstore",
   "syntax/keyword",
+  "syntax/leftassoc",
   "syntax/parsable",
   "syntax/unparse",
   "transform",
@@ -69,6 +70,7 @@ sappho-syntax-expr = { path = "syntax/expr" }
 sappho-syntax-identifier = { path = "syntax/identifier" }
 sappho-syntax-idstore = { path = "syntax/idstore" }
 sappho-syntax-keyword = { path = "syntax/keyword" }
+sappho-syntax-leftassoc = { path = "syntax/leftassoc" }
 sappho-syntax-parsable = { path = "syntax/parsable" }
 sappho-syntax-unparse = { path = "syntax/unparse" }
 sappho-transform = { path = "transform" }
