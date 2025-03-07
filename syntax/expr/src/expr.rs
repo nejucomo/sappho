@@ -51,21 +51,18 @@ mod test_conversions {
         }
     }
 
-    impl TryTransformFrom<Expr> for i32 {
+    impl TryTransformFrom<Expr> for InnerExpr {
         fn try_transform_from(src: Expr) -> Either<Self, Expr> {
-            // the Scream, Edvard Munch .jpg
             src.0
                 .try_into_left()
-                .left_and_then(|lookups| {
-                    lookups
-                        .try_into_left()
-                        .left_and_then(|inner| {
-                            <i32 as TryTransformFrom<InnerExpr>>::try_transform_from(inner)
-                                .map_right(Lookups::from)
-                        })
-                        .map_right(Applications::from)
-                })
+                .left_and_then(|lookups| lookups.try_into_left().map_right(Applications::from))
                 .map_right(Expr::from)
+        }
+    }
+
+    impl TryTransformFrom<Expr> for i32 {
+        fn try_transform_from(src: Expr) -> Either<Self, Expr> {
+            i32::try_transform_from_via::<InnerExpr>(src)
         }
     }
 }

@@ -6,7 +6,7 @@ use test_case::test_case;
 use crate::{Expr, InnerExpr};
 
 #[test_case("42" => 42; "forty-two")]
-#[test_case("(42)" => Expr::from(InnerExpr::from(Expr::from(42))); "parens-forty-two")]
+#[test_case("(42)" => InnerExpr::from(Expr::from(42)); "parens-forty-two")]
 // #[test_case("bob" => refexpr("bob") ; "ref bob")]
 // #[test_case("bob  \n   " => refexpr("bob") ; "ref bob newline")]
 // #[test_case("[]" => list([]) ; "tight empty list")]
