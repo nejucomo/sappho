@@ -1,11 +1,8 @@
 use chumsky::Parser as _;
-use either::Either::{self, Left};
-use sappho_primval::PrimVal;
 use sappho_syntax_parsable::{Parser, Recursive, RecursiveParsable};
 use sappho_syntax_unparse::{Stream, Unparse};
-use sappho_try_transform::TryTransformFrom;
 
-use crate::{Base, Expr, InnerExpr, Lookups};
+use crate::{Expr, InnerExpr, Lookups};
 
 #[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub struct Applications {
@@ -32,68 +29,27 @@ impl Unparse for Applications {
 }
 
 // Conversions
-impl From<Lookups> for Applications {
-    fn from(v: Lookups) -> Self {
-        Self::from((v, vec![]))
-    }
-}
+#[cfg(test)]
+mod test_conversions {
+    use sappho_try_transform::TryTransformFrom;
 
-impl From<Applications> for Lookups {
-    fn from(value: Applications) -> Self {
-        value.lookups
-    }
-}
+    use crate::{Applications, Lookups};
 
-impl TryTransformFrom<Applications> for Lookups {
-    fn try_transform_from(src: Applications) -> Either<Self, Applications> {
-        Left(Self::from(src))
+    impl From<Lookups> for Applications {
+        fn from(v: Lookups) -> Self {
+            Self::from((v, vec![]))
+        }
     }
-}
 
-impl From<InnerExpr> for Applications {
-    fn from(v: InnerExpr) -> Self {
-        Self::from(Lookups::from(v))
+    impl From<i32> for Applications {
+        fn from(value: i32) -> Self {
+            Self::from(Lookups::from(value))
+        }
     }
-}
 
-impl TryTransformFrom<Applications> for InnerExpr {
-    fn try_transform_from(src: Applications) -> Either<Self, Applications> {
-        Self::try_transform_from_via::<Lookups>(src)
-    }
-}
-
-impl From<Base> for Applications {
-    fn from(value: Base) -> Self {
-        Self::from(Lookups::from(value))
-    }
-}
-
-impl TryTransformFrom<Applications> for Base {
-    fn try_transform_from(src: Applications) -> Either<Self, Applications> {
-        Self::try_transform_from_via::<Lookups>(src)
-    }
-}
-
-impl From<PrimVal> for Applications {
-    fn from(v: PrimVal) -> Self {
-        Self::from(Lookups::from(v))
-    }
-}
-
-impl TryTransformFrom<Applications> for PrimVal {
-    fn try_transform_from(src: Applications) -> Either<Self, Applications> {
-        Self::try_transform_from_via::<Lookups>(src)
-    }
-}
-
-impl From<i32> for Applications {
-    fn from(v: i32) -> Self {
-        Self::from(Lookups::from(v))
-    }
-}
-
-impl TryTransformFrom<Applications> for i32 {
-    fn try_transform_from(src: Applications) -> Either<Self, Applications> {
-        Self::try_transform_from_via::<Lookups>(src)
+    impl TryTransformFrom<Applications> for i32 {
+        fn try_transform_from(src: Applications) -> either::Either<Self, Applications> {
+            Self::try_transform_from(src.lookups).map_right(Applications::from)
+        }
     }
 }

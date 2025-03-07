@@ -1,18 +1,24 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
-use either::Either::{self, Left};
-use sappho_primval::PrimVal;
 use sappho_syntax_idstore::ArcId;
 use sappho_syntax_parsable::{Parsable, Parser, Recursive, RecursiveParsable};
 use sappho_syntax_unparse::{Stream, Unparse};
-use sappho_try_transform::TryTransformFrom;
 
-use crate::{Base, Expr, InnerExpr};
+use crate::{Expr, InnerExpr};
 
 #[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub struct Lookups {
     inner: InnerExpr,
     lookups: Vec<ArcId>,
+}
+
+impl From<InnerExpr> for Lookups {
+    fn from(inner: InnerExpr) -> Self {
+        Lookups {
+            inner,
+            lookups: vec![],
+        }
+    }
 }
 
 impl RecursiveParsable<Expr> for Lookups {
@@ -33,56 +39,32 @@ impl Unparse for Lookups {
     }
 }
 
-// Conversions:
-impl From<InnerExpr> for Lookups {
-    fn from(inner: InnerExpr) -> Self {
-        Lookups::from((inner, vec![]))
-    }
-}
-impl From<Lookups> for InnerExpr {
-    fn from(value: Lookups) -> Self {
-        value.inner
-    }
-}
+#[cfg(test)]
+mod test_conversions {
+    use either::Either::{self, Left, Right};
+    use sappho_try_transform::TryTransformFrom;
 
-impl TryTransformFrom<Lookups> for InnerExpr {
-    fn try_transform_from(src: Lookups) -> Either<Self, Lookups> {
-        Left(InnerExpr::from(src))
-    }
-}
+    use crate::{InnerExpr, Lookups};
 
-impl From<Base> for Lookups {
-    fn from(value: Base) -> Self {
-        Self::from(InnerExpr::from(value))
+    impl From<i32> for Lookups {
+        fn from(value: i32) -> Self {
+            Self::from(InnerExpr::from(value))
+        }
     }
-}
 
-impl TryTransformFrom<Lookups> for Base {
-    fn try_transform_from(src: Lookups) -> Either<Self, Lookups> {
-        Self::try_transform_from_via::<InnerExpr>(src)
+    impl TryTransformFrom<Lookups> for InnerExpr {
+        fn try_transform_from(src: Lookups) -> Either<Self, Lookups> {
+            if src.lookups.is_empty() {
+                Left(src.inner)
+            } else {
+                Right(src)
+            }
+        }
     }
-}
 
-impl From<PrimVal> for Lookups {
-    fn from(pv: PrimVal) -> Self {
-        Lookups::from(InnerExpr::from(pv))
-    }
-}
-
-impl TryTransformFrom<Lookups> for PrimVal {
-    fn try_transform_from(src: Lookups) -> Either<Self, Lookups> {
-        Self::try_transform_from_via::<InnerExpr>(src)
-    }
-}
-
-impl From<i32> for Lookups {
-    fn from(i: i32) -> Self {
-        Lookups::from(InnerExpr::from(i))
-    }
-}
-
-impl TryTransformFrom<Lookups> for i32 {
-    fn try_transform_from(src: Lookups) -> Either<Self, Lookups> {
-        Self::try_transform_from_via::<InnerExpr>(src)
+    impl TryTransformFrom<Lookups> for i32 {
+        fn try_transform_from(src: Lookups) -> Either<Self, Lookups> {
+            i32::try_transform_from_via::<InnerExpr>(src)
+        }
     }
 }

@@ -39,8 +39,6 @@ impl Unparse for PrimVal {
     }
 }
 
-// Conversions
-
 impl TryTransformFrom<PrimVal> for i32 {
     fn try_transform_from(src: PrimVal) -> Either<Self, PrimVal> {
         match src {
