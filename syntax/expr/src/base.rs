@@ -4,7 +4,7 @@ use sappho_primval::PrimVal;
 use sappho_syntax_idstore::ArcId;
 use sappho_syntax_parsable::{Parsable, Parser};
 use sappho_syntax_unparse::{Stream, Unparse};
-use sappho_try_transform::TryTransformFrom;
+use sappho_try_transform::{TryTransformFrom, TryTransformInto};
 
 #[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub enum Base {
@@ -36,24 +36,24 @@ impl From<i32> for Base {
     }
 }
 
-impl TryTransformFrom<Base> for PrimVal {
-    fn try_transform_from(src: Base) -> Either<Self, Base> {
-        match src {
+impl TryTransformInto<PrimVal> for Base {
+    fn try_transform_into(self) -> Either<PrimVal, Self> {
+        match self {
             Base::PrimVal(x) => Left(x),
             other => Right(other),
         }
     }
 }
 
-impl TryTransformFrom<Base> for i32 {
-    fn try_transform_from(src: Base) -> Either<Self, Base> {
-        i32::try_transform_from_via::<PrimVal>(src)
+impl TryTransformInto<i32> for Base {
+    fn try_transform_into(self) -> Either<i32, Self> {
+        i32::try_transform_from_via::<PrimVal>(self)
     }
 }
 
-impl TryTransformFrom<Base> for ArcId {
-    fn try_transform_from(src: Base) -> Either<Self, Base> {
-        match src {
+impl TryTransformInto<ArcId> for Base {
+    fn try_transform_into(self) -> Either<ArcId, Self> {
+        match self {
             Base::Deref(x) => Left(x),
             other => Right(other),
         }

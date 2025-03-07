@@ -35,7 +35,7 @@ impl Unparse for Expr {
 mod test_conversions {
     use either::Either;
     use sappho_primval::PrimVal;
-    use sappho_try_transform::TryTransformFrom;
+    use sappho_try_transform::{TryTransformFrom, TryTransformInto};
 
     use crate::{Applications, Base, Expr, InnerExpr, Lookups};
 
@@ -51,18 +51,18 @@ mod test_conversions {
         }
     }
 
-    impl TryTransformFrom<Expr> for InnerExpr {
-        fn try_transform_from(src: Expr) -> Either<Self, Expr> {
-            src.0
-                .try_into_left()
-                .left_and_then(|lookups| lookups.try_into_left().map_right(Applications::from))
+    impl TryTransformInto<InnerExpr> for Expr {
+        fn try_transform_into(self) -> Either<InnerExpr, Self> {
+            self.0
+                .try_transform_into()
+                .left_and_then(|l: Lookups| l.try_transform_into().map_right(Applications::from))
                 .map_right(Expr::from)
         }
     }
 
-    impl TryTransformFrom<Expr> for i32 {
-        fn try_transform_from(src: Expr) -> Either<Self, Expr> {
-            i32::try_transform_from_via::<InnerExpr>(src)
+    impl TryTransformInto<i32> for Expr {
+        fn try_transform_into(self) -> Either<i32, Self> {
+            i32::try_transform_from_via::<InnerExpr>(self)
         }
     }
 }

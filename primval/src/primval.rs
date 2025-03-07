@@ -1,7 +1,7 @@
 use either::Either::{self, Left};
 use sappho_syntax_parsable::{Parsable, Parser};
 use sappho_syntax_unparse::{Stream, Unparse};
-use sappho_try_transform::TryTransformFrom;
+use sappho_try_transform::TryTransformInto;
 
 use crate::parseutil::number;
 
@@ -39,9 +39,9 @@ impl Unparse for PrimVal {
     }
 }
 
-impl TryTransformFrom<PrimVal> for i32 {
-    fn try_transform_from(src: PrimVal) -> Either<Self, PrimVal> {
-        match src {
+impl TryTransformInto<i32> for PrimVal {
+    fn try_transform_into(self) -> Either<i32, Self> {
+        match self {
             Num(i) => Left(i),
         }
     }

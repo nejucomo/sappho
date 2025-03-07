@@ -1,4 +1,4 @@
-use either::Either::{self, Left, Right};
+use either::Either::{self, Left};
 
 pub trait TryTransformFrom<F>: Sized + Into<F> {
     fn try_transform_from(src: F) -> Either<Self, F>;
@@ -18,24 +18,18 @@ pub trait TryTransformInto<I>: Sized + From<I> {
     fn try_transform_into(self) -> Either<I, Self>;
 }
 
-impl<I, F> TryTransformInto<I> for F
+impl<I, F> TryTransformFrom<F> for I
 where
     F: From<I>,
-    I: TryTransformFrom<F>,
+    F: TryTransformInto<I>,
 {
-    fn try_transform_into(self) -> Either<I, Self> {
-        I::try_transform_from(self)
-    }
-}
-
-impl<F> TryTransformFrom<F> for F {
     fn try_transform_from(src: F) -> Either<Self, F> {
-        Either::Left(src)
+        src.try_transform_into()
     }
 }
 
-impl<F> TryTransformFrom<Option<F>> for F {
-    fn try_transform_from(src: Option<F>) -> Either<Self, Option<F>> {
-        src.map(Left).unwrap_or(Right(None))
+impl<F> TryTransformInto<F> for F {
+    fn try_transform_into(self) -> Either<F, Self> {
+        Left(self)
     }
 }
