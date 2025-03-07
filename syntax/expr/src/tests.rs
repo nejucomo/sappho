@@ -9,7 +9,6 @@ use crate::{Expr, InnerExpr};
 #[test_case("42" => 42; "forty-two")]
 #[test_case("(42)" => InnerExpr::from(Expr::from(42)); "parens-forty-two")]
 #[test_case("bob" => resolve_static("bob") ; "ref bob")]
-// #[test_case("bob  \n   " => refexpr("bob") ; "ref bob newline")]
 // #[test_case("[]" => list([]) ; "tight empty list")]
 // #[test_case("[\n]" => list([]) ; "multiline empty list")]
 // #[test_case("[ ] " => list([]) ; "space empty list")]
@@ -301,6 +300,15 @@ where
     T: TryTransformFrom<Expr>,
 {
     let expr = Expr::parser().load_parse_source(input).unwrap();
+
+    // Every expr can be followed by optional whitespace, so these should all parse and equal the non-ws version:
+    for suffix in [" ", "\n", "\n\n     "] {
+        let exprws = Expr::parser()
+            .load_parse_source(format!("{input}{suffix}"))
+            .unwrap();
+        assert_eq!(&expr, &exprws);
+    }
+
     match T::try_transform_from(expr) {
         Left(t) => t,
         Right(expr) => panic!(
