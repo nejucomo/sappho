@@ -38,15 +38,10 @@ impl Unparse for InnerExpr {
 #[cfg(test)]
 mod test_conversions {
     use either::Either::{self, Left, Right};
+    use sappho_syntax_idstore::ArcId;
     use sappho_try_transform::{TryTransformFrom, TryTransformInto};
 
     use crate::{Base, InnerExpr};
-
-    impl From<i32> for InnerExpr {
-        fn from(value: i32) -> Self {
-            Self::from(Base::from(value))
-        }
-    }
 
     impl TryTransformInto<Base> for InnerExpr {
         fn try_transform_into(self) -> Either<Base, Self> {
@@ -57,9 +52,27 @@ mod test_conversions {
         }
     }
 
+    impl From<i32> for InnerExpr {
+        fn from(value: i32) -> Self {
+            Self::from(Base::from(value))
+        }
+    }
+
     impl TryTransformInto<i32> for InnerExpr {
         fn try_transform_into(self) -> Either<i32, Self> {
             i32::try_transform_from_via::<Base>(self)
+        }
+    }
+
+    impl From<ArcId> for InnerExpr {
+        fn from(value: ArcId) -> Self {
+            Self::from(Base::from(value))
+        }
+    }
+
+    impl TryTransformInto<ArcId> for InnerExpr {
+        fn try_transform_into(self) -> Either<ArcId, Self> {
+            ArcId::try_transform_from_via::<Base>(self)
         }
     }
 }

@@ -35,15 +35,10 @@ impl Unparse for Expr {
 mod test_conversions {
     use either::Either;
     use sappho_primval::PrimVal;
+    use sappho_syntax_idstore::ArcId;
     use sappho_try_transform::{TryTransformFrom, TryTransformInto};
 
     use crate::{Applications, Base, Expr, InnerExpr, Lookups};
-
-    impl From<i32> for Expr {
-        fn from(value: i32) -> Self {
-            Expr::from(InnerExpr::Base(Base::PrimVal(PrimVal::from(value))))
-        }
-    }
 
     impl From<InnerExpr> for Expr {
         fn from(value: InnerExpr) -> Self {
@@ -60,9 +55,27 @@ mod test_conversions {
         }
     }
 
+    impl From<i32> for Expr {
+        fn from(value: i32) -> Self {
+            Expr::from(InnerExpr::Base(Base::PrimVal(PrimVal::from(value))))
+        }
+    }
+
     impl TryTransformInto<i32> for Expr {
         fn try_transform_into(self) -> Either<i32, Self> {
             i32::try_transform_from_via::<InnerExpr>(self)
+        }
+    }
+
+    impl From<ArcId> for Expr {
+        fn from(value: ArcId) -> Self {
+            Expr::from(InnerExpr::from(value))
+        }
+    }
+
+    impl TryTransformInto<ArcId> for Expr {
+        fn try_transform_into(self) -> Either<ArcId, Self> {
+            ArcId::try_transform_from_via::<InnerExpr>(self)
         }
     }
 }

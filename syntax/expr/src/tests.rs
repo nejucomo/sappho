@@ -1,4 +1,5 @@
 use either::Either::{Left, Right};
+use sappho_syntax_idstore::resolve_static;
 use sappho_syntax_parsable::Parser;
 use sappho_try_transform::TryTransformFrom;
 use test_case::test_case;
@@ -7,7 +8,7 @@ use crate::{Expr, InnerExpr};
 
 #[test_case("42" => 42; "forty-two")]
 #[test_case("(42)" => InnerExpr::from(Expr::from(42)); "parens-forty-two")]
-// #[test_case("bob" => refexpr("bob") ; "ref bob")]
+#[test_case("bob" => resolve_static("bob") ; "ref bob")]
 // #[test_case("bob  \n   " => refexpr("bob") ; "ref bob newline")]
 // #[test_case("[]" => list([]) ; "tight empty list")]
 // #[test_case("[\n]" => list([]) ; "multiline empty list")]
