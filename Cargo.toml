@@ -23,6 +23,7 @@ members = [
   "syntax/leftassoc",
   "syntax/listform",
   "syntax/parsable",
+  "syntax/universal",
   "syntax/unparse",
   "transform",
   "try-transform",
@@ -72,6 +73,7 @@ sappho-syntax-keyword = { path = "syntax/keyword" }
 sappho-syntax-leftassoc = { path = "syntax/leftassoc" }
 sappho-syntax-listform = { path = "syntax/listform" }
 sappho-syntax-parsable = { path = "syntax/parsable" }
+sappho-syntax-universal = { path = "syntax/universal" }
 sappho-syntax-unparse = { path = "syntax/unparse" }
 sappho-transform = { path = "transform" }
 sappho-try-transform = { path = "try-transform" }
