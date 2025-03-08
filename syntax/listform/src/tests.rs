@@ -32,7 +32,7 @@ impl Unparse for TestElem {
 #[test_case("[x, ..z]" => Ok((vec!['x'], Some('z'))))]
 #[test_case("[x, y, ..z]" => Ok((vec!['x', 'y'], Some('z'))))]
 // Notice the chumsky error bug which we are matching:
-#[test_case("[x, ..z, y]" => Err("Parse errors in <memory>:\n  Error 0: found end of input".to_string()))]
+#[test_case("[x, ..z, y]" => Err("Parse errors in <memory>: found end of input".to_string()))]
 fn parse(input: &str) -> Result<(Vec<char>, Option<char>), String>
 where
 {

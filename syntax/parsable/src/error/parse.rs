@@ -16,8 +16,13 @@ impl fmt::Display for ParseError {
         assert!(!self.errors.is_empty());
 
         write!(f, "Parse errors in {}:", self.origin)?;
-        for (i, ce) in self.errors.iter().enumerate() {
-            write!(f, "\n  Error {}: {}", i, ce.0)?;
+        if self.errors.len() == 1 {
+            let error = &self.errors[0].0;
+            write!(f, " {error}")?;
+        } else {
+            for (i, ce) in self.errors.iter().enumerate() {
+                write!(f, "\n  Error {}: {}", i, ce.0)?;
+            }
         }
         Ok(())
     }
