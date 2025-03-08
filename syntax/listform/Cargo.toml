@@ -6,10 +6,14 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+chumsky.workspace = true
+derive_more.workspace = true
 derive-new.workspace = true
 either.workspace = true
 sappho-syntax-idstore.workspace = true
+sappho-syntax-parsable.workspace = true
 sappho-syntax-unparse.workspace = true
+sappho-try-transform.workspace = true
 
 [dev-dependencies]
 indoc.workspace = true

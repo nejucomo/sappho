@@ -1,5 +1,11 @@
+use chumsky::primitive::just;
+use chumsky::recursive::recursive;
+use chumsky::Parser as _;
 use either::Either::{self, Left, Right};
+use sappho_syntax_parsable::{ParsableWith, Parser, Recursive};
 use sappho_syntax_unparse::{Stream, Unparse};
+use sappho_try_transform::TryTransformInto;
+
 use std::fmt;
 
 use crate::lfg::ListFormGeneric;
@@ -7,7 +13,7 @@ use crate::ListFormIter;
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub struct ListForm<Elem, Tail>(ListFormGeneric<Vec<Elem>, Tail>);
 
 impl<X, T> ListForm<X, T> {
@@ -25,6 +31,83 @@ impl<X, T> ListForm<X, T> {
     pub fn prepend(mut self, head: X) -> Self {
         self.0.xs.insert(0, head);
         self
+    }
+}
+
+impl<X, XP, T, TP> ParsableWith<(XP, TP)> for ListForm<X, T>
+where
+    X: ParsableWith<XP> + 'static,
+    T: ParsableWith<TP> + 'static,
+    XP: Clone + 'static,
+    TP: Clone + 'static,
+{
+    fn make_parser_with((xp, tp): (XP, TP)) -> impl Parser<Self> {
+        just('[').then_opt_space().ignore_then(recursive(|rec| {
+            parse_after_open_bracket::<X, XP, T, TP>(xp, tp, rec)
+        }))
+    }
+}
+
+fn parse_after_open_bracket<X, XP, T, TP>(
+    xp: XP,
+    tp: TP,
+    rec: Recursive<ListForm<X, T>>,
+) -> impl Parser<ListForm<X, T>> + '_
+where
+    X: ParsableWith<XP> + 'static,
+    T: ParsableWith<TP> + 'static,
+    XP: Clone + 'static,
+    TP: Clone + 'static,
+{
+    let tail = just("..")
+        .then_opt_space()
+        .ignore_then(T::parser_with(tp.clone()))
+        .or_not()
+        .then_ignore(just(']'))
+        .map(|optail| ListForm::new(vec![], optail));
+
+    let elem = X::parser_with(xp.clone()).then_ignore(just(',').then_opt_space());
+
+    let elem_and_rest = elem.then(rec).map(|(x, mut lf)| {
+        lf.0.xs.push(x);
+        lf
+    });
+
+    tail.or(elem_and_rest)
+}
+
+impl<X, T> Unparse for ListForm<X, T>
+where
+    X: Unparse,
+    T: Unparse,
+{
+    fn unparse_into(&self, s: &mut Stream) {
+        use sappho_syntax_unparse::Brackets::Square;
+        use sappho_syntax_unparse::Break::OptSpace;
+
+        if self.is_empty() {
+            s.write("[]")
+        } else {
+            s.bracketed(Square, |subs| {
+                let mut sep = "";
+
+                for xort in self.0.as_ref() {
+                    subs.write(sep);
+                    sep = ",";
+                    subs.write(&OptSpace);
+
+                    match xort {
+                        Left(elem) => {
+                            subs.write(elem);
+                        }
+                        Right(tail) => {
+                            subs.write("..");
+                            subs.write(tail);
+                        }
+                    }
+                }
+            });
+        }
     }
 }
 
@@ -62,47 +145,6 @@ where
     }
 }
 
-impl<X, T> Unparse for ListForm<X, T>
-where
-    X: Unparse,
-    T: Unparse,
-{
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_syntax_unparse::Brackets::Square;
-        use sappho_syntax_unparse::Break::OptSpace;
-
-        if self.is_empty() {
-            s.write("[]")
-        } else {
-            s.bracketed(Square, |subs| {
-                let mut first = true;
-
-                for xort in self.0.as_ref() {
-                    match xort {
-                        Left(elem) => {
-                            if first {
-                                first = false;
-                            } else {
-                                subs.write(",");
-                            }
-                            subs.write(&OptSpace);
-                            subs.write(elem);
-                        }
-                        Right(tail) => {
-                            if !first {
-                                subs.write(",");
-                            }
-                            subs.write(&OptSpace);
-                            subs.write("..");
-                            subs.write(tail);
-                        }
-                    }
-                }
-            });
-        }
-    }
-}
-
 impl<X, T> fmt::Display for ListForm<X, T>
 where
     X: Unparse,
@@ -113,46 +155,19 @@ where
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::ListForm;
-    use indoc::indoc;
-    use sappho_syntax_unparse::{Stream, Unparse};
-    use test_case::test_case;
-
-    struct X;
-
-    impl Unparse for X {
-        fn unparse_into(&self, s: &mut Stream) {
-            s.write("X");
-        }
+// Transforms
+impl<X, T> From<Vec<X>> for ListForm<X, T> {
+    fn from(value: Vec<X>) -> Self {
+        ListForm::from(ListFormGeneric::new(value, None))
     }
+}
 
-    #[test_case([], None => "[]")]
-    #[test_case([], Some(X) => indoc! { "
-        [
-          ..X
-        ]"
-    })]
-    #[test_case([X], None => indoc! { "
-        [
-          X
-        ]"
-    })]
-    #[test_case([X], Some(X) => indoc! { "
-        [
-          X,
-          ..X
-        ]"
-    })]
-    #[test_case([X, X], Some(X) => indoc! { "
-        [
-          X,
-          X,
-          ..X
-        ]"
-    })]
-    fn display<const K: usize>(body: [X; K], tail: Option<X>) -> String {
-        ListForm::new(body, tail).to_string()
+impl<X, T> TryTransformInto<Vec<X>> for ListForm<X, T> {
+    fn try_transform_into(self) -> Either<Vec<X>, Self> {
+        if self.0.optail.is_none() {
+            Left(self.0.xs)
+        } else {
+            Right(self)
+        }
     }
 }

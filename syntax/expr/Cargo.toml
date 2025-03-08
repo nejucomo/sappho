@@ -12,8 +12,8 @@ either.workspace = true
 sappho-primval.workspace = true
 sappho-syntax-idstore.workspace = true
 sappho-syntax-leftassoc.workspace = true
+sappho-syntax-listform.workspace = true
 sappho-syntax-parsable.workspace = true
-sappho-syntax-primitives.workspace = true
 sappho-syntax-unparse.workspace = true
 sappho-try-transform.workspace = true
 

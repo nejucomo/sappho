@@ -8,7 +8,7 @@ use sappho_syntax_unparse::{Stream, Unparse};
 pub struct AttrLookup(ArcId);
 
 impl ParsableWith<()> for AttrLookup {
-    fn parser_with(_: ()) -> impl Parser<Self> {
+    fn make_parser_with(_: ()) -> impl Parser<Self> {
         just('.').ignore_then(ArcId::parser()).map(AttrLookup)
     }
 }

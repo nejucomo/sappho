@@ -1,7 +1,8 @@
 use either::Either::{Left, Right};
 use sappho_syntax_idstore::resolve_static;
+use sappho_syntax_listform::ListForm;
 use sappho_syntax_parsable::Parser;
-use sappho_try_transform::TryTransformFrom;
+use sappho_try_transform::TryTransformInto;
 use test_case::test_case;
 
 use crate::{Expr, InnerExpr};
@@ -9,7 +10,7 @@ use crate::{Expr, InnerExpr};
 #[test_case("42" => 42; "forty-two")]
 #[test_case("(42)" => InnerExpr::from(Expr::from(42)); "parens-forty-two")]
 #[test_case("bob" => resolve_static("bob") ; "ref bob")]
-// #[test_case("[]" => list([]) ; "tight empty list")]
+#[test_case("[]" => ListForm::default(); "tight empty list")]
 // #[test_case("[\n]" => list([]) ; "multiline empty list")]
 // #[test_case("[ ] " => list([]) ; "space empty list")]
 // #[test_case(
@@ -297,7 +298,7 @@ use crate::{Expr, InnerExpr};
 // )]
 fn parse_nonerror<T>(input: &str) -> T
 where
-    T: TryTransformFrom<Expr>,
+    Expr: TryTransformInto<T>,
 {
     let expr = Expr::parser().load_parse_source(input).unwrap();
 
@@ -309,7 +310,7 @@ where
         assert_eq!(&expr, &exprws);
     }
 
-    match T::try_transform_from(expr) {
+    match expr.try_transform_into() {
         Left(t) => t,
         Right(expr) => panic!(
             "Successfully parsed unexpected result: {expr:?}\nExpecting a {} value.",

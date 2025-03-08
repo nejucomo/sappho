@@ -21,7 +21,7 @@ impl Expr {
 }
 
 impl<'r> ParsableWith<Recursive<'r, Expr>> for Expr {
-    fn parser_with(rec: Recursive<'r, Expr>) -> impl Parser<Self> {
+    fn make_parser_with(rec: Recursive<'r, Expr>) -> impl Parser<Self> {
         Applications::parser_with(((rec.clone(), ()), rec))
             .then_ignore(space())
             .map(Expr::from)
@@ -39,6 +39,7 @@ mod test_conversions {
     use either::Either;
     use sappho_primval::PrimVal;
     use sappho_syntax_idstore::ArcId;
+    use sappho_syntax_listform::ListForm;
     use sappho_try_transform::{TryTransformFrom, TryTransformInto};
 
     use crate::{Applications, Base, Expr, InnerExpr, Lookups};
@@ -79,6 +80,30 @@ mod test_conversions {
     impl TryTransformInto<ArcId> for Expr {
         fn try_transform_into(self) -> Either<ArcId, Self> {
             ArcId::try_transform_from_via::<InnerExpr>(self)
+        }
+    }
+
+    impl From<ListForm<Expr, Box<Expr>>> for Expr {
+        fn from(value: ListForm<Expr, Box<Expr>>) -> Self {
+            Expr::from(InnerExpr::from(value))
+        }
+    }
+
+    impl TryTransformInto<ListForm<Expr, Box<Expr>>> for Expr {
+        fn try_transform_into(self) -> Either<ListForm<Expr, Box<Expr>>, Self> {
+            ListForm::try_transform_from_via::<InnerExpr>(self)
+        }
+    }
+
+    impl From<Vec<Expr>> for Expr {
+        fn from(value: Vec<Expr>) -> Self {
+            Expr::from(InnerExpr::from(value))
+        }
+    }
+
+    impl TryTransformInto<Vec<Expr>> for Expr {
+        fn try_transform_into(self) -> Either<Vec<Expr>, Self> {
+            Vec::try_transform_from_via::<InnerExpr>(self)
         }
     }
 }

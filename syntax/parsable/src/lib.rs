@@ -2,6 +2,7 @@ pub mod error;
 mod intoparser;
 mod parsable;
 mod parser;
+pub mod primitive;
 mod with;
 
 pub type Recursive<'a, O> = chumsky::recursive::Recursive<'a, char, O, ChumskyError>;

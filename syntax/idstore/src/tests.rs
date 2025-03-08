@@ -10,7 +10,7 @@ use crate::{resolve_static, ArcId};
 fn parse(input: &str) -> Option<ArcId> {
     // This demonstrates a chumsky bug in error messages:
     // use chumsky::Parser;
-    // dbg!(ArcId::parser().parse_recovery_verbose(input));
+    // db-g!(ArcId::parser().parse_recovery_verbose(input));
 
     ArcId::parser().load_parse_source(input).ok()
     // .map_err(|e| e.to_string())

@@ -1,6 +1,8 @@
+use chumsky::Parser as _;
 use sappho_source::{LoadSource, SourceCode};
 
 use crate::error::{ChumskyError, Error, ParseError};
+use crate::primitive::space;
 
 pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyError> {
     fn load_parse_source<L, C>(&self, loadable: L) -> Result<Output, Error>
@@ -23,6 +25,10 @@ pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyE
         self.then_ignore(end())
             .parse(sc.code())
             .map_err(|errors| ParseError::new(sc.source().clone(), errors))
+    }
+
+    fn then_opt_space(self) -> impl Parser<Output> {
+        self.then_ignore(space().or_not())
     }
 }
 

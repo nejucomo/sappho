@@ -1,4 +1,4 @@
-use either::Either::{self, Left};
+use either::Either::{self, Left, Right};
 
 pub trait TryTransformFrom<F>: Sized + Into<F> {
     fn try_transform_from(src: F) -> Either<Self, F>;
@@ -31,5 +31,18 @@ where
 impl<F> TryTransformInto<F> for F {
     fn try_transform_into(self) -> Either<F, Self> {
         Left(self)
+    }
+}
+
+impl<T, const K: usize> TryTransformInto<[T; K]> for Vec<T>
+where
+    T: std::fmt::Debug,
+{
+    fn try_transform_into(self) -> Either<[T; K], Self> {
+        if self.len() == K {
+            Left(<[T; K]>::try_from(self).unwrap())
+        } else {
+            Right(self)
+        }
     }
 }

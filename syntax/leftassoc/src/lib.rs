@@ -16,7 +16,7 @@ where
     L: ParsableWith<LP>,
     R: ParsableWith<RP>,
 {
-    fn parser_with((pl, pr): (LP, RP)) -> impl Parser<Self> {
+    fn make_parser_with((pl, pr): (LP, RP)) -> impl Parser<Self> {
         L::parser_with(pl)
             .then(R::parser_with(pr).repeated())
             .map(LeftAssoc::from)
