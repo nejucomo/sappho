@@ -21,3 +21,12 @@ where
         P::parser_with(())
     }
 }
+
+impl<T, P> ParsableWith<T> for Box<P>
+where
+    P: ParsableWith<T>,
+{
+    fn make_parser_with(param: T) -> impl Parser<Self> {
+        P::parser_with(param).map(Box::new)
+    }
+}

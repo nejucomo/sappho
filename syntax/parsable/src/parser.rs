@@ -27,6 +27,10 @@ pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyE
             .map_err(|errors| ParseError::new(sc.source().clone(), errors))
     }
 
+    fn then_space(self) -> impl Parser<Output> {
+        self.then_ignore(space())
+    }
+
     fn then_opt_space(self) -> impl Parser<Output> {
         self.then_ignore(space().or_not())
     }

@@ -15,3 +15,13 @@ pub fn space() -> impl Parser<()> {
         .repeated()
         .map(|_| ())
 }
+
+pub fn bracketed<P, O>([open, close]: [char; 2], inner: P) -> impl Parser<O>
+where
+    P: Parser<O>,
+{
+    just(open)
+        .then_opt_space()
+        .ignore_then(inner)
+        .then_ignore(space().or_not().ignore_then(just(close)))
+}

@@ -1,8 +1,9 @@
 use chumsky::primitive::just;
-use chumsky::recursive::recursive;
 use chumsky::Parser as _;
 use either::Either::{self, Left, Right};
-use sappho_syntax_parsable::{ParsableWith, Parser, Recursive};
+use sappho_syntax_parsable::error::ChumskyError;
+use sappho_syntax_parsable::primitive::bracketed;
+use sappho_syntax_parsable::{ParsableWith, Parser};
 use sappho_syntax_unparse::{Stream, Unparse};
 use sappho_try_transform::TryTransformInto;
 
@@ -24,6 +25,18 @@ impl<X, T> ListForm<X, T> {
         ListForm(ListFormGeneric::new(body.into_iter().collect(), tail))
     }
 
+    /// Try to construct from a `Left(elem)` or `Right(tail)` iter
+    ///
+    /// # Errors
+    ///
+    /// The first such item to follow a tail is the `Err` case. There can be 0 or 1 tails.
+    pub fn try_from_iter<I>(iter: I) -> Result<Self, Either<X, T>>
+    where
+        I: IntoIterator<Item = Either<X, T>>,
+    {
+        ListFormGeneric::try_from_iter(iter).map(ListForm)
+    }
+
     pub fn is_empty(&self) -> bool {
         self.0.xs.is_empty() && self.0.optail.is_none()
     }
@@ -36,44 +49,24 @@ impl<X, T> ListForm<X, T> {
 
 impl<X, XP, T, TP> ParsableWith<(XP, TP)> for ListForm<X, T>
 where
-    X: ParsableWith<XP> + 'static,
-    T: ParsableWith<TP> + 'static,
-    XP: Clone + 'static,
-    TP: Clone + 'static,
+    X: ParsableWith<XP>,
+    T: ParsableWith<TP>,
+    XP: Clone,
+    TP: Clone,
 {
     fn make_parser_with((xp, tp): (XP, TP)) -> impl Parser<Self> {
-        just('[').then_opt_space().ignore_then(recursive(|rec| {
-            parse_after_open_bracket::<X, XP, T, TP>(xp, tp, rec)
-        }))
+        bracketed(
+            ['[', ']'],
+            (just("..").ignore_then(T::parser_with(tp)).map(Right))
+                .or(X::parser_with(xp).map(Left))
+                .separated_by(just(',').then_opt_space()),
+        )
+        .try_map(|v, span| {
+            Self::try_from_iter(v).map_err(|xort| {
+                ChumskyError::custom(span, format!("unexpected item after `..<tail>`: {xort:?}"))
+            })
+        })
     }
-}
-
-fn parse_after_open_bracket<X, XP, T, TP>(
-    xp: XP,
-    tp: TP,
-    rec: Recursive<ListForm<X, T>>,
-) -> impl Parser<ListForm<X, T>> + '_
-where
-    X: ParsableWith<XP> + 'static,
-    T: ParsableWith<TP> + 'static,
-    XP: Clone + 'static,
-    TP: Clone + 'static,
-{
-    let tail = just("..")
-        .then_opt_space()
-        .ignore_then(T::parser_with(tp.clone()))
-        .or_not()
-        .then_ignore(just(']'))
-        .map(|optail| ListForm::new(vec![], optail));
-
-    let elem = X::parser_with(xp.clone()).then_ignore(just(',').then_opt_space());
-
-    let elem_and_rest = elem.then(rec).map(|(x, mut lf)| {
-        lf.0.xs.push(x);
-        lf
-    });
-
-    tail.or(elem_and_rest)
 }
 
 impl<X, T> Unparse for ListForm<X, T>
@@ -132,16 +125,11 @@ impl<X, T> IntoIterator for ListForm<X, T> {
     }
 }
 
-/// # Panic
-///
-/// This panics if a `Right` is ever encountered in any position besides the last element
-impl<X, T> FromIterator<Either<X, T>> for ListForm<X, T>
-where
-    X: std::fmt::Debug,
-    T: std::fmt::Debug,
-{
-    fn from_iter<I: IntoIterator<Item = Either<X, T>>>(iter: I) -> Self {
-        ListForm(ListFormGeneric::from_iter(iter))
+impl<X, T> TryFrom<Vec<Either<X, T>>> for ListForm<X, T> {
+    type Error = Either<X, T>;
+
+    fn try_from(value: Vec<Either<X, T>>) -> Result<Self, Self::Error> {
+        Self::try_from_iter(value)
     }
 }
 

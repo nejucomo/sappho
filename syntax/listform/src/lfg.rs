@@ -11,6 +11,28 @@ pub(crate) struct ListFormGeneric<XS, T> {
 }
 
 impl<XS, T> ListFormGeneric<XS, T> {
+    pub(crate) fn try_from_iter<I, X>(iter: I) -> Result<Self, Either<X, T>>
+    where
+        I: IntoIterator<Item = Either<X, T>>,
+        XS: Default + Extend<X>,
+    {
+        let mut xs = XS::default();
+        let mut optail = None;
+
+        for ei in iter {
+            if optail.is_none() {
+                match ei {
+                    Left(x) => xs.extend(Some(x)),
+                    Right(t) => optail = Some(t),
+                }
+            } else {
+                return Err(ei);
+            }
+        }
+
+        Ok(ListFormGeneric { xs, optail })
+    }
+
     pub(crate) fn as_ref(&self) -> ListFormGeneric<&XS, &T> {
         ListFormGeneric {
             xs: &self.xs,
@@ -43,29 +65,11 @@ where
     }
 }
 
-/// # Panic
-///
-/// This panics if a `Right` is ever encountered in any position besides the last element.
-///
-/// Note: The std `impl<A, E, V> FromIterator<Result<A, E> for Result<V, E>` impl cannot help us here. :-(
-impl<X, T> FromIterator<Either<X, T>> for ListFormGeneric<Vec<X>, T>
-where
-    X: std::fmt::Debug,
-    T: std::fmt::Debug,
-{
-    fn from_iter<I: IntoIterator<Item = Either<X, T>>>(iter: I) -> Self {
-        let mut xs = vec![];
-        let mut optail = None;
+impl<X, T> TryFrom<Vec<Either<X, T>>> for ListFormGeneric<Vec<X>, T> {
+    /// The error is the first item following a tail:
+    type Error = Either<X, T>;
 
-        for ei in iter {
-            // BUG: A better API would cause this to be an `Err` somehow:
-            assert!(optail.is_none(), "out-of-order tail: {ei:?}");
-            match ei {
-                Left(x) => xs.push(x),
-                Right(t) => optail = Some(t),
-            }
-        }
-
-        ListFormGeneric { xs, optail }
+    fn try_from(v: Vec<Either<X, T>>) -> Result<Self, Self::Error> {
+        Self::try_from_iter(v)
     }
 }

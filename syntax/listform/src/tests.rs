@@ -14,11 +14,12 @@ fn test_iter<I, const K: usize>(
 ) where
     I: IntoIterator<Item = &'static str>,
 {
-    let lf: ListForm<_, _> = xs
-        .into_iter()
-        .map(Left)
-        .chain(optail.into_iter().map(Right))
-        .collect();
+    let lf = ListForm::try_from_iter(
+        xs.into_iter()
+            .map(Left)
+            .chain(optail.into_iter().map(Right)),
+    )
+    .unwrap();
 
     let v: Vec<_> = lf.clone().into_iter().map(Either::into_inner).collect();
     assert_eq!(v.as_slice(), expected.as_slice());

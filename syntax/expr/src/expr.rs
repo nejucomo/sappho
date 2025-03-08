@@ -2,7 +2,6 @@ use chumsky::recursive::recursive;
 use chumsky::Parser as _;
 use sappho_syntax_leftassoc::LeftAssoc;
 use sappho_syntax_parsable::{ParsableWith, Parser, Recursive};
-use sappho_syntax_primitives::space;
 use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::{AttrLookup, InnerExpr};
@@ -23,7 +22,7 @@ impl Expr {
 impl<'r> ParsableWith<Recursive<'r, Expr>> for Expr {
     fn make_parser_with(rec: Recursive<'r, Expr>) -> impl Parser<Self> {
         Applications::parser_with(((rec.clone(), ()), rec))
-            .then_ignore(space())
+            .then_space()
             .map(Expr::from)
     }
 }
