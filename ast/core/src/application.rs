@@ -11,9 +11,11 @@ where
     FX: Effect,
 {
     /// The target of application, ie `f` in `f x`.
+    #[new(into)]
     pub target: Box<XP::Expr<FX>>,
 
     /// The argument of application, ie `x` in `f x`.
+    #[new(into)]
     pub argument: Box<XP::Expr<FX>>,
 }
 

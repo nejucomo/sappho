@@ -15,6 +15,7 @@ where
     XP: AstProvider,
     FX: Effect,
 {
+    // TODO: Replace Literal and Ref with PrimVal
     Lit(Literal),
     Ref(ArcId),
     Object(ObjectDef<XP, FX>),

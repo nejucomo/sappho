@@ -6,7 +6,7 @@ use sappho_syntax_unparse::{Stream, Unparse};
 
 use crate::{AttrLookup, InnerExpr};
 
-#[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
+#[derive(Clone, Debug, Eq, PartialEq, derive_more::From, derive_more::Into)]
 pub struct Expr(Applications);
 
 pub type Applications = LeftAssoc<Lookups, InnerExpr>;

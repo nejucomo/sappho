@@ -7,6 +7,12 @@ pub enum Literal {
     Num(f64),
 }
 
+impl From<i32> for Literal {
+    fn from(i: i32) -> Self {
+        Literal::Num(f64::from(i))
+    }
+}
+
 impl Unparse for Literal {
     fn unparse_into(&self, s: &mut Stream) {
         use Literal::*;

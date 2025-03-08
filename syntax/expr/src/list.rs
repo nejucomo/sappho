@@ -12,6 +12,13 @@ use crate::Expr;
 #[derive(Clone, Default, Debug, Eq, PartialEq)]
 pub struct ListExpr(ListForm<Expr, Box<Expr>>);
 
+impl ListExpr {
+    #[allow(clippy::should_implement_trait)]
+    pub fn into_iter(self) -> impl Iterator<Item = Either<Expr, Expr>> {
+        self.0.into_iter().map(|ei| ei.map_right(|bx| *bx))
+    }
+}
+
 impl<L> From<L> for ListExpr
 where
     ListForm<Expr, Box<Expr>>: From<L>,

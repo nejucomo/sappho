@@ -13,6 +13,16 @@ pub struct LeftAssoc<L, R> {
     pub rights: Vec<R>,
 }
 
+impl<L, R> LeftAssoc<L, R> {
+    pub fn la_fold<F, A>(self, f: F) -> A
+    where
+        A: From<L>,
+        F: Fn(A, R) -> A,
+    {
+        self.rights.into_iter().fold(A::from(self.left), f)
+    }
+}
+
 impl<L, LP, R, RP> ParsableWith<(LP, RP)> for LeftAssoc<L, R>
 where
     L: ParsableWith<LP>,

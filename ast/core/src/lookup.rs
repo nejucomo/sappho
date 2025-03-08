@@ -11,6 +11,7 @@ where
     FX: Effect,
 {
     /// The target expression of the lookup, ie `x` in `x.foo`.
+    #[new(into)]
     pub target: Box<XP::Expr<FX>>,
 
     /// An attribute name, ie: `foo` in `x.foo`.
