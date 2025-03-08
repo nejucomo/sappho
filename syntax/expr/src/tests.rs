@@ -1,18 +1,17 @@
 use either::Either::{Left, Right};
 use sappho_syntax_idstore::resolve_static;
-use sappho_syntax_listform::ListForm;
 use sappho_syntax_parsable::Parser;
 use sappho_try_transform::TryTransformInto;
 use test_case::test_case;
 
-use crate::{Expr, InnerExpr};
+use crate::{Expr, InnerExpr, ListExpr};
 
 #[test_case("42" => 42; "forty-two")]
 #[test_case("(42)" => InnerExpr::from(Expr::from(42)); "parens-forty-two")]
 #[test_case("bob" => resolve_static("bob") ; "ref bob")]
-#[test_case("[]" => ListForm::default(); "tight empty list")]
-// #[test_case("[\n]" => list([]) ; "multiline empty list")]
-// #[test_case("[ ] " => list([]) ; "space empty list")]
+#[test_case("[]" => ListExpr::default(); "tight empty list")]
+#[test_case("[\n]" => ListExpr::default() ; "multiline empty list")]
+#[test_case("[ ] " => ListExpr::default() ; "space empty list")]
 // #[test_case(
 //     "[42]" =>
 //     list([

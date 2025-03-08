@@ -38,10 +38,9 @@ mod test_conversions {
     use either::Either;
     use sappho_primval::PrimVal;
     use sappho_syntax_idstore::ArcId;
-    use sappho_syntax_listform::ListForm;
     use sappho_try_transform::{TryTransformFrom, TryTransformInto};
 
-    use crate::{Applications, Base, Expr, InnerExpr, Lookups};
+    use crate::{Applications, Base, Expr, InnerExpr, ListExpr, Lookups};
 
     impl From<InnerExpr> for Expr {
         fn from(value: InnerExpr) -> Self {
@@ -82,15 +81,15 @@ mod test_conversions {
         }
     }
 
-    impl From<ListForm<Expr, Box<Expr>>> for Expr {
-        fn from(value: ListForm<Expr, Box<Expr>>) -> Self {
+    impl From<ListExpr> for Expr {
+        fn from(value: ListExpr) -> Self {
             Expr::from(InnerExpr::from(value))
         }
     }
 
-    impl TryTransformInto<ListForm<Expr, Box<Expr>>> for Expr {
-        fn try_transform_into(self) -> Either<ListForm<Expr, Box<Expr>>, Self> {
-            ListForm::try_transform_from_via::<InnerExpr>(self)
+    impl TryTransformInto<ListExpr> for Expr {
+        fn try_transform_into(self) -> Either<ListExpr, Self> {
+            ListExpr::try_transform_from_via::<InnerExpr>(self)
         }
     }
 

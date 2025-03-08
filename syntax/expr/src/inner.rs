@@ -1,16 +1,15 @@
 use chumsky::primitive::just;
 use chumsky::Parser as _;
-use sappho_syntax_listform::ListForm;
 use sappho_syntax_parsable::{Parsable, ParsableWith, Parser, Recursive};
 use sappho_syntax_unparse::{Stream, Unparse};
 
-use crate::{Base, Expr};
+use crate::{Base, Expr, ListExpr};
 
 #[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
 pub enum InnerExpr {
     Base(Base),
     Parens(Box<Expr>),
-    ListExpr(ListForm<Expr, Box<Expr>>),
+    ListExpr(ListExpr),
 }
 
 impl From<Expr> for InnerExpr {
@@ -23,7 +22,7 @@ impl<'r> ParsableWith<Recursive<'r, Expr>> for InnerExpr {
     fn make_parser_with(rec: Recursive<'r, Expr>) -> impl Parser<Self> {
         Base::parser()
             .map(InnerExpr::from)
-            .or(ListForm::parser_with((rec.clone(), rec.clone())).map(InnerExpr::from))
+            .or(ListExpr::parser_with(rec.clone()).map(InnerExpr::from))
             .or(just('(')
                 .ignore_then(rec)
                 .then_ignore(just(')'))
@@ -45,10 +44,9 @@ impl Unparse for InnerExpr {
 mod test_conversions {
     use either::Either::{self, Left, Right};
     use sappho_syntax_idstore::ArcId;
-    use sappho_syntax_listform::ListForm;
     use sappho_try_transform::{TryTransformFrom, TryTransformInto};
 
-    use crate::{Base, Expr, InnerExpr};
+    use crate::{Base, Expr, InnerExpr, ListExpr};
 
     impl TryTransformInto<Base> for InnerExpr {
         fn try_transform_into(self) -> Either<Base, Self> {
@@ -83,8 +81,8 @@ mod test_conversions {
         }
     }
 
-    impl TryTransformInto<ListForm<Expr, Box<Expr>>> for InnerExpr {
-        fn try_transform_into(self) -> Either<ListForm<Expr, Box<Expr>>, Self> {
+    impl TryTransformInto<ListExpr> for InnerExpr {
+        fn try_transform_into(self) -> Either<ListExpr, Self> {
             match self {
                 InnerExpr::ListExpr(x) => Left(x),
                 other => Right(other),
@@ -94,13 +92,13 @@ mod test_conversions {
 
     impl From<Vec<Expr>> for InnerExpr {
         fn from(value: Vec<Expr>) -> Self {
-            Self::from(ListForm::from(value))
+            Self::from(ListExpr::from(value))
         }
     }
 
     impl TryTransformInto<Vec<Expr>> for InnerExpr {
         fn try_transform_into(self) -> Either<Vec<Expr>, Self> {
-            Vec::try_transform_from_via::<ListForm<_, _>>(self)
+            Vec::try_transform_from_via::<ListExpr>(self)
         }
     }
 }
