@@ -1,21 +1,21 @@
 use sappho_ast_core::Literal;
-use sappho_ast_reduced as astred;
-use sappho_ast_rich as ast;
+use sappho_ast_reduced as red;
+use sappho_ast_rich as rich;
 use sappho_attrs::Attrs;
 use sappho_syntax_idstore::resolve_static;
 use test_case::test_case;
 
 use crate::TransformInto;
 
-fn bind(s: &'static str) -> astred::Pattern {
-    astred::Pattern::Bind(resolve_static(s))
+fn bind(s: &'static str) -> red::Pattern {
+    red::Pattern::Bind(resolve_static(s))
 }
 
-fn unpack_empty() -> astred::Pattern {
-    astred::Pattern::Unpack(Attrs::default())
+fn unpack_empty() -> red::Pattern {
+    red::Pattern::Unpack(Attrs::default())
 }
 
-fn cons_pat(head: &'static str, tail: astred::Pattern) -> astred::Pattern {
+fn cons_pat(head: &'static str, tail: red::Pattern) -> red::Pattern {
     Attrs::from_iter([
         (resolve_static("head"), bind(head)),
         (resolve_static("tail"), tail),
@@ -56,26 +56,26 @@ fn cons_pat(head: &'static str, tail: astred::Pattern) -> astred::Pattern {
         ),
     )
 )]
-fn ast_to_red<const K: usize>(
+fn rich_to_red<const K: usize>(
     body: [&'static str; K],
     tail: Option<&'static str>,
-) -> astred::Pattern {
-    ast::ListPattern::new(
-        body.map(resolve_static).map(ast::Pattern::Bind),
+) -> red::Pattern {
+    rich::ListPattern::new(
+        body.map(resolve_static).map(rich::Pattern::Bind),
         tail.map(resolve_static),
     )
     .transform()
 }
 
-fn alp_new<I>(bindpats: I, tailbind: Option<&'static str>) -> ast::Pattern
+fn alp_new<I>(bindpats: I, tailbind: Option<&'static str>) -> rich::Pattern
 where
     I: IntoIterator<Item = &'static str>,
 {
-    ast::ListPattern::new(
+    rich::ListPattern::new(
         bindpats
             .into_iter()
             .map(resolve_static)
-            .map(ast::Pattern::Bind),
+            .map(rich::Pattern::Bind),
         tailbind.map(resolve_static),
     )
     .into()
@@ -98,21 +98,21 @@ where
 #[test_case(
     cons_pat(
         "a",
-        astred::Pattern::LitEq(Literal::Num(42.0)),
+        red::Pattern::LitEq(Literal::Num(42.0)),
     )
-    => ast::Pattern::Unpack(
+    => rich::Pattern::Unpack(
         Attrs::from_iter([
             (
                 resolve_static("head"),
-                ast::Pattern::Bind(resolve_static("a")),
+                rich::Pattern::Bind(resolve_static("a")),
             ),
             (
                 resolve_static("tail"),
-                ast::Pattern::LitEq(Literal::Num(42.0)),
+                rich::Pattern::LitEq(Literal::Num(42.0)),
             )
         ]),
     )
 )]
-fn red_to_ast(p: astred::Pattern) -> ast::Pattern {
+fn red_to_rich(p: red::Pattern) -> rich::Pattern {
     p.transform()
 }

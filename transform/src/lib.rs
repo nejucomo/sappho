@@ -1,16 +1,16 @@
 mod xform;
 
-use sappho_ast_reduced as astred;
-use sappho_ast_rich as ast;
+use sappho_ast_reduced as red;
+use sappho_ast_rich as rich;
 
 use crate::xform::TransformInto;
 
-pub fn reduce(expr: ast::PureExpr) -> astred::PureExpr {
+pub fn reduce(expr: rich::PureExpr) -> red::PureExpr {
     expr.transform()
 }
 
-pub fn canonicalize(expr: ast::PureExpr) -> ast::PureExpr {
-    let redx: astred::PureExpr = expr.transform();
+pub fn canonicalize(expr: rich::PureExpr) -> rich::PureExpr {
+    let redx: red::PureExpr = expr.transform();
     redx.transform()
 }
 

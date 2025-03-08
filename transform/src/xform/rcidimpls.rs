@@ -1,7 +1,7 @@
 use sappho_ast_core::{AstProvider, CoreExpr};
 use sappho_ast_effect::Effect;
-use sappho_ast_reduced as astred;
-use sappho_ast_rich as ast;
+use sappho_ast_reduced as red;
+use sappho_ast_rich as rich;
 use sappho_syntax_idstore::ArcId;
 
 use crate::xform::TransformInto;
@@ -16,14 +16,14 @@ where
     }
 }
 
-impl TransformInto<ast::Pattern> for ArcId {
-    fn transform(self) -> ast::Pattern {
-        ast::Pattern::Bind(self)
+impl TransformInto<rich::Pattern> for ArcId {
+    fn transform(self) -> rich::Pattern {
+        rich::Pattern::Bind(self)
     }
 }
 
-impl TransformInto<astred::Pattern> for ArcId {
-    fn transform(self) -> astred::Pattern {
-        astred::Pattern::Bind(self)
+impl TransformInto<red::Pattern> for ArcId {
+    fn transform(self) -> red::Pattern {
+        red::Pattern::Bind(self)
     }
 }
