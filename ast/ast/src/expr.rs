@@ -41,7 +41,7 @@ where
     where
         T: IntoIterator<Item = Either<Expr<FX>, Box<Expr<FX>>>>,
     {
-        Expr::List(ListExpr::from_iter(iter))
+        Expr::List(ListExpr::try_from_iter(iter).unwrap())
     }
 }
 

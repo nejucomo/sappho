@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use chumsky::Parser as _;
 use derive_more::{Constructor, From};
 use either::Either;

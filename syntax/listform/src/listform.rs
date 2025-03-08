@@ -61,8 +61,6 @@ impl<X, XP, T, TP> ParsableWith<(XP, TP)> for ListForm<X, T>
 where
     X: ParsableWith<XP>,
     T: ParsableWith<TP>,
-    XP: Clone + fmt::Debug,
-    TP: Clone + fmt::Debug,
 {
     fn make_parser_with((xp, tp): (XP, TP)) -> impl Parser<Self> {
         bracketed(
