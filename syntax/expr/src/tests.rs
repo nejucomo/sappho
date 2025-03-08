@@ -300,12 +300,12 @@ fn parse_nonerror<T>(input: &str) -> T
 where
     Expr: TryTransformInto<T>,
 {
-    let expr = Expr::parser().load_parse_source(input).unwrap();
+    let expr = Expr::parser().load_and_parse(input).unwrap();
 
     // Every expr can be followed by optional whitespace, so these should all parse and equal the non-ws version:
     for suffix in [" ", "\n", "\n\n     "] {
         let exprws = Expr::parser()
-            .load_parse_source(format!("{input}{suffix}"))
+            .load_and_parse(format!("{input}{suffix}"))
             .unwrap();
         assert_eq!(&expr, &exprws);
     }

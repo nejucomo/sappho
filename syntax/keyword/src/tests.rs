@@ -14,7 +14,7 @@ use crate::Keyword::{self, *};
 #[test_case("true" => Err(()))]
 fn try_from_str(s: &str) -> Result<Keyword, ()> {
     let res1 = Keyword::try_from(s);
-    let res2 = Keyword::parser().load_parse_source(s).map_err(|_| ());
+    let res2 = Keyword::parser().load_and_parse(s).map_err(|_| ());
     assert_eq!(res1, res2);
     res1
 }

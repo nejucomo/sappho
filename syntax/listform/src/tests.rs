@@ -1,9 +1,46 @@
+use chumsky::primitive::filter;
+use chumsky::Parser as _;
 use either::Either::{self, Left, Right};
 use indoc::indoc;
+use sappho_syntax_parsable::{Parsable, ParsableWith};
 use sappho_syntax_unparse::{Stream, Unparse};
 use test_case::test_case;
 
 use crate::ListForm;
+
+// A fake element for parsing:
+#[derive(Debug, derive_more::From, derive_more::Into)]
+struct TestElem(char);
+
+impl ParsableWith<()> for TestElem {
+    fn make_parser_with(_: ()) -> impl sappho_syntax_parsable::Parser<Self> {
+        filter::<char, _, _>(|&c| c.is_ascii_alphabetic()).map(TestElem)
+    }
+}
+
+impl Unparse for TestElem {
+    fn unparse_into(&self, _: &mut Stream) {
+        unimplemented!("not exercised by test code");
+    }
+}
+
+#[test_case("[]" => Ok((vec![], None)))]
+#[test_case("[x]" => Ok((vec!['x'], None)))]
+#[test_case("[x, y]" => Ok((vec!['x', 'y'], None)))]
+#[test_case("[x, y, z]" => Ok((vec!['x', 'y', 'z'], None)))]
+#[test_case("[..z]" => Ok((vec![], Some('z'))))]
+#[test_case("[x, ..z]" => Ok((vec!['x'], Some('z'))))]
+#[test_case("[x, y, ..z]" => Ok((vec!['x', 'y'], Some('z'))))]
+// Notice the chumsky error bug which we are matching:
+#[test_case("[x, ..z, y]" => Err("Parse errors in <memory>:\n  Error 0: found end of input".to_string()))]
+fn parse(input: &str) -> Result<(Vec<char>, Option<char>), String>
+where
+{
+    ListForm::<TestElem, TestElem>::load_and_parse(input)
+        .map(ListForm::into)
+        .map(|(v, opt)| (v.into_iter().map(char::from).collect(), opt.map(char::from)))
+        .map_err(|e| e.to_string())
+}
 
 #[test_case(["x", "y"], None, ["x", "y"])]
 #[test_case(["x", "y"], Some("z"), ["x", "y", "z"])]

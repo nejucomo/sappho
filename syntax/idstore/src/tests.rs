@@ -12,6 +12,6 @@ fn parse(input: &str) -> Option<ArcId> {
     // use chumsky::Parser;
     // db-g!(ArcId::parser().parse_recovery_verbose(input));
 
-    ArcId::parser().load_parse_source(input).ok()
+    ArcId::parser().load_and_parse(input).ok()
     // .map_err(|e| e.to_string())
 }

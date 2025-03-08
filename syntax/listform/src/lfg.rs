@@ -3,7 +3,7 @@ use either::Either::{self, Left, Right};
 
 use crate::ListFormIter;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, new)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, new, derive_more::From, derive_more::Into)]
 #[new(visibility = "pub(crate)")]
 pub(crate) struct ListFormGeneric<XS, T> {
     pub(crate) xs: XS,

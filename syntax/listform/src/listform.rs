@@ -14,7 +14,7 @@ use crate::ListFormIter;
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
-#[derive(Clone, Debug, Eq, PartialEq, derive_more::From)]
+#[derive(Clone, Debug, Eq, PartialEq, derive_more::From, derive_more::Into)]
 pub struct ListForm<Elem, Tail>(ListFormGeneric<Vec<Elem>, Tail>);
 
 impl<X, T> ListForm<X, T> {
@@ -44,6 +44,16 @@ impl<X, T> ListForm<X, T> {
     pub fn prepend(mut self, head: X) -> Self {
         self.0.xs.insert(0, head);
         self
+    }
+}
+
+impl<X, T> ParsableWith<()> for ListForm<X, T>
+where
+    X: ParsableWith<()>,
+    T: ParsableWith<()>,
+{
+    fn make_parser_with(_: ()) -> impl Parser<Self> {
+        Self::parser_with(((), ()))
     }
 }
 
@@ -144,6 +154,18 @@ where
 }
 
 // Transforms
+impl<X, T> From<(Vec<X>, Option<T>)> for ListForm<X, T> {
+    fn from((xs, opt): (Vec<X>, Option<T>)) -> Self {
+        ListForm::new(xs, opt)
+    }
+}
+
+impl<X, T> From<ListForm<X, T>> for (Vec<X>, Option<T>) {
+    fn from(lf: ListForm<X, T>) -> Self {
+        lf.0.into()
+    }
+}
+
 impl<X, T> From<Vec<X>> for ListForm<X, T> {
     fn from(value: Vec<X>) -> Self {
         ListForm::from(ListFormGeneric::new(value, None))

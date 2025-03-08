@@ -5,26 +5,14 @@ use crate::error::{ChumskyError, Error, ParseError};
 use crate::primitive::space;
 
 pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyError> {
-    fn load_parse_source<L, C>(&self, loadable: L) -> Result<Output, Error>
+    fn load_and_parse<L, C>(&self, loadable: L) -> Result<Output, Error>
     where
         L: LoadSource<C>,
         C: AsRef<str>,
     {
         let source = loadable.load().map_err(Error::Load)?;
-        let parsed = self.parse_source(source)?;
+        let parsed = parse_source(self, source)?;
         Ok(parsed)
-    }
-
-    fn parse_source<C>(&self, sc: SourceCode<C>) -> Result<Output, ParseError>
-    where
-        C: AsRef<str>,
-    {
-        use chumsky::primitive::end;
-        use chumsky::Parser as _;
-
-        self.then_ignore(end())
-            .parse(sc.code())
-            .map_err(|errors| ParseError::new(sc.source().clone(), errors))
     }
 
     fn then_space(self) -> impl Parser<Output> {
@@ -37,3 +25,18 @@ pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyE
 }
 
 impl<P, O> Parser<O> for P where P: chumsky::Parser<char, O, Error = ChumskyError> {}
+
+// helper code
+fn parse_source<C, P, O>(parser: P, sc: SourceCode<C>) -> Result<O, ParseError>
+where
+    C: AsRef<str>,
+    P: Parser<O>,
+{
+    use chumsky::primitive::end;
+    use chumsky::Parser as _;
+
+    parser
+        .then_ignore(end())
+        .parse(sc.code())
+        .map_err(|errors| ParseError::new(sc.source().clone(), errors))
+}
