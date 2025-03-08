@@ -6,7 +6,7 @@ use sappho_ast_effect::Effect;
 use sappho_syntax_unparse::{Stream, Unparse};
 use std::fmt;
 
-use crate::{Ast, ListExpr};
+use crate::{AstRich, ListExpr};
 
 /// The general top-level expression for all effects.
 #[derive(Clone, Debug, PartialEq)]
@@ -14,19 +14,19 @@ pub enum Expr<FX>
 where
     FX: Effect,
 {
-    Core(CoreExpr<Ast, FX>),
+    Core(CoreExpr<AstRich, FX>),
 
     // Extensions from Core:
-    Func(FuncDef<Ast>),
-    Query(QueryDef<Ast>),
-    Proc(ProcDef<Ast>),
+    Func(FuncDef<AstRich>),
+    Query(QueryDef<AstRich>),
+    Proc(ProcDef<AstRich>),
     List(ListExpr<FX>),
 }
 
 impl<FX, T> From<T> for Expr<FX>
 where
     FX: Effect,
-    CoreExpr<Ast, FX>: From<T>,
+    CoreExpr<AstRich, FX>: From<T>,
 {
     fn from(x: T) -> Self {
         Expr::Core(CoreExpr::from(x))

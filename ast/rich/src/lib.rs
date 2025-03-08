@@ -16,9 +16,9 @@ use sappho_ast_core::Literal;
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
 use sappho_syntax_listform::ListForm;
 
-pub use self::expr::Expr;
-pub use self::pattern::{ListPattern, Pattern};
-pub use self::provider::Ast;
+pub use crate::expr::Expr;
+pub use crate::pattern::{ListPattern, Pattern};
+pub use crate::provider::AstRich;
 
 pub type PureExpr = Expr<PureEffect>;
 pub type QueryExpr = Expr<QueryEffect>;

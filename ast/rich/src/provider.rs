@@ -2,9 +2,9 @@ use sappho_ast_core::AstProvider;
 use sappho_ast_effect::Effect;
 
 #[derive(Debug)]
-pub struct Ast;
+pub struct AstRich;
 
-impl AstProvider for Ast {
+impl AstProvider for AstRich {
     type Pattern = crate::Pattern;
 
     type Expr<FX>

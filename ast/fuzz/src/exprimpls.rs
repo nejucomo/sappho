@@ -5,7 +5,7 @@ use sappho_ast_core::{
     ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_effect::Effect;
-use sappho_ast_rich::{Ast, Expr, ListExpr};
+use sappho_ast_rich::{AstRich, Expr, ListExpr};
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 use sappho_syntax_idstore::ArcId;
 
@@ -24,22 +24,22 @@ where
         let lower = self.next_lower_level();
         let rwf = lower.recursive_weight_factor();
 
-        <Self as Distribution<CoreExpr<Ast, FX>>>::map(lower, Core)
+        <Self as Distribution<CoreExpr<AstRich, FX>>>::map(lower, Core)
             .weighted_case(1)
-            .or(<Self as Distribution<FuncDef<Ast>>>::map(lower, Func).weighted_case(rwf))
-            .or(<Self as Distribution<QueryDef<Ast>>>::map(lower, Query).weighted_case(rwf))
-            .or(<Self as Distribution<ProcDef<Ast>>>::map(lower, Proc).weighted_case(rwf))
+            .or(<Self as Distribution<FuncDef<AstRich>>>::map(lower, Func).weighted_case(rwf))
+            .or(<Self as Distribution<QueryDef<AstRich>>>::map(lower, Query).weighted_case(rwf))
+            .or(<Self as Distribution<ProcDef<AstRich>>>::map(lower, Proc).weighted_case(rwf))
             .or(<Self as Distribution<ListExpr<FX>>>::map(lower, List).weighted_case(rwf))
             .sample(rng)
     }
 }
 
-impl<FX> Distribution<CoreExpr<Ast, FX>> for AstFuzz
+impl<FX> Distribution<CoreExpr<AstRich, FX>> for AstFuzz
 where
     FX: Effect + FxFuzz,
     AstFuzz: Distribution<FX>,
 {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> CoreExpr<Ast, FX> {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> CoreExpr<AstRich, FX> {
         use sappho_ast_core::CoreExpr::*;
 
         let rwf = self.recursive_weight_factor();
@@ -48,16 +48,25 @@ where
         <Self as Distribution<Literal>>::map(*self, Lit)
             .weighted_case(1)
             .or(<Self as Distribution<ArcId>>::map(*self, Ref).weighted_case(3))
-            .or(<Self as Distribution<ObjectDef<Ast, FX>>>::map(*self, Object).weighted_case(rwf))
-            .or(<Self as Distribution<LetExpr<Ast, FX>>>::map(*self, Let).weighted_case(rwf))
-            .or(<Self as Distribution<MatchExpr<Ast, FX>>>::map(*self, Match).weighted_case(rwf))
             .or(
-                <Self as Distribution<ApplicationExpr<Ast, FX>>>::map(*self, Application)
+                <Self as Distribution<ObjectDef<AstRich, FX>>>::map(*self, Object)
                     .weighted_case(rwf),
             )
-            .or(<Self as Distribution<LookupExpr<Ast, FX>>>::map(*self, Lookup).weighted_case(rwf))
+            .or(<Self as Distribution<LetExpr<AstRich, FX>>>::map(*self, Let).weighted_case(rwf))
             .or(
-                <Self as Distribution<EffectExpr<Ast, FX>>>::map(*self, Effect)
+                <Self as Distribution<MatchExpr<AstRich, FX>>>::map(*self, Match)
+                    .weighted_case(rwf),
+            )
+            .or(
+                <Self as Distribution<ApplicationExpr<AstRich, FX>>>::map(*self, Application)
+                    .weighted_case(rwf),
+            )
+            .or(
+                <Self as Distribution<LookupExpr<AstRich, FX>>>::map(*self, Lookup)
+                    .weighted_case(rwf),
+            )
+            .or(
+                <Self as Distribution<EffectExpr<AstRich, FX>>>::map(*self, Effect)
                     .weighted_case(rwf * fxwf),
             )
             .sample(rng)
