@@ -1,6 +1,6 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::Pattern;
+use sappho_ast_rich::Pattern;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 
 use crate::AstFuzz;

@@ -11,7 +11,7 @@ use sappho_source::LoadSource;
 
 pub use self::error::LoadParseError;
 
-pub fn parse<'a, S>(sourceloader: S) -> Result<sappho_ast::PureExpr, LoadParseError<'a>>
+pub fn parse<'a, S>(sourceloader: S) -> Result<sappho_ast_rich::PureExpr, LoadParseError<'a>>
 where
     S: LoadSource<'a>,
 {

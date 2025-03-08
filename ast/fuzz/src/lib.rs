@@ -11,7 +11,7 @@ mod recoreimpls;
 
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
-use sappho_ast::PureExpr;
+use sappho_ast_rich::PureExpr;
 
 /// Return `(seed, expr)` where `expr` is a randomly generated expression using `seed`
 pub fn random_expr(max_depth: usize) -> (u64, PureExpr) {

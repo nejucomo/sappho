@@ -1,6 +1,6 @@
-use sappho_ast as ast;
 use sappho_ast_core::Literal;
 use sappho_ast_reduced as astred;
+use sappho_ast_rich as ast;
 use sappho_attrs::Attrs;
 use sappho_syntax_idstore::resolve_static;
 use test_case::test_case;

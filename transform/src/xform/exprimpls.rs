@@ -1,8 +1,8 @@
 use either::Either::{self, Left};
-use sappho_ast::{self as ast};
 use sappho_ast_core::{AstProvider, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 use sappho_ast_reduced::{self as astred};
+use sappho_ast_rich::{self as ast};
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};

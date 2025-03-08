@@ -1,4 +1,4 @@
-use sappho_ast::PureExpr;
+use sappho_ast_rich::PureExpr;
 
 use crate::{Result, SourceOption, UnparseFormat};
 

@@ -2,7 +2,7 @@ use crate::error::BareError;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{Ast, ProcExpr};
+use sappho_ast_rich::{Ast, ProcExpr};
 use sappho_ast_core::EffectExpr;
 use sappho_ast_effect::ProcEffect;
 

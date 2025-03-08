@@ -1,6 +1,6 @@
 use crate::error::BareError;
 use crate::error::Span;
-use sappho_ast::{Ast, Expr};
+use sappho_ast_rich::{Ast, Expr};
 use sappho_ast_core::{
     ApplicationExpr, CoreExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };

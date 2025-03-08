@@ -1,6 +1,6 @@
 use crate::error::BareError;
 use chumsky::{text, Parser};
-use sappho_ast::ProcExpr;
+use sappho_ast_rich::ProcExpr;
 use sappho_ast_core::Literal;
 use sappho_syntax_identifier::RcId;
 use std::str::FromStr;

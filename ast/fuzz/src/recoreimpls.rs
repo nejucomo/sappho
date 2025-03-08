@@ -1,10 +1,10 @@
 //! The _Rec_ursive _Core_ subset
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Ast, Expr, Pattern};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
+use sappho_ast_rich::{Ast, Expr, Pattern};
 use sappho_syntax_idstore::ArcId;
 
 use crate::effectsimpls::FxFuzz;

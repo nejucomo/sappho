@@ -1,5 +1,5 @@
 use either::Either::Left;
-use sappho_ast::{Ast, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
+use sappho_ast_rich::{Ast, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
 };
