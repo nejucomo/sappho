@@ -61,14 +61,17 @@ impl<X, XP, T, TP> ParsableWith<(XP, TP)> for ListForm<X, T>
 where
     X: ParsableWith<XP>,
     T: ParsableWith<TP>,
-    XP: Clone,
-    TP: Clone,
+    XP: Clone + fmt::Debug,
+    TP: Clone + fmt::Debug,
 {
     fn make_parser_with((xp, tp): (XP, TP)) -> impl Parser<Self> {
         bracketed(
             ['[', ']'],
             (just("..").ignore_then(T::parser_with(tp)).map(Right))
-                .or(X::parser_with(xp).map(Left))
+                .or(X::parser_with(xp)
+                    .map(Left)
+                    // Allow space before commas:
+                    .then_opt_space())
                 .separated_by(just(',').then_opt_space()),
         )
         .try_map(|v, span| {
