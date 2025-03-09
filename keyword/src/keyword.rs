@@ -31,13 +31,10 @@ impl Keyword {
     }
 
     pub fn parse(self) -> impl Parser<Self> {
-        use chumsky::text;
+        use chumsky::prelude::just;
         use chumsky::Parser as _;
-        use sappho_parsable::error::ChumskyError;
 
-        text::keyword::<char, Keyword, ChumskyError>(self)
-            .then_space()
-            .to(self)
+        just(self.as_str()).then_space().to(self)
     }
 }
 
