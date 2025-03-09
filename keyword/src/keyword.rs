@@ -1,3 +1,5 @@
+use std::fmt;
+
 use enum_iterator::Sequence;
 use sappho_parsable::Parser;
 use sappho_unparse::Unparse;
@@ -54,6 +56,12 @@ impl TryFrom<&str> for Keyword {
 impl AsRef<str> for Keyword {
     fn as_ref(&self) -> &str {
         self.as_str()
+    }
+}
+
+impl fmt::Display for Keyword {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.as_str().fmt(f)
     }
 }
 
