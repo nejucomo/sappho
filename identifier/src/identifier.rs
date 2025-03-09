@@ -10,6 +10,10 @@ impl aliri_braid::Validator for Identifier {
     type Error = InvalidIdentifier;
 
     fn validate(raw: &str) -> Result<(), Self::Error> {
+        if raw.is_empty() {
+            return Err(InvalidIdentifier::from(raw));
+        }
+
         for (ix, c) in raw.chars().enumerate() {
             let valid = if ix == 0 {
                 // Only underscore or letters as the initial character:
