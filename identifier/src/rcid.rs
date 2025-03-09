@@ -8,6 +8,7 @@ use sappho_unparse::Unparse;
 use crate::{IdentRef, Identifier};
 
 #[derive(Clone, Debug, From, Eq, Ord, PartialEq, PartialOrd)]
+#[from(Identifier)]
 pub struct RcId(Rc<Identifier>);
 
 impl RcId {
@@ -21,12 +22,6 @@ impl TryFrom<String> for RcId {
 
     fn try_from(s: String) -> Result<Self, Self::Error> {
         Identifier::try_from(s).map(RcId::from)
-    }
-}
-
-impl From<Identifier> for RcId {
-    fn from(id: Identifier) -> Self {
-        RcId::from(Rc::from(id))
     }
 }
 
