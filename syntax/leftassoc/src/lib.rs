@@ -1,3 +1,5 @@
+mod fromvia;
+
 use std::fmt::Debug;
 
 use chumsky::Parser as _;
@@ -14,6 +16,13 @@ pub struct LeftAssoc<L, R> {
 }
 
 impl<L, R> LeftAssoc<L, R> {
+    pub fn from_left<M>(value: M) -> Self
+    where
+        L: From<M>,
+    {
+        Self::new(L::from(value), vec![])
+    }
+
     pub fn la_fold<F, A>(self, f: F) -> A
     where
         A: From<L>,
@@ -48,10 +57,9 @@ where
     }
 }
 
-// Test Conversions:
 impl<L, R> From<L> for LeftAssoc<L, R> {
     fn from(left: L) -> Self {
-        Self::from((left, vec![]))
+        Self::new(left, vec![])
     }
 }
 

@@ -43,7 +43,7 @@ anyhow-std = "0.1.4"
 arrayvec = "0.7.6"
 chumsky = "0.9.3"
 clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
-derive_more = "0.99.17"
+derive_more = { version = "2.0.1", features = [ "full" ] }
 derive-new = "0.7.0"
 either = "1.13.0"
 enum-iterator = "2.1.0"

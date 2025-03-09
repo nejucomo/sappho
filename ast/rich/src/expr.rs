@@ -1,16 +1,17 @@
 //! Top-level expression type `Expr`, generic over effects [PureEffect](sappho_ast_core::PureEffect), [QueryEffect](sappho_ast_core::QueryEffect), or [ProcEffect](sappho_ast_core::ProcEffect).
 
-use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
+use sappho_ast_core::{CoreExpr, FuncDef, Literal, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 
 use crate::{AstRich, ListExpr};
 
 /// The general top-level expression for all effects.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum Expr<FX>
 where
     FX: Effect,
 {
+    #[from(Literal)]
     Core(CoreExpr<AstRich, FX>),
 
     // Extensions from Core:
@@ -77,6 +78,7 @@ mod syntax_transforms {
     use sappho_primval::PrimVal;
     use sappho_syntax_expr as syntax;
     use sappho_syntax_listform::ListForm;
+    use sappho_syntax_universal::UniExpr;
 
     use crate::Expr;
 
@@ -95,21 +97,21 @@ mod syntax_transforms {
 
     impl From<syntax::Lookups> for Expr<PureEffect> {
         fn from(synloo: syntax::Lookups) -> Self {
-            synloo.la_fold(|richexpr, synlookup| LookupExpr::new(richexpr, synlookup.into()).into())
+            synloo.la_fold(|rx, lookup| LookupExpr::new(rx, lookup).into())
         }
     }
 
     impl From<syntax::InnerExpr> for Expr<PureEffect> {
         fn from(syn: syntax::InnerExpr) -> Self {
             match syn {
-                syntax::InnerExpr::Base(x) => Self::from(x),
+                syntax::InnerExpr::Uni(x) => Self::from(x),
                 syntax::InnerExpr::Parens(x) => Self::from(x),
                 syntax::InnerExpr::ListExpr(x) => Self::from(x),
             }
         }
     }
 
-    impl<FX> From<syntax::Base> for Expr<FX>
+    impl<FX> From<UniExpr> for Expr<FX>
     where
         FX: Effect,
     {
@@ -148,23 +150,12 @@ mod syntax_transforms {
 }
 
 mod inner_transforms {
-    use sappho_ast_core::{
-        ApplicationExpr, CoreExpr, LetExpr, Literal, LookupExpr, MatchExpr, ObjectDef,
-    };
+    use sappho_ast_core::{ApplicationExpr, CoreExpr, LetExpr, LookupExpr, MatchExpr, ObjectDef};
     use sappho_ast_effect::Effect;
     use sappho_attrs::Attrs;
     use sappho_syntax_idstore::ArcId;
 
     use crate::{AstRich, Expr};
-
-    impl<FX> From<CoreExpr<AstRich, FX>> for Expr<FX>
-    where
-        FX: Effect,
-    {
-        fn from(value: CoreExpr<AstRich, FX>) -> Self {
-            Expr::Core(value)
-        }
-    }
 
     macro_rules! from_via_core_expr {
         ( $t:ty) => {
@@ -180,7 +171,7 @@ mod inner_transforms {
     }
 
     // Directly from `CoreExpr`:
-    from_via_core_expr!(Literal);
+    // from_via_core_expr!(Literal);
     from_via_core_expr!(ArcId);
     from_via_core_expr!(ObjectDef<AstRich, FX>);
     from_via_core_expr!(LetExpr<AstRich, FX>);

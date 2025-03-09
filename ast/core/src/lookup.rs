@@ -15,6 +15,7 @@ where
     pub target: Box<XP::Expr<FX>>,
 
     /// An attribute name, ie: `foo` in `x.foo`.
+    #[new(into)]
     pub attr: ArcId,
 }
 
