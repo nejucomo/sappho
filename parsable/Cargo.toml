@@ -1,0 +1,14 @@
+[package]
+name = "sappho-parsable"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+chumsky.workspace = true
+derive_more.workspace = true
+sappho-unparse.workspace = true
+sappho-source.workspace = true
+thiserror.workspace = true

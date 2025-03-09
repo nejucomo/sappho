@@ -14,6 +14,7 @@ members = [
   "interpreter",
   "listform",
   "object",
+  "parsable",
   "parser",
   "rand-dcomp",
   "source",
@@ -55,6 +56,7 @@ sappho-integration-tests = { path = "integration-tests" }
 sappho-interpreter = { path = "interpreter" }
 sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
+sappho-parsable = { path = "parsable" }
 sappho-parser = { path = "parser" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
