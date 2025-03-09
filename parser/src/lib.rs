@@ -17,11 +17,11 @@ where
 {
     use chumsky::Parser;
 
-    let (source, code) = loadsource.load()?.into();
+    let scode = loadsource.load()?;
 
     self::expr::expression()
-        .parse(code.as_ref().trim_end())
-        .map_err(|bares| ParseError::new(source, bares).into())
+        .parse(scode.code().trim_end())
+        .map_err(|bares| ParseError::new(scode.to_owned(), bares).into())
 }
 
 #[cfg(test)]

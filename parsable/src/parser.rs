@@ -8,7 +8,7 @@ pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyE
     fn load_and_parse<L, C>(&self, loadable: L) -> Result<Output, Error>
     where
         L: LoadSource<C>,
-        C: AsRef<str>,
+        C: AsRef<str> + ToString,
     {
         let source = loadable.load().map_err(Error::Load)?;
         let parsed = parse_source(self, source)?;
@@ -29,14 +29,16 @@ impl<P, O> Parser<O> for P where P: chumsky::Parser<char, O, Error = ChumskyErro
 // helper code
 fn parse_source<C, P, O>(parser: P, sc: SourceCode<C>) -> Result<O, ParseError>
 where
-    C: AsRef<str>,
+    C: AsRef<str> + ToString,
     P: Parser<O>,
 {
     use chumsky::primitive::end;
     use chumsky::Parser as _;
 
+    let sc = sc.to_owned();
+
     parser
         .then_ignore(end())
         .parse(sc.code())
-        .map_err(|errors| ParseError::new(sc.source().clone(), errors))
+        .map_err(|errors| ParseError::new(sc, errors))
 }

@@ -12,3 +12,6 @@ derive_more.workspace = true
 sappho-unparse.workspace = true
 sappho-source.workspace = true
 thiserror.workspace = true
+
+[dev-dependencies]
+test-case.workspace = true
