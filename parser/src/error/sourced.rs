@@ -1,31 +1,32 @@
 use crate::error::{BareError, Span};
-use sappho_source::Source;
+use sappho_source::SourceCode;
 use std::fmt;
 
 #[derive(Debug)]
-pub struct SourcedError<'a> {
-    source: Source<'a>,
+pub struct SourcedError {
+    scode: SourceCode<String>,
     bare: BareError,
 }
 
-impl<'a> SourcedError<'a> {
-    pub fn new(source: Source<'a>, bare: BareError) -> Self {
-        SourcedError { source, bare }
+impl SourcedError {
+    pub fn new<C>(scode: SourceCode<C>, bare: BareError) -> Self
+    where
+        C: ToString + AsRef<str>,
+    {
+        let scode = scode.to_owned();
+        SourcedError { scode, bare }
     }
 }
 
-impl fmt::Display for SourcedError<'_> {
+impl fmt::Display for SourcedError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use crate::error::indent::indent;
 
-        let (lix, lspan, lstr) = select_source(self.source.text(), self.bare.span());
+        let (lix, lspan, lstr) = select_source(self.scode.code(), self.bare.span());
         write!(
             f,
             "from {}, line {}:\n{}|\n+-> Syntax error: {}\n",
-            self.source
-                .path()
-                .map(|p| format!("{:?}", p.display()))
-                .unwrap_or_else(|| "<string>".to_string()),
+            self.scode.source(),
             lix + 1,
             indent(
                 "| ",

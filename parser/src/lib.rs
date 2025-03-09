@@ -11,17 +11,18 @@ use sappho_source::LoadSource;
 
 pub use self::error::LoadParseError;
 
-pub fn parse<'a, S>(sourceloader: S) -> Result<sappho_ast::PureExpr, LoadParseError<'a>>
+pub fn parse<S, C>(loadsource: S) -> Result<sappho_ast::PureExpr, LoadParseError>
 where
-    S: LoadSource<'a>,
+    S: LoadSource<C>,
+    C: Clone + AsRef<str> + ToString,
 {
     use chumsky::Parser;
 
-    let source = sourceloader.load()?;
+    let scode = loadsource.load()?;
 
     self::expr::expression()
-        .parse(source.text().trim_end())
-        .map_err(|bares| LoadParseError::Parse(Errors::attach_source(source, bares)))
+        .parse(scode.code().trim_end())
+        .map_err(|bares| LoadParseError::Parse(Errors::attach_source(scode, bares)))
 }
 
 #[cfg(test)]

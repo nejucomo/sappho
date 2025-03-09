@@ -12,6 +12,15 @@ where
     fn load(self) -> Result<SourceCode<C>>;
 }
 
+impl<C> LoadSource<C> for SourceCode<C>
+where
+    C: AsRef<str>,
+{
+    fn load(self) -> Result<SourceCode<C>> {
+        Ok(self)
+    }
+}
+
 impl<'a> LoadSource<&'a str> for &'a str {
     fn load(self) -> Result<SourceCode<&'a str>> {
         Ok(SourceCode::new(Source::default(), self))

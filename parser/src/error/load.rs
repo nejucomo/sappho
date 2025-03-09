@@ -2,12 +2,12 @@ use crate::error::Errors;
 use std::fmt;
 
 #[derive(Debug, derive_more::From)]
-pub enum LoadParseError<'a> {
+pub enum LoadParseError {
     Load(anyhow::Error),
-    Parse(Errors<'a>),
+    Parse(Errors),
 }
 
-impl fmt::Display for LoadParseError<'_> {
+impl fmt::Display for LoadParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use LoadParseError::*;
 

@@ -1,2 +1,2 @@
-pub type Error<'a> = sappho_interpreter::Error<'a>;
-pub type Result<'a, T> = sappho_interpreter::Result<'a, T>;
+pub type Error = sappho_interpreter::Error;
+pub type Result<T> = sappho_interpreter::Result<T>;

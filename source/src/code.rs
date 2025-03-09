@@ -1,13 +1,16 @@
+use derive_new::new;
+
 use crate::Source;
 
 // Todo: Replace with `source-text` crate.
 
 /// [SourceCode] refers to the textual source code and tracks the [Source] it came from (if any).
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, new)]
 pub struct SourceCode<C>
 where
     C: AsRef<str>,
 {
+    #[new(into)]
     source: Source,
     code: C,
 }
@@ -16,10 +19,6 @@ impl<C> SourceCode<C>
 where
     C: AsRef<str>,
 {
-    pub(crate) fn new(source: Source, code: C) -> Self {
-        SourceCode { source, code }
-    }
-
     pub fn source(&self) -> &Source {
         &self.source
     }
@@ -30,10 +29,10 @@ where
 
     pub fn to_owned(self) -> SourceCode<String>
     where
-        String: From<C>,
+        C: ToString,
     {
         let SourceCode { source, code } = self;
-        let code = String::from(code);
+        let code = code.to_string();
         SourceCode { source, code }
     }
 }

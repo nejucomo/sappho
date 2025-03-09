@@ -8,7 +8,7 @@ pub fn eval(source: &SourceOption) -> Result<()> {
     Ok(())
 }
 
-pub fn parse<'a>(source: &'a SourceOption, format: &'a UnparseFormat) -> Result<'a, ()> {
+pub fn parse(source: &SourceOption, format: &UnparseFormat) -> Result<()> {
     let x = sappho_parser::parse(source)?;
     unparse(x, format)
 }

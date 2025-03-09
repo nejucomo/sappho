@@ -1,14 +1,14 @@
 use std::fmt;
 
 #[derive(Debug, derive_more::From)]
-pub enum Error<'a> {
-    LoadParse(sappho_parser::LoadParseError<'a>),
+pub enum Error {
+    LoadParse(sappho_parser::LoadParseError),
     Eval(sappho_eval::Error),
 }
 
-pub type Result<'a, T> = std::result::Result<T, Error<'a>>;
+pub type Result<T> = std::result::Result<T, Error>;
 
-impl fmt::Display for Error<'_> {
+impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use Error::*;
 
