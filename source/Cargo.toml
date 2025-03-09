@@ -9,3 +9,4 @@ homepage.workspace = true
 anyhow-std.workspace = true
 anyhow.workspace = true
 derive-new.workspace = true
+derive_more.workspace = true

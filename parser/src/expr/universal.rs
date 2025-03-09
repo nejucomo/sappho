@@ -15,10 +15,10 @@ pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError>
 }
 
 pub(super) fn identifier() -> impl Parser<char, RcId, Error = BareError> + Clone {
-    use crate::keyword::Keyword;
+    use sappho_keyword::Keyword;
 
     text::ident().try_map(|ident, span| {
-        for kw in Keyword::iter() {
+        for kw in Keyword::each() {
             if ident == kw.as_str() {
                 return Err(BareError::custom(
                     span,

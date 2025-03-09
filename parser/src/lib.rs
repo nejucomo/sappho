@@ -1,12 +1,11 @@
 mod delimited;
 mod error;
 mod expr;
-mod keyword;
 mod listform;
 mod restrict;
 mod space;
 
-use crate::error::Errors;
+use sappho_parsable::error::ParseError;
 use sappho_source::LoadSource;
 
 pub use self::error::LoadParseError;
@@ -18,11 +17,11 @@ where
 {
     use chumsky::Parser;
 
-    let scode = loadsource.load()?;
+    let (source, code) = loadsource.load()?.into();
 
     self::expr::expression()
-        .parse(scode.code().trim_end())
-        .map_err(|bares| LoadParseError::Parse(Errors::attach_source(scode, bares)))
+        .parse(code.as_ref().trim_end())
+        .map_err(|bares| ParseError::new(source, bares).into())
 }
 
 #[cfg(test)]

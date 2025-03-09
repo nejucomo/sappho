@@ -1,3 +1,4 @@
+use derive_more::{From, Into};
 use derive_new::new;
 
 use crate::Source;
@@ -5,7 +6,7 @@ use crate::Source;
 // Todo: Replace with `source-text` crate.
 
 /// [SourceCode] refers to the textual source code and tracks the [Source] it came from (if any).
-#[derive(Clone, Debug, new)]
+#[derive(Clone, Debug, new, From, Into)]
 pub struct SourceCode<C>
 where
     C: AsRef<str>,

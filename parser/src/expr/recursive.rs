@@ -1,6 +1,5 @@
 use crate::error::BareError;
 use crate::expr::pattern::pattern;
-use crate::keyword::Keyword;
 use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
@@ -8,6 +7,7 @@ use chumsky::Parser;
 use sappho_ast::{Ast, Expr, ListExpr, ProcExpr};
 use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr};
 use sappho_ast_effect::ProcEffect;
+use sappho_keyword::Keyword;
 
 pub(crate) fn recursive_expr(
     expr: Recursive<char, ProcExpr, BareError>,
@@ -47,7 +47,7 @@ fn let_clause(
     expr: Recursive<char, ProcExpr, BareError>,
 ) -> impl Parser<char, LetClause<Ast, ProcEffect>, Error = BareError> + '_ {
     Keyword::Let
-        .parser()
+        .parse()
         .ignore_then(pattern())
         .then_ignore(just('=').delimited_by(ws(), ws()))
         .then(expr.clone())
@@ -64,7 +64,7 @@ fn match_expr(
     use crate::delimited::delimited;
 
     Keyword::Match
-        .parser()
+        .parse()
         .ignore_then(expr.clone())
         .then_ignore(ws())
         .then(delimited(

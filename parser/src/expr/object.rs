@@ -7,6 +7,7 @@ use sappho_ast::{Ast, Expr, ProcExpr};
 use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::ProcEffect;
 use sappho_identifier::RcId;
+use sappho_keyword::Keyword;
 use sappho_object::Element;
 
 use crate::delimited::delimited;
@@ -14,7 +15,6 @@ use crate::error::BareError;
 use crate::expr::pattern::pattern;
 use crate::expr::universal::identifier;
 use crate::expr::{pure_expr, query_expr};
-use crate::keyword::Keyword;
 use crate::space::ws;
 
 use self::procdef::proc_def;
@@ -35,7 +35,7 @@ fn func_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, FuncDef<Ast>, Error = BareError> + '_ {
     Keyword::Fn
-        .parser()
+        .parse()
         .ignore_then(pattern())
         .then_ignore(just("->").delimited_by(ws(), ws()))
         .then(pure_expr(expr))
@@ -50,7 +50,7 @@ fn query_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, QueryDef<Ast>, Error = BareError> + '_ {
     Keyword::Query
-        .parser()
+        .parse()
         .ignore_then(query_expr(expr))
         .map(|body| QueryDef {
             body: Box::new(body),

@@ -1,10 +1,5 @@
-mod bare;
-mod indent;
-mod load;
-mod set;
-mod sourced;
+pub type LoadParseError = sappho_parsable::error::Error;
 
-pub use self::bare::{BareError, Span};
-pub use self::load::LoadParseError;
-pub use self::set::Errors;
-pub use self::sourced::SourcedError;
+pub type BareError = sappho_parsable::error::ChumskyError;
+
+pub type Span = sappho_parsable::error::Span;
