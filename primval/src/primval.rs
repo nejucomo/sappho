@@ -1,13 +1,14 @@
 /// A [PrimVal] is a value the language inherently provides which excludes containing other values or value-references
 ///
 /// Note that some [PrimVal] values _can_ be containers of [PrimVal] types. For example, a string contains chars, and a char is also a [PrimVal].
+#[derive(Copy, Clone, Debug, PartialEq, derive_more::From)]
 pub enum PrimVal {
     Num(Num),
     // TODO:
     //Bool(bool),
     //Char(char),
 
-    // Less certain. Here we start heap allocations. We might want a distinction?
+    // Less certain. Here we start heap allocations and lose [Copy]. We might want a distinction?
     // However, we do not need GC-coverage beyond rust [Box]/[Rc]/[Arc].
     //String(String),
 
