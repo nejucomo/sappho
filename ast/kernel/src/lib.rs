@@ -21,6 +21,7 @@ mod application;
 mod expr;
 mod funcdef;
 mod kernel;
+pub mod r#let;
 mod objectdef;
 mod pattern;
 pub mod proc;
