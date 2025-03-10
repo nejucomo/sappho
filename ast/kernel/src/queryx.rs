@@ -1,6 +1,6 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Confined, Kernel};
+use crate::{Kernel, Recursion};
 
 /// A [QueryX] is an expression with query effects
 #[derive(Debug, derive_more::From)]
@@ -9,9 +9,8 @@ where
     U: Unparse,
 {
     Kernel(Kernel<U>),
-    // Syntax mayber-bug: do we want to allow `$$x` rather than requiring `$($x)`?
-    // If so, then `QueryX` would need to extend `Confined` which I think requires passing two params everywhere (then three for proc?)
-    Inquire(Confined<U>),
+    /// An inquire operation expression: `$x`
+    Inquire(Recursion<U>),
 }
 
 impl<U> Unparse for QueryX<U>

@@ -1,14 +1,14 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::Confined;
+use crate::Recursion;
 
 #[derive(Debug, derive_new::new)]
 pub struct Application<R>
 where
     R: Unparse,
 {
-    target: Confined<R>,
-    argument: Confined<R>,
+    target: Recursion<R>,
+    argument: Recursion<R>,
 }
 
 impl<R> Unparse for Application<R>

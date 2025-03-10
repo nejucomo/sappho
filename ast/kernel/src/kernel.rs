@@ -1,6 +1,8 @@
+use sappho_identifier::RcId;
+use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Application, Confined};
+use crate::Application;
 
 /// The common expression subset for all effects and richness-vs-reduction
 #[derive(Debug, derive_more::From)]
@@ -8,7 +10,8 @@ pub enum Kernel<R>
 where
     R: Unparse,
 {
-    Confined(Confined<R>),
+    Prim(PrimVal),
+    Ref(RcId),
     Application(Application<R>),
     // Let,
     // Lookup,
@@ -24,7 +27,8 @@ where
         use Kernel::*;
 
         match self {
-            Confined(x) => x.unparse_into(s),
+            Prim(x) => x.unparse_into(s),
+            Ref(x) => x.unparse_into(s),
             Application(x) => x.unparse_into(s),
         }
     }
