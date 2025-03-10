@@ -17,6 +17,7 @@ members = [
   "object",
   "parsable",
   "parser",
+  "primval",
   "rand-dcomp",
   "source",
   "transform",
@@ -61,6 +62,7 @@ sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
 sappho-parsable = { path = "parsable" }
 sappho-parser = { path = "parser" }
+sappho-primval = { path = "primval" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
 sappho-transform = { path = "transform" }
