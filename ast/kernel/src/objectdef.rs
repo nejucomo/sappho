@@ -1,10 +1,9 @@
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
-use crate::QueryDef;
+use crate::{FuncDef, QueryDef};
 
 // TODO:
-type FuncDef<T> = QueryDef<T>;
 type ProcDef<T> = QueryDef<T>;
 
 #[derive(Debug, derive_more::From)]

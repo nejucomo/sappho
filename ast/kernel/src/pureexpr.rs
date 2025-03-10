@@ -8,11 +8,11 @@ use crate::Kernel;
 #[derive(Debug, derive_more::From)]
 pub struct PureExpr<U>(Kernel<U>)
 where
-    U: Unparse + From<PureExpr<U>>;
+    U: Unparse;
 
 impl<U> Unparse for PureExpr<U>
 where
-    U: Unparse + From<PureExpr<U>>,
+    U: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         self.0.unparse_into(s)

@@ -18,17 +18,17 @@
 //!
 //! We use noun forms for type and discriminant names, and verb forms for functions which computes the effect.
 mod application;
+mod funcdef;
 mod kernel;
 mod objectdef;
 mod procexpr;
-mod pureexpr;
 mod query;
 mod recursion;
 
 pub use crate::application::Application;
+pub use crate::funcdef::FuncDef;
 pub use crate::kernel::Kernel;
 pub use crate::objectdef::ObjectDef;
 pub use crate::procexpr::ProcExpr;
-pub use crate::pureexpr::PureExpr;
 pub use crate::query::{QueryDef, QueryExpr};
 pub use crate::recursion::Recursion;
