@@ -1,6 +1,6 @@
 use either::Either::{self, Left, Right};
 use sappho_ast::{self as ast};
-use sappho_ast_reduced::{self as astred};
+use sappho_ast_old_reduced::{self as astred};
 use sappho_identifier::RcId;
 
 use crate::xform::listimpls::TailOrAttrs;

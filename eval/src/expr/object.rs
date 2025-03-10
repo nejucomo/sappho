@@ -1,7 +1,7 @@
 use crate::{Eval, EvalV, Result};
 use sappho_ast_core::{EffectExpr, ObjectDef};
 use sappho_ast_effect::Effect;
-use sappho_ast_reduced::AstRed;
+use sappho_ast_old_reduced::AstRed;
 use sappho_value::{AttrVals, Func, Object, Proc, Query, ScopeRef, Value};
 
 impl<FX> EvalV for ObjectDef<AstRed, FX>

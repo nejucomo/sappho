@@ -3,7 +3,7 @@ mod bindfailure;
 use crate::object::AttrVals;
 use crate::{Unbound, UnboundKind::Unfulfilled, ValRef};
 use sappho_ast_core::Literal;
-use sappho_ast_reduced::Pattern;
+use sappho_ast_old_reduced::Pattern;
 use sappho_attrs::Attrs;
 use sappho_identifier::{IdentRef, RcId};
 use std::cell::RefCell;

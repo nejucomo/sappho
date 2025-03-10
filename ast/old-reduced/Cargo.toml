@@ -1,5 +1,5 @@
 [package]
-name = "sappho-ast-reduced"
+name = "sappho-ast-old-reduced"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
