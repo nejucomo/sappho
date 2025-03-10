@@ -3,6 +3,7 @@ use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::r#let::Let;
+use crate::r#match::Match;
 use crate::{Application, Expression, ObjectDef};
 
 /// The common expression subset for all effects and richness-vs-reduction
@@ -16,6 +17,7 @@ where
     Application(Application<X>),
     ObjectDef(ObjectDef<X>),
     Let(Let<X>),
+    Match(Match<X>),
 }
 
 impl<X> Unparse for Kernel<X>
@@ -31,6 +33,7 @@ where
             Application(x) => x.unparse_into(s),
             ObjectDef(x) => x.unparse_into(s),
             Let(x) => x.unparse_into(s),
+            Match(x) => x.unparse_into(s),
         }
     }
 }

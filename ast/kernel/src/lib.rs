@@ -22,6 +22,7 @@ mod expr;
 mod funcdef;
 mod kernel;
 pub mod r#let;
+pub mod r#match;
 mod objectdef;
 mod pattern;
 pub mod proc;
