@@ -2,7 +2,7 @@ use sappho_identifier::RcId;
 use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::Application;
+use crate::{Application, ObjectDef};
 
 /// The common expression subset for all effects and richness-vs-reduction
 #[derive(Debug, derive_more::From)]
@@ -13,10 +13,7 @@ where
     Prim(PrimVal),
     Ref(RcId),
     Application(Application<R>),
-    // Let,
-    // Lookup,
-    // Match,
-    // Object,
+    ObjectDef(ObjectDef<R>),
 }
 
 impl<R> Unparse for Kernel<R>
@@ -30,6 +27,7 @@ where
             Prim(x) => x.unparse_into(s),
             Ref(x) => x.unparse_into(s),
             Application(x) => x.unparse_into(s),
+            ObjectDef(x) => x.unparse_into(s),
         }
     }
 }
