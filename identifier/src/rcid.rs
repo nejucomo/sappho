@@ -2,10 +2,13 @@ use std::borrow::Borrow;
 use std::fmt;
 use std::rc::Rc;
 
+use chumsky::{text, Parser as _};
 use derive_more::From;
+use sappho_parsable::error::ChumskyError;
+use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::Unparse;
 
-use crate::{IdentRef, Identifier};
+use crate::{IdentRef, Identifier, InvalidIdentifier};
 
 #[derive(Clone, Debug, From, Eq, Ord, PartialEq, PartialOrd)]
 #[from(Identifier)]
@@ -60,6 +63,17 @@ impl AsRef<str> for RcId {
     fn as_ref(&self) -> &str {
         let id: &IdentRef = self.as_ref();
         id.as_str()
+    }
+}
+
+impl Parsable for RcId {
+    fn parser() -> impl Parser<Self> {
+        text::ident().try_map(|ident, span| {
+            let rcid = RcId::try_from(ident)
+                .map_err(|e: InvalidIdentifier| ChumskyError::custom(span, e.to_string()))?;
+
+            Ok(rcid)
+        })
     }
 }
 

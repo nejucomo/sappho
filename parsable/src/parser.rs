@@ -4,7 +4,9 @@ use sappho_source::{LoadSource, SourceCode};
 use crate::error::{ChumskyError, Error, ParseError};
 use crate::primitive::space;
 
-pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyError> {
+pub trait Parser<Output>:
+    Sized + Clone + chumsky::Parser<char, Output, Error = ChumskyError>
+{
     fn load_and_parse<L, C>(&self, loadable: L) -> Result<Output, Error>
     where
         L: LoadSource<C>,
@@ -24,7 +26,7 @@ pub trait Parser<Output>: Sized + chumsky::Parser<char, Output, Error = ChumskyE
     }
 }
 
-impl<P, O> Parser<O> for P where P: chumsky::Parser<char, O, Error = ChumskyError> {}
+impl<P, O> Parser<O> for P where P: chumsky::Parser<char, O, Error = ChumskyError> + Clone {}
 
 // helper code
 fn parse_source<C, P, O>(parser: P, sc: SourceCode<C>) -> Result<O, ParseError>

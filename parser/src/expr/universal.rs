@@ -1,11 +1,12 @@
 use crate::error::BareError;
-use chumsky::{text, Parser};
+use chumsky::{text, Parser as _};
 use sappho_ast::ProcExpr;
 use sappho_ast_core::Literal;
 use sappho_identifier::RcId;
+use sappho_parsable::{Parsable, Parser};
 use std::str::FromStr;
 
-pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError> {
+pub(super) fn universal_expr() -> impl Parser<ProcExpr> {
     use sappho_ast_core::CoreExpr::{Lit, Ref};
 
     identifier()
@@ -14,30 +15,15 @@ pub(super) fn universal_expr() -> impl Parser<char, ProcExpr, Error = BareError>
         .map(ProcExpr::from)
 }
 
-pub(super) fn identifier() -> impl Parser<char, RcId, Error = BareError> + Clone {
-    use sappho_keyword::Keyword;
-
-    text::ident().try_map(|ident, span| {
-        for kw in Keyword::each() {
-            if ident == kw.as_str() {
-                return Err(BareError::custom(
-                    span,
-                    format!("Keyword {:?} cannot be used as an identifier.", kw.as_str()),
-                ));
-            }
-        }
-
-        let rcid = RcId::try_from(ident).map_err(|e| BareError::custom(span, e.to_string()))?;
-
-        Ok(rcid)
-    })
+pub(super) fn identifier() -> impl Parser<RcId> {
+    RcId::parser()
 }
 
-pub(super) fn literal() -> impl Parser<char, Literal, Error = BareError> {
+pub(super) fn literal() -> impl Parser<Literal> {
     number().map(Literal::Num).labelled("literal")
 }
 
-fn number() -> impl Parser<char, f64, Error = BareError> {
+fn number() -> impl Parser<f64> {
     use chumsky::primitive::filter;
 
     let disallowed_trailing_char = filter(|&c: &char| c.is_alphabetic() || c.is_control())
