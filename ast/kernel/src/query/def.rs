@@ -1,13 +1,14 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::QueryExpr;
+use crate::query::QueryExpr;
+use crate::Recursion;
 
 /// # Todo
 ///
 /// Change grammar to require parens around definition, ie: query ( $x ), or perhaps have a confined expression?
 #[derive(Debug, derive_more::From)]
 #[from(QueryExpr<R>)]
-pub struct QueryDef<R>(Box<QueryExpr<R>>)
+pub struct QueryDef<R>(Recursion<QueryExpr<R>>)
 where
     R: Unparse;
 

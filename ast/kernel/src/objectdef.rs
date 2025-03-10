@@ -1,10 +1,9 @@
 use sappho_object::Object;
 use sappho_unparse::Unparse;
 
-use crate::{FuncDef, QueryDef};
-
-// TODO:
-type ProcDef<T> = QueryDef<T>;
+use crate::proc::ProcDef;
+use crate::query::QueryDef;
+use crate::FuncDef;
 
 #[derive(Debug, derive_more::From)]
 pub struct ObjectDef<R>(Object<FuncDef<R>, QueryDef<R>, ProcDef<R>, R>)

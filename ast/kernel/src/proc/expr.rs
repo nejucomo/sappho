@@ -1,6 +1,7 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{QueryExpr, Recursion};
+use crate::query::QueryExpr;
+use crate::Recursion;
 
 /// An expression which may contain proc or query effects
 #[derive(Debug, derive_more::From)]
