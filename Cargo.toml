@@ -6,6 +6,7 @@ members = [
   "ast/effect",
   "ast/fuzz",
   "ast/kernel",
+  "ast/red",
   "ast/reduced",
   "attrs",
   "cli",
@@ -52,6 +53,7 @@ sappho-ast-effect = { path = "ast/effect" }
 sappho-ast-fuzz = { path = "ast/fuzz" }
 sappho-ast-kernel = { path = "ast/kernel" }
 sappho-ast = { path = "ast/ast" }
+sappho-ast-red = { path = "ast/red" }
 sappho-ast-reduced = { path = "ast/reduced" }
 sappho-attrs = { path = "attrs" }
 sappho-cli = { path = "cli" }
