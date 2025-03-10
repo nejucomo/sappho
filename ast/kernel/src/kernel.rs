@@ -4,7 +4,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::r#let::Let;
 use crate::r#match::Match;
-use crate::{Application, Expression, ObjectDef};
+use crate::{Application, Expression, Lookup, ObjectDef};
 
 /// The common expression subset for all effects and richness-vs-reduction
 #[derive(Debug, derive_more::From)]
@@ -14,8 +14,9 @@ where
 {
     Prim(PrimVal),
     Ref(RcId),
-    Application(Application<X>),
     ObjectDef(ObjectDef<X>),
+    Application(Application<X>),
+    Lookup(Lookup<X>),
     Let(Let<X>),
     Match(Match<X>),
 }
@@ -30,8 +31,9 @@ where
         match self {
             Prim(x) => x.unparse_into(s),
             Ref(x) => x.unparse_into(s),
-            Application(x) => x.unparse_into(s),
             ObjectDef(x) => x.unparse_into(s),
+            Application(x) => x.unparse_into(s),
+            Lookup(x) => x.unparse_into(s),
             Let(x) => x.unparse_into(s),
             Match(x) => x.unparse_into(s),
         }
