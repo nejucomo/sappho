@@ -1,18 +1,19 @@
 use sappho_unparse::Unparse;
 
 use crate::proc::Statements;
+use crate::Expression;
 
 #[derive(Debug, derive_more::From)]
-pub struct ProcDef<R>
+pub struct ProcDef<X>
 where
-    R: Unparse,
+    X: Expression,
 {
-    body: Statements<R>,
+    body: Statements<X>,
 }
 
-impl<R> Unparse for ProcDef<R>
+impl<X> Unparse for ProcDef<X>
 where
-    R: Unparse,
+    X: Expression,
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
         use sappho_unparse::Brackets::Squiggle;

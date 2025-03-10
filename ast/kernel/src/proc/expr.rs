@@ -1,22 +1,22 @@
 use sappho_unparse::{Stream, Unparse};
 
 use crate::query::QueryExpr;
-use crate::Recursion;
+use crate::{Expression, Recursion};
 
 /// An expression which may contain proc or query effects
 #[derive(Debug, derive_more::From)]
-pub enum ProcExpr<U>
+pub enum ProcExpr<X>
 where
-    U: Unparse,
+    X: Expression,
 {
-    QueryExpr(QueryExpr<U>),
+    QueryExpr(QueryExpr<X>),
     /// An invoke operation expression: `!x`
-    Invocation(Recursion<U>),
+    Invocation(Recursion<X>),
 }
 
-impl<U> Unparse for ProcExpr<U>
+impl<X> Unparse for ProcExpr<X>
 where
-    U: Unparse,
+    X: Expression,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use ProcExpr::*;

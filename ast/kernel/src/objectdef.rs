@@ -3,16 +3,16 @@ use sappho_unparse::Unparse;
 
 use crate::proc::ProcDef;
 use crate::query::QueryDef;
-use crate::FuncDef;
+use crate::{Expression, FuncDef};
 
 #[derive(Debug, derive_more::From)]
-pub struct ObjectDef<R>(Object<FuncDef<R>, QueryDef<R>, ProcDef<R>, R>)
+pub struct ObjectDef<X>(Object<FuncDef<X>, QueryDef<X>, ProcDef<X>, X>)
 where
-    R: Unparse;
+    X: Expression;
 
-impl<R> Unparse for ObjectDef<R>
+impl<X> Unparse for ObjectDef<X>
 where
-    R: Unparse,
+    X: Expression,
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
         s.write(&self.0);

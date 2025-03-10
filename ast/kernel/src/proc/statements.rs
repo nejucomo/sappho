@@ -1,21 +1,21 @@
 use sappho_unparse::{Stream, Unparse};
 
 use crate::proc::ProcExpr;
-use crate::Recursion;
+use crate::{Expression, Recursion};
 
 use self::Statements::*;
 
 #[derive(Debug)]
-pub enum Statements<R>
+pub enum Statements<X>
 where
-    R: Unparse,
+    X: Expression,
 {
-    Return(Recursion<ProcExpr<R>>),
+    Return(Recursion<ProcExpr<X>>),
 }
 
-impl<R> Unparse for Statements<R>
+impl<X> Unparse for Statements<X>
 where
-    R: Unparse,
+    X: Expression,
 {
     fn unparse_into(&self, s: &mut Stream) {
         match self {

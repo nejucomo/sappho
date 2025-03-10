@@ -1,5 +1,8 @@
 use crate::{Break, Stream};
 
+/// # TODO
+///
+/// Extend [std::fmt::Debug]
 pub trait Unparse {
     fn unparse(&self) -> Stream {
         let mut s = Stream::new();

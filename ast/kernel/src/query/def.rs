@@ -1,20 +1,20 @@
 use sappho_unparse::{Stream, Unparse};
 
 use crate::query::QueryExpr;
-use crate::Recursion;
+use crate::{Expression, Recursion};
 
 /// # Todo
 ///
 /// Change grammar to require parens around definition, ie: query ( $x ), or perhaps have a confined expression?
 #[derive(Debug, derive_more::From)]
-#[from(QueryExpr<R>)]
-pub struct QueryDef<R>(Recursion<QueryExpr<R>>)
+#[from(QueryExpr<X>)]
+pub struct QueryDef<X>(Recursion<QueryExpr<X>>)
 where
-    R: Unparse;
+    X: Expression;
 
-impl<R> Unparse for QueryDef<R>
+impl<X> Unparse for QueryDef<X>
 where
-    R: Unparse,
+    X: Expression,
 {
     fn unparse_into(&self, s: &mut Stream) {
         s.write("query ");

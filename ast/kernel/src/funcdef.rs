@@ -1,29 +1,24 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::Recursion;
+use crate::{Expression, Pattern, Recursion};
 
 #[derive(Debug, derive_new::new)]
-pub struct FuncDef<R>
+pub struct FuncDef<X>
 where
-    R: Unparse,
+    X: Expression,
 {
-    binding: (),
-    body: Recursion<R>,
+    binding: Pattern<X>,
+    body: Recursion<X>,
 }
 
-impl<R> Unparse for FuncDef<R>
+impl<X> Unparse for FuncDef<X>
 where
-    R: Unparse,
+    X: Expression,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        dbg!(self.binding);
-
         s.write("fn ");
-        // s.write(&self.binding);
-        s.write("FIXME: implement patterns");
+        s.write(&self.binding);
         s.write(" -> ");
         s.write(&self.body);
-
-        todo!("implement patterns");
     }
 }
