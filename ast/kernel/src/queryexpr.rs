@@ -2,9 +2,9 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::{Kernel, Recursion};
 
-/// A [QueryX] is an expression with query effects
+/// An expression which may contain query effects
 #[derive(Debug, derive_more::From)]
-pub enum QueryX<U>
+pub enum QueryExpr<U>
 where
     U: Unparse,
 {
@@ -13,12 +13,12 @@ where
     Inquiry(Recursion<U>),
 }
 
-impl<U> Unparse for QueryX<U>
+impl<U> Unparse for QueryExpr<U>
 where
     U: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use QueryX::*;
+        use QueryExpr::*;
 
         match self {
             Kernel(x) => x.unparse_into(s),

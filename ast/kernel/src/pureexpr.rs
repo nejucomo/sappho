@@ -4,15 +4,15 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::Kernel;
 
-/// A [PureX] is an expression without effects
+/// An expression without effects
 #[derive(Debug, derive_more::From)]
-pub struct PureX<U>(Kernel<U>)
+pub struct PureExpr<U>(Kernel<U>)
 where
-    U: Unparse + From<PureX<U>>;
+    U: Unparse + From<PureExpr<U>>;
 
-impl<U> Unparse for PureX<U>
+impl<U> Unparse for PureExpr<U>
 where
-    U: Unparse + From<PureX<U>>,
+    U: Unparse + From<PureExpr<U>>,
 {
     fn unparse_into(&self, s: &mut Stream) {
         self.0.unparse_into(s)
