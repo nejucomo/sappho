@@ -10,7 +10,7 @@ where
 {
     Kernel(Kernel<U>),
     /// An inquire operation expression: `$x`
-    Inquire(Recursion<U>),
+    Inquiry(Recursion<U>),
 }
 
 impl<U> Unparse for QueryX<U>
@@ -22,7 +22,7 @@ where
 
         match self {
             Kernel(x) => x.unparse_into(s),
-            Inquire(x) => x.unparse_into(s),
+            Inquiry(x) => x.unparse_into(s),
         }
     }
 }
