@@ -1,17 +1,23 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Kernel, Root};
+use crate::{Confined, Kernel};
 
 /// A [QueryX] is an expression with query effects
 #[derive(Debug, derive_more::From)]
-pub enum QueryX {
-    Kernel(Kernel<QueryX>),
-    Inquire(Box<QueryX>),
+pub enum QueryX<U>
+where
+    U: Unparse,
+{
+    Kernel(Kernel<U>),
+    // Syntax mayber-bug: do we want to allow `$$x` rather than requiring `$($x)`?
+    // If so, then `QueryX` would need to extend `Confined` which I think requires passing two params everywhere (then three for proc?)
+    Inquire(Confined<U>),
 }
 
-impl Root for QueryX {}
-
-impl Unparse for QueryX {
+impl<U> Unparse for QueryX<U>
+where
+    U: Unparse,
+{
     fn unparse_into(&self, s: &mut Stream) {
         use QueryX::*;
 

@@ -1,11 +1,11 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Confined, Root};
+use crate::Confined;
 
 #[derive(Debug, derive_new::new)]
 pub struct Application<R>
 where
-    R: Root,
+    R: Unparse,
 {
     target: Confined<R>,
     argument: Confined<R>,
@@ -13,7 +13,7 @@ where
 
 impl<R> Unparse for Application<R>
 where
-    R: Root,
+    R: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         s.write(&self.target);
