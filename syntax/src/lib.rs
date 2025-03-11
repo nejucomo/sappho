@@ -7,6 +7,9 @@ pub mod spanned;
 mod confined;
 mod expr;
 mod funcdef;
+mod parens;
+mod pattern;
+mod procexpr;
 mod restrict;
 
 use derive_more::From;
