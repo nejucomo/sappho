@@ -25,6 +25,14 @@ pub trait Parser<Output>:
         self.try_map(move |v, span| f(v).map_err(|e| ChumskyError::custom(span, e)))
     }
 
+    fn err_ez<O, E>(self, error: E) -> impl Parser<O>
+    where
+        E: ToString,
+    {
+        let errmsg = error.to_string();
+        self.try_map_ez::<_, O, _>(move |_| Err(errmsg.clone()))
+    }
+
     fn then_space(self) -> impl Parser<Output> {
         self.then_ignore(space())
     }

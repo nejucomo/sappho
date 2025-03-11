@@ -40,15 +40,13 @@ impl TryFrom<ProcEffect> for PureEffect {
 /// This is subtle: we need to construct the parser for general code, but it always produces a value, since [PureEffect] is a phantom type.
 impl Parsable for PureEffect {
     fn parser() -> impl Parser<Self> {
-        const ERROR_MSG: &str = indoc! {
+        empty().err_ez(indoc! {
             r#"
             Internal Parser bug: an attempt was made to parse the "pure
             effect" which is a phantom type; there is no such thing in
             the sappho syntax
             "#
-        };
-
-        empty().try_map(|(), span| Err(ChumskyError::custom(span, ERROR_MSG)))
+        })
     }
 }
 

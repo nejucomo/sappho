@@ -68,12 +68,7 @@ impl AsRef<str> for RcId {
 
 impl Parsable for RcId {
     fn parser() -> impl Parser<Self> {
-        text::ident().try_map(|ident, span| {
-            let rcid = RcId::try_from(ident)
-                .map_err(|e: InvalidIdentifier| ChumskyError::custom(span, e.to_string()))?;
-
-            Ok(rcid)
-        })
+        text::ident().try_map_ez(RcId::try_from)
     }
 }
 

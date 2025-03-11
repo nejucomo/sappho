@@ -53,18 +53,11 @@ impl Unparse for PrimVal {
 
 fn number() -> impl Parser<f64> {
     let disallowed_trailing_char = filter(|&c: &char| c.is_alphabetic() || c.is_control())
-        .try_map(|c, span| -> Result<(), ChumskyError> {
-            Err(ChumskyError::custom(
-                span,
-                format!("unexpected {:?} in numeric literal", c),
-            ))
-        })
+        .try_map_ez(|c| -> Result<(), _> { Err(format!("unexpected {c:?} in numeric literal")) })
         .or_not();
 
     text::digits(10)
         .then_ignore(disallowed_trailing_char)
-        .try_map(|digs: String, span| {
-            f64::from_str(&digs).map_err(|e| ChumskyError::custom(span, e.to_string()))
-        })
+        .try_map_ez(|digs: String| f64::from_str(&digs))
         .labelled("number")
 }
