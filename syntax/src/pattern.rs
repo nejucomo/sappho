@@ -19,8 +19,8 @@ impl ParsableWith<Recursive<'_, Pattern>> for Pattern {
         RcId::parser()
             .map(Bind)
             .or(PrimVal::parser().map(LitEq))
-            .or(Attrs::parse_with(pattern.clone()).map(Unpack))
-            .or(ListForm::parse_with((pattern, RcId::parser())).map(Unpack))
+            .or(Attrs::parser_with(pattern.clone()).map(Unpack))
+            .or(ListForm::parser_with((pattern, RcId::parser())).map(Unpack))
     }
 }
 

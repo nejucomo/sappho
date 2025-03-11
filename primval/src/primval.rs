@@ -2,7 +2,6 @@ use std::str::FromStr;
 
 use chumsky::primitive::filter;
 use chumsky::{text, Parser as _};
-use sappho_parsable::error::ChumskyError;
 use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::Unparse;
 

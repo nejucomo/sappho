@@ -1,7 +1,5 @@
 use chumsky::prelude::empty;
-use chumsky::Parser as _;
 use indoc::indoc;
-use sappho_parsable::error::ChumskyError;
 use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::{Stream, Unparse};
 

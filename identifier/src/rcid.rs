@@ -2,13 +2,12 @@ use std::borrow::Borrow;
 use std::fmt;
 use std::rc::Rc;
 
-use chumsky::{text, Parser as _};
+use chumsky::text;
 use derive_more::From;
-use sappho_parsable::error::ChumskyError;
 use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::Unparse;
 
-use crate::{IdentRef, Identifier, InvalidIdentifier};
+use crate::{IdentRef, Identifier};
 
 #[derive(Clone, Debug, From, Eq, Ord, PartialEq, PartialOrd)]
 #[from(Identifier)]
