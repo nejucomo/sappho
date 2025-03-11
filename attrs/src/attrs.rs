@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use arrayvec::ArrayVec;
 use either::Either::{self, Left, Right};
 use sappho_identifier::{IdentRef, RcId};
-use sappho_unparse::Unparse;
+use sappho_tfi::TryFromIterator;
 
 use crate::error::AttrsResult;
 use crate::AttrsError;
@@ -19,9 +19,10 @@ impl<T> Attrs<T> {
 
     pub fn define<K>(&mut self, id: K, val: T) -> AttrsResult<()>
     where
-        RcId: From<K>,
+        RcId: TryFrom<K>,
+        AttrsError: From<<RcId as TryFrom<K>>::Error>,
     {
-        let rcid = RcId::from(id);
+        let rcid = RcId::try_from(id)?;
         match self.0.insert(rcid.clone(), val) {
             None => Ok(()),
             Some(_) => Err(AttrsError::Redefinition(rcid)),
@@ -31,7 +32,8 @@ impl<T> Attrs<T> {
     pub fn define_many<I, K>(&mut self, pairs: I) -> AttrsResult<()>
     where
         I: IntoIterator<Item = (K, T)>,
-        RcId: From<K>,
+        RcId: TryFrom<K>,
+        AttrsError: From<<RcId as TryFrom<K>>::Error>,
     {
         for (k, v) in pairs {
             self.define(k, v)?;
@@ -73,18 +75,20 @@ impl<T> Attrs<T> {
     pub fn unpack<K, const N: usize>(mut self, keys: [K; N]) -> Either<[T; N], Self>
     where
         T: std::fmt::Debug,
-        RcId: From<K>,
+        RcId: TryFrom<K>,
+        AttrsError: From<<RcId as TryFrom<K>>::Error>,
     {
         let mut av = ArrayVec::default();
         for key in keys {
-            let rcid = RcId::from(key);
-            match self.take::<&RcId>(&rcid) {
-                Ok(v) => av.push((rcid, v)),
-                Err(_) => {
-                    // Unwind mutations:
-                    self.define_many::<_, RcId>(av).unwrap();
-                    return Right(self);
-                }
+            if let Some(pair) = RcId::try_from(key)
+                .ok()
+                .and_then(|rcid| self.take::<&RcId>(&rcid).ok().map(|v| (rcid, v)))
+            {
+                av.push(pair);
+            } else {
+                // Unwind mutations:
+                self.define_many::<_, RcId>(av).unwrap();
+                return Right(self);
             }
         }
 
@@ -147,11 +151,25 @@ impl<T> Default for Attrs<T> {
     }
 }
 
+impl<S, T> TryFromIterator<(S, T)> for Attrs<T>
+where
+    RcId: TryFrom<S>,
+    AttrsError: From<<RcId as TryFrom<S>>::Error>,
+{
+    type Error = AttrsError;
+
+    fn try_append(mut self, (id, val): (S, T)) -> Result<Self, Self::Error> {
+        self.define(id, val)?;
+        Ok(self)
+    }
+}
+
 impl<S, T> FromIterator<(S, T)> for Attrs<T>
 where
     RcId: From<S>,
 {
     fn from_iter<I: IntoIterator<Item = (S, T)>>(iter: I) -> Self {
+        // BUG: does not check for duplicates; no error signal
         Attrs(iter.into_iter().map(|(s, v)| (RcId::from(s), v)).collect())
     }
 }
@@ -162,29 +180,6 @@ impl<T> IntoIterator for Attrs<T> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
-    }
-}
-
-impl<T> Unparse for Attrs<T>
-where
-    T: Unparse,
-{
-    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
-        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
-
-        if self.0.is_empty() {
-            s.write("{}");
-        } else {
-            s.bracketed(Squiggle, |subs| {
-                for (k, v) in self.iter() {
-                    subs.write(&OptSpace);
-                    subs.write(k);
-                    subs.write(": ");
-                    subs.write(v);
-                    subs.write(",");
-                }
-            });
-        }
     }
 }
 

@@ -17,12 +17,24 @@ pub trait Parser<Output>:
         Ok(parsed)
     }
 
+    fn try_map_ez<F, O, E>(self, f: F) -> impl Parser<O>
+    where
+        F: Clone + Fn(Output) -> Result<O, E>,
+        E: ToString,
+    {
+        self.try_map(move |v, span| f(v).map_err(|e| ChumskyError::custom(span, e)))
+    }
+
     fn then_space(self) -> impl Parser<Output> {
         self.then_ignore(space())
     }
 
     fn then_opt_space(self) -> impl Parser<Output> {
         self.then_ignore(space().or_not())
+    }
+
+    fn opt_space_around(self) -> impl Parser<Output> {
+        space().or_not().ignore_then(self).then_opt_space()
     }
 }
 

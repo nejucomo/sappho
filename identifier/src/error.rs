@@ -2,7 +2,7 @@ use derive_new::new;
 use sappho_keyword::Keyword;
 use thiserror::Error;
 
-#[derive(Debug, Error, new)]
+#[derive(Clone, Debug, Error, new)]
 #[error("Invalid identifier {candidate:?}: {reason}")]
 pub struct InvalidIdentifier {
     pub candidate: String,
@@ -11,7 +11,7 @@ pub struct InvalidIdentifier {
 
 aliri_braid::from_infallible!(InvalidIdentifier);
 
-#[derive(Debug, Error, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Error, Eq, PartialEq)]
 pub enum InvalidityReason {
     #[error("identifiers must have at least one character")]
     Empty,

@@ -23,6 +23,7 @@ members = [
   "rand-dcomp",
   "source",
   "syntax",
+  "tfi",
   "transform",
   "unparse",
   "value",
@@ -71,6 +72,7 @@ sappho-primval = { path = "primval" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
+sappho-tfi = { path = "tfi" }
 sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
