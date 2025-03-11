@@ -10,20 +10,42 @@ use sappho_primval::PrimVal;
 
 use crate::leftassoc::LeftAssoc;
 
+pub type PureExpr = Expr<PureConfined>;
+
 #[derive(Debug)]
-pub enum Expr {
+pub struct PureConfined(Confined<Self>);
+
+pub type QueryExpr = Expr<QueryConfined>;
+
+#[derive(Debug)]
+pub enum QueryConfined {
+    Inquiry(Box<Self>),
+    NoFx(Confined<Self>),
+}
+
+pub type ProcExpr = Expr<ProcConfined>;
+
+#[derive(Debug)]
+pub enum ProcConfined {
+    Invocation(Box<Self>),
+    Inquiry(Box<Self>),
+    NoFx(Confined<Self>),
+}
+
+#[derive(Debug)]
+pub enum Expr<FX> {
     Func(FuncDef),
     Query(QueryDef),
     Proc(ProcDef),
-    Let(Let),
-    Match(Match),
-    Applications(Applications),
+    Let(Let<FX>),
+    Match(Match<FX>),
+    Applications(Applications<FX>),
 }
 
 #[derive(Debug)]
 pub struct FuncDef {
     argpat: Pattern,
-    body: Box<Expr>,
+    body: Box<PureExpr>,
 }
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
@@ -37,66 +59,50 @@ pub enum Pattern {
 #[derive(Debug)]
 pub struct QueryDef(Box<QueryExpr>);
 
-pub type QueryExpr = Expr; // FIXME
-
 #[derive(Debug)]
 pub struct ProcDef(Box<ProcExpr>);
 
-pub type ProcExpr = Expr; // FIXME
-
 #[derive(Debug)]
-pub struct Let {
-    clauses: Vec<LetClause>,
-    inner: Box<Expr>,
+pub struct Let<FX> {
+    clauses: Vec<LetClause<FX>>,
+    inner: Box<Expr<FX>>,
 }
 
 #[derive(Debug)]
-pub struct LetClause {
+pub struct LetClause<FX> {
     binding: Pattern,
-    definition: Box<Expr>,
+    definition: Box<Expr<FX>>,
 }
 
 #[derive(Debug)]
-pub struct Match {
-    candidate: Box<Expr>,
-    clauses: Vec<MatchClause>,
+pub struct Match<FX> {
+    candidate: Box<Expr<FX>>,
+    clauses: Vec<MatchClause<FX>>,
 }
 
 #[derive(Debug)]
-pub struct MatchClause {
+pub struct MatchClause<FX> {
     binding: Pattern,
-    consequent: Box<Expr>,
+    consequent: Box<Expr<FX>>,
 }
 
 #[derive(Debug)]
-pub struct Applications(LeftAssoc<Lookups, Lookups>);
+pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Lookups<FX>>);
 
 #[derive(Debug, derive_more::From)]
-pub struct Lookups(LeftAssoc<Confined, Lookup>);
+pub struct Lookups<FX>(LeftAssoc<FX, Lookup>);
 
 #[derive(Debug, derive_more::From)]
 pub struct Lookup(RcId);
 
 #[derive(Debug, derive_more::From)]
-pub enum Confined {
+pub enum Confined<FX> {
     Ref(RcId),
     Prim(PrimVal),
-    Parens(ParensExpr),
-    ObjectDef(Object<FuncDef, QueryDef, ProcDef, Expr>),
-    ListExpr(ListForm<Expr, Box<Expr>>),
-}
-
-#[derive(Debug)]
-pub struct QConfined {
-    is_inquiry: bool,
-    inner: Confined,
+    Parens(ParensExpr<FX>),
+    ObjectDef(Object<FuncDef, QueryDef, ProcDef, Expr<FX>>),
+    ListExpr(ListForm<Expr<FX>, Box<Expr<FX>>>),
 }
 
 #[derive(Debug, derive_more::From)]
-pub struct PConfined {
-    is_invocation: bool,
-    inner: QConfined,
-}
-
-#[derive(Debug, derive_more::From)]
-pub struct ParensExpr(Box<Expr>);
+pub struct ParensExpr<FX>(Box<Expr<FX>>);
