@@ -1,5 +1,5 @@
 [package]
-name = "sappho-ast-red"
+name = "sappho-syntax"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -8,6 +8,10 @@ homepage.workspace = true
 [dependencies]
 chumsky.workspace = true
 derive_more.workspace = true
-sappho-ast-kernel.workspace = true
+sappho-attrs.workspace = true
+sappho-identifier.workspace = true
 sappho-parsable.workspace = true
+sappho-primval.workspace = true
 sappho-unparse.workspace = true
+sappho-listform.workspace = true
+sappho-object.workspace = true

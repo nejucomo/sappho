@@ -1,4 +1,5 @@
 use sappho_identifier::RcId;
+use sappho_parsable::{ParsableWith, Parser, Recursive};
 use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
@@ -19,6 +20,15 @@ where
     Lookup(Lookup<X>),
     Let(Let<X>),
     Match(Match<X>),
+}
+
+impl<X> ParsableWith<Recursive<'_, X>> for Kernel<X>
+where
+    X: Expression,
+{
+    fn make_parser_with(rec: Recursive<'_, X>) -> impl Parser<Self> {
+        xxx
+    }
 }
 
 impl<X> Unparse for Kernel<X>

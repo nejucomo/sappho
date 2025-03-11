@@ -8,6 +8,7 @@ pub struct Lookup<X>
 where
     X: Expression,
 {
+    #[new(into)]
     origin: Recursion<X>,
     attr: RcId,
 }

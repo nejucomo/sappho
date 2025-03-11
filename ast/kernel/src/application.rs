@@ -7,7 +7,9 @@ pub struct Application<R>
 where
     R: Unparse,
 {
+    #[new(into)]
     target: Recursion<R>,
+    #[new(into)]
     argument: Recursion<R>,
 }
 
