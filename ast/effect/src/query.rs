@@ -1,6 +1,8 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::Effect;
+use crate::{Effect, EffectDescription, ProcEffect};
+
+use self::QueryEffect::Inquire;
 
 /// The query effect reads mutable memory.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -9,14 +11,33 @@ pub enum QueryEffect {
     Inquire,
 }
 
-impl Effect for QueryEffect {}
+impl Effect for QueryEffect {
+    fn context() -> &'static str {
+        "query"
+    }
+
+    fn description(self) -> EffectDescription {
+        EffectDescription {
+            sigil: "$",
+            noun: "inquiry",
+            verb: "inquire-of",
+        }
+    }
+}
+
+impl TryFrom<ProcEffect> for QueryEffect {
+    type Error = ProcEffect;
+
+    fn try_from(pfx: ProcEffect) -> Result<Self, Self::Error> {
+        match pfx {
+            ProcEffect::Inquire => Ok(Inquire),
+            other => Err(other),
+        }
+    }
+}
 
 impl Unparse for QueryEffect {
     fn unparse_into(&self, s: &mut Stream) {
-        use QueryEffect::*;
-
-        s.write(match self {
-            Inquire => "$",
-        });
+        s.write(self.sigil());
     }
 }

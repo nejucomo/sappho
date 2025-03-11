@@ -8,6 +8,37 @@ pub struct LeftAssoc<L, R> {
     rights: Vec<R>,
 }
 
+impl<L, R> LeftAssoc<L, R> {
+    pub fn map_left<ML, L2>(self, map_left: ML) -> LeftAssoc<L2, R>
+    where
+        ML: FnOnce(L) -> L2,
+    {
+        LeftAssoc {
+            left: map_left(self.left),
+            rights: self.rights,
+        }
+    }
+
+    pub fn try_map<ML, MR, L2, R2, E>(
+        self,
+        map_left: ML,
+        map_right: MR,
+    ) -> Result<LeftAssoc<L2, R2>, E>
+    where
+        ML: FnOnce(L) -> Result<L2, E>,
+        MR: Fn(R) -> Result<R2, E>,
+    {
+        let left = map_left(self.left)?;
+        let rights = self
+            .rights
+            .into_iter()
+            .map(map_right)
+            .collect::<Result<_, _>>()?;
+
+        Ok(LeftAssoc { left, rights })
+    }
+}
+
 impl<L, R, T> ParsableWith<T> for LeftAssoc<L, R>
 where
     L: ParsableWith<T>,

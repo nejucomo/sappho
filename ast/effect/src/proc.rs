@@ -1,6 +1,8 @@
 use sappho_unparse::{Stream, Unparse};
 
-use crate::Effect;
+use crate::{Effect, EffectDescription, QueryEffect};
+
+use self::ProcEffect::*;
 
 /// A proc effect can either be a mutation or a query effect.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -12,15 +14,25 @@ pub enum ProcEffect {
     Invoke,
 }
 
-impl Effect for ProcEffect {}
+impl Effect for ProcEffect {
+    fn context() -> &'static str {
+        "proc"
+    }
+
+    fn description(self) -> EffectDescription {
+        match self {
+            Inquire => QueryEffect::Inquire.description(),
+            Invoke => EffectDescription {
+                sigil: "!",
+                noun: "invocation",
+                verb: "invoke",
+            },
+        }
+    }
+}
 
 impl Unparse for ProcEffect {
     fn unparse_into(&self, s: &mut Stream) {
-        use ProcEffect::*;
-
-        s.write(match self {
-            Inquire => "$",
-            Invoke => "!",
-        });
+        s.write(self.description().sigil);
     }
 }
