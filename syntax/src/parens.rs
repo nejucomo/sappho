@@ -1,31 +1,26 @@
 use chumsky::Parser as _;
-use sappho_identifier::RcId;
-use sappho_parsable::{Parsable, Parser};
-use sappho_primval::PrimVal;
+use sappho_ast_effect::Effect;
+use sappho_parsable::primitive::bracketed;
+use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::Parens;
+use crate::procexpr::ProcExprParser;
+use crate::ParensExpr;
 
-impl<FX> Parsable for Parens<FX>
+impl<FX> ParsableWith<ProcExprParser<'_>> for ParensExpr<FX>
 where
-    FX: Parsable,
+    FX: Effect,
 {
-    fn parser() -> impl Parser<Self> {
-        xxx
+    fn make_parser_with(rec: ProcExprParser<'_>) -> impl Parser<Self> {
+        bracketed(['(', ')'], Box::parser_with(rec)).map(ParensExpr)
     }
 }
 
-impl<FX> Unparse for Parens<FX>
+impl<FX> Unparse for ParensExpr<FX>
 where
     FX: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        match self {
-            Ref(x) => x.unparse_into(s),
-            Prim(x) => x.unparse_into(s),
-            Parens(x) => x.unparse_into(s),
-            ObjectDef(x) => x.unparse_into(s),
-            ListExpr(x) => x.unparse_into(s),
-        }
+        self.0.unparse_into(s)
     }
 }

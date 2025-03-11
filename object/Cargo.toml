@@ -6,7 +6,10 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+chumsky.workspace = true
 derive-new.workspace = true
 sappho-attrs.workspace = true
 sappho-identifier.workspace = true
+sappho-parsable.workspace = true
+sappho-tfi.workspace = true
 sappho-unparse.workspace = true

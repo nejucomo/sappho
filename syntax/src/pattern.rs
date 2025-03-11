@@ -4,7 +4,7 @@ use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_parsable::{Parsable, ParsableWith, Parser, Recursive};
 use sappho_primval::PrimVal;
-use sappho_unparse::Unparse;
+use sappho_unparse::{Stream, Unparse};
 
 use crate::Pattern::{self, *};
 
@@ -20,7 +20,7 @@ impl ParsableWith<Recursive<'_, Pattern>> for Pattern {
             .map(Bind)
             .or(PrimVal::parser().map(LitEq))
             .or(Attrs::parser_with(pattern.clone()).map(Unpack))
-            .or(ListForm::parser_with((pattern, RcId::parser())).map(Unpack))
+            .or(ListForm::parser_with((pattern, RcId::parser())).map(List))
     }
 }
 

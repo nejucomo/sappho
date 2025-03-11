@@ -1,6 +1,11 @@
+use chumsky::prelude::just;
+use chumsky::Parser as _;
 use derive_new::new;
 
 use sappho_attrs::Attrs;
+use sappho_parsable::primitive::bracketed;
+use sappho_parsable::{ParsableWith, Parser};
+use sappho_tfi::TryFromIterator;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{Element, IntoIter, Unbundled};
@@ -153,38 +158,67 @@ impl<F, Q, P, A> IntoIterator for Object<F, Q, P, A> {
     }
 }
 
+impl<F, Q, P, A> TryFromIterator<Element<F, Q, P, A>> for Object<F, Q, P, A> {
+    type Error = String;
+
+    fn try_append(mut self, elem: Element<F, Q, P, A>) -> Result<Self, Self::Error> {
+        use Element::*;
+
+        fn set_up_to_one<T>(
+            pluralname: &'static str,
+            opt: &mut Option<T>,
+            val: T,
+        ) -> Result<(), String> {
+            if opt.replace(val).is_some() {
+                Err(format!(
+                    "multiple {pluralname} disallowed in object creation"
+                ))
+            } else {
+                Ok(())
+            }
+        }
+
+        match elem {
+            Func(f) => set_up_to_one("funcs", &mut self.f, f).map(|()| self),
+            Query(q) => set_up_to_one("queries", &mut self.q, q).map(|()| self),
+            Proc(p) => set_up_to_one("procs", &mut self.p, p).map(|()| self),
+            Attr(k, v) => self
+                .a
+                .define(k.clone(), v)
+                .map(|()| self)
+                .map_err(|_| format!("duplicate attribute {:?}", k.as_str())),
+        }
+    }
+}
+
 impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>, String> {
     fn from_iter<I>(iter: I) -> Self
     where
         I: IntoIterator<Item = Element<F, Q, P, A>>,
     {
-        use Element::*;
-
         let mut obj = Object::default();
         for elem in iter {
-            match elem {
-                Func(f) => {
-                    if obj.f.replace(f).is_some() {
-                        return Err("multiple funcs disallowed in object creation".to_string());
-                    }
-                }
-                Query(q) => {
-                    if obj.q.replace(q).is_some() {
-                        return Err("multiple queries disallowed in object creation".to_string());
-                    }
-                }
-                Proc(p) => {
-                    if obj.p.replace(p).is_some() {
-                        return Err("multiple procs disallowed in object creation".to_string());
-                    }
-                }
-                Attr(k, v) => obj
-                    .a
-                    .define(k.clone(), v)
-                    .map_err(|_| format!("duplicate attribute {:?}", k.as_str()))?,
-            }
+            obj = obj.try_append(elem)?;
         }
         Ok(obj)
+    }
+}
+
+impl<F, Q, P, A, ParseParam> ParsableWith<ParseParam> for Object<F, Q, P, A>
+where
+    ParseParam: Clone,
+    F: ParsableWith<ParseParam>,
+    Q: ParsableWith<ParseParam>,
+    P: ParsableWith<ParseParam>,
+    A: ParsableWith<ParseParam>,
+{
+    fn make_parser_with(param: ParseParam) -> impl Parser<Self> {
+        bracketed(
+            ['{', '}'],
+            Element::parser_with(param)
+                .separated_by(just(',').opt_space_around())
+                .try_map_ez(Object::try_from_iterator),
+        )
     }
 }
 

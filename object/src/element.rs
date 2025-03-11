@@ -1,5 +1,10 @@
+use chumsky::prelude::just;
+use chumsky::Parser as _;
 use sappho_identifier::RcId;
+use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
+
+use self::Element::*;
 
 #[derive(Debug)]
 pub enum Element<F, Q, P, A> {
@@ -9,7 +14,38 @@ pub enum Element<F, Q, P, A> {
     Attr(RcId, A),
 }
 
-impl<'a, F, Q, P, A> Unparse for Element<&'a F, &'a Q, &'a P, &'a A>
+impl<F, Q, P, A> Element<F, Q, P, A> {
+    pub fn as_refs(&self) -> Element<&F, &Q, &P, &A> {
+        match self {
+            Func(f) => Func(f),
+            Query(q) => Query(q),
+            Proc(p) => Proc(p),
+            Attr(id, a) => Attr(id.clone(), a),
+        }
+    }
+}
+
+impl<F, Q, P, A, ParseParam> ParsableWith<ParseParam> for Element<F, Q, P, A>
+where
+    ParseParam: Clone,
+    F: ParsableWith<ParseParam>,
+    Q: ParsableWith<ParseParam>,
+    P: ParsableWith<ParseParam>,
+    A: ParsableWith<ParseParam>,
+{
+    fn make_parser_with(param: ParseParam) -> impl Parser<Self> {
+        F::parser_with(param.clone())
+            .map(Func)
+            .or(Q::parser_with(param.clone()).map(Query))
+            .or(P::parser_with(param.clone()).map(Proc))
+            .or(RcId::parser()
+                .then_ignore(just(':').opt_space_around())
+                .then(A::parser_with(param))
+                .map(|(id, a)| Attr(id, a)))
+    }
+}
+
+impl<F, Q, P, A> Unparse for Element<F, Q, P, A>
 where
     F: Unparse,
     Q: Unparse,
@@ -17,8 +53,6 @@ where
     A: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
-        use Element::*;
-
         match self {
             Func(f) => f.unparse_into(s),
             Query(q) => q.unparse_into(s),
