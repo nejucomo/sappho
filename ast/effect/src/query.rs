@@ -1,3 +1,6 @@
+use chumsky::prelude::just;
+use chumsky::Parser as _;
+use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{Effect, EffectDescription, ProcEffect};
@@ -33,6 +36,12 @@ impl TryFrom<ProcEffect> for QueryEffect {
             ProcEffect::Inquire => Ok(Inquire),
             other => Err(other),
         }
+    }
+}
+
+impl Parsable for QueryEffect {
+    fn parser() -> impl Parser<Self> {
+        just(Inquire.sigil()).to(Inquire)
     }
 }
 

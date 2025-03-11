@@ -5,7 +5,6 @@ use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::Confined::{self, *};
-use crate::PureEffect;
 
 impl<FX> Parsable for Confined<FX>
 where
@@ -31,17 +30,5 @@ where
             ObjectDef(x) => x.unparse_into(s),
             ListExpr(x) => x.unparse_into(s),
         }
-    }
-}
-
-impl Parsable for PureEffect {
-    fn parser() -> impl Parser<Self> {
-        Confined::parser().map(Self)
-    }
-}
-
-impl Unparse for PureEffect {
-    fn unparse_into(&self, s: &mut Stream) {
-        self.0.unparse_into(s)
     }
 }

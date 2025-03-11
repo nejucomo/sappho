@@ -1,12 +1,10 @@
-use std::fmt::Debug;
-
-use sappho_unparse::Unparse;
+use sappho_parsable::Parsable;
 
 use crate::EffectDescription;
 
 use self::sealed::Sealed;
 
-pub trait Effect: Sealed + Unparse + PartialEq + Copy + Debug {
+pub trait Effect: Sealed + Parsable + PartialEq + Copy {
     /// The context these effects are restricted to occur in
     fn context() -> &'static str;
 

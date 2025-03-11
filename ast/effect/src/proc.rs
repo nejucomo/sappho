@@ -1,3 +1,6 @@
+use chumsky::prelude::just;
+use chumsky::Parser as _;
+use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{Effect, EffectDescription, QueryEffect};
@@ -28,6 +31,14 @@ impl Effect for ProcEffect {
                 verb: "invoke",
             },
         }
+    }
+}
+
+impl Parsable for ProcEffect {
+    fn parser() -> impl Parser<Self> {
+        just(Invoke.sigil())
+            .to(Invoke)
+            .or(just(Inquire.sigil()).to(Inquire))
     }
 }
 
