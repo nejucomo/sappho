@@ -5,17 +5,17 @@ use sappho_parsable::primitive::space;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::procexpr::ProcExprParser;
-use crate::{Expr, FuncDef, Pattern};
+use crate::proc::ProcExprParser;
+use crate::{FuncDef, Pattern, PureExpr};
 
 impl ParsableWith<ProcExprParser<'_>> for FuncDef {
-    fn make_parser_with(expr: ProcExprParser<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
         Fn.parse()
             .then_space()
             .ignore_then(Pattern::parser())
             .then_ignore(just("->").delimited_by(space(), space()))
-            .then(Expr::parser_with(expr))
-            .map(FuncDef::new)
+            .then(PureExpr::parser_with(pep))
+            .map(|(argpat, body)| FuncDef::new(argpat, body))
             .labelled("fn definition")
     }
 }

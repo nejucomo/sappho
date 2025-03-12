@@ -1,24 +1,48 @@
-use sappho_ast_effect::{Effect, EffectDescription};
+use either::Either::{Left, Right};
+use sappho_ast_effect::{Effect, EffectDescription, ProcEffect, PureEffect, QueryEffect};
+use sappho_listform::ListForm;
 use sappho_object::{Element, Object};
 use sappho_parsable::error::{ChumskyError, Span};
 
 use crate::leftassoc::LeftAssoc;
 use crate::spanned::Spanned;
 use crate::{
-    Applications, Confined, EffectExpr, Expr, FuncDef, Let, LetClause, Lookup, Lookups, Match,
-    MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef, QueryExpr,
+    Application, Applications, Confined, EffectExpr, Expr, FuncDef, Let, LetClause, Lookup,
+    Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef, QueryExpr,
 };
 
+// Restriction converts ProcEffects downwards or produces an error. This happens during parsing because it's difficult to parse all three effects recursions directly, so we restrict inside the parser.
 pub(crate) trait RestrictInto<D> {
     fn restrict(self, span: Span) -> Result<D, ChumskyError>;
 }
 
-/// Location tracking in restriction
-impl<FXS, FXD> RestrictInto<Spanned<FXS>> for Spanned<FXD>
+// Restricting effects exprs:
+impl RestrictInto<QueryEffect> for ProcEffect {
+    fn restrict(self, span: Span) -> Result<QueryEffect, ChumskyError> {
+        QueryEffect::try_from(self).map_err(|pfx| make_error(span, QueryEffect::context(), pfx))
+    }
+}
+
+impl RestrictInto<PureEffect> for ProcEffect {
+    fn restrict(self, span: Span) -> Result<PureEffect, ChumskyError> {
+        PureEffect::try_from(self).map_err(|pfx| make_error(span, PureEffect::context(), pfx))
+    }
+}
+
+fn make_error(span: Span, context: &'static str, pfx: ProcEffect) -> ChumskyError {
+    let EffectDescription { noun, sigil, .. } = pfx.description();
+    ChumskyError::custom(
+        span,
+        format!("{noun} {sigil:?} restricted in {context} contexts"),
+    )
+}
+
+// Location tracking in restriction
+impl<T, S> RestrictInto<Spanned<T>> for Spanned<S>
 where
-    FXD: RestrictInto<FXS>,
+    S: RestrictInto<T>,
 {
-    fn restrict(self, _: Span) -> Result<Spanned<FXS>, ChumskyError> {
+    fn restrict(self, _: Span) -> Result<Spanned<T>, ChumskyError> {
         // We shadow the outer span with the new source span:
         self.node
             .restrict(self.span.clone())
@@ -27,12 +51,6 @@ where
 }
 
 // Restricting top-level exprs:
-impl RestrictInto<PureExpr> for QueryExpr {
-    fn restrict(self, span: Span) -> Result<PureExpr, ChumskyError> {
-        self.0.restrict(span).map(PureExpr)
-    }
-}
-
 impl RestrictInto<PureExpr> for ProcExpr {
     fn restrict(self, span: Span) -> Result<PureExpr, ChumskyError> {
         self.0.restrict(span).map(PureExpr)
@@ -45,36 +63,19 @@ impl RestrictInto<QueryExpr> for ProcExpr {
     }
 }
 
-// Restricting effects exprs:
-struct RestrictWrapper<FX>(FX);
-
-impl<FXS, FXD> RestrictInto<FXD> for RestrictWrapper<FXS>
-where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
-{
-    fn restrict(self, span: Span) -> Result<FXD, ChumskyError> {
-        FXD::try_from(self.0).map_err(|sfx| {
-            let context = FXS::context();
-
-            let EffectDescription { noun, sigil, .. } = sfx.description();
-            ChumskyError::custom(
-                span,
-                format!("{noun} {sigil:?} restricted in {context} contexts"),
-            )
-        })
+impl RestrictInto<ProcExpr> for ProcExpr {
+    fn restrict(self, _: Span) -> Result<ProcExpr, ChumskyError> {
+        Ok(self)
     }
 }
 
 // FX-generic restrictions:
-impl<FXS, FXD> RestrictInto<Expr<FXD>> for Expr<FXS>
+impl<FX> RestrictInto<Expr<FX>> for Expr<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<Expr<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<Expr<FX>, ChumskyError> {
         use Expr::*;
 
         match self {
@@ -88,13 +89,12 @@ where
     }
 }
 
-impl<FXS, FXD> RestrictInto<Let<FXD>> for Let<FXS>
+impl<FX> RestrictInto<Let<FX>> for Let<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<Let<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<Let<FX>, ChumskyError> {
         let clauses = self
             .clauses
             .into_iter()
@@ -106,13 +106,12 @@ where
     }
 }
 
-impl<FXS, FXD> RestrictInto<LetClause<FXD>> for LetClause<FXS>
+impl<FX> RestrictInto<LetClause<FX>> for LetClause<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<LetClause<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<LetClause<FX>, ChumskyError> {
         let LetClause {
             binding,
             definition,
@@ -127,13 +126,12 @@ where
     }
 }
 
-impl<FXS, FXD> RestrictInto<Match<FXD>> for Match<FXS>
+impl<FX> RestrictInto<Match<FX>> for Match<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<Match<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<Match<FX>, ChumskyError> {
         let clauses = self
             .clauses
             .into_iter()
@@ -145,13 +143,12 @@ where
     }
 }
 
-impl<FXS, FXD> RestrictInto<MatchClause<FXD>> for MatchClause<FXS>
+impl<FX> RestrictInto<MatchClause<FX>> for MatchClause<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<MatchClause<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<MatchClause<FX>, ChumskyError> {
         let MatchClause {
             binding,
             consequent,
@@ -166,24 +163,32 @@ where
     }
 }
 
-impl<FXS, FXD> RestrictInto<Applications<FXD>> for Applications<FXS>
+impl<FX> RestrictInto<Applications<FX>> for Applications<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<Applications<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<Applications<FX>, ChumskyError> {
         self.0.restrict(span).map(Applications)
     }
 }
 
-impl<FXS, FXD> RestrictInto<Lookups<FXD>> for Lookups<FXS>
+impl<FX> RestrictInto<Application<FX>> for Application<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<Lookups<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<Application<FX>, ChumskyError> {
+        self.0.restrict(span).map(Application)
+    }
+}
+
+impl<FX> RestrictInto<Lookups<FX>> for Lookups<ProcEffect>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
+    fn restrict(self, span: Span) -> Result<Lookups<FX>, ChumskyError> {
         self.0.restrict(span).map(Lookups)
     }
 }
@@ -194,30 +199,28 @@ impl RestrictInto<Lookup> for Lookup {
     }
 }
 
-impl<FXS, FXD> RestrictInto<EffectExpr<FXD>> for EffectExpr<FXS>
+impl<FX> RestrictInto<EffectExpr<FX>> for EffectExpr<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<EffectExpr<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<EffectExpr<FX>, ChumskyError> {
         let effects = self
             .effects
             .into_iter()
-            .map(|fx| RestrictWrapper(fx).restrict(span.clone()))
+            .map(|fx| fx.restrict(span.clone()))
             .collect::<Result<Vec<_>, _>>()?;
         let confined = self.confined.restrict(span)?;
         Ok(EffectExpr { effects, confined })
     }
 }
 
-impl<FXS, FXD> RestrictInto<Confined<FXD>> for Confined<FXS>
+impl<FX> RestrictInto<Confined<FX>> for Confined<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<Confined<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<Confined<FX>, ChumskyError> {
         use Confined::*;
 
         match self {
@@ -225,33 +228,31 @@ where
             Prim(x) => Ok(Prim(x)),
             Parens(x) => x.restrict(span).map(Parens),
             ObjectDef(x) => x.restrict(span).map(ObjectDef),
-            ListExpr(x) => x.restrict_into(span).map(ListExpr),
+            ListExpr(x) => x.restrict(span).map(ListExpr),
         }
     }
 }
 
-impl<FXS, FXD> RestrictInto<ParensExpr<FXD>> for ParensExpr<FXS>
+impl<FX> RestrictInto<ParensExpr<FX>> for ParensExpr<ProcEffect>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<ParensExpr<FXD>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<ParensExpr<FX>, ChumskyError> {
         self.0.restrict(span).map(ParensExpr)
     }
 }
 
-impl<FXS, FXD> RestrictInto<Object<FuncDef, QueryDef, ProcDef, Expr<FXD>>>
-    for Object<FuncDef, QueryDef, ProcDef, Expr<FXS>>
+impl<FX> RestrictInto<Object<FuncDef, QueryDef, ProcDef, Expr<FX>>>
+    for Object<FuncDef, QueryDef, ProcDef, Expr<ProcEffect>>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
     fn restrict(
         self,
         span: Span,
-    ) -> Result<Object<FuncDef, QueryDef, ProcDef, Expr<FXD>>, ChumskyError> {
+    ) -> Result<Object<FuncDef, QueryDef, ProcDef, Expr<FX>>, ChumskyError> {
         self.into_iter()
             .map(|x| x.restrict(span.clone()))
             .collect::<Result<Result<Object<_, _, _, _>, String>, ChumskyError>>()
@@ -259,17 +260,16 @@ where
     }
 }
 
-impl<FXS, FXD> RestrictInto<Element<FuncDef, QueryDef, ProcDef, Expr<FXD>>>
-    for Element<FuncDef, QueryDef, ProcDef, Expr<FXS>>
+impl<FX> RestrictInto<Element<FuncDef, QueryDef, ProcDef, Expr<FX>>>
+    for Element<FuncDef, QueryDef, ProcDef, Expr<ProcEffect>>
 where
-    FXS: Effect,
-    FXD: Effect,
-    FXD: TryFrom<FXS, Error = FXS>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
     fn restrict(
         self,
         span: Span,
-    ) -> Result<Element<FuncDef, QueryDef, ProcDef, Expr<FXD>>, ChumskyError> {
+    ) -> Result<Element<FuncDef, QueryDef, ProcDef, Expr<FX>>, ChumskyError> {
         use Element::*;
 
         match self {
@@ -278,6 +278,24 @@ where
             Proc(x) => Ok(Proc(x)),
             Attr(rc_id, x) => x.restrict(span).map(|x| Attr(rc_id, x)),
         }
+    }
+}
+
+impl<FX> RestrictInto<ListForm<Expr<FX>, Box<Expr<FX>>>>
+    for ListForm<Expr<ProcEffect>, Box<Expr<ProcEffect>>>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
+    fn restrict(self, span: Span) -> Result<ListForm<Expr<FX>, Box<Expr<FX>>>, ChumskyError> {
+        self.into_iter()
+            .map(|ei| {
+                ei.either(
+                    |x| x.restrict(span.clone()).map(Left),
+                    |bx| bx.restrict(span.clone()).map(Right),
+                )
+            })
+            .collect()
     }
 }
 

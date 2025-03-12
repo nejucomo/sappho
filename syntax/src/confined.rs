@@ -1,26 +1,34 @@
 use chumsky::Parser as _;
+use sappho_ast_effect::{Effect, ProcEffect};
 use sappho_identifier::RcId;
-use sappho_parsable::{Parsable, Parser};
+use sappho_listform::ListForm;
+use sappho_object::Object;
+use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
+use crate::proc::ProcExprParser;
 use crate::Confined::{self, *};
+use crate::{Expr, ParensExpr};
 
-impl<FX> Parsable for Confined<FX>
-where
-    FX: Parsable,
-{
-    fn parser() -> impl Parser<Self> {
+impl ParsableWith<ProcExprParser<'_>> for Confined<ProcEffect> {
+    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
         RcId::parser()
             .map(Ref)
             .or(PrimVal::parser().map(Prim))
-            .or(chumsky::primitive::todo())
+            .or(ParensExpr::parser_with(pep.clone()).map(Parens))
+            .or(Object::parser_with(pep.clone()).map(ObjectDef))
+            .or(ListForm::parser_with((
+                Expr::parser_with(pep.clone()),
+                Box::<Expr<ProcEffect>>::parser_with(pep),
+            ))
+            .map(ListExpr))
     }
 }
 
 impl<FX> Unparse for Confined<FX>
 where
-    FX: Unparse,
+    FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
         match self {

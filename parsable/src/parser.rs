@@ -41,6 +41,10 @@ pub trait Parser<Output>:
         self.then_ignore(space().or_not())
     }
 
+    fn space_around(self) -> impl Parser<Output> {
+        space().ignore_then(self).then_space()
+    }
+
     fn opt_space_around(self) -> impl Parser<Output> {
         space().or_not().ignore_then(self).then_opt_space()
     }

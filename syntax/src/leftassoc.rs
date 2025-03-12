@@ -2,7 +2,7 @@ use chumsky::Parser as _;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, derive_more::From, derive_new::new)]
 pub struct LeftAssoc<L, R> {
     left: L,
     rights: Vec<R>,

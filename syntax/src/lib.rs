@@ -4,12 +4,19 @@
 pub mod leftassoc;
 pub mod spanned;
 
+mod applications;
 mod confined;
+mod effectexpr;
 mod expr;
 mod funcdef;
+mod letexpr;
+mod lookups;
+mod matchexpr;
 mod parens;
 mod pattern;
-mod procexpr;
+mod proc;
+mod pureexpr;
+mod query;
 mod restrict;
 
 use derive_more::From;
@@ -35,7 +42,7 @@ pub struct QueryExpr(Spanned<Expr<QueryEffect>>);
 pub struct ProcExpr(Spanned<Expr<ProcEffect>>);
 
 // Potentially effectful expressions:
-#[derive(Debug, new)]
+#[derive(Debug, From, new)]
 pub struct EffectExpr<FX> {
     pub effects: Vec<FX>,
     pub confined: Confined<FX>,
@@ -55,10 +62,11 @@ pub enum Expr<FX> {
 #[derive(Debug, new)]
 pub struct FuncDef {
     argpat: Pattern,
+    #[new(into)]
     body: Box<PureExpr>,
 }
 
-#[derive(Clone, Debug, PartialEq, derive_more::From)]
+#[derive(Clone, Debug, PartialEq, From)]
 pub enum Pattern {
     Bind(RcId),
     LitEq(PrimVal),
@@ -75,17 +83,20 @@ pub struct ProcDef(Box<ProcExpr>);
 #[derive(Debug, new)]
 pub struct Let<FX> {
     clauses: Vec<LetClause<FX>>,
+    #[new(into)]
     inner: Box<Expr<FX>>,
 }
 
 #[derive(Debug, new)]
 pub struct LetClause<FX> {
     binding: Pattern,
+    #[new(into)]
     definition: Box<Expr<FX>>,
 }
 
 #[derive(Debug, new)]
 pub struct Match<FX> {
+    #[new(into)]
     candidate: Box<Expr<FX>>,
     clauses: Vec<MatchClause<FX>>,
 }
@@ -93,19 +104,23 @@ pub struct Match<FX> {
 #[derive(Debug, new)]
 pub struct MatchClause<FX> {
     binding: Pattern,
+    #[new(into)]
     consequent: Box<Expr<FX>>,
 }
 
 #[derive(Debug, From)]
-pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Lookups<FX>>);
+pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>);
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, From)]
+pub struct Application<FX>(Lookups<FX>);
+
+#[derive(Debug, From)]
 pub struct Lookups<FX>(LeftAssoc<EffectExpr<FX>, Lookup>);
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, From)]
 pub struct Lookup(RcId);
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, From)]
 pub enum Confined<FX> {
     Ref(RcId),
     Prim(PrimVal),
@@ -114,5 +129,5 @@ pub enum Confined<FX> {
     ListExpr(ListForm<Expr<FX>, Box<Expr<FX>>>),
 }
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, From)]
 pub struct ParensExpr<FX>(Box<Expr<FX>>);

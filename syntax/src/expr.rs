@@ -1,31 +1,27 @@
 use chumsky::Parser as _;
-use sappho_ast_effect::Effect;
-use sappho_parsable::{Parsable, ParsableWith, Parser, Recursive};
+use sappho_ast_effect::{Effect, ProcEffect};
+use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::procexpr::ProcExprParser;
+use crate::proc::ProcExprParser;
 use crate::Expr::{self, *};
-use crate::{FuncDef, ProcDef, ProcEffect, ProcExpr, QueryDef};
+use crate::{FuncDef, ProcDef, QueryDef};
 
-impl<FX> ParsableWith<ProcExprParser<'_>> for Expr<FX>
-where
-    FX: Effect,
-{
-    fn make_parser_with(expr: ProcExprParser<'_>) -> impl Parser<Self> {
-        FuncDef::parser_with(expr.clone())
+impl ParsableWith<ProcExprParser<'_>> for Expr<ProcEffect> {
+    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+        FuncDef::parser_with(pep.clone())
             .map(Func)
-            .or(QueryDef::parser_with(expr.clone()).map(Query))
-            .or(ProcDef::parser_with(expr.clone()).map(Proc))
-            .or(crate::Let::parser_with(expr.clone()).map(Let))
-            .or(crate::Match::parser_with(expr.clone()).map(Match))
-            .or(crate::Applications::parser_with(expr).map(Applications))
-            .try_map(|proc_expr, span| proc_expr.restrict(span))
+            .or(QueryDef::parser_with(pep.clone()).map(Query))
+            .or(ProcDef::parser_with(pep.clone()).map(Proc))
+            .or(crate::Let::parser_with(pep.clone()).map(Let))
+            .or(crate::Match::parser_with(pep.clone()).map(Match))
+            .or(crate::Applications::parser_with(pep).map(Applications))
     }
 }
 
 impl<FX> Unparse for Expr<FX>
 where
-    FX: Unparse,
+    FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
         match self {
