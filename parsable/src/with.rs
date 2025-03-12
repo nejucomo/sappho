@@ -15,6 +15,7 @@ pub trait ParsableWith<T>: Sized + Unparse + Debug {
     fn make_parser_with(param: T) -> impl Parser<Self>;
 }
 
+// TODO: Remove this if it's unnecessary
 impl<P> Parsable for P
 where
     P: ParsableWith<()>,

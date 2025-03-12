@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use either::Either::{Left, Right};
@@ -9,16 +7,16 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::ListForm;
 
-impl<X, PX, T, PT> ParsableWith<(PX, PT)> for ListForm<X, T>
+impl<X, T, A> ParsableWith<A> for ListForm<X, T>
 where
-    X: Unparse + Debug,
-    T: Unparse + Debug,
-    PX: Parser<X>,
-    PT: Parser<T>,
+    X: ParsableWith<A>,
+    T: ParsableWith<A>,
+    A: Clone,
 {
-    fn make_parser_with((item, tail): (PX, PT)) -> impl Parser<Self> {
-        let tailmatch = || just("..").ignore_then(tail.clone());
-        let nonempty_body = item.separated_by(just(',').then_opt_space());
+    fn make_parser_with(parsearg: A) -> impl Parser<Self> {
+        let tailmatch = || just("..").ignore_then(T::parser_with(parsearg.clone()));
+        let nonempty_body =
+            X::parser_with(parsearg.clone()).separated_by(just(',').then_opt_space());
 
         let nonempty_opt_tail = nonempty_body
             .then(just(',').then_opt_space().ignore_then(tailmatch()).or_not())

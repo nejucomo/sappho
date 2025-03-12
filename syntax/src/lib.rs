@@ -68,11 +68,14 @@ pub struct FuncDef {
 
 #[derive(Clone, Debug, PartialEq, From)]
 pub enum Pattern {
-    Bind(RcId),
+    Bind(BindPattern),
     LitEq(PrimVal),
     Unpack(Attrs<Pattern>),
-    List(ListForm<Pattern, RcId>),
+    List(ListForm<Pattern, BindPattern>),
 }
+
+#[derive(Clone, Debug, PartialEq, From)]
+pub struct BindPattern(RcId);
 
 #[derive(Debug, From)]
 pub struct QueryDef(Box<QueryExpr>);

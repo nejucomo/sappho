@@ -9,7 +9,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::proc::ProcExprParser;
 use crate::Confined::{self, *};
-use crate::{Expr, ParensExpr};
+use crate::ParensExpr;
 
 impl ParsableWith<ProcExprParser<'_>> for Confined<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
@@ -18,11 +18,7 @@ impl ParsableWith<ProcExprParser<'_>> for Confined<ProcEffect> {
             .or(PrimVal::parser().map(Prim))
             .or(ParensExpr::parser_with(pep.clone()).map(Parens))
             .or(Object::parser_with(pep.clone()).map(ObjectDef))
-            .or(ListForm::parser_with((
-                Expr::parser_with(pep.clone()),
-                Box::<Expr<ProcEffect>>::parser_with(pep),
-            ))
-            .map(ListExpr))
+            .or(ListForm::parser_with(pep).map(ListExpr))
     }
 }
 
