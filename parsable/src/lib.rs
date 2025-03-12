@@ -3,6 +3,7 @@ mod intoparser;
 mod parsable;
 mod parser;
 pub mod primitive;
+pub mod spanned;
 mod with;
 
 use crate::error::ChumskyError;

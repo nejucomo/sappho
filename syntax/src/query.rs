@@ -1,13 +1,11 @@
 use chumsky::Parser as _;
-use sappho_ast_effect::ProcEffect;
 use sappho_keyword::Keyword::Query as KwQuery;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::proc::ProcExprParser;
 use crate::restrict::RestrictInto;
-use crate::spanned::Spanned;
-use crate::{Expr, QueryDef, QueryExpr};
+use crate::{ProcExpr, QueryDef, QueryExpr};
 
 impl ParsableWith<ProcExprParser<'_>> for QueryDef {
     fn make_parser_with(proc_expr: ProcExprParser<'_>) -> impl Parser<Self> {
@@ -21,9 +19,7 @@ impl ParsableWith<ProcExprParser<'_>> for QueryDef {
 
 impl ParsableWith<ProcExprParser<'_>> for QueryExpr {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
-        Spanned::parser_with(pep)
-            .try_map(|expr: Spanned<Expr<ProcEffect>>, span| expr.restrict(span))
-            .map(Self)
+        ProcExpr::parser_with(pep).try_map(|px, span| px.restrict(span))
     }
 }
 

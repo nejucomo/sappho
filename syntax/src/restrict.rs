@@ -3,9 +3,9 @@ use sappho_ast_effect::{Effect, EffectDescription, ProcEffect, PureEffect, Query
 use sappho_listform::ListForm;
 use sappho_object::{Element, Object};
 use sappho_parsable::error::{ChumskyError, Span};
+use sappho_parsable::spanned::Spanned;
 
 use crate::leftassoc::LeftAssoc;
-use crate::spanned::Spanned;
 use crate::{
     Application, Applications, Confined, EffectExpr, Expr, FuncDef, Let, LetClause, Lookup,
     Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef, QueryExpr,

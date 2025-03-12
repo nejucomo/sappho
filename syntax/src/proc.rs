@@ -4,8 +4,7 @@ use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{Parsable, ParsableWith, Parser, Recursive};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::spanned::Spanned;
-use crate::{ProcDef, ProcExpr};
+use crate::{Expr, ProcDef, ProcExpr};
 
 impl Parsable for ProcExpr {
     fn parser() -> impl Parser<Self> {
@@ -17,7 +16,7 @@ pub(crate) type ProcExprParser<'a> = Recursive<'a, ProcExpr>;
 
 impl ParsableWith<ProcExprParser<'_>> for ProcExpr {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
-        Spanned::parser_with(pep).map(ProcExpr)
+        Expr::parser_with(pep).spanned().map(ProcExpr)
     }
 }
 

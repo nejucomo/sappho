@@ -3,6 +3,7 @@ use sappho_source::{LoadSource, SourceCode};
 
 use crate::error::{ChumskyError, Error, ParseError};
 use crate::primitive::space;
+use crate::spanned::Spanned;
 
 pub trait Parser<Output>:
     Sized + Clone + chumsky::Parser<char, Output, Error = ChumskyError>
@@ -15,6 +16,10 @@ pub trait Parser<Output>:
         let source = loadable.load().map_err(Error::Load)?;
         let parsed = parse_source(self, source)?;
         Ok(parsed)
+    }
+
+    fn spanned(self) -> impl Parser<Spanned<Output>> {
+        self.map_with_span(Spanned::new)
     }
 
     fn try_map_ez<F, O, E>(self, f: F) -> impl Parser<O>
