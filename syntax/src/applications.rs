@@ -4,13 +4,14 @@ use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::leftassoc::LeftAssoc;
 use crate::proc::ProcExprParser;
 use crate::{Application, Applications, Lookups};
 
 impl ParsableWith<ProcExprParser<'_>> for Applications<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
-        LeftAssoc::parser_with(pep).map(Self)
+        Lookups::parser_with(pep.clone())
+            .left_assoc_then_rights(Application::parser_with(pep))
+            .map(Self)
     }
 }
 

@@ -1,5 +1,6 @@
 pub mod error;
 mod intoparser;
+pub mod leftassoc;
 mod parsable;
 mod parser;
 pub mod primitive;

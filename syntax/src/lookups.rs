@@ -5,18 +5,19 @@ use sappho_identifier::RcId;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::leftassoc::LeftAssoc;
 use crate::proc::ProcExprParser;
-use crate::{Lookup, Lookups};
+use crate::{EffectExpr, Lookup, Lookups};
 
 impl ParsableWith<ProcExprParser<'_>> for Lookups<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
-        LeftAssoc::parser_with(pep).map(Self)
+        EffectExpr::parser_with(pep)
+            .left_assoc_then_rights(Lookup::parser())
+            .map(Self)
     }
 }
 
-impl ParsableWith<ProcExprParser<'_>> for Lookup {
-    fn make_parser_with(_: ProcExprParser<'_>) -> impl Parser<Self> {
+impl Parsable for Lookup {
+    fn parser() -> impl Parser<Self> {
         just('.').ignore_then(RcId::parser()).map(Self)
     }
 }

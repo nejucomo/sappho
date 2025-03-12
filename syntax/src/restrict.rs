@@ -3,9 +3,9 @@ use sappho_ast_effect::{Effect, EffectDescription, ProcEffect, PureEffect, Query
 use sappho_listform::ListForm;
 use sappho_object::{Element, Object};
 use sappho_parsable::error::{ChumskyError, Span};
+use sappho_parsable::leftassoc::LeftAssoc;
 use sappho_parsable::spanned::Spanned;
 
-use crate::leftassoc::LeftAssoc;
 use crate::{
     Application, Applications, Confined, EffectExpr, Expr, FuncDef, Let, LetClause, Lookup,
     Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef, QueryExpr,
@@ -38,11 +38,12 @@ fn make_error(span: Span, context: &'static str, pfx: ProcEffect) -> ChumskyErro
 }
 
 // Location tracking in restriction
-impl<T, S> RestrictInto<Spanned<T>> for Spanned<S>
+impl<FX> RestrictInto<Spanned<Expr<FX>>> for Spanned<Expr<ProcEffect>>
 where
-    S: RestrictInto<T>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, _: Span) -> Result<Spanned<T>, ChumskyError> {
+    fn restrict(self, _: Span) -> Result<Spanned<Expr<FX>>, ChumskyError> {
         // We shadow the outer span with the new source span:
         self.node
             .restrict(self.span.clone())

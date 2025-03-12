@@ -1,8 +1,3 @@
-/// # Todo
-///
-/// Move `ListForm` into this crate.
-pub mod leftassoc;
-
 mod applications;
 mod confined;
 mod effectexpr;
@@ -25,10 +20,9 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
+use sappho_parsable::leftassoc::LeftAssoc;
 use sappho_parsable::spanned::Spanned;
 use sappho_primval::PrimVal;
-
-use crate::leftassoc::LeftAssoc;
 
 // Top-level expressions for each effect kind:
 #[derive(Debug, From)]

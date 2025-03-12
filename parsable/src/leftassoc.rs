@@ -1,5 +1,3 @@
-use chumsky::Parser as _;
-use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
 #[derive(Debug, derive_more::From, derive_new::new)]
@@ -36,19 +34,6 @@ impl<L, R> LeftAssoc<L, R> {
             .collect::<Result<_, _>>()?;
 
         Ok(LeftAssoc { left, rights })
-    }
-}
-
-impl<L, R, T> ParsableWith<T> for LeftAssoc<L, R>
-where
-    L: ParsableWith<T>,
-    R: ParsableWith<T>,
-    T: Clone,
-{
-    fn make_parser_with(t: T) -> impl Parser<Self> {
-        L::parser_with(t.clone())
-            .then(R::parser_with(t).repeated())
-            .map(LeftAssoc::from)
     }
 }
 

@@ -2,6 +2,7 @@ use chumsky::Parser as _;
 use sappho_source::{LoadSource, SourceCode};
 
 use crate::error::{ChumskyError, Error, ParseError};
+use crate::leftassoc::LeftAssoc;
 use crate::primitive::space;
 use crate::spanned::Spanned;
 
@@ -20,6 +21,13 @@ pub trait Parser<Output>:
 
     fn spanned(self) -> impl Parser<Spanned<Output>> {
         self.map_with_span(Spanned::new)
+    }
+
+    fn left_assoc_then_rights<P, R>(self, right: P) -> impl Parser<LeftAssoc<Output, R>>
+    where
+        P: Parser<R>,
+    {
+        self.then(right.repeated()).map(LeftAssoc::from)
     }
 
     fn try_map_ez<F, O, E>(self, f: F) -> impl Parser<O>
