@@ -1,7 +1,7 @@
 use std::borrow::Borrow;
 
-use sappho_listform::ListForm;
 use sappho_object::Unbundled;
+use sappho_parsable::listform::ListForm;
 
 use crate::{AttrVals, Object, ValRef, Value};
 

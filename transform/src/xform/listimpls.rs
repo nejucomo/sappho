@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use either::Either::{self, Left, Right};
 use sappho_attrs::Attrs;
-use sappho_listform::ListForm;
+use sappho_parsable::listform::ListForm;
 
 use crate::xform::{TransformInto, TryTransformInto};
 

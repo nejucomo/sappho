@@ -1,7 +1,7 @@
 use chumsky::Parser as _;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
-use sappho_listform::ListForm;
+use sappho_parsable::listform::ListForm;
 use sappho_parsable::{Parsable, ParsableWith, Parser, Recursive};
 use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};

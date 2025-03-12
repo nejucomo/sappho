@@ -26,7 +26,7 @@ impl fmt::Display for Error {
             MissingAttr(v, name) => write!(f, "missing attr {}.{}", v, name),
             Mismatch(v, pats) => {
                 // TODO: This is a super hacky way to get the `Unparse` of the patterns:
-                use sappho_listform::ListForm;
+                use sappho_parsable::listform::ListForm;
 
                 write!(
                     f,

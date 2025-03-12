@@ -1,6 +1,6 @@
 use crate::error::BareError;
 use chumsky::Parser;
-use sappho_listform::ListForm;
+use sappho_parsable::listform::ListForm;
 
 pub(crate) fn list_form<PX, PT, X, T>(
     item: PX,
