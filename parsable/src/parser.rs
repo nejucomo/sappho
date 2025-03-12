@@ -1,9 +1,11 @@
+use chumsky::prelude::just;
 use chumsky::Parser as _;
 use sappho_source::{LoadSource, SourceCode};
 
 use crate::error::{ChumskyError, Error, ParseError};
 use crate::leftassoc::LeftAssoc;
-use crate::primitive::space;
+use crate::listform::ListForm;
+use crate::primitive::{bracketed, space};
 use crate::spanned::Spanned;
 
 pub trait Parser<Output>:
@@ -28,6 +30,27 @@ pub trait Parser<Output>:
         P: Parser<R>,
     {
         self.then(right.repeated()).map(LeftAssoc::from)
+    }
+
+    fn list_form_with_tail<P, T>(self, tail: P) -> impl Parser<ListForm<Output, T>>
+    where
+        P: Clone + Parser<T>,
+    {
+        let tailmatch = || just("..").ignore_then(tail.clone());
+        let nonempty_body = self.separated_by(just(',').then_opt_space());
+
+        let nonempty_opt_tail = nonempty_body
+            .then(just(',').then_opt_space().ignore_then(tailmatch()).or_not())
+            .map(|(pats, opttail)| ListForm::new(pats, opttail));
+
+        bracketed(
+            ['[', ']'],
+            tailmatch()
+                .map(|t| ListForm::new([], Some(t)))
+                .or(nonempty_opt_tail)
+                .or_not()
+                .map(|opt| opt.unwrap_or_else(|| ListForm::new([], None))),
+        )
     }
 
     fn try_map_ez<F, O, E>(self, f: F) -> impl Parser<O>

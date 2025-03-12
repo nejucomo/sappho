@@ -1,11 +1,12 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use either::Either::{Left, Right};
-use sappho_parsable::primitive::bracketed;
-use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::ListForm;
+use crate::primitive::bracketed;
+use crate::{ParsableWith, Parser};
+
+use super::ListForm;
 
 impl<X, T, A> ParsableWith<A> for ListForm<X, T>
 where

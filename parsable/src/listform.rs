@@ -1,9 +1,14 @@
-use either::Either;
-use sappho_unparse::Unparse;
+mod lfg;
+mod lfiter;
+mod parsable;
+
 use std::fmt;
 
-use crate::lfg::ListFormGeneric;
-use crate::ListFormIter;
+use either::Either;
+use sappho_unparse::Unparse;
+
+use self::lfg::ListFormGeneric;
+pub use self::lfiter::ListFormIter;
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -77,45 +82,4 @@ where
 }
 
 #[cfg(test)]
-mod tests {
-    use crate::ListForm;
-    use indoc::indoc;
-    use sappho_unparse::{Stream, Unparse};
-    use test_case::test_case;
-
-    struct X;
-
-    impl Unparse for X {
-        fn unparse_into(&self, s: &mut Stream) {
-            s.write("X");
-        }
-    }
-
-    #[test_case([], None => "[]")]
-    #[test_case([], Some(X) => indoc! { "
-        [
-          ..X
-        ]"
-    })]
-    #[test_case([X], None => indoc! { "
-        [
-          X
-        ]"
-    })]
-    #[test_case([X], Some(X) => indoc! { "
-        [
-          X,
-          ..X
-        ]"
-    })]
-    #[test_case([X, X], Some(X) => indoc! { "
-        [
-          X,
-          X,
-          ..X
-        ]"
-    })]
-    fn display<const K: usize>(body: [X; K], tail: Option<X>) -> String {
-        ListForm::new(body, tail).to_string()
-    }
-}
+mod tests;

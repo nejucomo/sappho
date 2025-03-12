@@ -1,7 +1,7 @@
 use derive_new::new;
 use either::Either::{self, Left, Right};
 
-use crate::ListFormIter;
+use super::ListFormIter;
 
 #[derive(Copy, Clone, Debug, PartialEq, new)]
 #[new(visibility = "pub(crate)")]

@@ -15,7 +15,6 @@ members = [
   "integration-tests",
   "interpreter",
   "keyword",
-  "listform",
   "object",
   "parsable",
   "parser",
@@ -64,7 +63,6 @@ sappho-identifier = { path = "identifier" }
 sappho-integration-tests = { path = "integration-tests" }
 sappho-interpreter = { path = "interpreter" }
 sappho-keyword = { path = "keyword" }
-sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
 sappho-parsable = { path = "parsable" }
 sappho-parser = { path = "parser" }

@@ -3,7 +3,7 @@ use std::iter::Fuse;
 use derive_new::new;
 use either::Either::{self, Left, Right};
 
-use crate::lfg::ListFormGeneric;
+use super::lfg::ListFormGeneric;
 
 #[derive(Clone, Debug, new)]
 #[new(visibility = "pub(crate)")]
