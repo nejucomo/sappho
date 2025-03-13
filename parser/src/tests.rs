@@ -84,6 +84,14 @@ fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&'static str>) -> P
     Pattern::List(ListPattern::new(pats, tail.map(RcId::from)))
 }
 
+fn unpack_pat<const K: usize>(attrpats: [(&'static str, &'static str); K]) -> Pattern {
+    Pattern::Unpack(Attrs::from_iter(
+        attrpats
+            .into_iter()
+            .map(|(attrname, bindto)| (attrname, bind(bindto))),
+    ))
+}
+
 #[test_case("42" => num(42.0) ; "forty-two")]
 #[test_case("42\n" => num(42.0) ; "forty-two newline")]
 #[test_case("bob" => refexpr("bob") ; "ref bob")]
@@ -204,6 +212,23 @@ fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&'static str>) -> P
     "{ a: x, b: x }" =>
     attrs_def([("a", refexpr("x")), ("b", refexpr("x"))])
     ; "attrs-only object single line spacey"
+)]
+#[test_case(
+    "let { a: x, b: y, c: z } = { a: 2 };\nz" =>
+    let_expr([
+        (
+            unpack_pat([
+                ("a", "x"),
+                ("b", "y"),
+                ("c", "z"),
+            ]),
+            attrs_def([
+                ("a", num(2.0)),
+            ])
+        )],
+        refexpr("z")
+    )
+    ; "attrs-only object unpack missing attrs integration regression"
 )]
 #[test_case(
     "{ query x }" =>

@@ -1,9 +1,12 @@
-use crate::{BindFailure, Frame, Scope, ValRef};
-use sappho_ast_reduced::Pattern;
-use std::ops::Deref;
 use std::rc::Rc;
 
-#[derive(Clone, Debug)]
+use derive_more::Deref;
+use sappho_ast_reduced::Pattern;
+
+use crate::{BindFailure, Frame, Scope, ValRef};
+
+#[derive(Clone, Debug, Deref)]
+#[deref(forward)]
 pub struct ScopeRef(Rc<Scope>);
 
 impl Default for ScopeRef {
@@ -42,10 +45,8 @@ impl ScopeRef {
     }
 }
 
-impl Deref for ScopeRef {
-    type Target = Scope;
-
-    fn deref(&self) -> &Scope {
-        self.0.deref()
+impl PartialEq for ScopeRef {
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.0, &other.0)
     }
 }

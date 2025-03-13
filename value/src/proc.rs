@@ -4,7 +4,7 @@ use sappho_ast_effect::ProcEffect;
 use sappho_ast_reduced::{AstRed, Expr};
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Debug, derive_new::new)]
+#[derive(Debug, PartialEq, derive_new::new)]
 pub struct Proc {
     pdef: ProcDef<AstRed>,
     defscope: ScopeRef,

@@ -4,7 +4,7 @@ use sappho_ast_effect::QueryEffect;
 use sappho_ast_reduced::{AstRed, QueryExpr};
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Query {
     body: QueryExpr,
     defscope: ScopeRef,

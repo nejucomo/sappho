@@ -5,7 +5,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::{BindFailure, GenThunk, ScopeRef, ValRef};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Func {
     binding: Pattern,
     body: PureExpr,

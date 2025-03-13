@@ -3,7 +3,7 @@ use sappho_unparse::{Stream, Unparse};
 use crate::tryaslist::TryAsList;
 use crate::Object;
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, derive_more::From, PartialEq)]
 pub enum Value {
     Num(f64),
     Object(Box<Object>),

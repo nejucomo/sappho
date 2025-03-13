@@ -1,8 +1,9 @@
-use crate::Result;
 use sappho_eval::{eval, ValRef};
 use sappho_parser::parse;
 use sappho_source::LoadSource;
 use sappho_transform::reduce;
+
+use crate::Result;
 
 pub fn interpret<S, C>(source: S) -> Result<ValRef>
 where
