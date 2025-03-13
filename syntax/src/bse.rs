@@ -14,19 +14,19 @@ impl Parsable for BSE<ProcEffect> {
 
 impl ParsableWith<SEParser<'_>> for BSE<ProcEffect> {
     fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
-        sep.map(Self::from)
+        SE::parser_with(sep).map(Self::from)
     }
 }
 
 impl Parsable for SE<ProcEffect> {
     fn parser() -> impl Parser<Self> {
-        chumsky::recursive::recursive(Self::parser_with)
+        chumsky::recursive::recursive(|sep| Spanned::parser_with(sep).map(Self))
     }
 }
 
 impl ParsableWith<SEParser<'_>> for SE<ProcEffect> {
     fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
-        Spanned::parser_with(sep).map(Self)
+        sep
     }
 }
 

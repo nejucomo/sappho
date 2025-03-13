@@ -11,17 +11,19 @@ use crate::Pattern::{self, *};
 
 impl Parsable for Pattern {
     fn parser() -> impl Parser<Self> {
-        chumsky::recursive::recursive(Pattern::parser_with)
+        chumsky::recursive::recursive(|pattern| {
+            BindPattern::parser_with(pattern.clone())
+                .map(Bind)
+                .or(PrimVal::parser().map(LitEq))
+                .or(Attrs::parser_with(pattern.clone()).map(Unpack))
+                .or(ListForm::parser_with(pattern).map(List))
+        })
     }
 }
 
 impl ParsableWith<Recursive<'_, Pattern>> for Pattern {
     fn make_parser_with(pattern: Recursive<'_, Pattern>) -> impl Parser<Self> {
-        BindPattern::parser_with(pattern.clone())
-            .map(Bind)
-            .or(PrimVal::parser().map(LitEq))
-            .or(Attrs::parser_with(pattern.clone()).map(Unpack))
-            .or(ListForm::parser_with(pattern).map(List))
+        pattern
     }
 }
 
