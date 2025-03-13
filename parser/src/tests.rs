@@ -201,6 +201,11 @@ fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&'static str>) -> P
     ; "empty object"
 )]
 #[test_case(
+    "{ a: x, b: x }" =>
+    attrs_def([("a", refexpr("x")), ("b", refexpr("x"))])
+    ; "attrs-only object single line spacey"
+)]
+#[test_case(
     "{ query x }" =>
     object_def(
         None,
