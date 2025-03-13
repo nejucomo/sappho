@@ -59,10 +59,3 @@ impl Unparse for ValRef {
         self.deref().unparse_into(s)
     }
 }
-
-// Necessary for value as list form:
-impl Unparse for &ValRef {
-    fn unparse_into(&self, s: &mut Stream) {
-        (*self).unparse_into(s)
-    }
-}
