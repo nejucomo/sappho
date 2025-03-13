@@ -3,10 +3,10 @@ use sappho_ast_effect::{Effect, ProcEffect};
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Confined, EffectExpr, ProcExprParser};
+use crate::{Confined, EffectExpr, SEParser};
 
-impl ParsableWith<ProcExprParser<'_>> for EffectExpr<ProcEffect> {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for EffectExpr<ProcEffect> {
+    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
         ProcEffect::parser()
             .repeated()
             .then(Confined::parser_with(pep))

@@ -8,7 +8,8 @@ use crate::leftassoc::LeftAssoc;
 use crate::spanned::Spanned;
 use crate::{
     Application, Applications, Confined, EffectExpr, Expr, FuncDef, Let, LetClause, Lookup,
-    Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef, QueryExpr,
+    Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef, QueryExpr, BSE,
+    SE,
 };
 
 // Restriction converts ProcEffects downwards or produces an error. This happens during parsing because it's difficult to parse all three effects recursions directly, so we restrict inside the parser.
@@ -66,6 +67,27 @@ impl RestrictInto<QueryExpr> for ProcExpr {
 impl RestrictInto<ProcExpr> for ProcExpr {
     fn restrict(self, _: Span) -> Result<ProcExpr, ChumskyError> {
         Ok(self)
+    }
+}
+
+// Top-Level Recursion Nexus
+impl<FX> RestrictInto<BSE<FX>> for BSE<ProcEffect>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
+    fn restrict(self, span: Span) -> Result<BSE<FX>, ChumskyError> {
+        self.0.restrict(span).map(BSE)
+    }
+}
+
+impl<FX> RestrictInto<SE<FX>> for SE<ProcEffect>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
+    fn restrict(self, span: Span) -> Result<SE<FX>, ChumskyError> {
+        self.0.restrict(span).map(SE)
     }
 }
 
@@ -243,8 +265,8 @@ where
     }
 }
 
-impl<FX> RestrictInto<Object<FuncDef, QueryDef, ProcDef, Expr<FX>>>
-    for Object<FuncDef, QueryDef, ProcDef, Expr<ProcEffect>>
+impl<FX> RestrictInto<Object<FuncDef, QueryDef, ProcDef, SE<FX>>>
+    for Object<FuncDef, QueryDef, ProcDef, SE<ProcEffect>>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
@@ -252,7 +274,7 @@ where
     fn restrict(
         self,
         span: Span,
-    ) -> Result<Object<FuncDef, QueryDef, ProcDef, Expr<FX>>, ChumskyError> {
+    ) -> Result<Object<FuncDef, QueryDef, ProcDef, SE<FX>>, ChumskyError> {
         self.into_iter()
             .map(|x| x.restrict(span.clone()))
             .collect::<Result<Result<Object<_, _, _, _>, String>, ChumskyError>>()
@@ -260,8 +282,8 @@ where
     }
 }
 
-impl<FX> RestrictInto<Element<FuncDef, QueryDef, ProcDef, Expr<FX>>>
-    for Element<FuncDef, QueryDef, ProcDef, Expr<ProcEffect>>
+impl<FX> RestrictInto<Element<FuncDef, QueryDef, ProcDef, SE<FX>>>
+    for Element<FuncDef, QueryDef, ProcDef, SE<ProcEffect>>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
@@ -269,7 +291,7 @@ where
     fn restrict(
         self,
         span: Span,
-    ) -> Result<Element<FuncDef, QueryDef, ProcDef, Expr<FX>>, ChumskyError> {
+    ) -> Result<Element<FuncDef, QueryDef, ProcDef, SE<FX>>, ChumskyError> {
         use Element::*;
 
         match self {
@@ -281,13 +303,12 @@ where
     }
 }
 
-impl<FX> RestrictInto<ListForm<Expr<FX>, Box<Expr<FX>>>>
-    for ListForm<Expr<ProcEffect>, Box<Expr<ProcEffect>>>
+impl<FX> RestrictInto<ListForm<SE<FX>, BSE<FX>>> for ListForm<SE<ProcEffect>, BSE<ProcEffect>>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<ListForm<Expr<FX>, Box<Expr<FX>>>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<ListForm<SE<FX>, BSE<FX>>, ChumskyError> {
         self.into_iter()
             .map(|ei| {
                 ei.either(

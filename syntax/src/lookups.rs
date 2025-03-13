@@ -6,16 +6,16 @@ use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
-use crate::{Lookup, Lookups, ProcExprParser};
+use crate::{Lookup, Lookups, SEParser};
 
-impl ParsableWith<ProcExprParser<'_>> for Lookups<ProcEffect> {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for Lookups<ProcEffect> {
+    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
         LeftAssoc::parser_with(pep).map(Self)
     }
 }
 
-impl ParsableWith<ProcExprParser<'_>> for Lookup {
-    fn make_parser_with(_: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for Lookup {
+    fn make_parser_with(_: SEParser<'_>) -> impl Parser<Self> {
         just('.').ignore_then(RcId::parser()).map(Self)
     }
 }

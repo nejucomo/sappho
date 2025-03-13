@@ -4,27 +4,26 @@ use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::spanned::Spanned;
-use crate::{ProcDef, ProcExpr, ProcExprParser};
+use crate::{ProcDef, ProcExpr, SEParser, BSE};
 
 impl Parsable for ProcExpr {
     fn parser() -> impl Parser<Self> {
-        chumsky::recursive::recursive(ProcExpr::parser_with)
+        BSE::parser().map(Self)
     }
 }
 
-impl ParsableWith<ProcExprParser<'_>> for ProcExpr {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
-        Spanned::parser_with(pep).map(ProcExpr)
+impl ParsableWith<SEParser<'_>> for ProcExpr {
+    fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
+        BSE::parser_with(sep).map(Self)
     }
 }
 
-impl ParsableWith<ProcExprParser<'_>> for ProcDef {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for ProcDef {
+    fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
         KwProc
             .parse()
             .then_space()
-            .ignore_then(bracketed(['{', '}'], Box::parser_with(pep)))
+            .ignore_then(bracketed(['{', '}'], ProcExpr::parser_with(sep)))
             .map(Self)
     }
 }

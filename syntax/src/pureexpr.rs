@@ -1,17 +1,12 @@
-use chumsky::Parser as _;
-use sappho_ast_effect::ProcEffect;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::restrict::RestrictInto;
-use crate::spanned::Spanned;
-use crate::{Expr, ProcExprParser, PureExpr};
+use crate::parserext::ParserExt;
+use crate::{ProcExpr, PureExpr, SEParser};
 
-impl ParsableWith<ProcExprParser<'_>> for PureExpr {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
-        Spanned::parser_with(pep)
-            .try_map(|expr: Spanned<Expr<ProcEffect>>, span| expr.restrict(span))
-            .map(Self)
+impl ParsableWith<SEParser<'_>> for PureExpr {
+    fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
+        ProcExpr::parser_with(sep).restrict()
     }
 }
 

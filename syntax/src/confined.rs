@@ -8,10 +8,10 @@ use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::Confined::{self, *};
-use crate::{ParensExpr, ProcExprParser};
+use crate::{ParensExpr, SEParser};
 
-impl ParsableWith<ProcExprParser<'_>> for Confined<ProcEffect> {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for Confined<ProcEffect> {
+    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
         RcId::parser()
             .map(Ref)
             .or(PrimVal::parser().map(Prim))

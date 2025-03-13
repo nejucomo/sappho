@@ -5,27 +5,27 @@ use sappho_keyword::Keyword::Let as KwLet;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Expr, Let, LetClause, Pattern, ProcExprParser};
+use crate::{Let, LetClause, Pattern, SEParser, BSE};
 
-impl ParsableWith<ProcExprParser<'_>> for Let<ProcEffect> {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for Let<ProcEffect> {
+    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
         LetClause::parser_with(pep.clone())
             .then_space()
             .repeated()
             .at_least(1)
-            .then(Expr::parser_with(pep))
+            .then(BSE::parser_with(pep))
             .map(|(clauses, inner)| Let::new(clauses, inner))
             .labelled("let-expression")
     }
 }
 
-impl ParsableWith<ProcExprParser<'_>> for LetClause<ProcEffect> {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for LetClause<ProcEffect> {
+    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
         KwLet
             .parse()
             .ignore_then(Pattern::parser())
             .then_ignore(just('=').opt_space_around())
-            .then(Expr::parser_with(pep))
+            .then(BSE::parser_with(pep))
             .then_ignore(just(';'))
             .map(|(binding, definition)| LetClause::new(binding, definition))
     }

@@ -4,10 +4,10 @@ use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::Expr::{self, *};
-use crate::{FuncDef, ProcDef, ProcExprParser, QueryDef};
+use crate::{FuncDef, ProcDef, QueryDef, SEParser};
 
-impl ParsableWith<ProcExprParser<'_>> for Expr<ProcEffect> {
-    fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<SEParser<'_>> for Expr<ProcEffect> {
+    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
         FuncDef::parser_with(pep.clone())
             .map(Func)
             .or(QueryDef::parser_with(pep.clone()).map(Query))
