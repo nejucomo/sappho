@@ -5,8 +5,7 @@ use sappho_parsable::primitive::space;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::proc::ProcExprParser;
-use crate::{FuncDef, Pattern, PureExpr};
+use crate::{FuncDef, Pattern, ProcExprParser, PureExpr};
 
 impl ParsableWith<ProcExprParser<'_>> for FuncDef {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {

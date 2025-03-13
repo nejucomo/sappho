@@ -5,8 +5,7 @@ use sappho_keyword::Keyword::Let as KwLet;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::proc::ProcExprParser;
-use crate::{Expr, Let, LetClause, Pattern};
+use crate::{Expr, Let, LetClause, Pattern, ProcExprParser};
 
 impl ParsableWith<ProcExprParser<'_>> for Let<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {

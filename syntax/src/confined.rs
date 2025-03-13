@@ -7,9 +7,8 @@ use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::proc::ProcExprParser;
 use crate::Confined::{self, *};
-use crate::ParensExpr;
+use crate::{ParensExpr, ProcExprParser};
 
 impl ParsableWith<ProcExprParser<'_>> for Confined<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {

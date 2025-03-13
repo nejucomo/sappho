@@ -26,10 +26,14 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
+use sappho_parsable::Recursive;
 use sappho_primval::PrimVal;
 
 use crate::leftassoc::LeftAssoc;
 use crate::spanned::Spanned;
+
+// Common internal parser recursion:
+pub(crate) type ProcExprParser<'a> = Recursive<'a, ProcExpr>;
 
 // Top-level expressions for each effect kind:
 #[derive(Debug, From)]

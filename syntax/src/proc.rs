@@ -1,19 +1,17 @@
 use chumsky::Parser as _;
 use sappho_keyword::Keyword::Proc as KwProc;
 use sappho_parsable::primitive::bracketed;
-use sappho_parsable::{Parsable, ParsableWith, Parser, Recursive};
+use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::spanned::Spanned;
-use crate::{ProcDef, ProcExpr};
+use crate::{ProcDef, ProcExpr, ProcExprParser};
 
 impl Parsable for ProcExpr {
     fn parser() -> impl Parser<Self> {
         chumsky::recursive::recursive(ProcExpr::parser_with)
     }
 }
-
-pub(crate) type ProcExprParser<'a> = Recursive<'a, ProcExpr>;
 
 impl ParsableWith<ProcExprParser<'_>> for ProcExpr {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {

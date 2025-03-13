@@ -6,8 +6,7 @@ use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
-use crate::proc::ProcExprParser;
-use crate::{Lookup, Lookups};
+use crate::{Lookup, Lookups, ProcExprParser};
 
 impl ParsableWith<ProcExprParser<'_>> for Lookups<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {

@@ -4,10 +4,9 @@ use sappho_keyword::Keyword::Query as KwQuery;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::proc::ProcExprParser;
 use crate::restrict::RestrictInto;
 use crate::spanned::Spanned;
-use crate::{Expr, QueryDef, QueryExpr};
+use crate::{Expr, ProcExprParser, QueryDef, QueryExpr};
 
 impl ParsableWith<ProcExprParser<'_>> for QueryDef {
     fn make_parser_with(proc_expr: ProcExprParser<'_>) -> impl Parser<Self> {

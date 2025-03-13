@@ -4,8 +4,7 @@ use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::proc::ProcExprParser;
-use crate::ParensExpr;
+use crate::{ParensExpr, ProcExprParser};
 
 impl ParsableWith<ProcExprParser<'_>> for ParensExpr<ProcEffect> {
     fn make_parser_with(rec: ProcExprParser<'_>) -> impl Parser<Self> {

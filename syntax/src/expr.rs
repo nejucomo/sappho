@@ -3,9 +3,8 @@ use sappho_ast_effect::{Effect, ProcEffect};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::proc::ProcExprParser;
 use crate::Expr::{self, *};
-use crate::{FuncDef, ProcDef, QueryDef};
+use crate::{FuncDef, ProcDef, ProcExprParser, QueryDef};
 
 impl ParsableWith<ProcExprParser<'_>> for Expr<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {

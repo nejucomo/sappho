@@ -6,8 +6,7 @@ use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::proc::ProcExprParser;
-use crate::{Expr, Match, MatchClause, Pattern};
+use crate::{Expr, Match, MatchClause, Pattern, ProcExprParser};
 
 impl ParsableWith<ProcExprParser<'_>> for Match<ProcEffect> {
     fn make_parser_with(pep: ProcExprParser<'_>) -> impl Parser<Self> {
