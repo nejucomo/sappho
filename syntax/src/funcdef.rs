@@ -5,7 +5,7 @@ use sappho_parsable::primitive::space;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{FuncDef, Pattern, SEParser, PureExpr};
+use crate::{FuncDef, Pattern, PureExpr, SEParser};
 
 impl ParsableWith<SEParser<'_>> for FuncDef {
     fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {

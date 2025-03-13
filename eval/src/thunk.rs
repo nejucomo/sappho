@@ -1,7 +1,7 @@
 use crate::{Eval, EvalThunk, Result};
 use sappho_ast_core::EffectExpr;
 use sappho_ast_effect::Effect;
-use sappho_ast_old_reduced::AstRed;
+use sappho_ast_reduced::AstRed;
 use sappho_value::{GenThunk, ValRef};
 
 impl<FX> EvalThunk for GenThunk<FX>

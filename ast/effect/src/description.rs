@@ -7,6 +7,6 @@ pub struct EffectDescription {
     /// The noun name of this effect
     pub noun: &'static str,
 
-    /// The infinitive verb which fulfills "the expression `<symbol>x` will <infinitive> the value, `x`"
+    /// The infinitive verb which fulfills "the expression `<symbol>x` will {infinitive} the value, `x`"
     pub verb: &'static str,
 }

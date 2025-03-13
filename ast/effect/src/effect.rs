@@ -21,7 +21,7 @@ pub trait Effect: Sealed + Parsable + PartialEq + Copy + TryFrom<ProcEffect> {
         self.description().noun
     }
 
-    /// The infinitive verb which fulfills "the expression `<symbol>x` will <infinitive> the value, `x`"
+    /// The infinitive verb which fulfills "the expression `<symbol>x` will {infinitive} the value, `x`"
     fn verb(self) -> &'static str {
         self.description().verb
     }
