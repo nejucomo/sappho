@@ -17,4 +17,7 @@ sappho-listform.workspace = true
 sappho-object.workspace = true
 
 [dev-dependencies]
+sappho-parser.workspace = true
+sappho-regression-vectors.workspace = true
+sappho-unparse.workspace = true
 test-case.workspace = true

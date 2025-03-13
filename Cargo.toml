@@ -19,6 +19,7 @@ members = [
   "parser",
   "primval",
   "rand-dcomp",
+  "regression-vectors",
   "source",
   "syntax",
   "tfi",
@@ -66,6 +67,7 @@ sappho-parsable = { path = "parsable" }
 sappho-parser = { path = "parser" }
 sappho-primval = { path = "primval" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
+sappho-regression-vectors = { path = "regression-vectors" }
 sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
 sappho-tfi = { path = "tfi" }

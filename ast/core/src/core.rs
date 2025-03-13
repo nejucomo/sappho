@@ -15,13 +15,21 @@ where
     XP: AstProvider,
     FX: Effect,
 {
+    #[from(f64)]
     Lit(Literal),
+    #[from]
     Ref(RcId),
+    #[from]
     Object(ObjectDef<XP, FX>),
+    #[from]
     Let(LetExpr<XP, FX>),
+    #[from]
     Match(MatchExpr<XP, FX>),
+    #[from]
     Application(ApplicationExpr<XP, FX>),
+    #[from]
     Lookup(LookupExpr<XP, FX>),
+    #[from]
     Effect(EffectExpr<XP, FX>),
 }
 

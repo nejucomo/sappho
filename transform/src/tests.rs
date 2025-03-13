@@ -1,8 +1,12 @@
+//! Tests here assume the lower stack is correct, and thus rely on parse/unparse
 use sappho_ast as ast;
 use sappho_ast_core::Literal;
 use sappho_ast_reduced as astred;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
+use sappho_parser::parse;
+use sappho_regression_vectors as regression;
+use sappho_unparse::Unparse;
 use test_case::test_case;
 
 use crate::TransformInto;
@@ -17,6 +21,21 @@ fn unpack_empty() -> astred::Pattern {
 
 fn cons_pat(head: &'static str, tail: astred::Pattern) -> astred::Pattern {
     Attrs::from_iter([("head", bind(head)), ("tail", tail)]).into()
+}
+
+#[test_case(
+    regression::UNPACK_MISSING_ATTRS,
+    regression::UNPACK_MISSING_ATTRS
+    ; "unpack-missing-attrs-regression"
+)]
+fn reduce(input: &str, expected: &str) {
+    let astx: ast::PureExpr = parse(input).unwrap();
+    dbg!(&astx);
+    let expected = parse(expected).unwrap();
+    dbg!(&expected);
+    let actual = crate::reduce(astx);
+    dbg!(&actual);
+    assert_eq!(expected.unparse().to_string(), actual.unparse().to_string());
 }
 
 #[test_case([], None => unpack_empty())]

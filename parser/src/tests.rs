@@ -6,10 +6,11 @@ use sappho_ast_core::{
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
+use sappho_regression_vectors as regression;
 use test_case::test_case;
 
 fn num(f: f64) -> PureExpr {
-    sappho_ast_core::Literal::Num(f).into()
+    PureExpr::from(f)
 }
 
 fn refexpr<FX>(s: &'static str) -> Expr<FX>
@@ -214,7 +215,7 @@ fn unpack_pat<const K: usize>(attrpats: [(&'static str, &'static str); K]) -> Pa
     ; "attrs-only object single line spacey"
 )]
 #[test_case(
-    "let { a: x, b: y, c: z } = { a: 2 };\nz" =>
+    regression::UNPACK_MISSING_ATTRS =>
     let_expr([
         (
             unpack_pat([

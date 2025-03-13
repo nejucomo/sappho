@@ -1,10 +1,12 @@
 //! Top-level expression type `Expr`, generic over effects [PureEffect](sappho_ast_core::PureEffect), [QueryEffect](sappho_ast_core::QueryEffect), or [ProcEffect](sappho_ast_core::ProcEffect).
 
+use std::fmt;
+
+// use derive_more::From;
 use either::Either;
 use sappho_ast_core::{CoreExpr, FuncDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
-use std::fmt;
 
 use crate::{Ast, ListExpr};
 

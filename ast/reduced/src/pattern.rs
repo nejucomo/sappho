@@ -6,8 +6,11 @@ use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, derive_more::From)]
 pub enum Pattern {
+    #[from]
     Bind(RcId),
+    #[from(f64)]
     LitEq(Literal),
+    #[from]
     Unpack(Attrs<Pattern>),
 }
 

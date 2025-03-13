@@ -25,3 +25,4 @@ sappho-source.workspace = true
 [dev-dependencies]
 test-case.workspace = true
 include_dir.workspace = true
+sappho-regression-vectors.workspace = true

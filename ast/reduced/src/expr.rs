@@ -2,14 +2,30 @@ use std::fmt;
 use std::ops::Deref;
 
 use derive_more::{From, Into};
-use sappho_ast_core::CoreExpr;
+use sappho_ast_core::{
+    ApplicationExpr, CoreExpr, EffectExpr, LetExpr, LookupExpr, MatchExpr, ObjectDef,
+};
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
+use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::AstRed;
 
 #[derive(Clone, Debug, PartialEq, From, Into)]
+#[from(
+    CoreExpr<AstRed, FX>,
+    RcId,
+    f64,
+    ObjectDef<AstRed, FX>,
+    LetExpr<AstRed, FX>,
+    MatchExpr<AstRed, FX>,
+    ApplicationExpr<AstRed, FX>,
+    LookupExpr<AstRed, FX>,
+    EffectExpr<AstRed, FX>,
+
+
+)]
 pub struct Expr<FX>(CoreExpr<AstRed, FX>)
 where
     FX: Effect;

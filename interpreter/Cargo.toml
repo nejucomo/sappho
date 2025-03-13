@@ -16,3 +16,4 @@ sappho-transform.workspace = true
 
 [dev-dependencies]
 test-case.workspace = true
+sappho-regression-vectors.workspace = true
