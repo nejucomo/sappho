@@ -1,23 +1,18 @@
-use crate::{cmds, Command, Options, Result};
+use crate::options::GlobalOptions;
+use crate::{cmds, Command, Result};
 
 pub trait RunCommand {
-    fn cmd_run(&self, options: &Options) -> Result<()>;
-}
-
-impl RunCommand for Options {
-    fn cmd_run(&self, options: &Options) -> Result<()> {
-        self.command.cmd_run(options)
-    }
+    fn cmd_run(self, glopts: GlobalOptions) -> Result<()>;
 }
 
 impl RunCommand for Command {
-    fn cmd_run(&self, _options: &Options) -> Result<()> {
+    fn cmd_run(self, _: GlobalOptions) -> Result<()> {
         use Command::*;
 
         match self {
-            Eval(opts) => cmds::eval(&opts.source),
-            Parse(opts) => cmds::parse(&opts.source.source, &opts.format),
-            Fuzz(opts) => cmds::fuzz(opts.max_depth, &opts.format),
+            Eval(opts) => cmds::eval(opts.source),
+            Parse(opts) => cmds::parse(opts.source.source, opts.format),
+            Fuzz(opts) => cmds::fuzz(opts.max_depth, opts.format),
         }
     }
 }

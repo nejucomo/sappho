@@ -6,17 +6,17 @@ mod restrict;
 mod space;
 
 use sappho_parsable::error::ParseError;
-use sappho_source::LoadSource;
+use sappho_source::Source;
 
 pub use self::error::LoadParseError;
 
-pub fn parse<S>(loadsource: S) -> Result<sappho_ast::PureExpr, LoadParseError>
+pub fn parse<S>(source: S) -> Result<sappho_ast::PureExpr, LoadParseError>
 where
-    S: LoadSource,
+    Source: From<S>,
 {
     use chumsky::Parser;
 
-    let scode = loadsource.load()?;
+    let scode = Source::from(source).load()?;
 
     self::expr::expression()
         .parse(scode.code().trim_end())

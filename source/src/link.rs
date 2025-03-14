@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use derive_more::From;
 
-use crate::{Source, SourceCode};
+use crate::SourceCode;
 
 /// A reference counted link to [SourceCode]
 ///
@@ -13,7 +13,7 @@ pub struct SourceCodeLink(Rc<SourceCode>);
 
 impl SourceCodeLink {
     /// The source
-    pub fn source(&self) -> &Source {
+    pub fn source(&self) -> &str {
         self.0.source()
     }
 

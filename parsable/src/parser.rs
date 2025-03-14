@@ -1,5 +1,5 @@
 use chumsky::Parser as _;
-use sappho_source::{LoadSource, SourceCodeLink};
+use sappho_source::{Source, SourceCodeLink};
 
 use crate::error::{ChumskyError, Error, ParseError};
 use crate::primitive::space;
@@ -7,12 +7,12 @@ use crate::primitive::space;
 pub trait Parser<Output>:
     Sized + Clone + chumsky::Parser<char, Output, Error = ChumskyError>
 {
-    fn load_and_parse<L>(&self, loadable: L) -> Result<Output, Error>
+    fn load_and_parse<S>(&self, source: S) -> Result<Output, Error>
     where
-        L: LoadSource,
+        Source: From<S>,
     {
-        let source = loadable.load().map_err(Error::Load)?;
-        let parsed = parse_source(self, source)?;
+        let scode = Source::from(source).load().map_err(Error::Load)?;
+        let parsed = parse_source(self, scode)?;
         Ok(parsed)
     }
 

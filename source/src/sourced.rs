@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use derive_more::From;
 
-use crate::{Source, SourceCodeLink};
+use crate::SourceCodeLink;
 
 /// Associate parsed data with the code from which it came
 #[derive(Debug, From)]
@@ -22,7 +22,7 @@ impl<T> Sourced<T> {
     }
 
     /// Refer to the source of this code
-    pub fn source(&self) -> &Source {
+    pub fn source(&self) -> &str {
         self.sclink.source()
     }
 

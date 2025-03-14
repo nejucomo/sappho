@@ -1,18 +1,26 @@
 mod runcmd;
 
-use crate::{Result, SourceOption};
 use clap::{ArgEnum, Parser, Subcommand};
+use sappho_source::Source;
+
+use crate::Result;
 
 /// sappho interpreter
 #[derive(Debug, Parser)]
 #[clap()]
 pub struct Options {
+    #[clap(flatten)]
+    pub glopts: GlobalOptions,
+
+    #[clap(subcommand)]
+    pub command: Command,
+}
+
+#[derive(Debug, Parser)]
+pub struct GlobalOptions {
     /// Turn on trace output
     #[clap(short, long)]
     pub trace: bool,
-
-    #[clap(subcommand)]
-    command: Command,
 }
 
 impl Options {
@@ -20,10 +28,10 @@ impl Options {
         <Options as Parser>::parse()
     }
 
-    pub fn run(&self) -> Result<()> {
+    pub fn run(self) -> Result<()> {
         use self::runcmd::RunCommand;
 
-        self.cmd_run(self)
+        self.command.cmd_run(self.glopts)
     }
 }
 
@@ -49,7 +57,7 @@ pub enum Command {
 #[clap()]
 pub struct SourceOptions {
     #[clap(default_value_t)]
-    source: SourceOption,
+    source: Source,
 }
 
 /// parse options

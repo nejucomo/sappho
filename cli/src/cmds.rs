@@ -1,25 +1,26 @@
 use sappho_ast::PureExpr;
+use sappho_source::Source;
 
-use crate::{Result, SourceOption, UnparseFormat};
+use crate::{Result, UnparseFormat};
 
-pub fn eval(source: &SourceOption) -> Result<()> {
+pub fn eval(source: Source) -> Result<()> {
     let x = sappho_interpreter::interpret(source)?;
     println!("{}", x);
     Ok(())
 }
 
-pub fn parse(source: &SourceOption, format: &UnparseFormat) -> Result<()> {
+pub fn parse(source: Source, format: UnparseFormat) -> Result<()> {
     let x = sappho_parser::parse(source)?;
     unparse(x, format)
 }
 
-pub fn fuzz(max_depth: usize, format: &UnparseFormat) -> Result<()> {
+pub fn fuzz(max_depth: usize, format: UnparseFormat) -> Result<()> {
     let (seed, x) = sappho_ast_fuzz::random_expr(max_depth);
     println!("# AstFuzz seed: {seed}");
     unparse(x, format)
 }
 
-fn unparse(x: PureExpr, format: &UnparseFormat) -> Result<()> {
+fn unparse(x: PureExpr, format: UnparseFormat) -> Result<()> {
     use sappho_transform::{canonicalize, reduce};
     use UnparseFormat::*;
 

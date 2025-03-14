@@ -1,17 +1,17 @@
 use std::fmt::Debug;
 
-use sappho_source::LoadSource;
+use sappho_source::Source;
 use sappho_unparse::Unparse;
 
 use crate::error::Error;
 use crate::Parser;
 
 pub trait Parsable: Sized + Unparse + Debug {
-    fn load_and_parse<L>(loadable: L) -> Result<Self, Error>
+    fn load_and_parse<S>(source: S) -> Result<Self, Error>
     where
-        L: LoadSource,
+        Source: From<S>,
     {
-        Self::parser().load_and_parse(loadable)
+        Self::parser().load_and_parse(source)
     }
 
     fn parser() -> impl Parser<Self>;
