@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 
 use crate::{Source, SourceCode, SourceCodeLink};
 
@@ -24,13 +24,13 @@ impl LoadSource for SourceCode {
 
 impl LoadSource for &str {
     fn load(self) -> Result<SourceCodeLink> {
-        Ok(SourceCode::new(Source::default(), self).into())
+        self.to_string().load()
     }
 }
 
 impl LoadSource for String {
     fn load(self) -> Result<SourceCodeLink> {
-        Ok(SourceCode::new(Source::default(), self).into())
+        Ok(SourceCode::new(Source::Memory, self).into())
     }
 }
 
@@ -42,10 +42,27 @@ impl LoadSource for &Path {
 
 impl LoadSource for PathBuf {
     fn load(self) -> Result<SourceCodeLink> {
-        use anyhow_std::PathAnyhow;
+        let f = std::fs::File::open(&self)
+            .context(format!("while opening path {:?}", self.display()))?;
 
-        let code = self.read_to_string_anyhow()?;
-        let source = Source::from(self);
+        (Source::from(self), f).load()
+    }
+}
+
+impl LoadSource for std::io::Stdin {
+    fn load(self) -> Result<SourceCodeLink> {
+        (Source::Stdin, self).load()
+    }
+}
+
+impl<R> LoadSource for (Source, R)
+where
+    R: std::io::Read,
+{
+    fn load(self) -> Result<SourceCodeLink> {
+        let (source, r) = self;
+        let code =
+            std::io::read_to_string(r).context(format!("while attempting to read {}", &source))?;
         Ok(SourceCode::new(source, code).into())
     }
 }

@@ -14,12 +14,7 @@ use SourceOption::*;
 impl LoadSource for &SourceOption {
     fn load(self) -> anyhow::Result<SourceCodeLink> {
         match self {
-            Stdin => {
-                use std::io::Read;
-                let mut s = String::new();
-                std::io::stdin().read_to_string(&mut s)?;
-                s.load()
-            }
+            Stdin => std::io::stdin().load(),
             Path(p) => p.as_path().load(),
         }
     }
