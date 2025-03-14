@@ -22,3 +22,9 @@ impl SourceCodeLink {
         self.0.code()
     }
 }
+
+impl Clone for SourceCodeLink {
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
