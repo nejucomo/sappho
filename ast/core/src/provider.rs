@@ -5,12 +5,11 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_unparse::Unparse;
 
-pub trait AstProvider {
+pub trait AstProvider<FX>: AstNode
+where
+    FX: Effect,
+{
     type Pattern: AstNode;
-
-    type Expr<FX>: AstNode
-    where
-        FX: Effect;
 }
 
 pub trait AstNode:
