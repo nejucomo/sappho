@@ -4,13 +4,13 @@ use sappho_listform::ListForm;
 use sappho_object::{Element, Object};
 use sappho_parsable::error::ChumskyError;
 use sappho_source::Span;
+use sappho_with_source::WithSource;
 
 use crate::leftassoc::LeftAssoc;
-use crate::spanned::Spanned;
 use crate::{
-    Application, Applications, Confined, EffectExpr, Expr, FuncDef, Let, LetClause, Lookup,
-    Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef, QueryExpr, BSE,
-    SE,
+    Application, Applications, BoxWise, Confined, EffectExpr, Expr, FuncDef, Let, LetClause,
+    Lookup, Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef,
+    QueryExpr, Wise,
 };
 
 // Restriction converts ProcEffects downwards or produces an error. This happens during parsing because it's difficult to parse all three effects recursions directly, so we restrict inside the parser.
@@ -40,15 +40,16 @@ fn make_error(span: Span, context: &'static str, pfx: ProcEffect) -> ChumskyErro
 }
 
 // Location tracking in restriction
-impl<T, S> RestrictInto<Spanned<T>> for Spanned<S>
+impl<T, S> RestrictInto<WithSource<T>> for WithSource<S>
 where
     S: RestrictInto<T>,
 {
-    fn restrict(self, _: Span) -> Result<Spanned<T>, ChumskyError> {
+    fn restrict(self, _: Span) -> Result<WithSource<T>, ChumskyError> {
+        let (node, scref) = self.into();
+
         // We shadow the outer span with the new source span:
-        self.node
-            .restrict(self.span.clone())
-            .map(|fxd| Spanned::new(fxd, self.span))
+        node.restrict(scref.span())
+            .map(|fxd| WithSource::new(fxd, scref))
     }
 }
 
@@ -72,23 +73,23 @@ impl RestrictInto<ProcExpr> for ProcExpr {
 }
 
 // Top-Level Recursion Nexus
-impl<FX> RestrictInto<BSE<FX>> for BSE<ProcEffect>
+impl<FX> RestrictInto<BoxWise<FX>> for BoxWise<ProcEffect>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<BSE<FX>, ChumskyError> {
-        self.0.restrict(span).map(BSE)
+    fn restrict(self, span: Span) -> Result<BoxWise<FX>, ChumskyError> {
+        self.0.restrict(span).map(BoxWise)
     }
 }
 
-impl<FX> RestrictInto<SE<FX>> for SE<ProcEffect>
+impl<FX> RestrictInto<Wise<FX>> for Wise<ProcEffect>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<SE<FX>, ChumskyError> {
-        self.0.restrict(span).map(SE)
+    fn restrict(self, span: Span) -> Result<Wise<FX>, ChumskyError> {
+        self.0.restrict(span).map(Wise)
     }
 }
 
@@ -266,8 +267,8 @@ where
     }
 }
 
-impl<FX> RestrictInto<Object<FuncDef, QueryDef, ProcDef, SE<FX>>>
-    for Object<FuncDef, QueryDef, ProcDef, SE<ProcEffect>>
+impl<FX> RestrictInto<Object<FuncDef, QueryDef, ProcDef, Wise<FX>>>
+    for Object<FuncDef, QueryDef, ProcDef, Wise<ProcEffect>>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
@@ -275,7 +276,7 @@ where
     fn restrict(
         self,
         span: Span,
-    ) -> Result<Object<FuncDef, QueryDef, ProcDef, SE<FX>>, ChumskyError> {
+    ) -> Result<Object<FuncDef, QueryDef, ProcDef, Wise<FX>>, ChumskyError> {
         self.into_iter()
             .map(|x| x.restrict(span.clone()))
             .collect::<Result<Result<Object<_, _, _, _>, String>, ChumskyError>>()
@@ -283,8 +284,8 @@ where
     }
 }
 
-impl<FX> RestrictInto<Element<FuncDef, QueryDef, ProcDef, SE<FX>>>
-    for Element<FuncDef, QueryDef, ProcDef, SE<ProcEffect>>
+impl<FX> RestrictInto<Element<FuncDef, QueryDef, ProcDef, Wise<FX>>>
+    for Element<FuncDef, QueryDef, ProcDef, Wise<ProcEffect>>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
@@ -292,7 +293,7 @@ where
     fn restrict(
         self,
         span: Span,
-    ) -> Result<Element<FuncDef, QueryDef, ProcDef, SE<FX>>, ChumskyError> {
+    ) -> Result<Element<FuncDef, QueryDef, ProcDef, Wise<FX>>, ChumskyError> {
         use Element::*;
 
         match self {
@@ -304,12 +305,13 @@ where
     }
 }
 
-impl<FX> RestrictInto<ListForm<SE<FX>, BSE<FX>>> for ListForm<SE<ProcEffect>, BSE<ProcEffect>>
+impl<FX> RestrictInto<ListForm<Wise<FX>, BoxWise<FX>>>
+    for ListForm<Wise<ProcEffect>, BoxWise<ProcEffect>>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<ListForm<SE<FX>, BSE<FX>>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<ListForm<Wise<FX>, BoxWise<FX>>, ChumskyError> {
         self.into_iter()
             .map(|ei| {
                 ei.either(

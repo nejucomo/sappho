@@ -4,13 +4,14 @@
 #![deny(missing_docs)]
 
 use chumsky::Parser as _;
+use derive_more::Into;
 use derive_new::new;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_source::{SourceCodeLink, SourceCodeRef};
 use sappho_unparse::Unparse;
 
 /// Associate parsed data with the code from which it came
-#[derive(Debug, new)]
+#[derive(Debug, new, Into)]
 pub struct WithSource<T> {
     parsed: T,
     sc: SourceCodeRef,

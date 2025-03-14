@@ -5,16 +5,17 @@ use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
-use crate::{Application, Applications, Lookups, SEParser};
+use crate::parseparams::ParseParams;
+use crate::{Application, Applications, Lookups};
 
-impl ParsableWith<SEParser<'_>> for Applications<ProcEffect> {
-    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
-        LeftAssoc::parser_with(pep).map(Self)
+impl ParsableWith<ParseParams<'_>> for Applications<ProcEffect> {
+    fn make_parser_with(pp: ParseParams<'_>) -> impl Parser<Self> {
+        LeftAssoc::parser_with(pp).map(Self)
     }
 }
 
-impl ParsableWith<SEParser<'_>> for Application<ProcEffect> {
-    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<ParseParams<'_>> for Application<ProcEffect> {
+    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         space().ignore_then(Lookups::parser_with(pep)).map(Self)
     }
 }

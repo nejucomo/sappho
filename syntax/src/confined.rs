@@ -7,11 +7,12 @@ use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
+use crate::parseparams::ParseParams;
 use crate::Confined::{self, *};
-use crate::{ParensExpr, SEParser};
+use crate::ParensExpr;
 
-impl ParsableWith<SEParser<'_>> for Confined<ProcEffect> {
-    fn make_parser_with(pep: SEParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<ParseParams<'_>> for Confined<ProcEffect> {
+    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         RcId::parser()
             .map(Ref)
             .or(PrimVal::parser().map(Prim))

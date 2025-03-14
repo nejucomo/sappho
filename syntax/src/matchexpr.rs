@@ -6,14 +6,15 @@ use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Match, MatchClause, Pattern, SEParser, BSE};
+use crate::parseparams::ParseParams;
+use crate::{BoxWise, Match, MatchClause, Pattern};
 
-impl ParsableWith<SEParser<'_>> for Match<ProcEffect> {
-    fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<ParseParams<'_>> for Match<ProcEffect> {
+    fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         KwMatch
             .parse()
             .then_space()
-            .ignore_then(BSE::parser_with(sep.clone()))
+            .ignore_then(BoxWise::parser_with(sep.clone()))
             .then_space()
             .then(bracketed(
                 ['{', '}'],
@@ -25,11 +26,11 @@ impl ParsableWith<SEParser<'_>> for Match<ProcEffect> {
     }
 }
 
-impl ParsableWith<SEParser<'_>> for MatchClause<ProcEffect> {
-    fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<ParseParams<'_>> for MatchClause<ProcEffect> {
+    fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         Pattern::parser()
             .then_ignore(just("->").space_around())
-            .then(BSE::parser_with(sep))
+            .then(BoxWise::parser_with(sep))
             .map(|(binding, consequent)| Self::new(binding, consequent))
     }
 }

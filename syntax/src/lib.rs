@@ -2,10 +2,8 @@
 ///
 /// Move `ListForm` into this crate.
 pub mod leftassoc;
-pub mod spanned;
 
 mod applications;
-mod bse;
 mod confined;
 mod effectexpr;
 mod expr;
@@ -14,12 +12,14 @@ mod letexpr;
 mod lookups;
 mod matchexpr;
 mod parens;
+mod parseparams;
 mod parserext;
 mod pattern;
 mod proc;
 mod pureexpr;
 mod query;
 mod restrict;
+mod wise;
 
 use derive_more::From;
 use derive_new::new;
@@ -28,34 +28,31 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
-use sappho_parsable::Recursive;
 use sappho_primval::PrimVal;
+use sappho_with_source::WithSource;
 
 use crate::leftassoc::LeftAssoc;
-use crate::spanned::Spanned;
 
 // Top-level expressions for each effect kind:
 #[derive(Debug, From)]
-pub struct PureExpr(BSE<PureEffect>);
+pub struct PureExpr(BoxWise<PureEffect>);
 
 #[derive(Debug, From)]
-pub struct QueryExpr(BSE<QueryEffect>);
+pub struct QueryExpr(BoxWise<QueryEffect>);
 
 #[derive(Debug, From)]
-pub struct ProcExpr(BSE<ProcEffect>);
+pub struct ProcExpr(BoxWise<ProcEffect>);
 
 // Top-Level Recursion Nexus
 
 /// Boxed-Spanned-Expression
 #[derive(Debug, From)]
-#[from(SE<FX>)]
-pub struct BSE<FX>(Box<SE<FX>>);
+#[from(Wise<FX>)]
+pub struct BoxWise<FX>(Box<Wise<FX>>);
 
-/// Spanned-Expression
+/// _Wi_th _S_ource _E_xpression
 #[derive(Debug, From)]
-pub struct SE<FX>(Spanned<Expr<FX>>);
-
-type SEParser<'a> = Recursive<'a, SE<ProcEffect>>;
+pub struct Wise<FX>(WithSource<Expr<FX>>);
 
 // Potentially effectful expressions:
 #[derive(Debug, From, new)]
@@ -103,20 +100,20 @@ pub struct ProcDef(ProcExpr);
 pub struct Let<FX> {
     clauses: Vec<LetClause<FX>>,
     #[new(into)]
-    inner: BSE<FX>,
+    inner: BoxWise<FX>,
 }
 
 #[derive(Debug, new)]
 pub struct LetClause<FX> {
     binding: Pattern,
     #[new(into)]
-    definition: BSE<FX>,
+    definition: BoxWise<FX>,
 }
 
 #[derive(Debug, new)]
 pub struct Match<FX> {
     #[new(into)]
-    candidate: BSE<FX>,
+    candidate: BoxWise<FX>,
     clauses: Vec<MatchClause<FX>>,
 }
 
@@ -124,7 +121,7 @@ pub struct Match<FX> {
 pub struct MatchClause<FX> {
     binding: Pattern,
     #[new(into)]
-    consequent: BSE<FX>,
+    consequent: BoxWise<FX>,
 }
 
 #[derive(Debug, From)]
@@ -144,9 +141,9 @@ pub enum Confined<FX> {
     Ref(RcId),
     Prim(PrimVal),
     Parens(ParensExpr<FX>),
-    ObjectDef(Object<FuncDef, QueryDef, ProcDef, SE<FX>>),
-    ListExpr(ListForm<SE<FX>, BSE<FX>>),
+    ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),
+    ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
 }
 
 #[derive(Debug, From)]
-pub struct ParensExpr<FX>(BSE<FX>);
+pub struct ParensExpr<FX>(BoxWise<FX>);

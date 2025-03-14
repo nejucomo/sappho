@@ -4,11 +4,12 @@ use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{ParensExpr, SEParser, BSE};
+use crate::parseparams::ParseParams;
+use crate::{BoxWise, ParensExpr};
 
-impl ParsableWith<SEParser<'_>> for ParensExpr<ProcEffect> {
-    fn make_parser_with(rec: SEParser<'_>) -> impl Parser<Self> {
-        bracketed(['(', ')'], BSE::parser_with(rec)).map(ParensExpr)
+impl ParsableWith<ParseParams<'_>> for ParensExpr<ProcEffect> {
+    fn make_parser_with(rec: ParseParams<'_>) -> impl Parser<Self> {
+        bracketed(['(', ')'], BoxWise::parser_with(rec)).map(ParensExpr)
     }
 }
 

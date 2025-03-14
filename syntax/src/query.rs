@@ -1,13 +1,14 @@
 use chumsky::Parser as _;
 use sappho_keyword::Keyword::Query as KwQuery;
-use sappho_parsable::{Parsable, ParsableWith, Parser};
+use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
+use crate::parseparams::ParseParams;
 use crate::parserext::ParserExt;
-use crate::{ProcExpr, QueryDef, QueryExpr, SEParser};
+use crate::{ProcExpr, QueryDef, QueryExpr};
 
-impl ParsableWith<SEParser<'_>> for QueryDef {
-    fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<ParseParams<'_>> for QueryDef {
+    fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         KwQuery
             .parse()
             .then_space()
@@ -16,14 +17,8 @@ impl ParsableWith<SEParser<'_>> for QueryDef {
     }
 }
 
-impl Parsable for QueryExpr {
-    fn parser() -> impl Parser<Self> {
-        ProcExpr::parser().restrict()
-    }
-}
-
-impl ParsableWith<SEParser<'_>> for QueryExpr {
-    fn make_parser_with(sep: SEParser<'_>) -> impl Parser<Self> {
+impl ParsableWith<ParseParams<'_>> for QueryExpr {
+    fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         ProcExpr::parser_with(sep).restrict()
     }
 }

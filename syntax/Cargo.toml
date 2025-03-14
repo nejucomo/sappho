@@ -20,3 +20,4 @@ sappho-parsable.workspace = true
 sappho-primval.workspace = true
 sappho-unparse.workspace = true
 sappho-source.workspace = true
+sappho-with-source.workspace = true
