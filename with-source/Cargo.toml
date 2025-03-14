@@ -1,5 +1,5 @@
 [package]
-name = "sappho-sourced"
+name = "sappho-with-source"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

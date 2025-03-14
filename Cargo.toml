@@ -21,12 +21,12 @@ members = [
   "rand-dcomp",
   "regression-vectors",
   "source",
-  "sourced",
   "syntax",
   "tfi",
   "transform",
   "unparse",
   "value",
+  "with-source",
 ]
 
 [workspace.package]
@@ -70,12 +70,12 @@ sappho-primval = { path = "primval" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-regression-vectors = { path = "regression-vectors" }
 sappho-source = { path = "source" }
-sappho-sourced = { path = "sourced" }
 sappho-syntax = { path = "syntax" }
 sappho-tfi = { path = "tfi" }
 sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
+sappho-with-source = { path = "with-source" }
 simplelog = "0.12.0"
 test-case = "2.0"
 thiserror = "2.0.11"
