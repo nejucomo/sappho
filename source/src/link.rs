@@ -1,30 +1,20 @@
 use std::rc::Rc;
 
-use derive_more::From;
+use derive_more::{Deref, From};
 
-use crate::SourceCode;
+use crate::scref::Span;
+use crate::{SourceCode, SourceCodeRef};
 
 /// A reference counted link to [SourceCode]
 ///
 /// Often multiple parsed items need to refer back to the source, and this meets that need.
-#[derive(Debug, From)]
+#[derive(Clone, Debug, From, Deref)]
 #[from(SourceCode)]
 pub struct SourceCodeLink(Rc<SourceCode>);
 
 impl SourceCodeLink {
-    /// The source
-    pub fn source(&self) -> &str {
-        self.0.source()
-    }
-
-    /// The code
-    pub fn code(&self) -> &str {
-        self.0.code()
-    }
-}
-
-impl Clone for SourceCodeLink {
-    fn clone(&self) -> Self {
-        Self(self.0.clone())
+    /// Refer to a specific span
+    pub fn refer_to_span(&self, span: Span) -> SourceCodeRef {
+        SourceCodeRef::new(self.clone(), span)
     }
 }

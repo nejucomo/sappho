@@ -4,10 +4,10 @@
 
 mod code;
 mod link;
+mod scref;
 mod source;
-mod sourced;
 
 pub use self::code::SourceCode;
 pub use self::link::SourceCodeLink;
+pub use self::scref::{SourceCodeRef, Span};
 pub use self::source::Source;
-pub use self::sourced::{Sourced, Span};

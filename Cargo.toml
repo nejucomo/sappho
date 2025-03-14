@@ -21,6 +21,7 @@ members = [
   "rand-dcomp",
   "regression-vectors",
   "source",
+  "sourced",
   "syntax",
   "tfi",
   "transform",
@@ -69,6 +70,7 @@ sappho-primval = { path = "primval" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-regression-vectors = { path = "regression-vectors" }
 sappho-source = { path = "source" }
+sappho-sourced = { path = "sourced" }
 sappho-syntax = { path = "syntax" }
 sappho-tfi = { path = "tfi" }
 sappho-transform = { path = "transform" }

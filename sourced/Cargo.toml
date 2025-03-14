@@ -1,0 +1,13 @@
+[package]
+name = "sappho-sourced"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+chumsky.workspace = true
+derive-new.workspace = true
+sappho-parsable.workspace = true
+sappho-source.workspace = true
+sappho-unparse.workspace = true
