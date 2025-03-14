@@ -2,7 +2,8 @@ use either::Either::{Left, Right};
 use sappho_ast_effect::{Effect, EffectDescription, ProcEffect, PureEffect, QueryEffect};
 use sappho_listform::ListForm;
 use sappho_object::{Element, Object};
-use sappho_parsable::error::{ChumskyError, Span};
+use sappho_parsable::error::ChumskyError;
+use sappho_source::Span;
 
 use crate::leftassoc::LeftAssoc;
 use crate::spanned::Spanned;

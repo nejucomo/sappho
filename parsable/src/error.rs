@@ -1,12 +1,8 @@
 mod parse;
 mod serror;
 
-use std::ops::Range;
-
 pub use self::parse::ParseError;
 pub use self::serror::ChumskyError;
-
-pub type Span = Range<usize>;
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

@@ -1,6 +1,6 @@
 use chumsky::Parser as _;
-use sappho_parsable::error::Span;
 use sappho_parsable::{ParsableWith, Parser};
+use sappho_source::Span;
 use sappho_unparse::{Stream, Unparse};
 
 #[derive(Debug, derive_new::new)]

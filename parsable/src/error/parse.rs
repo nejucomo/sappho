@@ -1,8 +1,8 @@
 use std::fmt;
 
-use sappho_source::SourceCode;
+use sappho_source::{SourceCode, Span};
 
-use crate::error::{ChumskyError, Span};
+use crate::error::ChumskyError;
 
 #[derive(Debug, derive_more::Constructor, thiserror::Error)]
 pub struct ParseError {

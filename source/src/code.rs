@@ -4,6 +4,8 @@ use derive_new::new;
 use crate::Source;
 
 // Todo: Replace with `source-text` crate.
+//
+// TODO: refactor to be a ref-generic container.
 
 /// [SourceCode] refers to the textual source code and tracks the [Source] it came from (if any).
 #[derive(Clone, Debug, new, From, Into)]

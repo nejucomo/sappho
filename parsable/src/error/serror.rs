@@ -1,8 +1,7 @@
 use std::fmt;
 
 use chumsky::error::Simple;
-
-use crate::error::Span;
+use sappho_source::Span;
 
 #[derive(Debug, derive_more::From)]
 pub struct ChumskyError(Simple<char, Span>);
