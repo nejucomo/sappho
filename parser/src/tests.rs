@@ -1,8 +1,8 @@
 use either::Either::Left;
-use sappho_ast_core::{
+use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{
     ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
 };
-use sappho_ast_effect::Effect;
 use sappho_ast_rich::{Ast, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;

@@ -1,6 +1,6 @@
 use either::Either::{self, Left, Right};
-use sappho_ast_core::{AstProvider, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{AstProvider, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_attrs::Attrs;
 use sappho_object::{Object, Unbundled};
 

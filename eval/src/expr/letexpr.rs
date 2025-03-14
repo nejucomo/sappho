@@ -1,6 +1,6 @@
 use crate::{Eval, Result};
-use sappho_ast_core::{EffectExpr, LetExpr};
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{EffectExpr, LetExpr};
 use sappho_ast_red::AstRed;
 use sappho_value::{ScopeRef, ValRef};
 

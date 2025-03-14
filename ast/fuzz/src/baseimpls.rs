@@ -1,6 +1,6 @@
 use rand::distr::{Distribution, StandardUniform};
 use rand::Rng;
-use sappho_ast_core::Literal;
+use sappho_ast_kernel::Literal;
 use sappho_identifier::{Identifier, RcId};
 
 use crate::AstFuzz;

@@ -1,8 +1,8 @@
-use sappho_ast_core::{
+use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{
     ApplicationExpr, AstProvider, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause,
     MatchExpr,
 };
-use sappho_ast_effect::Effect;
 
 use crate::xform::TransformInto;
 

@@ -1,10 +1,10 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast_core::{
+use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{
     ApplicationExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef, ProcDef, QueryDef,
 };
-use sappho_ast_effect::Effect;
 use sappho_ast_rich::{Ast, Expr, ListExpr};
 use sappho_identifier::RcId;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
@@ -40,7 +40,7 @@ where
     AstFuzz: Distribution<FX>,
 {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> CoreExpr<Ast, FX> {
-        use sappho_ast_core::CoreExpr::*;
+        use sappho_ast_kernel::CoreExpr::*;
 
         let rwf = self.recursive_weight_factor();
         let fxwf = FX::fuzz_weight_factor();

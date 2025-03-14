@@ -1,5 +1,5 @@
-use sappho_ast_core::{AstProvider, Statements};
 use sappho_ast_effect::ProcEffect;
+use sappho_ast_kernel::{AstProvider, Statements};
 
 use crate::xform::TransformInto;
 

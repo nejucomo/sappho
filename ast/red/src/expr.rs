@@ -2,10 +2,10 @@ use std::fmt;
 use std::ops::Deref;
 
 use derive_more::{From, Into};
-use sappho_ast_core::{
+use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{
     ApplicationExpr, CoreExpr, EffectExpr, LetExpr, LookupExpr, MatchExpr, ObjectDef,
 };
-use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};

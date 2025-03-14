@@ -1,5 +1,5 @@
-use sappho_ast_core::{AstProvider, CoreExpr};
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{AstProvider, CoreExpr};
 use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 use sappho_identifier::RcId;

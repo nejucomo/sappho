@@ -1,6 +1,6 @@
 use either::Either::{self, Left};
-use sappho_ast_core::{AstProvider, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{AstProvider, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 

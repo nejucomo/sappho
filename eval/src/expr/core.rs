@@ -1,6 +1,6 @@
 use crate::{Eval, Result};
-use sappho_ast_core::{CoreExpr, EffectExpr};
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::{CoreExpr, EffectExpr};
 use sappho_ast_red::AstRed;
 use sappho_value::{ScopeRef, ValRef};
 
@@ -10,7 +10,7 @@ where
     FX: Effect,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        use sappho_ast_core::CoreExpr::*;
+        use sappho_ast_kernel::CoreExpr::*;
 
         match self {
             Lit(x) => x.eval(scope),

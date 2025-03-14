@@ -1,5 +1,5 @@
-use sappho_ast_core::AstProvider;
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::AstProvider;
 
 #[derive(Debug)]
 pub struct Ast;

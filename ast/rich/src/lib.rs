@@ -12,8 +12,8 @@ mod expr;
 mod pattern;
 mod provider;
 
-use sappho_ast_core::Literal;
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_kernel::Literal;
 use sappho_listform::ListForm;
 
 pub use self::expr::Expr;

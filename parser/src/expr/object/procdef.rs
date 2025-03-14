@@ -1,7 +1,7 @@
 use crate::error::BareError;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast_core::{ProcDef, Statements};
+use sappho_ast_kernel::{ProcDef, Statements};
 use sappho_ast_rich::{Ast, ProcExpr};
 use sappho_keyword::Keyword;
 

@@ -1,5 +1,5 @@
-use sappho_ast_core::{AstProvider, FuncDef, ProcDef, QueryDef, Statements};
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_kernel::{AstProvider, FuncDef, ProcDef, QueryDef, Statements};
 
 use crate::xform::TransformInto;
 

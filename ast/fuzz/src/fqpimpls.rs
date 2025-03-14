@@ -1,6 +1,6 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
+use sappho_ast_kernel::{FuncDef, ObjectDef, ProcDef, QueryDef, Statements};
 use sappho_ast_rich::{Ast, Expr};
 use sappho_attrs::Attrs;
 use sappho_object::Object;

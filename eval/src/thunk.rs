@@ -1,6 +1,6 @@
 use crate::{Eval, EvalThunk, Result};
-use sappho_ast_core::EffectExpr;
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::EffectExpr;
 use sappho_ast_red::AstRed;
 use sappho_value::{GenThunk, ValRef};
 

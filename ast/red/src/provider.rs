@@ -1,5 +1,5 @@
-use sappho_ast_core::AstProvider;
 use sappho_ast_effect::Effect;
+use sappho_ast_kernel::AstProvider;
 
 /// The [AstProvider] for a "REDuced" AST named [AstRed]
 #[derive(Copy, Clone, Default, Debug)]

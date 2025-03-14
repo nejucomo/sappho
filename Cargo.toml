@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-  "ast/core",
+  "ast/kernel",
   "ast/effect",
   "ast/fuzz",
   "ast/red",
@@ -50,7 +50,7 @@ include_dir = "0.7"
 indoc = "1.0.6"
 log = "0.4.17"
 rand = "0.9.0"
-sappho-ast-core = { path = "ast/core" }
+sappho-ast-kernel = { path = "ast/kernel" }
 sappho-ast-effect = { path = "ast/effect" }
 sappho-ast-fuzz = { path = "ast/fuzz" }
 sappho-ast-red = { path = "ast/red" }

@@ -1,5 +1,5 @@
-use sappho_ast_core::FuncDef;
 use sappho_ast_effect::PureEffect;
+use sappho_ast_kernel::FuncDef;
 use sappho_ast_red::{AstRed, Pattern, PureExpr};
 use sappho_unparse::{Stream, Unparse};
 

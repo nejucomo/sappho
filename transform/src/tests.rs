@@ -1,5 +1,5 @@
 //! Tests here assume the lower stack is correct, and thus rely on parse/unparse
-use sappho_ast_core::Literal;
+use sappho_ast_kernel::Literal;
 use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 use sappho_attrs::Attrs;

@@ -1,4 +1,4 @@
-use sappho_ast_core::Literal;
+use sappho_ast_kernel::Literal;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
