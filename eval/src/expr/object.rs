@@ -1,12 +1,12 @@
 use crate::{Eval, EvalV, Result};
 use sappho_ast_effect::Effect;
-use sappho_ast_kernel::{EffectExpr, ObjectDef};
+use sappho_ast_kernel::{Interaction, ObjectDef};
 use sappho_ast_red::AstRed;
 use sappho_value::{AttrVals, Func, Object, Proc, Query, ScopeRef, Value};
 
 impl<FX> EvalV for ObjectDef<AstRed, FX>
 where
-    EffectExpr<AstRed, FX>: Eval,
+    Interaction<AstRed, FX>: Eval,
     FX: Effect,
 {
     fn eval_val(&self, scope: &ScopeRef) -> Result<Value> {

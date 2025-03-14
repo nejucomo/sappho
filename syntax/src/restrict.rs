@@ -8,7 +8,7 @@ use sappho_with_source::WithSource;
 
 use crate::leftassoc::LeftAssoc;
 use crate::{
-    Application, Applications, BoxWise, Confined, EffectExpr, Expr, FuncDef, Let, LetClause,
+    Application, Applications, BoxWise, Confined, Expr, FuncDef, Interactions, Let, LetClause,
     Lookup, Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef,
     QueryExpr, Wise,
 };
@@ -223,19 +223,19 @@ impl RestrictInto<Lookup> for Lookup {
     }
 }
 
-impl<FX> RestrictInto<EffectExpr<FX>> for EffectExpr<ProcEffect>
+impl<FX> RestrictInto<Interactions<FX>> for Interactions<ProcEffect>
 where
     FX: Effect,
     ProcEffect: RestrictInto<FX>,
 {
-    fn restrict(self, span: Span) -> Result<EffectExpr<FX>, ChumskyError> {
+    fn restrict(self, span: Span) -> Result<Interactions<FX>, ChumskyError> {
         let effects = self
             .effects
             .into_iter()
             .map(|fx| fx.restrict(span.clone()))
             .collect::<Result<Vec<_>, _>>()?;
         let confined = self.confined.restrict(span)?;
-        Ok(EffectExpr { effects, confined })
+        Ok(Interactions { effects, confined })
     }
 }
 

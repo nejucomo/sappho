@@ -2,7 +2,7 @@ use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 use sappho_ast_kernel::{
-    ApplicationExpr, EffectExpr, Kernel, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
+    ApplicationExpr, Interaction, Kernel, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
 use sappho_ast_rich::{Ast, Expr};
 
@@ -84,7 +84,7 @@ where
             Match(x) => MatchExpr::restrict(x, span).map(Match),
             Application(x) => ApplicationExpr::restrict(x, span).map(Application),
             Lookup(x) => LookupExpr::restrict(x, span).map(Lookup),
-            Effect(x) => EffectExpr::restrict(x, span).map(Effect),
+            Effect(x) => Interaction::restrict(x, span).map(Effect),
         }
     }
 }
@@ -175,13 +175,13 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<EffectExpr<Ast, FXS>> for EffectExpr<Ast, FXD>
+impl<FXS, FXD> Restrict<Interaction<Ast, FXS>> for Interaction<Ast, FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: EffectExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
-        Ok(EffectExpr {
+    fn restrict(src: Interaction<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+        Ok(Interaction {
             effect: FXD::restrict(src.effect, span.clone())?,
             expr: Box::new(Expr::<FXD>::restrict(*src.expr, span)?),
         })

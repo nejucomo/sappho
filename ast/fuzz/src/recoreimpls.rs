@@ -2,7 +2,7 @@
 use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast_kernel::{
-    ApplicationExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
+    ApplicationExpr, Interaction, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
 use sappho_ast_rich::{Ast, Expr, Pattern};
 use sappho_identifier::RcId;
@@ -88,13 +88,13 @@ where
     }
 }
 
-impl<FX> Distribution<EffectExpr<Ast, FX>> for AstFuzz
+impl<FX> Distribution<Interaction<Ast, FX>> for AstFuzz
 where
     FX: FxFuzz,
     AstFuzz: Distribution<FX>,
 {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> EffectExpr<Ast, FX> {
-        EffectExpr::new(
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Interaction<Ast, FX> {
+        Interaction::new(
             rng.sample::<FX, _>(self),
             rng.sample::<Box<Expr<FX>>, _>(self),
         )

@@ -5,9 +5,9 @@ pub mod leftassoc;
 
 mod applications;
 mod confined;
-mod effectexpr;
 mod expr;
 mod funcdef;
+mod interactions;
 mod letexpr;
 mod lookups;
 mod matchexpr;
@@ -56,7 +56,7 @@ pub struct Wise<FX>(WithSource<Expr<FX>>);
 
 // Potentially effectful expressions:
 #[derive(Debug, From, new)]
-pub struct EffectExpr<FX> {
+pub struct Interactions<FX> {
     pub effects: Vec<FX>,
     pub confined: Confined<FX>,
 }
@@ -131,7 +131,7 @@ pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>);
 pub struct Application<FX>(Lookups<FX>);
 
 #[derive(Debug, From)]
-pub struct Lookups<FX>(LeftAssoc<EffectExpr<FX>, Lookup>);
+pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>);
 
 #[derive(Debug, From)]
 pub struct Lookup(RcId);

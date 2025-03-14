@@ -1,7 +1,7 @@
 use either::Either::Left;
 use sappho_ast_effect::Effect;
 use sappho_ast_kernel::{
-    ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
+    ApplicationExpr, FuncDef, Interaction, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
 };
 use sappho_ast_rich::{Ast, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_attrs::Attrs;
@@ -27,7 +27,7 @@ fn bind(s: &'static str) -> Pattern {
 fn inquire(x: QueryExpr) -> QueryExpr {
     use sappho_ast_effect::QueryEffect;
 
-    QueryExpr::from(EffectExpr::new(QueryEffect::Inquire, Box::new(x)))
+    QueryExpr::from(Interaction::new(QueryEffect::Inquire, Box::new(x)))
 }
 
 fn list<T>(xs: T) -> PureExpr

@@ -1,5 +1,5 @@
 use crate::{
-    ApplicationExpr, AstProvider, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
+    ApplicationExpr, AstProvider, FuncDef, Interaction, LetExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_effect::Effect;
@@ -30,7 +30,7 @@ where
     #[from]
     Lookup(LookupExpr<XP, FX>),
     #[from]
-    Effect(EffectExpr<XP, FX>),
+    Effect(Interaction<XP, FX>),
 }
 
 impl<XP, FX> From<FuncDef<XP>> for Kernel<XP, FX>

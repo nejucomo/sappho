@@ -4,7 +4,7 @@ use sappho_unparse::{Stream, Unparse};
 use crate::AstProvider;
 
 #[derive(Debug, derive_new::new)]
-pub struct EffectExpr<XP, FX>
+pub struct Interaction<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
@@ -13,24 +13,24 @@ where
     pub expr: Box<XP::Expr<FX>>,
 }
 
-impl<XP, FX> EffectExpr<XP, FX>
+impl<XP, FX> Interaction<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
-    pub fn transform_into<XPD>(self) -> EffectExpr<XPD, FX>
+    pub fn transform_into<XPD>(self) -> Interaction<XPD, FX>
     where
         XPD: AstProvider,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
-        EffectExpr {
+        Interaction {
             effect: self.effect,
             expr: Box::new(XPD::Expr::from(*self.expr)),
         }
     }
 }
 
-impl<XP, FX> Unparse for EffectExpr<XP, FX>
+impl<XP, FX> Unparse for Interaction<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
@@ -41,17 +41,17 @@ where
     }
 }
 
-impl<XP, FX> Clone for EffectExpr<XP, FX>
+impl<XP, FX> Clone for Interaction<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,
 {
     fn clone(&self) -> Self {
-        EffectExpr::new(self.effect, self.expr.clone())
+        Interaction::new(self.effect, self.expr.clone())
     }
 }
 
-impl<XP, FX> PartialEq for EffectExpr<XP, FX>
+impl<XP, FX> PartialEq for Interaction<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,

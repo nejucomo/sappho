@@ -2,7 +2,7 @@ use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast_effect::Effect;
 use sappho_ast_kernel::{
-    ApplicationExpr, EffectExpr, FuncDef, Kernel, LetExpr, Literal, LookupExpr, MatchExpr,
+    ApplicationExpr, FuncDef, Interaction, Kernel, LetExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_rich::{Ast, Expr, ListExpr};
@@ -57,7 +57,7 @@ where
             )
             .or(<Self as Distribution<LookupExpr<Ast, FX>>>::map(*self, Lookup).weighted_case(rwf))
             .or(
-                <Self as Distribution<EffectExpr<Ast, FX>>>::map(*self, Effect)
+                <Self as Distribution<Interaction<Ast, FX>>>::map(*self, Effect)
                     .weighted_case(rwf * fxwf),
             )
             .sample(rng)

@@ -1,6 +1,6 @@
 use crate::{GenThunk, ScopeRef};
 use sappho_ast_effect::ProcEffect;
-use sappho_ast_kernel::{EffectExpr, ObjectDef, ProcDef};
+use sappho_ast_kernel::{Interaction, ObjectDef, ProcDef};
 use sappho_ast_red::{AstRed, Expr};
 use sappho_unparse::{Stream, Unparse};
 
@@ -15,7 +15,7 @@ impl Proc {
         // FIXME: This is ugly: GenThunk requires an `Expr` so we synthsize `!proc { ... }` around
         // the proc definition.
         GenThunk::new(
-            Expr::new(EffectExpr::new(
+            Expr::new(Interaction::new(
                 ProcEffect::Invoke,
                 Box::new(Expr::new(ObjectDef::new_proc(self.pdef.clone()))),
             )),

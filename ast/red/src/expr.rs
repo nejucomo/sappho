@@ -4,7 +4,7 @@ use std::ops::Deref;
 use derive_more::{From, Into};
 use sappho_ast_effect::Effect;
 use sappho_ast_kernel::{
-    ApplicationExpr, EffectExpr, Kernel, LetExpr, LookupExpr, MatchExpr, ObjectDef,
+    ApplicationExpr, Interaction, Kernel, LetExpr, LookupExpr, MatchExpr, ObjectDef,
 };
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
@@ -22,7 +22,7 @@ use crate::AstRed;
     MatchExpr<AstRed, FX>,
     ApplicationExpr<AstRed, FX>,
     LookupExpr<AstRed, FX>,
-    EffectExpr<AstRed, FX>,
+    Interaction<AstRed, FX>,
 
 
 )]

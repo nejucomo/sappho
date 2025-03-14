@@ -1,6 +1,6 @@
 use sappho_ast_effect::Effect;
 use sappho_ast_kernel::{
-    ApplicationExpr, AstProvider, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause,
+    ApplicationExpr, AstProvider, Interaction, LetClause, LetExpr, LookupExpr, MatchClause,
     MatchExpr,
 };
 
@@ -97,14 +97,14 @@ where
     }
 }
 
-impl<XPS, XPD, FX> TransformInto<EffectExpr<XPD, FX>> for EffectExpr<XPS, FX>
+impl<XPS, XPD, FX> TransformInto<Interaction<XPD, FX>> for Interaction<XPS, FX>
 where
     XPS: AstProvider,
     XPD: AstProvider,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
 {
-    fn transform(self) -> EffectExpr<XPD, FX> {
-        EffectExpr::new(self.effect, Box::new(self.expr.transform()))
+    fn transform(self) -> Interaction<XPD, FX> {
+        Interaction::new(self.effect, Box::new(self.expr.transform()))
     }
 }
