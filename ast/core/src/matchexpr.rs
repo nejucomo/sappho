@@ -11,7 +11,7 @@ pub use self::clause::MatchClause;
 #[derive(Debug, derive_new::new)]
 pub struct MatchExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     /// The match target, ie: `x` in `match x { 3 -> 0, y -> y }`.
@@ -23,12 +23,12 @@ where
 
 impl<XP, FX> MatchExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> MatchExpr<XPD, FX>
     where
-        XPD: AstProvider,
+        XPD: AstProvider<FX>,
         XPD::Pattern: From<XP::Pattern>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
@@ -45,7 +45,7 @@ where
 
 impl<XP, FX> Unparse for MatchExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -66,7 +66,7 @@ where
 
 impl<XP, FX> Clone for MatchExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -76,7 +76,7 @@ where
 
 impl<XP, FX> PartialEq for MatchExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

@@ -8,8 +8,8 @@ use crate::xform::TransformInto;
 
 impl<XPS, XPD, FX> TransformInto<LetExpr<XPD, FX>> for LetExpr<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
     XPS::Pattern: TransformInto<XPD::Pattern>,
@@ -24,8 +24,8 @@ where
 
 impl<XPS, XPD, FX> TransformInto<LetClause<XPD, FX>> for LetClause<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
     XPS::Pattern: TransformInto<XPD::Pattern>,
@@ -40,8 +40,8 @@ where
 
 impl<XPS, XPD, FX> TransformInto<MatchExpr<XPD, FX>> for MatchExpr<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
     XPS::Pattern: TransformInto<XPD::Pattern>,
@@ -59,8 +59,8 @@ where
 
 impl<XPS, XPD, FX> TransformInto<MatchClause<XPD, FX>> for MatchClause<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
     XPS::Pattern: TransformInto<XPD::Pattern>,
@@ -72,8 +72,8 @@ where
 
 impl<XPS, XPD, FX> TransformInto<ApplicationExpr<XPD, FX>> for ApplicationExpr<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
 {
@@ -87,8 +87,8 @@ where
 
 impl<XPS, XPD, FX> TransformInto<LookupExpr<XPD, FX>> for LookupExpr<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
 {
@@ -99,8 +99,8 @@ where
 
 impl<XPS, XPD, FX> TransformInto<EffectExpr<XPD, FX>> for EffectExpr<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
 {

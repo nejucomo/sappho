@@ -11,7 +11,7 @@ pub use self::clause::LetClause;
 #[derive(Debug, derive_new::new)]
 pub struct LetExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     /// The let clauses:
@@ -23,12 +23,12 @@ where
 
 impl<XP, FX> LetExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> LetExpr<XPD, FX>
     where
-        XPD: AstProvider,
+        XPD: AstProvider<FX>,
         XPD::Pattern: From<XP::Pattern>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
@@ -45,7 +45,7 @@ where
 
 impl<XP, FX> Unparse for LetExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -73,7 +73,7 @@ where
 
 impl<XP, FX> Clone for LetExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -83,7 +83,7 @@ where
 
 impl<XP, FX> PartialEq for LetExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

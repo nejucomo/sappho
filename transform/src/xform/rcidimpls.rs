@@ -8,7 +8,7 @@ use crate::xform::TransformInto;
 
 impl<XP, FX> TransformInto<CoreExpr<XP, FX>> for RcId
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn transform(self) -> CoreExpr<XP, FX> {

@@ -8,8 +8,8 @@ use crate::xform::{TransformInto, TryTransformInto};
 
 impl<XPS, XPD, FX> TransformInto<ObjectDef<XPD, FX>> for ObjectDef<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
     FuncDef<XPS>: TransformInto<FuncDef<XPD>>,
@@ -36,7 +36,7 @@ where
 
 impl<XP, FX> TryTransformInto<Attrs<XP::Expr<FX>>> for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn try_transform(self) -> Either<Attrs<XP::Expr<FX>>, Self> {

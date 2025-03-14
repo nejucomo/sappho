@@ -7,7 +7,7 @@ use crate::AstProvider;
 #[derive(Debug, derive_new::new)]
 pub struct ApplicationExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     /// The target of application, ie `f` in `f x`.
@@ -19,12 +19,12 @@ where
 
 impl<XP, FX> ApplicationExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> ApplicationExpr<XPD, FX>
     where
-        XPD: AstProvider,
+        XPD: AstProvider<FX>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         ApplicationExpr {
@@ -36,7 +36,7 @@ where
 
 impl<XP, FX> Unparse for ApplicationExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -56,7 +56,7 @@ where
 
 impl<XP, FX> Clone for ApplicationExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -66,7 +66,7 @@ where
 
 impl<XP, FX> PartialEq for ApplicationExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

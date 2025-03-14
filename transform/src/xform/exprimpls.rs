@@ -70,8 +70,8 @@ where
 
 impl<XPS, XPD, FX> TransformInto<CoreExpr<XPD, FX>> for CoreExpr<XPS, FX>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     FX: Effect,
     XPS::Expr<FX>: TransformInto<XPD::Expr<FX>>,
     XPS::Pattern: TransformInto<XPD::Pattern>,

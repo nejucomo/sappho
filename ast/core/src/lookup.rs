@@ -7,7 +7,7 @@ use sappho_unparse::{Stream, Unparse};
 #[derive(Debug, derive_new::new)]
 pub struct LookupExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     /// The target expression of the lookup, ie `x` in `x.foo`.
@@ -19,12 +19,12 @@ where
 
 impl<XP, FX> LookupExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     pub fn transform_into<XPD>(self) -> LookupExpr<XPD, FX>
     where
-        XPD: AstProvider,
+        XPD: AstProvider<FX>,
         XPD::Expr<FX>: From<XP::Expr<FX>>,
     {
         LookupExpr {
@@ -36,7 +36,7 @@ where
 
 impl<XP, FX> Unparse for LookupExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -48,7 +48,7 @@ where
 
 impl<XP, FX> Clone for LookupExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -58,7 +58,7 @@ where
 
 impl<XP, FX> PartialEq for LookupExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

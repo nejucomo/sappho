@@ -12,7 +12,7 @@ use sappho_unparse::{Stream, Unparse};
 #[derive(Debug, derive_more::From)]
 pub enum CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     #[from(f64)]
@@ -35,7 +35,7 @@ where
 
 impl<XP, FX> From<FuncDef<XP>> for CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: FuncDef<XP>) -> Self {
@@ -45,7 +45,7 @@ where
 
 impl<XP, FX> From<QueryDef<XP>> for CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: QueryDef<XP>) -> Self {
@@ -55,7 +55,7 @@ where
 
 impl<XP, FX> From<ProcDef<XP>> for CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: ProcDef<XP>) -> Self {
@@ -65,7 +65,7 @@ where
 
 impl<XP, FX> From<Attrs<XP::Expr<FX>>> for CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: Attrs<XP::Expr<FX>>) -> Self {
@@ -75,7 +75,7 @@ where
 
 impl<XP, FX> Unparse for CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -96,7 +96,7 @@ where
 
 impl<XP, FX> Clone for CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -117,7 +117,7 @@ where
 
 impl<XP, FX> PartialEq for CoreExpr<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

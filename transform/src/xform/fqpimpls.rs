@@ -5,8 +5,8 @@ use crate::xform::TransformInto;
 
 impl<XPS, XPD> TransformInto<FuncDef<XPD>> for FuncDef<XPS>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     XPS::Expr<PureEffect>: TransformInto<XPD::Expr<PureEffect>>,
     XPS::Pattern: TransformInto<XPD::Pattern>,
 {
@@ -17,8 +17,8 @@ where
 
 impl<XPS, XPD> TransformInto<QueryDef<XPD>> for QueryDef<XPS>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     XPS::Expr<QueryEffect>: TransformInto<XPD::Expr<QueryEffect>>,
 {
     fn transform(self) -> QueryDef<XPD> {
@@ -28,8 +28,8 @@ where
 
 impl<XPS, XPD> TransformInto<ProcDef<XPD>> for ProcDef<XPS>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     XPS::Expr<ProcEffect>: TransformInto<XPD::Expr<ProcEffect>>,
 {
     fn transform(self) -> ProcDef<XPD> {

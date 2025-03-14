@@ -6,18 +6,18 @@ use crate::AstProvider;
 #[derive(Debug)]
 pub enum Statements<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     Return(Box<XP::Expr<ProcEffect>>),
 }
 
 impl<XP> Statements<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     pub fn transform_into<XPD>(self) -> Statements<XPD>
     where
-        XPD: AstProvider,
+        XPD: AstProvider<FX>,
         XPD::Expr<ProcEffect>: From<XP::Expr<ProcEffect>>,
     {
         use Statements::*;
@@ -30,7 +30,7 @@ where
 
 impl<XP> Unparse for Statements<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use Statements::*;
@@ -47,7 +47,7 @@ where
 
 impl<XP> Clone for Statements<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     fn clone(&self) -> Self {
         use Statements::*;
@@ -60,7 +60,7 @@ where
 
 impl<XP> PartialEq for Statements<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     fn eq(&self, other: &Self) -> bool {
         use Statements::*;

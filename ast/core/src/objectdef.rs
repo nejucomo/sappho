@@ -13,12 +13,12 @@ use crate::{AstProvider, FuncDef, ProcDef, QueryDef};
 #[derive(Debug, new, From, Into)]
 pub struct ObjectDef<XP, FX>(Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>)
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect;
 
 impl<XP, FX> ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     pub fn new_from_parts(
@@ -66,7 +66,7 @@ where
 
 impl<XP, FX> Default for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn default() -> Self {
@@ -76,7 +76,7 @@ where
 
 impl<XP, FX> From<FuncDef<XP>> for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: FuncDef<XP>) -> Self {
@@ -86,7 +86,7 @@ where
 
 impl<XP, FX> From<QueryDef<XP>> for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: QueryDef<XP>) -> Self {
@@ -96,7 +96,7 @@ where
 
 impl<XP, FX> From<ProcDef<XP>> for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: ProcDef<XP>) -> Self {
@@ -106,7 +106,7 @@ where
 
 impl<XP, FX> From<Attrs<XP::Expr<FX>>> for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn from(value: Attrs<XP::Expr<FX>>) -> Self {
@@ -116,7 +116,7 @@ where
 
 impl<XP, FX> Deref for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     type Target = Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>;
@@ -129,7 +129,7 @@ where
 impl<XP, FX> AsRef<Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>>>
     for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn as_ref(&self) -> &Object<FuncDef<XP>, QueryDef<XP>, ProcDef<XP>, XP::Expr<FX>> {
@@ -139,7 +139,7 @@ where
 
 impl<XP, FX> Unparse for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
@@ -149,7 +149,7 @@ where
 
 impl<XP, FX> Clone for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn clone(&self) -> Self {
@@ -159,7 +159,7 @@ where
 
 impl<XP, FX> PartialEq for ObjectDef<XP, FX>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
     FX: Effect,
 {
     fn eq(&self, other: &Self) -> bool {

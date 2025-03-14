@@ -5,8 +5,8 @@ use crate::xform::TransformInto;
 
 impl<XPS, XPD> TransformInto<Statements<XPD>> for Statements<XPS>
 where
-    XPS: AstProvider,
-    XPD: AstProvider,
+    XPS: AstProvider<FX>,
+    XPD: AstProvider<FX>,
     XPS::Expr<ProcEffect>: TransformInto<XPD::Expr<ProcEffect>>,
 {
     fn transform(self) -> Statements<XPD> {

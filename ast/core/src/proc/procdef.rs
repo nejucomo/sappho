@@ -4,11 +4,11 @@ use sappho_unparse::{Stream, Unparse};
 #[derive(Debug, derive_more::From, derive_more::Into)]
 pub struct ProcDef<XP>(Statements<XP>)
 where
-    XP: AstProvider;
+    XP: AstProvider<FX>;
 
 impl<XP> Unparse for ProcDef<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Brackets::Squiggle;
@@ -24,7 +24,7 @@ where
 
 impl<XP> Clone for ProcDef<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     fn clone(&self) -> Self {
         ProcDef::from(self.0.clone())
@@ -33,7 +33,7 @@ where
 
 impl<XP> PartialEq for ProcDef<XP>
 where
-    XP: AstProvider,
+    XP: AstProvider<FX>,
 {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
