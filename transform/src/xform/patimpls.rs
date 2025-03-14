@@ -1,28 +1,28 @@
 use either::Either::{self, Left, Right};
-use sappho_ast_red::{self as astred};
+use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 use sappho_identifier::RcId;
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};
 
-impl TransformInto<astred::Pattern> for rich::Pattern {
-    fn transform(self) -> astred::Pattern {
+impl TransformInto<red::Pattern> for rich::Pattern {
+    fn transform(self) -> red::Pattern {
         match self {
-            rich::Pattern::Bind(x) => astred::Pattern::Bind(x),
-            rich::Pattern::LitEq(x) => astred::Pattern::LitEq(x),
-            rich::Pattern::Unpack(x) => astred::Pattern::Unpack(x.transform()),
+            rich::Pattern::Bind(x) => red::Pattern::Bind(x),
+            rich::Pattern::LitEq(x) => red::Pattern::LitEq(x),
+            rich::Pattern::Unpack(x) => red::Pattern::Unpack(x.transform()),
             rich::Pattern::List(x) => x.transform(),
         }
     }
 }
 
-impl TransformInto<rich::Pattern> for astred::Pattern {
+impl TransformInto<rich::Pattern> for red::Pattern {
     fn transform(self) -> rich::Pattern {
         match self {
-            astred::Pattern::Bind(x) => rich::Pattern::Bind(x),
-            astred::Pattern::LitEq(x) => rich::Pattern::LitEq(x),
-            astred::Pattern::Unpack(attrs) => {
+            red::Pattern::Bind(x) => rich::Pattern::Bind(x),
+            red::Pattern::LitEq(x) => rich::Pattern::LitEq(x),
+            red::Pattern::Unpack(attrs) => {
                 attrs.try_transform().either(rich::Pattern::List, |attrs| {
                     rich::Pattern::Unpack(attrs.transform())
                 })
@@ -31,13 +31,13 @@ impl TransformInto<rich::Pattern> for astred::Pattern {
     }
 }
 
-impl TryTransformInto<TailOrAttrs<RcId, astred::Pattern>> for astred::Pattern {
-    fn try_transform(self) -> Either<TailOrAttrs<RcId, astred::Pattern>, Self> {
+impl TryTransformInto<TailOrAttrs<RcId, red::Pattern>> for red::Pattern {
+    fn try_transform(self) -> Either<TailOrAttrs<RcId, red::Pattern>, Self> {
         use TailOrAttrs::*;
 
         match self {
-            astred::Pattern::Bind(rcid) => Left(Tail(rcid)),
-            astred::Pattern::Unpack(attrs) => Left(TailAttrs(attrs)),
+            red::Pattern::Bind(rcid) => Left(Tail(rcid)),
+            red::Pattern::Unpack(attrs) => Left(TailAttrs(attrs)),
             other => Right(other),
         }
     }

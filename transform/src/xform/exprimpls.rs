@@ -1,28 +1,28 @@
 use either::Either::{self, Left};
 use sappho_ast_core::{AstProvider, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
-use sappho_ast_red as astred;
+use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};
 
-impl<FX> TransformInto<astred::Expr<FX>> for rich::Expr<FX>
+impl<FX> TransformInto<red::Expr<FX>> for rich::Expr<FX>
 where
     FX: Effect,
 {
-    fn transform(self) -> astred::Expr<FX> {
+    fn transform(self) -> red::Expr<FX> {
         match self {
-            rich::Expr::Core(x) => astred::Expr::new(x.transform()),
-            rich::Expr::Func(x) => astred::Expr::new(x.transform()),
-            rich::Expr::Query(x) => astred::Expr::new(x.transform()),
-            rich::Expr::Proc(x) => astred::Expr::new(x.transform()),
+            rich::Expr::Core(x) => red::Expr::new(x.transform()),
+            rich::Expr::Func(x) => red::Expr::new(x.transform()),
+            rich::Expr::Query(x) => red::Expr::new(x.transform()),
+            rich::Expr::Proc(x) => red::Expr::new(x.transform()),
             rich::Expr::List(x) => x.transform(),
         }
     }
 }
 
-impl<FX> TransformInto<rich::Expr<FX>> for astred::Expr<FX>
+impl<FX> TransformInto<rich::Expr<FX>> for red::Expr<FX>
 where
     FX: Effect,
 {
@@ -50,11 +50,11 @@ where
     }
 }
 
-impl<FX> TryTransformInto<TailOrAttrs<Box<rich::Expr<FX>>, astred::Expr<FX>>> for astred::Expr<FX>
+impl<FX> TryTransformInto<TailOrAttrs<Box<rich::Expr<FX>>, red::Expr<FX>>> for red::Expr<FX>
 where
     FX: Effect,
 {
-    fn try_transform(self) -> Either<TailOrAttrs<Box<rich::Expr<FX>>, astred::Expr<FX>>, Self> {
+    fn try_transform(self) -> Either<TailOrAttrs<Box<rich::Expr<FX>>, red::Expr<FX>>, Self> {
         use CoreExpr::*;
         use TailOrAttrs::*;
 
@@ -62,7 +62,7 @@ where
             Object(obj) => obj
                 .try_transform()
                 .map_left(TailAttrs)
-                .map_right(|obj| astred::Expr::from(Object(obj))),
+                .map_right(|obj| red::Expr::from(Object(obj))),
             other => Left(Tail(Box::new(rich::Expr::Core(other.transform())))),
         }
     }

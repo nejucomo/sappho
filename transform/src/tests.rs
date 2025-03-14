@@ -1,6 +1,6 @@
 //! Tests here assume the lower stack is correct, and thus rely on parse/unparse
 use sappho_ast_core::Literal;
-use sappho_ast_red as astred;
+use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
@@ -11,15 +11,15 @@ use test_case::test_case;
 
 use crate::TransformInto;
 
-fn bind(s: &'static str) -> astred::Pattern {
-    astred::Pattern::Bind(RcId::from(s))
+fn bind(s: &'static str) -> red::Pattern {
+    red::Pattern::Bind(RcId::from(s))
 }
 
-fn unpack_empty() -> astred::Pattern {
-    astred::Pattern::Unpack(Attrs::default())
+fn unpack_empty() -> red::Pattern {
+    red::Pattern::Unpack(Attrs::default())
 }
 
-fn cons_pat(head: &'static str, tail: astred::Pattern) -> astred::Pattern {
+fn cons_pat(head: &'static str, tail: red::Pattern) -> red::Pattern {
     Attrs::from_iter([("head", bind(head)), ("tail", tail)]).into()
 }
 
@@ -71,10 +71,7 @@ fn reduce(input: &str, expected: &str) {
         ),
     )
 )]
-fn ast_to_red<const K: usize>(
-    body: [&'static str; K],
-    tail: Option<&'static str>,
-) -> astred::Pattern {
+fn ast_to_red<const K: usize>(body: [&'static str; K], tail: Option<&'static str>) -> red::Pattern {
     rich::ListPattern::new(
         body.map(RcId::from).map(rich::Pattern::Bind),
         tail.map(RcId::from),
@@ -113,7 +110,7 @@ where
 #[test_case(
     cons_pat(
         "a",
-        astred::Pattern::LitEq(Literal::Num(42.0)),
+        red::Pattern::LitEq(Literal::Num(42.0)),
     )
     => rich::Pattern::Unpack(
         Attrs::from_iter([
@@ -128,6 +125,6 @@ where
         ]),
     )
 )]
-fn red_to_ast(p: astred::Pattern) -> rich::Pattern {
+fn red_to_ast(p: red::Pattern) -> rich::Pattern {
     p.transform()
 }

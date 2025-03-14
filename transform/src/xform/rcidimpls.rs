@@ -1,6 +1,6 @@
 use sappho_ast_core::{AstProvider, CoreExpr};
 use sappho_ast_effect::Effect;
-use sappho_ast_red as astred;
+use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 use sappho_identifier::RcId;
 
@@ -22,8 +22,8 @@ impl TransformInto<rich::Pattern> for RcId {
     }
 }
 
-impl TransformInto<astred::Pattern> for RcId {
-    fn transform(self) -> astred::Pattern {
-        astred::Pattern::Bind(self)
+impl TransformInto<red::Pattern> for RcId {
+    fn transform(self) -> red::Pattern {
+        red::Pattern::Bind(self)
     }
 }
