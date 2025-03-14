@@ -1,7 +1,7 @@
 use either::Either::{self, Left};
 use sappho_ast_core::{AstProvider, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::Effect;
-use sappho_ast_reduced as astred;
+use sappho_ast_red as astred;
 use sappho_ast_rich as rich;
 
 use crate::xform::listimpls::TailOrAttrs;

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use derive_more::Deref;
-use sappho_ast_reduced::Pattern;
+use sappho_ast_red::Pattern;
 
 use crate::{BindFailure, Frame, Scope, ValRef};
 

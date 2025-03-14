@@ -1,5 +1,5 @@
 use either::Either::{self, Left, Right};
-use sappho_ast_reduced::{self as astred};
+use sappho_ast_red::{self as astred};
 use sappho_ast_rich as rich;
 use sappho_identifier::RcId;
 

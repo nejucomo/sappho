@@ -1,7 +1,7 @@
 use crate::{Eval, Result};
 use sappho_ast_core::EffectExpr;
 use sappho_ast_effect::{PureEffect, QueryEffect};
-use sappho_ast_reduced::AstRed;
+use sappho_ast_red::AstRed;
 use sappho_value::{ScopeRef, ValRef};
 
 impl Eval for EffectExpr<AstRed, PureEffect> {

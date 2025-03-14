@@ -1,6 +1,6 @@
 mod xform;
 
-use sappho_ast_reduced as astred;
+use sappho_ast_red as astred;
 use sappho_ast_rich as rich;
 
 use crate::xform::TransformInto;

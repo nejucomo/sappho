@@ -7,7 +7,7 @@ pub use self::sref::ScopeRef;
 pub use self::unbound::{Unbound, UnboundKind};
 
 use crate::ValRef;
-use sappho_ast_reduced::Pattern;
+use sappho_ast_red::Pattern;
 use sappho_identifier::RcId;
 
 #[derive(Debug)]

@@ -1,6 +1,6 @@
 //! Tests here assume the lower stack is correct, and thus rely on parse/unparse
 use sappho_ast_core::Literal;
-use sappho_ast_reduced as astred;
+use sappho_ast_red as astred;
 use sappho_ast_rich as rich;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;

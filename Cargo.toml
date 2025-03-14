@@ -4,7 +4,7 @@ members = [
   "ast/core",
   "ast/effect",
   "ast/fuzz",
-  "ast/reduced",
+  "ast/red",
   "ast/rich",
   "attrs",
   "cli",
@@ -53,7 +53,7 @@ rand = "0.9.0"
 sappho-ast-core = { path = "ast/core" }
 sappho-ast-effect = { path = "ast/effect" }
 sappho-ast-fuzz = { path = "ast/fuzz" }
-sappho-ast-reduced = { path = "ast/reduced" }
+sappho-ast-red = { path = "ast/red" }
 sappho-ast-rich = { path = "ast/rich" }
 sappho-attrs = { path = "attrs" }
 sappho-cli = { path = "cli" }

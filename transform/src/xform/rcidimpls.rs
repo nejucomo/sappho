@@ -1,6 +1,6 @@
 use sappho_ast_core::{AstProvider, CoreExpr};
 use sappho_ast_effect::Effect;
-use sappho_ast_reduced as astred;
+use sappho_ast_red as astred;
 use sappho_ast_rich as rich;
 use sappho_identifier::RcId;
 
