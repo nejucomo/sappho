@@ -12,14 +12,7 @@ use crate::{BoxWise, Wise};
 impl<'a> ParsableWith<&'a SourceCodeLink> for Wise<ProcEffect> {
     fn make_parser_with(sclink: &'a SourceCodeLink) -> impl Parser<Self> {
         chumsky::recursive::recursive(|recp| {
-            WithSource::parser_with((
-                sclink,
-                Self::parser_with(ParseParams {
-                    recp,
-                    sclink: sclink.clone(),
-                }),
-            ))
-            .map(Self)
+            WithSource::parser_with((sclink, ParseParams { recp })).map(Self)
         })
     }
 }
