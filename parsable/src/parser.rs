@@ -12,8 +12,17 @@ pub trait Parser<Output>:
         Source: From<S>,
     {
         let scode = Source::from(source).load().map_err(Error::Load)?;
-        let parsed = parse_source(self, scode)?;
+        let parsed = self.parse_sourcecode(&scode)?;
         Ok(parsed)
+    }
+
+    fn parse_sourcecode(self, sc: &SourceCodeLink) -> Result<Output, ParseError> {
+        use chumsky::primitive::end;
+        use chumsky::Parser as _;
+
+        self.then_ignore(end())
+            .parse(sc.code())
+            .map_err(|errors| ParseError::new(sc.clone(), errors))
     }
 
     fn try_map_ez<F, O, E>(self, f: F) -> impl Parser<O>
@@ -50,17 +59,3 @@ pub trait Parser<Output>:
 }
 
 impl<P, O> Parser<O> for P where P: chumsky::Parser<char, O, Error = ChumskyError> + Clone {}
-
-// helper code
-fn parse_source<P, O>(parser: P, sc: SourceCodeLink) -> Result<O, ParseError>
-where
-    P: Parser<O>,
-{
-    use chumsky::primitive::end;
-    use chumsky::Parser as _;
-
-    parser
-        .then_ignore(end())
-        .parse(sc.code())
-        .map_err(|errors| ParseError::new(sc, errors))
-}
