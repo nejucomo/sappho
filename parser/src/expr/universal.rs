@@ -6,7 +6,7 @@ use sappho_parsable::{Parsable, Parser};
 use sappho_primval::PrimVal;
 
 pub(super) fn universal_expr() -> impl Parser<ProcExpr> {
-    use sappho_ast_kernel::CoreExpr::{Lit, Ref};
+    use sappho_ast_kernel::Kernel::{Lit, Ref};
 
     identifier()
         .map(Ref)

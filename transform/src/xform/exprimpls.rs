@@ -1,6 +1,6 @@
 use either::Either::{self, Left};
 use sappho_ast_effect::Effect;
-use sappho_ast_kernel::{AstProvider, CoreExpr, FuncDef, ObjectDef, ProcDef, QueryDef};
+use sappho_ast_kernel::{AstProvider, FuncDef, Kernel, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 
@@ -28,9 +28,9 @@ where
 {
     fn transform(self) -> rich::Expr<FX> {
         use sappho_object::Unbundled::*;
-        use CoreExpr::*;
+        use Kernel::*;
 
-        let cx: CoreExpr<_, _> = self.into();
+        let cx: Kernel<_, _> = self.into();
         // rich::Expr::Core(cx.transform())
         match cx {
             Object(obj) => match obj.unbundle() {
@@ -55,10 +55,10 @@ where
     FX: Effect,
 {
     fn try_transform(self) -> Either<TailOrAttrs<Box<rich::Expr<FX>>, red::Expr<FX>>, Self> {
-        use CoreExpr::*;
+        use Kernel::*;
         use TailOrAttrs::*;
 
-        match CoreExpr::from(self) {
+        match Kernel::from(self) {
             Object(obj) => obj
                 .try_transform()
                 .map_left(TailAttrs)
@@ -68,7 +68,7 @@ where
     }
 }
 
-impl<XPS, XPD, FX> TransformInto<CoreExpr<XPD, FX>> for CoreExpr<XPS, FX>
+impl<XPS, XPD, FX> TransformInto<Kernel<XPD, FX>> for Kernel<XPS, FX>
 where
     XPS: AstProvider,
     XPD: AstProvider,
@@ -79,8 +79,8 @@ where
     QueryDef<XPS>: TransformInto<QueryDef<XPD>>,
     ProcDef<XPS>: TransformInto<ProcDef<XPD>>,
 {
-    fn transform(self) -> CoreExpr<XPD, FX> {
-        use CoreExpr::*;
+    fn transform(self) -> Kernel<XPD, FX> {
+        use Kernel::*;
 
         match self {
             Lit(x) => Lit(x),

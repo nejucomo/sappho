@@ -2,7 +2,7 @@ use crate::error::BareError;
 use crate::error::Span;
 use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 use sappho_ast_kernel::{
-    ApplicationExpr, CoreExpr, EffectExpr, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
+    ApplicationExpr, EffectExpr, Kernel, LetClause, LetExpr, LookupExpr, MatchClause, MatchExpr,
 };
 use sappho_ast_rich::{Ast, Expr};
 
@@ -48,7 +48,7 @@ where
         use Expr::*;
 
         match src {
-            Core(x) => CoreExpr::restrict(x, span).map(Core),
+            Core(x) => Kernel::restrict(x, span).map(Core),
             Func(x) => Ok(Func(x)),
             Query(x) => Ok(Query(x)),
             Proc(x) => Ok(Proc(x)),
@@ -66,13 +66,13 @@ where
     }
 }
 
-impl<FXS, FXD> Restrict<CoreExpr<Ast, FXS>> for CoreExpr<Ast, FXD>
+impl<FXS, FXD> Restrict<Kernel<Ast, FXS>> for Kernel<Ast, FXD>
 where
     FXD: Effect + Restrict<FXS>,
     FXS: Effect,
 {
-    fn restrict(src: CoreExpr<Ast, FXS>, span: Span) -> Result<Self, BareError> {
-        use sappho_ast_kernel::CoreExpr::*;
+    fn restrict(src: Kernel<Ast, FXS>, span: Span) -> Result<Self, BareError> {
+        use sappho_ast_kernel::Kernel::*;
 
         match src {
             Lit(x) => Ok(Lit(x)),

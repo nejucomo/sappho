@@ -1,18 +1,18 @@
 use sappho_ast_effect::Effect;
-use sappho_ast_kernel::{AstProvider, CoreExpr};
+use sappho_ast_kernel::{AstProvider, Kernel};
 use sappho_ast_red as red;
 use sappho_ast_rich as rich;
 use sappho_identifier::RcId;
 
 use crate::xform::TransformInto;
 
-impl<XP, FX> TransformInto<CoreExpr<XP, FX>> for RcId
+impl<XP, FX> TransformInto<Kernel<XP, FX>> for RcId
 where
     XP: AstProvider,
     FX: Effect,
 {
-    fn transform(self) -> CoreExpr<XP, FX> {
-        CoreExpr::Ref(self)
+    fn transform(self) -> Kernel<XP, FX> {
+        Kernel::Ref(self)
     }
 }
 

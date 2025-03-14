@@ -1,16 +1,16 @@
 use crate::{Eval, Result};
 use sappho_ast_effect::Effect;
-use sappho_ast_kernel::{CoreExpr, EffectExpr};
+use sappho_ast_kernel::{EffectExpr, Kernel};
 use sappho_ast_red::AstRed;
 use sappho_value::{ScopeRef, ValRef};
 
-impl<FX> Eval for CoreExpr<AstRed, FX>
+impl<FX> Eval for Kernel<AstRed, FX>
 where
     EffectExpr<AstRed, FX>: Eval,
     FX: Effect,
 {
     fn eval(&self, scope: &ScopeRef) -> Result<ValRef> {
-        use sappho_ast_kernel::CoreExpr::*;
+        use sappho_ast_kernel::Kernel::*;
 
         match self {
             Lit(x) => x.eval(scope),

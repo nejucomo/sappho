@@ -2,7 +2,7 @@ use rand::distr::Distribution;
 use rand::Rng;
 use sappho_ast_effect::Effect;
 use sappho_ast_kernel::{
-    ApplicationExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
+    ApplicationExpr, EffectExpr, FuncDef, Kernel, LetExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_rich::{Ast, Expr, ListExpr};
@@ -24,7 +24,7 @@ where
         let lower = self.next_lower_level();
         let rwf = lower.recursive_weight_factor();
 
-        <Self as Distribution<CoreExpr<Ast, FX>>>::map(lower, Core)
+        <Self as Distribution<Kernel<Ast, FX>>>::map(lower, Core)
             .weighted_case(1)
             .or(<Self as Distribution<FuncDef<Ast>>>::map(lower, Func).weighted_case(rwf))
             .or(<Self as Distribution<QueryDef<Ast>>>::map(lower, Query).weighted_case(rwf))
@@ -34,13 +34,13 @@ where
     }
 }
 
-impl<FX> Distribution<CoreExpr<Ast, FX>> for AstFuzz
+impl<FX> Distribution<Kernel<Ast, FX>> for AstFuzz
 where
     FX: Effect + FxFuzz,
     AstFuzz: Distribution<FX>,
 {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> CoreExpr<Ast, FX> {
-        use sappho_ast_kernel::CoreExpr::*;
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Kernel<Ast, FX> {
+        use sappho_ast_kernel::Kernel::*;
 
         let rwf = self.recursive_weight_factor();
         let fxwf = FX::fuzz_weight_factor();

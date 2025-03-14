@@ -4,7 +4,7 @@ use std::ops::Deref;
 use derive_more::{From, Into};
 use sappho_ast_effect::Effect;
 use sappho_ast_kernel::{
-    ApplicationExpr, CoreExpr, EffectExpr, LetExpr, LookupExpr, MatchExpr, ObjectDef,
+    ApplicationExpr, EffectExpr, Kernel, LetExpr, LookupExpr, MatchExpr, ObjectDef,
 };
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
@@ -14,7 +14,7 @@ use crate::AstRed;
 
 #[derive(Clone, Debug, PartialEq, From, Into)]
 #[from(
-    CoreExpr<AstRed, FX>,
+    Kernel<AstRed, FX>,
     RcId,
     f64,
     ObjectDef<AstRed, FX>,
@@ -26,7 +26,7 @@ use crate::AstRed;
 
 
 )]
-pub struct Expr<FX>(CoreExpr<AstRed, FX>)
+pub struct Expr<FX>(Kernel<AstRed, FX>)
 where
     FX: Effect;
 
@@ -36,9 +36,9 @@ where
 {
     pub fn new<T>(x: T) -> Self
     where
-        CoreExpr<AstRed, FX>: From<T>,
+        Kernel<AstRed, FX>: From<T>,
     {
-        Expr(CoreExpr::from(x))
+        Expr(Kernel::from(x))
     }
 }
 
@@ -47,7 +47,7 @@ where
     FX: Effect,
 {
     fn from(attrs: Attrs<Expr<FX>>) -> Self {
-        Expr(CoreExpr::from(attrs))
+        Expr(Kernel::from(attrs))
     }
 }
 
@@ -55,7 +55,7 @@ impl<FX> Deref for Expr<FX>
 where
     FX: Effect,
 {
-    type Target = CoreExpr<AstRed, FX>;
+    type Target = Kernel<AstRed, FX>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

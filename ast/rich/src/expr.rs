@@ -5,7 +5,7 @@ use std::fmt;
 // use derive_more::From;
 use either::Either;
 use sappho_ast_effect::Effect;
-use sappho_ast_kernel::{CoreExpr, FuncDef, ProcDef, QueryDef};
+use sappho_ast_kernel::{FuncDef, Kernel, ProcDef, QueryDef};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{Ast, ListExpr};
@@ -16,7 +16,7 @@ pub enum Expr<FX>
 where
     FX: Effect,
 {
-    Core(CoreExpr<Ast, FX>),
+    Core(Kernel<Ast, FX>),
 
     // Extensions from Core:
     Func(FuncDef<Ast>),
@@ -28,10 +28,10 @@ where
 impl<FX, T> From<T> for Expr<FX>
 where
     FX: Effect,
-    CoreExpr<Ast, FX>: From<T>,
+    Kernel<Ast, FX>: From<T>,
 {
     fn from(x: T) -> Self {
-        Expr::Core(CoreExpr::from(x))
+        Expr::Core(Kernel::from(x))
     }
 }
 
