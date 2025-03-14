@@ -1,5 +1,7 @@
 //! A crate for loading source code while tracking its provenance.
 
+#![deny(missing_docs)]
+
 mod code;
 mod link;
 mod load;

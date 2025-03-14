@@ -1,12 +1,12 @@
 use std::fmt;
 
-use sappho_source::{SourceCode, Span};
+use sappho_source::{SourceCodeLink, Span};
 
 use crate::error::ChumskyError;
 
 #[derive(Debug, derive_more::Constructor, thiserror::Error)]
 pub struct ParseError {
-    scode: SourceCode<String>,
+    scode: SourceCodeLink,
     errors: Vec<ChumskyError>,
 }
 

@@ -1,4 +1,4 @@
-use sappho_source::{LoadSource, SourceCode};
+use sappho_source::{LoadSource, SourceCodeLink};
 use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -11,8 +11,8 @@ pub enum SourceOption {
 }
 use SourceOption::*;
 
-impl LoadSource<String> for &SourceOption {
-    fn load(self) -> anyhow::Result<SourceCode<String>> {
+impl LoadSource for &SourceOption {
+    fn load(self) -> anyhow::Result<SourceCodeLink> {
         match self {
             Stdin => {
                 use std::io::Read;

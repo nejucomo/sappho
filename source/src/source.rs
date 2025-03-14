@@ -1,6 +1,9 @@
 use std::fmt;
 use std::path::{Path, PathBuf};
 
+/// The origin of a [SourceCode](crate::SourceCode)
+///
+/// This is an optional [PathBuf]. It is absent when source comes from arbitrary in-memory sources (especially in tests).
 #[derive(Clone, Debug, Default)]
 pub struct Source(Option<PathBuf>);
 

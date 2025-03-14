@@ -5,10 +5,9 @@ use sappho_transform::reduce;
 
 use crate::Result;
 
-pub fn interpret<S, C>(source: S) -> Result<ValRef>
+pub fn interpret<S>(source: S) -> Result<ValRef>
 where
-    S: LoadSource<C>,
-    C: Clone + AsRef<str> + ToString,
+    S: LoadSource,
 {
     let ast = parse(source)?;
     let val = eval(reduce(ast))?;
