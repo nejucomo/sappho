@@ -13,15 +13,6 @@ pub trait Unparse {
     fn unparse_into(&self, s: &mut Stream);
 }
 
-impl<T> Unparse for &T
-where
-    T: Unparse,
-{
-    fn unparse_into(&self, s: &mut Stream) {
-        s.write(self)
-    }
-}
-
 impl Unparse for str {
     fn unparse_into(&self, s: &mut Stream) {
         s.write_string(self.to_string())

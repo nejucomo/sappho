@@ -238,8 +238,21 @@ where
         } else {
             s.bracketed(Squiggle, |subs| {
                 for elem in self.as_refs().into_iter() {
+                    use Element::*;
+
                     subs.write(&OptSpace);
-                    subs.write(&elem);
+                    // HACK BUG TODO: Explore a pivot to `Unparse::unparse_into(self, ...)` not `&self`
+                    // subs.write(&elem);
+                    match elem {
+                        Func(f) => f.unparse_into(subs),
+                        Query(q) => q.unparse_into(subs),
+                        Proc(p) => p.unparse_into(subs),
+                        Attr(k, v) => {
+                            subs.write(&k);
+                            subs.write(": ");
+                            v.unparse_into(subs);
+                        }
+                    }
                     subs.write(",");
                 }
             });

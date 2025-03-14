@@ -7,7 +7,11 @@ fn errmsg(s: &str) -> Result<ValRef, String> {
 }
 
 #[test_case("{ a: 2, b: 3 }" => matches Ok(_))]
-#[test_case(regression::UNPACK_MISSING_ATTRS => errmsg("FIXME") ; "missing-attrs-on-unpack")]
+#[test_case(
+    regression::UNPACK_MISSING_ATTRS
+    => errmsg("eval error: value {\n  a: 2,\n} does not match pattern {\n  a: x,\n  b: y,\n  c: z,\n}: missing attr b")
+    ; "missing-attrs-on-unpack"
+)]
 fn interpret(source: &str) -> Result<ValRef, String> {
     crate::interpret(source).map_err(|e| e.to_string())
 }
