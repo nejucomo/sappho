@@ -4,9 +4,9 @@ use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{Ast, Expr, ListExpr, ProcExpr};
 use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr};
 use sappho_ast_effect::ProcEffect;
+use sappho_ast_rich::{Ast, Expr, ListExpr, ProcExpr};
 use sappho_keyword::Keyword;
 
 pub(crate) fn recursive_expr(

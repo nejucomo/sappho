@@ -1,6 +1,6 @@
 use chumsky::Parser as _;
-use sappho_ast::ProcExpr;
 use sappho_ast_core::Literal;
+use sappho_ast_rich::ProcExpr;
 use sappho_identifier::RcId;
 use sappho_parsable::{Parsable, Parser};
 use sappho_primval::PrimVal;

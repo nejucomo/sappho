@@ -1,7 +1,7 @@
-use sappho_ast as ast;
 use sappho_ast_core::{AstProvider, CoreExpr};
 use sappho_ast_effect::Effect;
 use sappho_ast_reduced as astred;
+use sappho_ast_rich as rich;
 use sappho_identifier::RcId;
 
 use crate::xform::TransformInto;
@@ -16,9 +16,9 @@ where
     }
 }
 
-impl TransformInto<ast::Pattern> for RcId {
-    fn transform(self) -> ast::Pattern {
-        ast::Pattern::Bind(self)
+impl TransformInto<rich::Pattern> for RcId {
+    fn transform(self) -> rich::Pattern {
+        rich::Pattern::Bind(self)
     }
 }
 

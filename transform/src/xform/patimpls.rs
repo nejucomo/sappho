@@ -1,30 +1,30 @@
 use either::Either::{self, Left, Right};
-use sappho_ast::{self as ast};
 use sappho_ast_reduced::{self as astred};
+use sappho_ast_rich as rich;
 use sappho_identifier::RcId;
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};
 
-impl TransformInto<astred::Pattern> for ast::Pattern {
+impl TransformInto<astred::Pattern> for rich::Pattern {
     fn transform(self) -> astred::Pattern {
         match self {
-            ast::Pattern::Bind(x) => astred::Pattern::Bind(x),
-            ast::Pattern::LitEq(x) => astred::Pattern::LitEq(x),
-            ast::Pattern::Unpack(x) => astred::Pattern::Unpack(x.transform()),
-            ast::Pattern::List(x) => x.transform(),
+            rich::Pattern::Bind(x) => astred::Pattern::Bind(x),
+            rich::Pattern::LitEq(x) => astred::Pattern::LitEq(x),
+            rich::Pattern::Unpack(x) => astred::Pattern::Unpack(x.transform()),
+            rich::Pattern::List(x) => x.transform(),
         }
     }
 }
 
-impl TransformInto<ast::Pattern> for astred::Pattern {
-    fn transform(self) -> ast::Pattern {
+impl TransformInto<rich::Pattern> for astred::Pattern {
+    fn transform(self) -> rich::Pattern {
         match self {
-            astred::Pattern::Bind(x) => ast::Pattern::Bind(x),
-            astred::Pattern::LitEq(x) => ast::Pattern::LitEq(x),
+            astred::Pattern::Bind(x) => rich::Pattern::Bind(x),
+            astred::Pattern::LitEq(x) => rich::Pattern::LitEq(x),
             astred::Pattern::Unpack(attrs) => {
-                attrs.try_transform().either(ast::Pattern::List, |attrs| {
-                    ast::Pattern::Unpack(attrs.transform())
+                attrs.try_transform().either(rich::Pattern::List, |attrs| {
+                    rich::Pattern::Unpack(attrs.transform())
                 })
             }
         }

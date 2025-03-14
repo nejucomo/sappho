@@ -1,9 +1,9 @@
 use either::Either::Left;
-use sappho_ast::{Ast, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_ast_core::{
     ApplicationExpr, EffectExpr, FuncDef, LetClause, LetExpr, LookupExpr, ObjectDef, QueryDef,
 };
 use sappho_ast_effect::Effect;
+use sappho_ast_rich::{Ast, Expr, ListPattern, Pattern, PureExpr, QueryExpr};
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_regression_vectors as regression;

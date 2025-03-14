@@ -7,7 +7,7 @@ use crate::expr::universal::universal_expr;
 use crate::space::ws;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::ProcExpr;
+use sappho_ast_rich::ProcExpr;
 use sappho_identifier::RcId;
 
 pub(super) fn proc_expr_def(

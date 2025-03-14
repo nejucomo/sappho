@@ -1,11 +1,11 @@
 use rand::distr::Distribution;
 use rand::Rng;
-use sappho_ast::{Ast, Expr, ListExpr};
 use sappho_ast_core::{
     ApplicationExpr, CoreExpr, EffectExpr, FuncDef, LetExpr, Literal, LookupExpr, MatchExpr,
     ObjectDef, ProcDef, QueryDef,
 };
 use sappho_ast_effect::Effect;
+use sappho_ast_rich::{Ast, Expr, ListExpr};
 use sappho_identifier::RcId;
 use sappho_rand_dcomp::{DistributionExt, WeightedCase};
 

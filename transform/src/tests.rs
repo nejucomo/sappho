@@ -1,7 +1,7 @@
 //! Tests here assume the lower stack is correct, and thus rely on parse/unparse
-use sappho_ast as ast;
 use sappho_ast_core::Literal;
 use sappho_ast_reduced as astred;
+use sappho_ast_rich as rich;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_parser::parse;
@@ -29,7 +29,7 @@ fn cons_pat(head: &'static str, tail: astred::Pattern) -> astred::Pattern {
     ; "unpack-missing-attrs-regression"
 )]
 fn reduce(input: &str, expected: &str) {
-    let astx: ast::PureExpr = parse(input).unwrap();
+    let astx: rich::PureExpr = parse(input).unwrap();
     dbg!(&astx);
     let expected = parse(expected).unwrap();
     dbg!(&expected);
@@ -75,19 +75,22 @@ fn ast_to_red<const K: usize>(
     body: [&'static str; K],
     tail: Option<&'static str>,
 ) -> astred::Pattern {
-    ast::ListPattern::new(
-        body.map(RcId::from).map(ast::Pattern::Bind),
+    rich::ListPattern::new(
+        body.map(RcId::from).map(rich::Pattern::Bind),
         tail.map(RcId::from),
     )
     .transform()
 }
 
-fn alp_new<I>(bindpats: I, tailbind: Option<&'static str>) -> ast::Pattern
+fn alp_new<I>(bindpats: I, tailbind: Option<&'static str>) -> rich::Pattern
 where
     I: IntoIterator<Item = &'static str>,
 {
-    ast::ListPattern::new(
-        bindpats.into_iter().map(RcId::from).map(ast::Pattern::Bind),
+    rich::ListPattern::new(
+        bindpats
+            .into_iter()
+            .map(RcId::from)
+            .map(rich::Pattern::Bind),
         tailbind.map(RcId::from),
     )
     .into()
@@ -112,19 +115,19 @@ where
         "a",
         astred::Pattern::LitEq(Literal::Num(42.0)),
     )
-    => ast::Pattern::Unpack(
+    => rich::Pattern::Unpack(
         Attrs::from_iter([
             (
                 "head",
-                ast::Pattern::Bind(RcId::from("a")),
+                rich::Pattern::Bind(RcId::from("a")),
             ),
             (
                 "tail",
-                ast::Pattern::LitEq(Literal::Num(42.0)),
+                rich::Pattern::LitEq(Literal::Num(42.0)),
             )
         ]),
     )
 )]
-fn red_to_ast(p: astred::Pattern) -> ast::Pattern {
+fn red_to_ast(p: astred::Pattern) -> rich::Pattern {
     p.transform()
 }

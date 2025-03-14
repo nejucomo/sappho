@@ -1,8 +1,8 @@
 use crate::error::BareError;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
-use sappho_ast::{Ast, ProcExpr};
 use sappho_ast_core::{ProcDef, Statements};
+use sappho_ast_rich::{Ast, ProcExpr};
 use sappho_keyword::Keyword;
 
 pub(crate) fn proc_def(

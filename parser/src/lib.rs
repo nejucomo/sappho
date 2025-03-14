@@ -10,7 +10,7 @@ use sappho_source::Source;
 
 pub use self::error::LoadParseError;
 
-pub fn parse<S>(source: S) -> Result<sappho_ast::PureExpr, LoadParseError>
+pub fn parse<S>(source: S) -> Result<sappho_ast_rich::PureExpr, LoadParseError>
 where
     Source: From<S>,
 {
