@@ -7,6 +7,7 @@ homepage.workspace = true
 
 [dependencies]
 chumsky.workspace = true
+derive-enum-from-into.workspace = true
 derive_more.workspace = true
 derive-new.workspace = true
 either.workspace = true
@@ -21,3 +22,7 @@ sappho-primval.workspace = true
 sappho-unparse.workspace = true
 sappho-source.workspace = true
 sappho-with-source.workspace = true
+sappho-tff.workspace = true
+
+[dev-dependencies]
+test-case.workspace = true

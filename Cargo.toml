@@ -22,6 +22,7 @@ members = [
   "regression-vectors",
   "source",
   "syntax",
+  "tff",
   "tfi",
   "transform",
   "unparse",
@@ -42,6 +43,7 @@ anyhow-std = "0.1.4"
 arrayvec = "0.7.6"
 chumsky = "0.9.3"
 clap = { version = "3.1.18", features = [ "derive", "cargo" ] }
+derive-enum-from-into = "0.2.0"
 derive_more = { version = "2.0.1", features = [ "full" ] }
 derive-new = "0.7.0"
 either = "1.13.0"
@@ -50,9 +52,9 @@ include_dir = "0.7"
 indoc = "1.0.6"
 log = "0.4.17"
 rand = "0.9.0"
-sappho-ast-kernel = { path = "ast/kernel" }
 sappho-ast-effect = { path = "ast/effect" }
 sappho-ast-fuzz = { path = "ast/fuzz" }
+sappho-ast-kernel = { path = "ast/kernel" }
 sappho-ast-red = { path = "ast/red" }
 sappho-ast-rich = { path = "ast/rich" }
 sappho-attrs = { path = "attrs" }
@@ -71,6 +73,7 @@ sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-regression-vectors = { path = "regression-vectors" }
 sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
+sappho-tff = { path = "tff" }
 sappho-tfi = { path = "tfi" }
 sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }

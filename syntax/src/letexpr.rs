@@ -86,7 +86,7 @@ where
         let clauses = src
             .clauses
             .into_iter()
-            .map(|clause| LetClause::restrict(clause))
+            .map(LetClause::restrict)
             .collect::<Result<Vec<_>, _>>()?;
         let inner = BoxWise::restrict(src.inner)?;
 

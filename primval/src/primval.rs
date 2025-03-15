@@ -1,16 +1,9 @@
-use std::str::FromStr;
-
-use chumsky::primitive::filter;
-use chumsky::{text, Parser as _};
-use sappho_parsable::{Parsable, Parser};
-use sappho_unparse::Unparse;
-
-use self::PrimVal::*;
+use derive_enum_from_into::{EnumFrom, EnumTryInto};
 
 /// A [PrimVal] is a value the language inherently provides which excludes containing other values or value-references
 ///
 /// Note that some [PrimVal] values _can_ be containers of [PrimVal] types. For example, a string contains chars, and a char is also a [PrimVal].
-#[derive(Copy, Clone, Debug, PartialEq, derive_more::From)]
+#[derive(Copy, Clone, Debug, PartialEq, EnumFrom, EnumTryInto)]
 pub enum PrimVal {
     Num(Num),
     // TODO:
@@ -36,27 +29,24 @@ pub enum PrimVal {
 /// ints (including bytes), big ints, decimals...
 pub type Num = f64;
 
-impl Parsable for PrimVal {
-    fn parser() -> impl Parser<Self> {
-        number().map(Num)
-    }
-}
+mod parsing {
+    use chumsky::Parser as _;
+    use sappho_parsable::{Parsable, Parser};
+    use sappho_unparse::Unparse;
 
-impl Unparse for PrimVal {
-    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
-        match self {
-            Num(n) => s.write(&n.to_string()),
+    use crate::PrimVal::{self, *};
+
+    impl Parsable for PrimVal {
+        fn parser() -> impl Parser<Self> {
+            crate::parseutil::number().map(Num)
         }
     }
-}
 
-fn number() -> impl Parser<f64> {
-    let disallowed_trailing_char = filter(|&c: &char| c.is_alphabetic() || c.is_control())
-        .try_map_ez(|c| -> Result<(), _> { Err(format!("unexpected {c:?} in numeric literal")) })
-        .or_not();
-
-    text::digits(10)
-        .then_ignore(disallowed_trailing_char)
-        .try_map_ez(|digs: String| f64::from_str(&digs))
-        .labelled("number")
+    impl Unparse for PrimVal {
+        fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
+            match self {
+                Num(n) => s.write(&n.to_string()),
+            }
+        }
+    }
 }

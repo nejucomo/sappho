@@ -81,7 +81,7 @@ where
         let clauses = src
             .clauses
             .into_iter()
-            .map(|clause| MatchClause::restrict(clause))
+            .map(MatchClause::restrict)
             .collect::<Result<Vec<_>, _>>()?;
         let candidate = BoxWise::restrict(src.candidate)?;
 

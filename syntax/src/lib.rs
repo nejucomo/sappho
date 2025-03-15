@@ -20,6 +20,7 @@ mod procdef;
 mod querydef;
 mod wise;
 
+use derive_enum_from_into::{EnumFrom, EnumTryInto};
 use derive_more::{From, Into};
 use derive_new::new;
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
@@ -27,7 +28,7 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
-use sappho_primval::PrimVal;
+use sappho_primval::{Num, PrimVal};
 use sappho_with_source::WithSource;
 
 use crate::leftassoc::LeftAssoc;
@@ -56,7 +57,7 @@ pub struct Interactions<FX> {
 }
 
 // Generic structures across effects:
-#[derive(Debug, From)]
+#[derive(Debug, EnumFrom, EnumTryInto)]
 pub enum Expr<FX> {
     Func(FuncDef),
     Query(QueryDef),
@@ -73,7 +74,7 @@ pub struct FuncDef {
     body: PureExpr,
 }
 
-#[derive(Clone, Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, EnumFrom, EnumTryInto)]
 pub enum Pattern {
     Bind(BindPattern),
     LitEq(PrimVal),
@@ -130,7 +131,7 @@ pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>);
 #[derive(Debug, From)]
 pub struct Lookup(RcId);
 
-#[derive(Debug, From)]
+#[derive(Debug, EnumFrom, EnumTryInto)]
 pub enum Confined<FX> {
     Ref(RcId),
     Prim(PrimVal),
@@ -141,3 +142,6 @@ pub enum Confined<FX> {
 
 #[derive(Debug, From)]
 pub struct ParensExpr<FX>(BoxWise<FX>);
+
+#[cfg(test)]
+mod tests;
