@@ -1,18 +1,16 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
-use sappho_ast_effect::{Effect, ProcEffect};
+use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_keyword::Keyword::Let as KwLet;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::restrict::RestrictInto;
 use crate::{BoxWise, Let, LetClause, Pattern};
 
 impl<FX> ParsableWith<ParseParams<'_>> for Let<FX>
 where
-    FX: Effect,
-    ProcEffect: RestrictInto<FX>,
+    FX: Effect + RestrictFrom<ProcEffect>,
 {
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         LetClause::parser_with(pep.clone())
@@ -27,8 +25,7 @@ where
 
 impl<FX> ParsableWith<ParseParams<'_>> for LetClause<FX>
 where
-    FX: Effect,
-    ProcEffect: RestrictInto<FX>,
+    FX: Effect + RestrictFrom<ProcEffect>,
 {
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         KwLet
@@ -78,5 +75,40 @@ where
         s.write(&self.binding);
         s.write(" = ");
         s.write(&self.definition);
+    }
+}
+
+impl<FX> RestrictFrom<Let<ProcEffect>> for Let<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: Let<ProcEffect>) -> Result<Let<FX>, Restriction> {
+        let clauses = src
+            .clauses
+            .into_iter()
+            .map(|clause| LetClause::restrict(clause))
+            .collect::<Result<Vec<_>, _>>()?;
+        let inner = BoxWise::restrict(src.inner)?;
+
+        Ok(Let { clauses, inner })
+    }
+}
+
+impl<FX> RestrictFrom<LetClause<ProcEffect>> for LetClause<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: LetClause<ProcEffect>) -> Result<LetClause<FX>, Restriction> {
+        let LetClause {
+            binding,
+            definition,
+        } = src;
+
+        let definition = BoxWise::restrict(definition)?;
+
+        Ok(LetClause {
+            binding,
+            definition,
+        })
     }
 }

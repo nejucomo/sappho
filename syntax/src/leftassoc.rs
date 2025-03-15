@@ -1,4 +1,5 @@
 use chumsky::Parser as _;
+use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
@@ -62,5 +63,15 @@ where
         for r in &self.rights {
             s.write(r);
         }
+    }
+}
+
+impl<LS, RS, LT, RT> RestrictFrom<LeftAssoc<LS, RS>> for LeftAssoc<LT, RT>
+where
+    LT: RestrictFrom<LS>,
+    RT: RestrictFrom<RS>,
+{
+    fn restrict(src: LeftAssoc<LS, RS>) -> Result<LeftAssoc<LT, RT>, Restriction> {
+        src.try_map(LT::restrict, RT::restrict)
     }
 }

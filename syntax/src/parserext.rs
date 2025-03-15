@@ -1,13 +1,13 @@
+use sappho_ast_effect::RestrictFrom;
+use sappho_parsable::error::ChumskyError;
 use sappho_parsable::Parser;
-
-use crate::restrict::RestrictInto;
 
 pub(crate) trait ParserExt<O>: Parser<O> {
     fn restrict<D>(self) -> impl Parser<D>
     where
-        O: RestrictInto<D>,
+        D: RestrictFrom<O>,
     {
-        self.try_map(|out, span| out.restrict(span))
+        self.try_map(|out, span| D::restrict(out).map_err(|err| ChumskyError::custom(span, err)))
     }
 }
 

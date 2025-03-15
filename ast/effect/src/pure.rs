@@ -3,7 +3,7 @@ use indoc::indoc;
 use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Effect, ProcEffect, QueryEffect};
+use crate::Effect;
 
 /// Pure effects cannot be instantiated, because pure expressions have no side effects.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -16,22 +16,6 @@ impl Effect for PureEffect {
 
     fn description(self) -> crate::EffectDescription {
         unreachable!("pure effects are never instantiated");
-    }
-}
-
-impl TryFrom<QueryEffect> for PureEffect {
-    type Error = QueryEffect;
-
-    fn try_from(value: QueryEffect) -> Result<Self, Self::Error> {
-        Err(value)
-    }
-}
-
-impl TryFrom<ProcEffect> for PureEffect {
-    type Error = ProcEffect;
-
-    fn try_from(value: ProcEffect) -> Result<Self, Self::Error> {
-        Err(value)
     }
 }
 

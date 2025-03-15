@@ -1,16 +1,14 @@
 use chumsky::Parser as _;
-use sappho_ast_effect::{Effect, ProcEffect};
+use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::restrict::RestrictInto;
 use crate::{Confined, Interactions};
 
 impl<FX> ParsableWith<ParseParams<'_>> for Interactions<FX>
 where
-    FX: Effect,
-    ProcEffect: RestrictInto<FX>,
+    FX: Effect + RestrictFrom<ProcEffect>,
 {
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         FX::parser()
@@ -29,5 +27,20 @@ where
             s.write(fx);
         }
         s.write(&self.confined);
+    }
+}
+
+impl<FX> RestrictFrom<Interactions<ProcEffect>> for Interactions<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: Interactions<ProcEffect>) -> Result<Interactions<FX>, Restriction> {
+        let effects = src
+            .effects
+            .into_iter()
+            .map(|fx| FX::restrict(fx))
+            .collect::<Result<Vec<_>, _>>()?;
+        let confined = Confined::restrict(src.confined)?;
+        Ok(Interactions { effects, confined })
     }
 }

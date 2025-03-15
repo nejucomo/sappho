@@ -2,6 +2,7 @@ use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_new::new;
 
+use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_attrs::Attrs;
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
@@ -257,5 +258,14 @@ where
                 }
             });
         }
+    }
+}
+
+impl<F, Q, P, AS, AT> RestrictFrom<Object<F, Q, P, AS>> for Object<F, Q, P, AT>
+where
+    AT: RestrictFrom<AS>,
+{
+    fn restrict(src: Object<F, Q, P, AS>) -> Result<Self, Restriction> {
+        src.into_try_map_values(|asrc| AT::restrict(asrc))
     }
 }

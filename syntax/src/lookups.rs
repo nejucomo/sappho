@@ -1,19 +1,17 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
-use sappho_ast_effect::{Effect, ProcEffect};
+use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_identifier::RcId;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::restrict::RestrictInto;
 use crate::{Lookup, Lookups};
 
 impl<FX> ParsableWith<ParseParams<'_>> for Lookups<FX>
 where
     FX: Effect,
-    ProcEffect: RestrictInto<FX>,
 {
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         LeftAssoc::parser_with(pep).map(Self)
@@ -39,5 +37,20 @@ impl Unparse for Lookup {
     fn unparse_into(&self, s: &mut Stream) {
         s.write(".");
         self.0.unparse_into(s);
+    }
+}
+
+impl<FX> RestrictFrom<Lookups<ProcEffect>> for Lookups<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: Lookups<ProcEffect>) -> Result<Lookups<FX>, Restriction> {
+        LeftAssoc::restrict(src.0).map(Lookups)
+    }
+}
+
+impl RestrictFrom<Lookup> for Lookup {
+    fn restrict(src: Lookup) -> Result<Lookup, Restriction> {
+        Ok(src)
     }
 }

@@ -1,19 +1,17 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
-use sappho_ast_effect::{Effect, ProcEffect};
+use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_keyword::Keyword::Match as KwMatch;
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::restrict::RestrictInto;
 use crate::{BoxWise, Match, MatchClause, Pattern};
 
 impl<FX> ParsableWith<ParseParams<'_>> for Match<FX>
 where
     FX: Effect,
-    ProcEffect: RestrictInto<FX>,
 {
     fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         KwMatch
@@ -34,7 +32,6 @@ where
 impl<FX> ParsableWith<ParseParams<'_>> for MatchClause<FX>
 where
     FX: Effect,
-    ProcEffect: RestrictInto<FX>,
 {
     fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         Pattern::parser()
@@ -73,5 +70,40 @@ where
         s.write(&self.binding);
         s.write(" -> ");
         s.write(&self.consequent);
+    }
+}
+
+impl<FX> RestrictFrom<Match<ProcEffect>> for Match<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: Match<ProcEffect>) -> Result<Match<FX>, Restriction> {
+        let clauses = src
+            .clauses
+            .into_iter()
+            .map(|clause| MatchClause::restrict(clause))
+            .collect::<Result<Vec<_>, _>>()?;
+        let candidate = BoxWise::restrict(src.candidate)?;
+
+        Ok(Match { candidate, clauses })
+    }
+}
+
+impl<FX> RestrictFrom<MatchClause<ProcEffect>> for MatchClause<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: MatchClause<ProcEffect>) -> Result<MatchClause<FX>, Restriction> {
+        let MatchClause {
+            binding,
+            consequent,
+        } = src;
+
+        let consequent = BoxWise::restrict(consequent)?;
+
+        Ok(MatchClause {
+            binding,
+            consequent,
+        })
     }
 }

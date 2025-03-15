@@ -1,4 +1,5 @@
 use either::Either;
+use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_unparse::Unparse;
 use std::fmt;
 
@@ -73,6 +74,18 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.unparse().fmt(f)
+    }
+}
+
+impl<XS, XT, TS, TT> RestrictFrom<ListForm<XS, TS>> for ListForm<XT, TT>
+where
+    XT: RestrictFrom<XS> + std::fmt::Debug,
+    TT: RestrictFrom<TS> + std::fmt::Debug,
+{
+    fn restrict(src: ListForm<XS, TS>) -> Result<Self, Restriction> {
+        src.into_iter()
+            .map(|ei| ei.map_either(XT::restrict, TT::restrict).factor_err())
+            .collect()
     }
 }
 

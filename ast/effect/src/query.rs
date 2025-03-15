@@ -3,7 +3,7 @@ use chumsky::Parser as _;
 use sappho_parsable::{Parsable, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{Effect, EffectDescription, ProcEffect};
+use crate::{Effect, EffectDescription};
 
 use self::QueryEffect::Inquire;
 
@@ -24,17 +24,6 @@ impl Effect for QueryEffect {
             sigil: "$",
             noun: "inquiry",
             verb: "inquire-of",
-        }
-    }
-}
-
-impl TryFrom<ProcEffect> for QueryEffect {
-    type Error = ProcEffect;
-
-    fn try_from(pfx: ProcEffect) -> Result<Self, Self::Error> {
-        match pfx {
-            ProcEffect::Inquire => Ok(Inquire),
-            other => Err(other),
         }
     }
 }

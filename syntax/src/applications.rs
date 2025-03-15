@@ -1,18 +1,16 @@
 use chumsky::Parser as _;
-use sappho_ast_effect::{Effect, ProcEffect};
+use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::restrict::RestrictInto;
 use crate::{Application, Applications, Lookups};
 
 impl<FX> ParsableWith<ParseParams<'_>> for Applications<FX>
 where
-    FX: Effect,
-    ProcEffect: RestrictInto<FX>,
+    FX: Effect + RestrictFrom<ProcEffect>,
 {
     fn make_parser_with(pp: ParseParams<'_>) -> impl Parser<Self> {
         LeftAssoc::parser_with(pp).map(Self)
@@ -21,8 +19,7 @@ where
 
 impl<FX> ParsableWith<ParseParams<'_>> for Application<FX>
 where
-    FX: Effect,
-    ProcEffect: RestrictInto<FX>,
+    FX: Effect + RestrictFrom<ProcEffect>,
 {
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         space().ignore_then(Lookups::parser_with(pep)).map(Self)
@@ -45,5 +42,23 @@ where
     fn unparse_into(&self, s: &mut Stream) {
         s.write(" ");
         self.0.unparse_into(s);
+    }
+}
+
+impl<FX> RestrictFrom<Applications<ProcEffect>> for Applications<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: Applications<ProcEffect>) -> Result<Applications<FX>, Restriction> {
+        LeftAssoc::restrict(src.0).map(Applications)
+    }
+}
+
+impl<FX> RestrictFrom<Application<ProcEffect>> for Application<FX>
+where
+    FX: Effect,
+{
+    fn restrict(src: Application<ProcEffect>) -> Result<Application<FX>, Restriction> {
+        Lookups::restrict(src.0).map(Application)
     }
 }

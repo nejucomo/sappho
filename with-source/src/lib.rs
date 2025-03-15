@@ -6,6 +6,7 @@
 use chumsky::Parser as _;
 use derive_more::Into;
 use derive_new::new;
+use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_source::{SourceCodeLink, SourceCodeRef};
 use sappho_unparse::Unparse;
@@ -40,6 +41,18 @@ impl<T> WithSource<T> {
     }
 }
 
+impl<T, E> WithSource<Result<T, E>> {
+    /// Transpose an `Result<T, E>` parsed value
+    pub fn transpose(self) -> Result<WithSource<T>, E> {
+        let WithSource {
+            parsed: res,
+            sourcecode,
+        } = self;
+
+        res.map(|parsed| WithSource { parsed, sourcecode })
+    }
+}
+
 impl<'l, T, P> ParsableWith<(&'l SourceCodeLink, T)> for WithSource<P>
 where
     P: ParsableWith<T>,
@@ -55,5 +68,14 @@ where
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
         self.parsed.unparse_into(s)
+    }
+}
+
+impl<S, T> RestrictFrom<WithSource<S>> for WithSource<T>
+where
+    T: RestrictFrom<S>,
+{
+    fn restrict(src: WithSource<S>) -> Result<Self, Restriction> {
+        src.map(T::restrict).transpose()
     }
 }

@@ -10,3 +10,4 @@ chumsky.workspace = true
 indoc.workspace = true
 sappho-parsable.workspace = true
 sappho-unparse.workspace = true
+thiserror.workspace = true

@@ -4,6 +4,7 @@
 pub mod leftassoc;
 
 mod applications;
+mod boxwise;
 mod confined;
 mod expr;
 mod funcdef;
@@ -17,7 +18,6 @@ mod parserext;
 mod pattern;
 mod procdef;
 mod querydef;
-mod restrict;
 mod wise;
 
 use derive_more::{From, Into};

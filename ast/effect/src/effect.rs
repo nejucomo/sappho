@@ -1,10 +1,10 @@
 use sappho_parsable::Parsable;
 
-use crate::{EffectDescription, ProcEffect};
+use crate::{EffectDescription, ProcEffect, RestrictFrom};
 
 use self::sealed::Sealed;
 
-pub trait Effect: Sealed + Parsable + PartialEq + Copy + TryFrom<ProcEffect> {
+pub trait Effect: Sealed + Parsable + PartialEq + Copy + RestrictFrom<ProcEffect> {
     /// The context these effects are restricted to occur in
     fn context() -> &'static str;
 

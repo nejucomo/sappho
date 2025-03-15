@@ -12,6 +12,7 @@ either.workspace = true
 sappho-identifier.workspace = true
 sappho-parsable.workspace = true
 sappho-unparse.workspace = true
+sappho-ast-effect.workspace = true
 
 [dev-dependencies]
 indoc.workspace = true
