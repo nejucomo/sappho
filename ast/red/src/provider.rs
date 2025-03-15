@@ -2,7 +2,7 @@ use sappho_ast_effect::Effect;
 use sappho_ast_kernel::AstProvider;
 
 /// The [AstProvider] for a "REDuced" AST named [AstRed]
-#[derive(Copy, Clone, Default, Debug)]
+#[derive(Copy, Clone, Default, Debug, PartialEq)]
 pub struct AstRed;
 
 impl AstProvider for AstRed {

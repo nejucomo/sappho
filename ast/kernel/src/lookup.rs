@@ -1,4 +1,4 @@
-use crate::AstProvider;
+use crate::{AstProvider, BoxWise};
 use sappho_ast_effect::Effect;
 use sappho_identifier::RcId;
 use sappho_unparse::{Stream, Unparse};
@@ -17,22 +17,22 @@ where
     pub attr: RcId,
 }
 
-impl<XP, FX> LookupExpr<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    pub fn transform_into<XPD>(self) -> LookupExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
-        LookupExpr {
-            target: Box::new(XPD::Expr::from(*self.target)),
-            attr: self.attr,
-        }
-    }
-}
+// impl<XP, FX> LookupExpr<XP, FX>
+// where
+//     XP: AstProvider,
+//     FX: Effect,
+// {
+//     pub fn transform_into<XPD>(self) -> LookupExpr<XPD, FX>
+//     where
+//         XPD: AstProvider,
+//         XPD::Expr<FX>: From<XP::Expr<FX>>,
+//     {
+//         LookupExpr {
+//             target: Box::new(XPD::Expr::from(*self.target)),
+//             attr: self.attr,
+//         }
+//     }
+// }
 
 impl<XP, FX> Unparse for LookupExpr<XP, FX>
 where

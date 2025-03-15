@@ -9,7 +9,7 @@ use crate::SourceCodeLink;
 pub type Span = Range<usize>;
 
 /// Refers to a specific span of code within a [Source](crate::Source)
-#[derive(Clone, Debug, new, Deref)]
+#[derive(Clone, Debug, PartialEq, Eq, new, Deref)]
 pub struct SourceCodeRef {
     #[deref]
     link: SourceCodeLink,

@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, BoxWise};
 
 /// A `match` clause, ie `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
 #[derive(Debug, derive_new::new)]
@@ -17,23 +17,23 @@ where
     pub body: BoxWise<XP, FX>,
 }
 
-impl<XP, FX> MatchClause<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    pub fn transform_into<XPD>(self) -> MatchClause<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
-        MatchClause {
-            pattern: XPD::Pattern::from(self.pattern),
-            body: Box::new(XPD::Expr::from(*self.body)),
-        }
-    }
-}
+// impl<XP, FX> MatchClause<XP, FX>
+// where
+//     XP: AstProvider,
+//     FX: Effect,
+// {
+//     pub fn transform_into<XPD>(self) -> MatchClause<XPD, FX>
+//     where
+//         XPD: AstProvider,
+//         XPD::Pattern: From<XP::Pattern>,
+//         XPD::Expr<FX>: From<XP::Expr<FX>>,
+//     {
+//         MatchClause {
+//             pattern: XPD::Pattern::from(self.pattern),
+//             body: Box::new(XPD::Expr::from(*self.body)),
+//         }
+//     }
+// }
 
 impl<XP, FX> Unparse for MatchClause<XP, FX>
 where

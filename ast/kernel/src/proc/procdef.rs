@@ -1,7 +1,9 @@
-use crate::{AstProvider, Statements};
+use derive_more::From;
 use sappho_unparse::{Stream, Unparse};
 
-#[derive(Debug, derive_more::From, derive_more::Into)]
+use crate::{AstProvider, Statements};
+
+#[derive(Clone, Debug, PartialEq, From)]
 pub struct ProcDef<XP>(Statements<XP>)
 where
     XP: AstProvider;
@@ -19,23 +21,5 @@ where
             subs.write(&Break::Mandatory);
             subs.write(&self.0);
         });
-    }
-}
-
-impl<XP> Clone for ProcDef<XP>
-where
-    XP: AstProvider,
-{
-    fn clone(&self) -> Self {
-        ProcDef::from(self.0.clone())
-    }
-}
-
-impl<XP> PartialEq for ProcDef<XP>
-where
-    XP: AstProvider,
-{
-    fn eq(&self, other: &Self) -> bool {
-        self.0 == other.0
     }
 }

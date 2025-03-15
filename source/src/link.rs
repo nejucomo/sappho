@@ -8,6 +8,8 @@ use crate::{SourceCode, SourceCodeRef};
 /// A reference counted link to [SourceCode]
 ///
 /// Often multiple parsed items need to refer back to the source, and this meets that need.
+///
+/// `Eq` and `PartialEq` use pointer comparison.
 #[derive(Clone, Debug, From, Deref)]
 #[from(SourceCode)]
 pub struct SourceCodeLink(Rc<SourceCode>);
@@ -16,5 +18,13 @@ impl SourceCodeLink {
     /// Refer to a specific span
     pub fn refer_to_span(&self, span: Span) -> SourceCodeRef {
         SourceCodeRef::new(self.clone(), span)
+    }
+}
+
+impl Eq for SourceCodeLink {}
+
+impl PartialEq for SourceCodeLink {
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.0, &other.0)
     }
 }

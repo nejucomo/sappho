@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, BoxWise};
 
 /// Function application, ie `f x`.
 #[derive(Debug, derive_new::new)]
@@ -17,22 +17,22 @@ where
     pub argument: BoxWise<XP, FX>,
 }
 
-impl<XP, FX> ApplicationExpr<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    pub fn transform_into<XPD>(self) -> ApplicationExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
-        ApplicationExpr {
-            target: Box::new(XPD::Expr::from(*self.target)),
-            argument: Box::new(XPD::Expr::from(*self.argument)),
-        }
-    }
-}
+// impl<XP, FX> ApplicationExpr<XP, FX>
+// where
+//     XP: AstProvider,
+//     FX: Effect,
+// {
+//     pub fn transform_into<XPD>(self) -> ApplicationExpr<XPD, FX>
+//     where
+//         XPD: AstProvider,
+//         XPD::Expr<FX>: From<XP::Expr<FX>>,
+//     {
+//         ApplicationExpr {
+//             target: BoxWise::from(XPD::Expr::from(*self.target)),
+//             argument: BoxWise::from(XPD::Expr::from(*self.argument)),
+//         }
+//     }
+// }
 
 impl<XP, FX> Unparse for ApplicationExpr<XP, FX>
 where

@@ -1,7 +1,6 @@
-use sappho_ast_effect::PureEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, PureExpr};
 
 /// A function definition expression, ie `fn x -> x`.
 #[derive(Debug, derive_new::new)]
@@ -16,22 +15,22 @@ where
     pub body: PureExpr<XP>,
 }
 
-impl<XP> FuncDef<XP>
-where
-    XP: AstProvider,
-{
-    pub fn transform_into<XPD>(self) -> FuncDef<XPD>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
-    {
-        FuncDef {
-            binding: XPD::Pattern::from(self.binding),
-            body: Box::new(XPD::Expr::from(*self.body)),
-        }
-    }
-}
+// impl<XP> FuncDef<XP>
+// where
+//     XP: AstProvider,
+// {
+//     pub fn transform_into<XPD>(self) -> FuncDef<XPD>
+//     where
+//         XPD: AstProvider,
+//         XPD::Pattern: From<XP::Pattern>,
+//         XPD::Expr<PureEffect>: From<XP::Expr<PureEffect>>,
+//     {
+//         FuncDef {
+//             binding: XPD::Pattern::from(self.binding),
+//             body: Box::new(XPD::Expr::from(*self.body)),
+//         }
+//     }
+// }
 
 impl<XP> Unparse for FuncDef<XP>
 where

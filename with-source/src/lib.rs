@@ -11,21 +11,32 @@ use sappho_source::{SourceCodeLink, SourceCodeRef};
 use sappho_unparse::Unparse;
 
 /// Associate parsed data with the code from which it came
-#[derive(Debug, new, Into)]
+#[derive(Clone, Debug, PartialEq, Eq, new, Into)]
 pub struct WithSource<T> {
-    parsed: T,
-    sc: SourceCodeRef,
+    /// The parsed item
+    pub parsed: T,
+    /// The [SourceCodeRef] from which [Self::parsed] came
+    pub sourcecode: SourceCodeRef,
 }
 
 impl<T> WithSource<T> {
-    /// Refer to data parsed from this code
-    pub fn parsed(&self) -> &T {
-        &self.parsed
+    /// Get a reference to [Self::parsed] which carries the [SourceCodeRef]
+    pub fn as_ref(&self) -> WithSource<&T> {
+        WithSource {
+            parsed: &self.parsed,
+            sourcecode: self.sourcecode.clone(),
+        }
     }
 
-    /// Refer to the source of this code
-    pub fn sourcecode(&self) -> &SourceCodeRef {
-        &self.sc
+    /// Map the parsed value while retaining the [SourceCodeRef]
+    pub fn map<F, U>(self, f: F) -> WithSource<U>
+    where
+        F: FnOnce(T) -> U,
+    {
+        WithSource {
+            parsed: f(self.parsed),
+            sourcecode: self.sourcecode,
+        }
     }
 }
 

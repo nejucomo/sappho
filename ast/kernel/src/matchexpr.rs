@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, BoxWise};
 
 pub use self::clause::MatchClause;
 
@@ -21,27 +21,27 @@ where
     pub clauses: Vec<MatchClause<XP, FX>>,
 }
 
-impl<XP, FX> MatchExpr<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    pub fn transform_into<XPD>(self) -> MatchExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
-        MatchExpr {
-            target: Box::new(XPD::Expr::from(*self.target)),
-            clauses: self
-                .clauses
-                .into_iter()
-                .map(|c| c.transform_into())
-                .collect(),
-        }
-    }
-}
+// impl<XP, FX> MatchExpr<XP, FX>
+// where
+//     XP: AstProvider,
+//     FX: Effect,
+// {
+//     pub fn transform_into<XPD>(self) -> MatchExpr<XPD, FX>
+//     where
+//         XPD: AstProvider,
+//         XPD::Pattern: From<XP::Pattern>,
+//         XPD::Expr<FX>: From<XP::Expr<FX>>,
+//     {
+//         MatchExpr {
+//             target: Box::new(XPD::Expr::from(*self.target)),
+//             clauses: self
+//                 .clauses
+//                 .into_iter()
+//                 .map(|c| c.transform_into())
+//                 .collect(),
+//         }
+//     }
+// }
 
 impl<XP, FX> Unparse for MatchExpr<XP, FX>
 where

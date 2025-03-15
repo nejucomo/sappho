@@ -1,7 +1,7 @@
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, BoxWise};
 
 #[derive(Debug, derive_new::new)]
 pub struct Interaction<XP, FX>
@@ -10,25 +10,26 @@ where
     FX: Effect,
 {
     pub effect: FX,
+    #[new(into)]
     pub expr: BoxWise<XP, FX>,
 }
 
-impl<XP, FX> Interaction<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    pub fn transform_into<XPD>(self) -> Interaction<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
-        Interaction {
-            effect: self.effect,
-            expr: Box::new(XPD::Expr::from(*self.expr)),
-        }
-    }
-}
+// impl<XP, FX> Interaction<XP, FX>
+// where
+//     XP: AstProvider,
+//     FX: Effect,
+// {
+//     pub fn transform_into<XPD>(self) -> Interaction<XPD, FX>
+//     where
+//         XPD: AstProvider,
+//         XPD::Expr<FX>: From<XP::Expr<FX>>,
+//     {
+//         Interaction {
+//             effect: self.effect,
+//             expr: Box::new(XPD::Expr::from(*self.expr)),
+//         }
+//     }
+// }
 
 impl<XP, FX> Unparse for Interaction<XP, FX>
 where

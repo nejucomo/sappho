@@ -1,18 +1,17 @@
 use derive_more::From;
 use sappho_ast_effect::Effect;
 use sappho_unparse::Unparse;
-use sappho_with_source::WithSource;
 
-use crate::AstProvider;
+use crate::{AstProvider, Wise};
 
-/// WIth Source Expression is the top-level recursion entrypoint for AST expressions
-#[derive(Clone, Debug, From, PartialEq)]
-pub struct Wise<XP, FX>(WithSource<XP::Expr<FX>>)
+/// Heap-allocated [Wise]
+#[derive(Clone, Debug, PartialEq, From)]
+pub struct BoxWise<XP, FX>(Box<Wise<XP, FX>>)
 where
     XP: AstProvider,
     FX: Effect;
 
-impl<XP, FX> Unparse for Wise<XP, FX>
+impl<XP, FX> Unparse for BoxWise<XP, FX>
 where
     XP: AstProvider,
     FX: Effect,

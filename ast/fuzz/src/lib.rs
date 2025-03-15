@@ -8,6 +8,8 @@ mod fuzz;
 mod listimpls;
 mod patternimpls;
 mod recoreimpls;
+mod wiseimpls;
+mod withsourceimpls;
 
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};

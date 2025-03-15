@@ -3,7 +3,7 @@ mod clause;
 use sappho_ast_effect::Effect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, BoxWise};
 
 pub use self::clause::LetClause;
 
@@ -21,27 +21,27 @@ where
     pub tail: BoxWise<XP, FX>,
 }
 
-impl<XP, FX> LetExpr<XP, FX>
-where
-    XP: AstProvider,
-    FX: Effect,
-{
-    pub fn transform_into<XPD>(self) -> LetExpr<XPD, FX>
-    where
-        XPD: AstProvider,
-        XPD::Pattern: From<XP::Pattern>,
-        XPD::Expr<FX>: From<XP::Expr<FX>>,
-    {
-        LetExpr {
-            clauses: self
-                .clauses
-                .into_iter()
-                .map(|c| c.transform_into())
-                .collect(),
-            tail: Box::new(XPD::Expr::from(*self.tail)),
-        }
-    }
-}
+// impl<XP, FX> LetExpr<XP, FX>
+// where
+//     XP: AstProvider,
+//     FX: Effect,
+// {
+//     pub fn transform_into<XPD>(self) -> LetExpr<XPD, FX>
+//     where
+//         XPD: AstProvider,
+//         XPD::Pattern: From<XP::Pattern>,
+//         XPD::Expr<FX>: From<XP::Expr<FX>>,
+//     {
+//         LetExpr {
+//             clauses: self
+//                 .clauses
+//                 .into_iter()
+//                 .map(|c| c.transform_into())
+//                 .collect(),
+//             tail: Box::new(XPD::Expr::from(*self.tail)),
+//         }
+//     }
+// }
 
 impl<XP, FX> Unparse for LetExpr<XP, FX>
 where

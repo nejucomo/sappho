@@ -5,7 +5,10 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_unparse::Unparse;
 
-pub trait AstProvider {
+/// # Caution
+///
+/// [AstProvider] extends [AstNodeBase] purely as a hack to enable deriving those traits types which are paremeterized on this trait
+pub trait AstProvider: AstNodeBase {
     type Pattern: AstNode;
 
     type Expr<FX>: AstNode
@@ -13,12 +16,11 @@ pub trait AstProvider {
         FX: Effect;
 }
 
-pub trait AstNode:
-    Unparse + Debug + Clone + PartialEq + From<RcId> + From<f64> + From<Attrs<Self>>
-{
-}
+pub trait AstNodeBase: Debug + Clone + PartialEq {}
 
-impl<T> AstNode for T where
-    T: Unparse + Debug + Clone + PartialEq + From<RcId> + From<f64> + From<Attrs<Self>>
-{
-}
+pub trait AstNode: AstNodeBase + Unparse + From<RcId> + From<f64> + From<Attrs<Self>> {}
+
+// Blanket impls:
+impl<T> AstNodeBase for T where T: Debug + Clone + PartialEq {}
+
+impl<T> AstNode for T where T: AstNodeBase + Unparse + From<RcId> + From<f64> + From<Attrs<Self>> {}

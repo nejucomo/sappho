@@ -1,7 +1,6 @@
-use sappho_ast_effect::QueryEffect;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::AstProvider;
+use crate::{AstProvider, QueryExpr};
 
 /// A query definition, ie `query $x`.
 #[derive(Debug, derive_new::new)]
@@ -13,20 +12,20 @@ where
     pub body: QueryExpr<XP>,
 }
 
-impl<XP> QueryDef<XP>
-where
-    XP: AstProvider,
-{
-    pub fn transform_into<XPD>(self) -> QueryDef<XPD>
-    where
-        XPD: AstProvider,
-        XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
-    {
-        QueryDef {
-            body: Box::new(XPD::Expr::from(*self.body)),
-        }
-    }
-}
+// impl<XP> QueryDef<XP>
+// where
+//     XP: AstProvider,
+// {
+//     pub fn transform_into<XPD>(self) -> QueryDef<XPD>
+//     where
+//         XPD: AstProvider,
+//         XPD::Expr<QueryEffect>: From<XP::Expr<QueryEffect>>,
+//     {
+//         QueryDef {
+//             body: Box::new(XPD::Expr::from(*self.body)),
+//         }
+//     }
+// }
 
 impl<XP> Unparse for QueryDef<XP>
 where
