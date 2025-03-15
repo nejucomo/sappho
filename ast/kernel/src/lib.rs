@@ -13,6 +13,13 @@ mod provider;
 mod querydef;
 mod wise;
 
+use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
+
+// Top-level Aliases:
+pub type ProcExpr<XP> = BoxWise<XP, ProcEffect>;
+pub type QueryExpr<XP> = BoxWise<XP, QueryEffect>;
+pub type PureExpr<XP> = BoxWise<XP, PureEffect>;
+
 pub use self::application::ApplicationExpr;
 pub use self::funcdef::FuncDef;
 pub use self::interaction::Interaction;
