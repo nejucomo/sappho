@@ -18,7 +18,7 @@ where
     pub clauses: Vec<LetClause<XP, FX>>,
 
     /// The expression to evaluate with the binding in-scope, ie: `f x` in `let x = 42; f x`.
-    pub tail: Box<XP::Expr<FX>>,
+    pub tail: BoxWise<XP, FX>,
 }
 
 impl<XP, FX> LetExpr<XP, FX>

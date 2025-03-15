@@ -11,10 +11,10 @@ where
     FX: Effect,
 {
     /// The target of application, ie `f` in `f x`.
-    pub target: Box<XP::Expr<FX>>,
+    pub target: BoxWise<XP, FX>,
 
     /// The argument of application, ie `x` in `f x`.
-    pub argument: Box<XP::Expr<FX>>,
+    pub argument: BoxWise<XP, FX>,
 }
 
 impl<XP, FX> ApplicationExpr<XP, FX>

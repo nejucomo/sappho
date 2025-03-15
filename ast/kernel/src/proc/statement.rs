@@ -8,7 +8,7 @@ pub enum Statements<XP>
 where
     XP: AstProvider,
 {
-    Return(Box<XP::Expr<ProcEffect>>),
+    Return(ProcExpr<XP>),
 }
 
 impl<XP> Statements<XP>

@@ -11,7 +11,7 @@ where
     FX: Effect,
 {
     /// The target expression of the lookup, ie `x` in `x.foo`.
-    pub target: Box<XP::Expr<FX>>,
+    pub target: BoxWise<XP, FX>,
 
     /// An attribute name, ie: `foo` in `x.foo`.
     pub attr: RcId,

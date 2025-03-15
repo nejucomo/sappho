@@ -13,7 +13,7 @@ where
     pub binding: XP::Pattern,
 
     /// The body, ie the final `x` in `fn x -> x`.
-    pub body: Box<XP::Expr<PureEffect>>,
+    pub body: PureExpr<XP>,
 }
 
 impl<XP> FuncDef<XP>

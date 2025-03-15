@@ -10,7 +10,7 @@ where
     XP: AstProvider,
 {
     /// The `QueryExpr` definition, ie the `$x` in `query $x`.
-    pub body: Box<XP::Expr<QueryEffect>>,
+    pub body: QueryExpr<XP>,
 }
 
 impl<XP> QueryDef<XP>

@@ -13,7 +13,7 @@ where
     pub binding: XP::Pattern,
 
     /// The expression to bind, ie: `42` in `let x = 42; f x`.
-    pub bindexpr: Box<XP::Expr<FX>>,
+    pub bindexpr: BoxWise<XP, FX>,
 }
 
 impl<XP, FX> LetClause<XP, FX>

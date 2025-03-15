@@ -10,7 +10,7 @@ where
     FX: Effect,
 {
     pub effect: FX,
-    pub expr: Box<XP::Expr<FX>>,
+    pub expr: BoxWise<XP, FX>,
 }
 
 impl<XP, FX> Interaction<XP, FX>

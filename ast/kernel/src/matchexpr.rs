@@ -15,7 +15,7 @@ where
     FX: Effect,
 {
     /// The match target, ie: `x` in `match x { 3 -> 0, y -> y }`.
-    pub target: Box<XP::Expr<FX>>,
+    pub target: BoxWise<XP, FX>,
 
     /// The match clauses, ie: `3 -> 0` and `y -> y` in `match x { 3 -> 0, y -> y }`.
     pub clauses: Vec<MatchClause<XP, FX>>,

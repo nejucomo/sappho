@@ -14,7 +14,7 @@ where
     pub pattern: XP::Pattern,
 
     /// The match body expression, ie `0` in `3 -> 0` and the second `y` in `y -> y`.
-    pub body: Box<XP::Expr<FX>>,
+    pub body: BoxWise<XP, FX>,
 }
 
 impl<XP, FX> MatchClause<XP, FX>
