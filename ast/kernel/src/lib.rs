@@ -11,6 +11,7 @@ mod objectdef;
 mod proc;
 mod provider;
 mod querydef;
+mod wise;
 
 pub use self::application::ApplicationExpr;
 pub use self::funcdef::FuncDef;
@@ -24,3 +25,4 @@ pub use self::objectdef::ObjectDef;
 pub use self::proc::{ProcDef, Statements};
 pub use self::provider::AstProvider;
 pub use self::querydef::QueryDef;
+pub use self::wise::{BoxWise, Wise};
