@@ -7,9 +7,14 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
+use crate::restrict::RestrictInto;
 use crate::{Lookup, Lookups};
 
-impl ParsableWith<ParseParams<'_>> for Lookups<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for Lookups<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         LeftAssoc::parser_with(pep).map(Self)
     }

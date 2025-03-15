@@ -7,9 +7,14 @@ use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
+use crate::restrict::RestrictInto;
 use crate::{BoxWise, Match, MatchClause, Pattern};
 
-impl ParsableWith<ParseParams<'_>> for Match<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for Match<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         KwMatch
             .parse()
@@ -26,7 +31,11 @@ impl ParsableWith<ParseParams<'_>> for Match<ProcEffect> {
     }
 }
 
-impl ParsableWith<ParseParams<'_>> for MatchClause<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for MatchClause<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
         Pattern::parser()
             .then_ignore(just("->").space_around())

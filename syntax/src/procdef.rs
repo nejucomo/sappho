@@ -2,23 +2,10 @@ use chumsky::Parser as _;
 use sappho_keyword::Keyword::Proc as KwProc;
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
-use sappho_source::SourceCodeLink;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, ProcDef, ProcExpr};
-
-impl<'a> ParsableWith<&'a SourceCodeLink> for ProcExpr {
-    fn make_parser_with(sclink: &'a SourceCodeLink) -> impl Parser<Self> {
-        BoxWise::parser_with(sclink).map(Self)
-    }
-}
-
-impl ParsableWith<ParseParams<'_>> for ProcExpr {
-    fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
-        BoxWise::parser_with(sep).map(Self)
-    }
-}
+use crate::{ProcDef, ProcExpr};
 
 impl ParsableWith<ParseParams<'_>> for ProcDef {
     fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
@@ -27,12 +14,6 @@ impl ParsableWith<ParseParams<'_>> for ProcDef {
             .then_space()
             .ignore_then(bracketed(['{', '}'], ProcExpr::parser_with(sep)))
             .map(Self)
-    }
-}
-
-impl Unparse for ProcExpr {
-    fn unparse_into(&self, s: &mut Stream) {
-        self.0.unparse_into(s);
     }
 }
 

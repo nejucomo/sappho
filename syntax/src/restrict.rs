@@ -9,8 +9,7 @@ use sappho_with_source::WithSource;
 use crate::leftassoc::LeftAssoc;
 use crate::{
     Application, Applications, BoxWise, Confined, Expr, FuncDef, Interactions, Let, LetClause,
-    Lookup, Lookups, Match, MatchClause, ParensExpr, ProcDef, ProcExpr, PureExpr, QueryDef,
-    QueryExpr, Wise,
+    Lookup, Lookups, Match, MatchClause, ParensExpr, ProcDef, QueryDef, Wise,
 };
 
 // Restriction converts ProcEffects downwards or produces an error. This happens during parsing because it's difficult to parse all three effects recursions directly, so we restrict inside the parser.
@@ -19,6 +18,12 @@ pub(crate) trait RestrictInto<D> {
 }
 
 // Restricting effects exprs:
+impl RestrictInto<ProcEffect> for ProcEffect {
+    fn restrict(self, _: Span) -> Result<ProcEffect, ChumskyError> {
+        Ok(self)
+    }
+}
+
 impl RestrictInto<QueryEffect> for ProcEffect {
     fn restrict(self, span: Span) -> Result<QueryEffect, ChumskyError> {
         QueryEffect::try_from(self).map_err(|pfx| make_error(span, QueryEffect::context(), pfx))
@@ -50,25 +55,6 @@ where
         // We shadow the outer span with the new source span:
         node.restrict(scref.span())
             .map(|fxd| WithSource::new(fxd, scref))
-    }
-}
-
-// Restricting top-level exprs:
-impl RestrictInto<PureExpr> for ProcExpr {
-    fn restrict(self, span: Span) -> Result<PureExpr, ChumskyError> {
-        self.0.restrict(span).map(PureExpr)
-    }
-}
-
-impl RestrictInto<QueryExpr> for ProcExpr {
-    fn restrict(self, span: Span) -> Result<QueryExpr, ChumskyError> {
-        self.0.restrict(span).map(QueryExpr)
-    }
-}
-
-impl RestrictInto<ProcExpr> for ProcExpr {
-    fn restrict(self, _: Span) -> Result<ProcExpr, ChumskyError> {
-        Ok(self)
     }
 }
 

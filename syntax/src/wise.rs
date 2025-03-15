@@ -6,30 +6,45 @@ use sappho_unparse::{Stream, Unparse};
 use sappho_with_source::WithSource;
 
 use crate::parseparams::ParseParams;
+use crate::parserext::ParserExt as _;
+use crate::restrict::RestrictInto;
 use crate::{BoxWise, Wise};
 
-/// This impl enables [ParsableWith::load_and_parse]
-impl<'a> ParsableWith<&'a SourceCodeLink> for Wise<ProcEffect> {
+impl<'a, FX> ParsableWith<&'a SourceCodeLink> for Wise<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(sclink: &'a SourceCodeLink) -> impl Parser<Self> {
-        chumsky::recursive::recursive(|recp| {
-            WithSource::parser_with((sclink, ParseParams { recp })).map(Self)
-        })
+        make_proc_wise_parser(sclink).restrict()
     }
+}
+
+fn make_proc_wise_parser(sclink: &SourceCodeLink) -> impl Parser<Wise<ProcEffect>> + '_ {
+    chumsky::recursive::recursive(|recp| {
+        WithSource::parser_with((sclink, ParseParams { recp })).map(Wise)
+    })
 }
 
 /// This impl terminates recursion within the parser layer
-impl ParsableWith<ParseParams<'_>> for Wise<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for Wise<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(pp: ParseParams<'_>) -> impl Parser<Self> {
-        pp.recp
+        pp.recp.restrict()
     }
 }
 
-impl<T> ParsableWith<T> for BoxWise<ProcEffect>
+impl<T, FX> ParsableWith<T> for BoxWise<FX>
 where
-    Wise<ProcEffect>: ParsableWith<T>,
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+    Wise<FX>: ParsableWith<T>,
 {
     fn make_parser_with(param: T) -> impl Parser<Self> {
-        Wise::parser_with(param).map(Box::new).map(Self)
+        Wise::<FX>::parser_with(param).map(Box::new).map(Self)
     }
 }
 

@@ -6,9 +6,14 @@ use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
+use crate::restrict::RestrictInto;
 use crate::{BoxWise, Let, LetClause, Pattern};
 
-impl ParsableWith<ParseParams<'_>> for Let<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for Let<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         LetClause::parser_with(pep.clone())
             .then_space()
@@ -20,7 +25,11 @@ impl ParsableWith<ParseParams<'_>> for Let<ProcEffect> {
     }
 }
 
-impl ParsableWith<ParseParams<'_>> for LetClause<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for LetClause<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         KwLet
             .parse()

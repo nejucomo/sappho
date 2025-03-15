@@ -12,16 +12,15 @@ mod expr;
 mod pattern;
 mod provider;
 
-use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
-use sappho_ast_kernel::Literal;
+use sappho_ast_kernel::{self as kernel, Literal};
 use sappho_listform::ListForm;
 
 pub use self::expr::Expr;
 pub use self::pattern::{ListPattern, Pattern};
 pub use self::provider::Ast;
 
-pub type PureExpr = Expr<PureEffect>;
-pub type QueryExpr = Expr<QueryEffect>;
-pub type ProcExpr = Expr<ProcEffect>;
+pub type PureExpr = kernel::PureExpr<Ast>;
+pub type QueryExpr = kernel::QueryExpr<Ast>;
+pub type ProcExpr = kernel::ProcExpr<Ast>;
 
 pub type ListExpr<FX> = ListForm<Expr<FX>, Box<Expr<FX>>>;

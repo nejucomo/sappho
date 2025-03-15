@@ -15,13 +15,12 @@ mod parens;
 mod parseparams;
 mod parserext;
 mod pattern;
-mod proc;
-mod pureexpr;
-mod query;
+mod procdef;
+mod querydef;
 mod restrict;
 mod wise;
 
-use derive_more::From;
+use derive_more::{From, Into};
 use derive_new::new;
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
 use sappho_attrs::Attrs;
@@ -34,24 +33,19 @@ use sappho_with_source::WithSource;
 use crate::leftassoc::LeftAssoc;
 
 // Top-level expressions for each effect kind:
-#[derive(Debug, From)]
-pub struct PureExpr(BoxWise<PureEffect>);
-
-#[derive(Debug, From)]
-pub struct QueryExpr(BoxWise<QueryEffect>);
-
-#[derive(Debug, From)]
-pub struct ProcExpr(BoxWise<ProcEffect>);
+pub type PureExpr = BoxWise<PureEffect>;
+pub type QueryExpr = BoxWise<QueryEffect>;
+pub type ProcExpr = BoxWise<ProcEffect>;
 
 // Top-Level Recursion Nexus
 
 /// Boxed-Spanned-Expression
-#[derive(Debug, From)]
+#[derive(Debug, From, Into)]
 #[from(Wise<FX>)]
 pub struct BoxWise<FX>(Box<Wise<FX>>);
 
-/// _Wi_th _S_ource _E_xpression
-#[derive(Debug, From)]
+/// **Wi**th **S**ource **E**xpression
+#[derive(Debug, From, Into)]
 pub struct Wise<FX>(WithSource<Expr<FX>>);
 
 // Potentially effectful expressions:

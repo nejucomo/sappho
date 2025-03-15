@@ -8,10 +8,15 @@ use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
+use crate::restrict::RestrictInto;
 use crate::Confined::{self, *};
 use crate::ParensExpr;
 
-impl ParsableWith<ParseParams<'_>> for Confined<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for Confined<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         RcId::parser()
             .map(Ref)

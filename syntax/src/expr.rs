@@ -4,10 +4,15 @@ use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
+use crate::restrict::RestrictInto;
 use crate::Expr::{self, *};
 use crate::{FuncDef, ProcDef, QueryDef};
 
-impl ParsableWith<ParseParams<'_>> for Expr<ProcEffect> {
+impl<FX> ParsableWith<ParseParams<'_>> for Expr<FX>
+where
+    FX: Effect,
+    ProcEffect: RestrictInto<FX>,
+{
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
         FuncDef::parser_with(pep.clone())
             .map(Func)
