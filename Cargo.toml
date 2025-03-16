@@ -1,14 +1,16 @@
 [workspace]
 resolver = "2"
 members = [
-  "ast/kernel",
   "ast/effect",
   "ast/fuzz",
+  "ast/kernel",
   "ast/red",
   "ast/rich",
   "attrs",
   "cli",
   "eval",
+  "fconv",
+  "fconv-derive",
   "identifier",
   "integration-tests",
   "interpreter",
@@ -22,7 +24,6 @@ members = [
   "regression-vectors",
   "source",
   "syntax",
-  "tff",
   "tfi",
   "transform",
   "unparse",
@@ -48,9 +49,12 @@ derive_more = { version = "2.0.1", features = [ "full" ] }
 derive-new = "0.7.0"
 either = "1.13.0"
 enum-iterator = "2.1.0"
+easy-ext = "1.0.2"
 include_dir = "0.7"
 indoc = "1.0.6"
 log = "0.4.17"
+proc-macro2 = "1.0.94"
+quote = "1.0.40"
 rand = "0.9.0"
 sappho-ast-effect = { path = "ast/effect" }
 sappho-ast-fuzz = { path = "ast/fuzz" }
@@ -60,6 +64,8 @@ sappho-ast-rich = { path = "ast/rich" }
 sappho-attrs = { path = "attrs" }
 sappho-cli = { path = "cli" }
 sappho-eval = { path = "eval" }
+sappho-fconv-derive = { path = "fconv-derive" }
+sappho-fconv = { path = "fconv" }
 sappho-identifier = { path = "identifier" }
 sappho-integration-tests = { path = "integration-tests" }
 sappho-interpreter = { path = "interpreter" }
@@ -73,12 +79,12 @@ sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-regression-vectors = { path = "regression-vectors" }
 sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
-sappho-tff = { path = "tff" }
 sappho-tfi = { path = "tfi" }
 sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
 sappho-value = { path = "value" }
 sappho-with-source = { path = "with-source" }
 simplelog = "0.12.0"
+syn = "2.0.100"
 test-case = "2.0"
 thiserror = "2.0.11"

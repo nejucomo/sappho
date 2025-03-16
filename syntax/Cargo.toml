@@ -22,7 +22,7 @@ sappho-primval.workspace = true
 sappho-unparse.workspace = true
 sappho-source.workspace = true
 sappho-with-source.workspace = true
-sappho-tff.workspace = true
+sappho-fconv.workspace = true
 
 [dev-dependencies]
 test-case.workspace = true
