@@ -1,0 +1,10 @@
+[package]
+name = "sappho-dev-dependencies"
+description = "just a dummy crate so that `cargo doc` will generate dev dependency docs locally"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+test-case.workspace = true
