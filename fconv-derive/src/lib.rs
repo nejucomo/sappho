@@ -9,12 +9,14 @@ use syn::{
 
 #[proc_macro_derive(Extract)]
 pub fn extract_derive(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    extract_derive_inner(item.into())
-        .unwrap_or_else(Error::into_compile_error)
-        .into()
+    extract_derive_pm2(item.into()).into()
 }
 
-fn extract_derive_inner(item: TokenStream) -> syn::Result<TokenStream> {
+fn extract_derive_pm2(item: TokenStream) -> TokenStream {
+    extract_derive_res(item).unwrap_or_else(Error::into_compile_error)
+}
+
+fn extract_derive_res(item: TokenStream) -> syn::Result<TokenStream> {
     let item: Item = parse(item)?;
     item.generate_impls()
 }
@@ -159,3 +161,6 @@ where
         Error::new(self.span(), msg)
     }
 }
+
+#[cfg(test)]
+mod tests;

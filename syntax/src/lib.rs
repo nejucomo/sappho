@@ -25,10 +25,11 @@ use derive_more::{From, Into};
 use derive_new::new;
 use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
 use sappho_attrs::Attrs;
+use sappho_fconv::Extract;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
-use sappho_primval::{Num, PrimVal};
+use sappho_primval::PrimVal;
 use sappho_with_source::WithSource;
 
 use crate::leftassoc::LeftAssoc;
@@ -41,7 +42,7 @@ pub type ProcExpr = BoxWise<ProcEffect>;
 // Top-Level Recursion Nexus
 
 /// Boxed-Spanned-Expression
-#[derive(Debug, From, Into)]
+#[derive(Debug, From, Into, Extract)]
 #[from(Wise<FX>)]
 pub struct BoxWise<FX>(Box<Wise<FX>>);
 

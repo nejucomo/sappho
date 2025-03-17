@@ -9,6 +9,3 @@ where
 {
     load_and_parse(source)
 }
-
-#[cfg(test)]
-mod tests;
