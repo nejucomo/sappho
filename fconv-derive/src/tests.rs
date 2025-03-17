@@ -7,6 +7,11 @@ struct TestCase {
     expected: &'static str,
 }
 
+// We want to test a cartesian produce:
+// - struct-vs-enum
+// - indexed-vs-named fields
+// - single-field-vs-multi-field (? via tuples like `derive_more::From` ?)
+// - concrete-vs-generic-with-bounds
 #[test_case(
     TestCase {
         input: indoc! { r#"
@@ -28,7 +33,7 @@ struct TestCase {
             }
         "# },
     }
-    ; "struct-tuple-newtype"
+    ; "concrete-struct-1-indexed-field"
 )]
 #[test_case(
     TestCase {
@@ -74,7 +79,7 @@ struct TestCase {
             }
         "# },
     }
-    ; "struct-tuple-enum"
+    ; "concrete-enum-1-indexed-fields"
 )]
 fn extract_derive_pm2(TestCase { input, expected }: TestCase) {
     let input_tokens = parse_tokens(input);
