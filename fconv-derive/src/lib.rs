@@ -4,7 +4,7 @@ use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{
-    parse2 as parse, Error, Field, Fields, Item, ItemEnum, ItemStruct, Token, Type, Variant,
+    parse2 as parse, Error, Field, Fields, Index, Item, ItemEnum, ItemStruct, Token, Type, Variant,
 };
 
 #[proc_macro_derive(Extract)]
@@ -42,12 +42,14 @@ impl ItemStruct {
         let (fid, fty) = fields.try_into_field_translation_info()?;
 
         Ok(quote! {
+            #[automatically_derived]
             impl ::sappho_fconv::Extract< #fty > for #ident {
                 fn extract(self) -> Result< #fty, Self > {
                     Ok( self . #fid )
                 }
             }
 
+            #[automatically_derived]
             impl ::sappho_fconv::Embed< #fty > for #ident {
                 fn embed(thing: #fty ) -> Self {
                     #ident( thing )
@@ -86,6 +88,7 @@ impl ItemEnum {
 
         Ok(quote! {
             #(
+                #[automatically_derived]
                 impl ::sappho_fconv::Extract< #ftys > for #enumid {
                     fn extract(self) -> Result< #ftys, Self > {
                         match self {
@@ -95,6 +98,7 @@ impl ItemEnum {
                     }
                 }
 
+                #[automatically_derived]
                 impl ::sappho_fconv::Embed< #ftys > for #enumid {
                     fn embed(thing: #ftys ) -> Self {
                         #enumid :: #varids ( thing )
@@ -113,7 +117,7 @@ impl Fields {
         let fid = field
             .ident
             .map(|id| id.into_token_stream())
-            .unwrap_or_else(|| quote! { #fix });
+            .unwrap_or_else(|| Index::from(fix).into_token_stream());
 
         Ok((fid, fty))
     }
