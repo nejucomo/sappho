@@ -7,14 +7,14 @@ use syn::{
     parse2 as parse, Error, Field, Fields, Item, ItemEnum, ItemStruct, Token, Type, Variant,
 };
 
-#[proc_macro_derive(FConvInto)]
-pub fn fconv_into_derive(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    fconv_into_derive_inner(item.into())
+#[proc_macro_derive(Extract)]
+pub fn extract_derive(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    extract_derive_inner(item.into())
         .unwrap_or_else(Error::into_compile_error)
         .into()
 }
 
-fn fconv_into_derive_inner(item: TokenStream) -> syn::Result<TokenStream> {
+fn extract_derive_inner(item: TokenStream) -> syn::Result<TokenStream> {
     let item: Item = parse(item)?;
     item.generate_impls()
 }
@@ -35,13 +35,20 @@ impl Item {
 #[ext]
 impl ItemStruct {
     fn generate_impls(self) -> syn::Result<TokenStream> {
+        // BUG: The `Embed` impl uses TupleStruct syntax only
         let ItemStruct { ident, fields, .. } = self;
         let (fid, fty) = fields.try_into_field_translation_info()?;
 
         Ok(quote! {
-            impl FConvInto< #fty > for #ident {
-                fn fconv_into(self) -> Result< #fty, Self > {
+            impl ::sappho_fconv::Extract< #fty > for #ident {
+                fn extract(self) -> Result< #fty, Self > {
                     Ok( self . #fid )
+                }
+            }
+
+            impl ::sappho_fconv::Embed< #fty > for #ident {
+                fn embed(thing: #fty ) -> Self {
+                    #ident( thing )
                 }
             }
         })
@@ -51,6 +58,7 @@ impl ItemStruct {
 #[ext]
 impl ItemEnum {
     fn generate_impls(self) -> syn::Result<TokenStream> {
+        // BUG: `Embed` impl only supports tuple-like construction
         let ItemEnum {
             ident: enumid,
             variants,
@@ -76,12 +84,18 @@ impl ItemEnum {
 
         Ok(quote! {
             #(
-                impl FConvInto< #ftys > for #enumid {
-                    fn fconv_into(self) -> Result< #ftys, Self > {
+                impl ::sappho_fconv::Extract< #ftys > for #enumid {
+                    fn extract(self) -> Result< #ftys, Self > {
                         match self {
                             #enumid :: #varids ( x ) => Ok(x),
                             other => Err(other),
                         }
+                    }
+                }
+
+                impl ::sappho_fconv::Embed< #ftys > for #enumid {
+                    fn embed(thing: #ftys ) -> Self {
+                        #enumid :: #varids ( thing )
                     }
                 }
             )*
