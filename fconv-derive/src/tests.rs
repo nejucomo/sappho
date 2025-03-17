@@ -43,14 +43,14 @@ impl TestCase<&str> {
         "# },
         expected: indoc! { r#"
             #[automatically_derived]
-            impl ::sappho_fconv::Extract<Bar> for Foo {
+            impl ::sappho_fconv::Extract<Bar> for (Foo) {
                 fn extract(self) -> Result<Bar, Self> {
                     Ok(self.0)
                 }
             }
 
             #[automatically_derived]
-            impl ::sappho_fconv::Embed<Bar> for Foo {
+            impl ::sappho_fconv::Embed<Bar> for (Foo) {
                 fn embed(thing: Bar) -> Self {
                     Foo(thing)
                 }
@@ -69,7 +69,7 @@ impl TestCase<&str> {
         "# },
         expected: indoc! { r#"
             #[automatically_derived]
-            impl ::sappho_fconv::Extract<Bar> for Foo {
+            impl ::sappho_fconv::Extract<Bar> for (Foo) {
                 fn extract(self) -> Result<Bar, Self> {
                     match self {
                         Foo::MkBar(x) => Ok(x),
@@ -79,14 +79,14 @@ impl TestCase<&str> {
             }
 
             #[automatically_derived]
-            impl ::sappho_fconv::Embed<Bar> for Foo {
+            impl ::sappho_fconv::Embed<Bar> for (Foo) {
                 fn embed(thing: Bar) -> Self {
                     Foo::MkBar(thing)
                 }
             }
 
             #[automatically_derived]
-            impl ::sappho_fconv::Extract<bool> for Foo {
+            impl ::sappho_fconv::Extract<bool> for (Foo) {
                 fn extract(self) -> Result<bool, Self> {
                     match self {
                         Foo::MkBool(x) => Ok(x),
@@ -96,7 +96,7 @@ impl TestCase<&str> {
             }
 
             #[automatically_derived]
-            impl ::sappho_fconv::Embed<bool> for Foo {
+            impl ::sappho_fconv::Embed<bool> for (Foo) {
                 fn embed(thing: bool) -> Self {
                     Foo::MkBool(thing)
                 }
@@ -191,21 +191,36 @@ fn matrix_expected(kind: Kind, fspec: FieldSpec, gen: Genericity) -> String {
     match (kind, fspec, gen) {
         (Struct, Indexed, Concrete) => indoc! { r#"
             #[automatically_derived]
-            impl ::sappho_fconv::Extract<T> for Foo {
+            impl ::sappho_fconv::Extract<T> for (Foo) {
                 fn extract(self) -> Result<T, Self> {
                     Ok(self.0)
                 }
             }
 
             #[automatically_derived]
-            impl ::sappho_fconv::Embed<T> for Foo {
+            impl ::sappho_fconv::Embed<T> for (Foo) {
                 fn embed(thing: T) -> Self {
                     Foo(thing)
                 }
             }
         "# }
         .to_string(),
-        (Struct, Indexed, Generic) => todo!(),
+        (Struct, Indexed, Generic) => indoc! { r#"
+            #[automatically_derived]
+            impl<T> ::sappho_fconv::Extract<T> for (Foo<T>) {
+                fn extract(self) -> Result<T, Self> {
+                    Ok(self.0)
+                }
+            }
+
+            #[automatically_derived]
+            impl<T> ::sappho_fconv::Embed<T> for (Foo<T>) {
+                fn embed(thing: T) -> Self {
+                    Foo(thing)
+                }
+            }
+        "# }
+        .to_string(),
         (Struct, Named, Concrete) => todo!(),
         (Struct, Named, Generic) => todo!(),
         (Enum, Indexed, Concrete) => todo!(),
