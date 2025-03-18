@@ -1,5 +1,6 @@
 use indoc::indoc;
 use proc_macro2::TokenStream;
+use syn::Ident;
 use test_case::{test_case, test_matrix};
 
 use crate::FieldSpec::{self, *};
@@ -93,7 +94,7 @@ impl TestCase<&str> {
                 fn extract(self) -> Result<Bar, Self> {
                     match self {
                         Foo::MkBar(x) => Ok(x),
-                        other => Err(other),
+                        other => Err(other)
                     }
                 }
             }
@@ -110,7 +111,7 @@ impl TestCase<&str> {
                 fn extract(self) -> Result<bool, Self> {
                     match self {
                         Foo::MkBool(x) => Ok(x),
-                        other => Err(other),
+                        other => Err(other)
                     }
                 }
             }
@@ -133,9 +134,14 @@ fn extract_derive_pm2(tc: TestCase<&str>) {
 // Maybe TODO?
 // enum FieldCount { Single, Multiple }
 
+fn ident(s: &str) -> Ident {
+    let tokenstream = s.parse().unwrap();
+    syn::parse2(tokenstream).unwrap()
+}
+
 #[test_matrix(
     [Struct, Enum],
-    [Indexed], //, Named],
+    [Indexed, Named(ident("my_field"))],
     [Concrete, Generic]
 )]
 fn matrix(kind: Kind, fspec: FieldSpec, gen: Genericity) {
@@ -208,7 +214,7 @@ fn matrix_expected(kind: Kind, fspec: FieldSpec, gen: Genericity) -> String {
         // Optional enum fallthrough case:
         match kind {
             Struct => "",
-            Enum => "other => Err(other),",
+            Enum => "other => Err(other)",
         }
     )
 }

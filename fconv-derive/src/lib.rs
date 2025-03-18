@@ -30,6 +30,68 @@ fn extract_derive_res(item: TokenStream) -> syn::Result<TokenStream> {
     item.generate_impls()
 }
 
+fn generate_impls<I>(tyid: Ident, generics: Generics, fieldses: I) -> syn::Result<TokenStream>
+where
+    I: IntoIterator<Item = (Option<Ident>, Fields)>,
+{
+    let (gparams, optwhere) = generics.into_gparams_and_where_clause()?;
+
+    let mut variant_pat_or_ctrs = vec![];
+    let mut field_pat_or_ctrs = vec![];
+    let mut ftys = vec![];
+    let mut is_enum = false;
+
+    for (optvarid, fields) in fieldses {
+        variant_pat_or_ctrs.push(
+            optvarid
+                .map(|varid| {
+                    is_enum = true;
+                    quote! { #tyid :: #varid }
+                })
+                .unwrap_or_else(|| quote! { #tyid }),
+        );
+
+        let (fspec, fty) = fields.try_into_field_translation_info()?;
+        field_pat_or_ctrs.push(match fspec {
+            Indexed => quote! {
+                ( x )
+            },
+            Named(ident) => quote! {
+                { #ident : x }
+            },
+        });
+
+        ftys.push(fty);
+    }
+
+    let catch_all_pat = if is_enum {
+        quote! { other => Err(other) }
+    } else {
+        quote! {}
+    };
+
+    Ok(quote! {
+        #(
+            #[automatically_derived]
+            impl #gparams ::sappho_fconv::Extract< #ftys > for ( #tyid #gparams ) #optwhere {
+                fn extract(self) -> Result< #ftys, Self > {
+                    match self {
+                        #variant_pat_or_ctrs #field_pat_or_ctrs => Ok(x),
+                        #catch_all_pat
+                    }
+                }
+            }
+
+            #[automatically_derived]
+            impl #gparams ::sappho_fconv::Embed< #ftys > for ( #tyid #gparams ) #optwhere {
+                fn embed(x: #ftys ) -> Self {
+                    #variant_pat_or_ctrs #field_pat_or_ctrs
+                }
+            }
+        )*
+    })
+}
+
 #[ext]
 impl Item {
     fn generate_impls(self) -> syn::Result<TokenStream> {
@@ -46,105 +108,24 @@ impl Item {
 #[ext]
 impl ItemStruct {
     fn generate_impls(self) -> syn::Result<TokenStream> {
-        let ItemStruct {
-            ident,
-            fields,
-            generics,
-            ..
-        } = self;
-
-        let (fspec, fty) = fields.try_into_field_translation_info()?;
-        let (gparams, optwhere) = generics.into_gparams_and_where_clause()?;
-
-        let (matchpat, mkexpr) = match fspec {
-            Indexed => (
-                quote! {
-                    ( x )
-                },
-                quote! {
-                    ( x )
-                },
-            ),
-            Named(ident) => (
-                quote! {
-                    { #ident : x }
-                },
-                quote! {
-                    { #ident : x }
-                },
-            ),
-        };
-
-        Ok(quote! {
-            #[automatically_derived]
-            impl #gparams ::sappho_fconv::Extract< #fty > for ( #ident #gparams ) #optwhere {
-                fn extract(self) -> Result< #fty, Self > {
-                    match self {
-                        #ident #matchpat => Ok(x),
-                    }
-                }
-            }
-
-            #[automatically_derived]
-            impl #gparams ::sappho_fconv::Embed< #fty > for ( #ident #gparams ) #optwhere {
-                fn embed(x: #fty ) -> Self {
-                    #ident #mkexpr
-                }
-            }
-        })
+        generate_impls(
+            self.ident,
+            self.generics,
+            std::iter::once((None, self.fields)),
+        )
     }
 }
 
 #[ext]
 impl ItemEnum {
     fn generate_impls(self) -> syn::Result<TokenStream> {
-        // BUG: `Embed` impl only supports tuple-like construction
-        let ItemEnum {
-            ident: enumid,
-            variants,
-            generics,
-            ..
-        } = self;
-
-        let (gparams, optwhere) = generics.into_gparams_and_where_clause()?;
-
-        let mut varids = vec![];
-        let mut ftys = vec![];
-
-        for Variant {
-            ident: varid,
-            fields,
-            ..
-        } in variants
-        {
-            varids.push(varid);
-
-            let (fspec, fty) = fields.try_into_field_translation_info()?;
-
-            let _ = dbg!(fspec);
-            ftys.push(fty);
-        }
-
-        Ok(quote! {
-            #(
-                #[automatically_derived]
-                impl #gparams  ::sappho_fconv::Extract< #ftys > for ( #enumid #gparams ) #optwhere {
-                    fn extract(self) -> Result< #ftys, Self > {
-                        match self {
-                            #enumid :: #varids ( x ) => Ok(x),
-                            other => Err(other),
-                        }
-                    }
-                }
-
-                #[automatically_derived]
-                impl #gparams  ::sappho_fconv::Embed< #ftys > for ( #enumid #gparams ) #optwhere {
-                    fn embed(x: #ftys ) -> Self {
-                        #enumid :: #varids ( x )
-                    }
-                }
-            )*
-        })
+        generate_impls(
+            self.ident,
+            self.generics,
+            self.variants
+                .into_iter()
+                .map(|Variant { ident, fields, .. }| (Some(ident), fields)),
+        )
     }
 }
 
