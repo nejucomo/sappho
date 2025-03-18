@@ -4,13 +4,21 @@ use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{
-    parse2 as parse, Error, Field, Fields, GenericParam, Generics, Index, Item, ItemEnum,
+    parse2 as parse, Error, Field, Fields, GenericParam, Generics, Ident, Item, ItemEnum,
     ItemStruct, Token, Type, Variant, WhereClause,
 };
+
+use crate::FieldSpec::*;
 
 #[proc_macro_derive(Extract)]
 pub fn extract_derive(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     extract_derive_pm2(item.into()).into()
+}
+
+#[derive(Debug, Clone)]
+enum FieldSpec {
+    Indexed,
+    Named(Ident),
 }
 
 fn extract_derive_pm2(item: TokenStream) -> TokenStream {
@@ -44,21 +52,43 @@ impl ItemStruct {
             generics,
             ..
         } = self;
-        let (fid, fty) = fields.try_into_field_translation_info()?;
+
+        let (fspec, fty) = fields.try_into_field_translation_info()?;
         let (gparams, optwhere) = generics.into_gparams_and_where_clause()?;
+
+        let (matchpat, mkexpr) = match fspec {
+            Indexed => (
+                quote! {
+                    ( x )
+                },
+                quote! {
+                    ( x )
+                },
+            ),
+            Named(ident) => (
+                quote! {
+                    { #ident : x }
+                },
+                quote! {
+                    { #ident : x }
+                },
+            ),
+        };
 
         Ok(quote! {
             #[automatically_derived]
             impl #gparams ::sappho_fconv::Extract< #fty > for ( #ident #gparams ) #optwhere {
                 fn extract(self) -> Result< #fty, Self > {
-                    Ok( self . #fid )
+                    match self {
+                        #ident #matchpat => Ok(x),
+                    }
                 }
             }
 
             #[automatically_derived]
             impl #gparams ::sappho_fconv::Embed< #fty > for ( #ident #gparams ) #optwhere {
-                fn embed(thing: #fty ) -> Self {
-                    #ident( thing )
+                fn embed(x: #fty ) -> Self {
+                    #ident #mkexpr
                 }
             }
         })
@@ -79,7 +109,6 @@ impl ItemEnum {
         let (gparams, optwhere) = generics.into_gparams_and_where_clause()?;
 
         let mut varids = vec![];
-        let mut fids = vec![];
         let mut ftys = vec![];
 
         for Variant {
@@ -90,8 +119,9 @@ impl ItemEnum {
         {
             varids.push(varid);
 
-            let (fid, fty) = fields.try_into_field_translation_info()?;
-            fids.push(fid);
+            let (fspec, fty) = fields.try_into_field_translation_info()?;
+
+            let _ = dbg!(fspec);
             ftys.push(fty);
         }
 
@@ -109,8 +139,8 @@ impl ItemEnum {
 
                 #[automatically_derived]
                 impl #gparams  ::sappho_fconv::Embed< #ftys > for ( #enumid #gparams ) #optwhere {
-                    fn embed(thing: #ftys ) -> Self {
-                        #enumid :: #varids ( thing )
+                    fn embed(x: #ftys ) -> Self {
+                        #enumid :: #varids ( x )
                     }
                 }
             )*
@@ -162,24 +192,17 @@ impl Generics {
 
 #[ext]
 impl Fields {
-    fn try_into_field_translation_info(self) -> syn::Result<(TokenStream, Type)> {
-        let (fix, field) = self.take_only_single_field()?;
+    fn try_into_field_translation_info(self) -> syn::Result<(FieldSpec, Type)> {
+        let field = self.take_only_single_field()?;
         let fty = field.ty;
-        let fid = field
-            .ident
-            .map(|id| id.into_token_stream())
-            .unwrap_or_else(|| Index::from(fix).into_token_stream());
-
-        Ok((fid, fty))
+        let fspec = field.ident.map(Named).unwrap_or(Indexed);
+        Ok((fspec, fty))
     }
 
-    fn take_only_single_field(self) -> syn::Result<(usize, Field)> {
+    fn take_only_single_field(self) -> syn::Result<Field> {
         let error = self.error("only single field struct or variants are supported");
         let punc = self.into_punctuated()?;
-        punc.into_iter()
-            .enumerate()
-            .take_only_singleton()
-            .ok_or(error)
+        punc.take_only_singleton().ok_or(error)
     }
 
     fn into_punctuated(self) -> syn::Result<Punctuated<Field, Token![,]>> {
