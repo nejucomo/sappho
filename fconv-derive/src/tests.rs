@@ -3,7 +3,7 @@ use proc_macro2::TokenStream;
 use syn::Ident;
 use test_case::{test_case, test_matrix};
 
-use crate::FieldSpec::{self, *};
+use crate::embeddings::EmbeddingFieldSpec::{self, Indexed, Named};
 
 use self::Genericity::*;
 use self::Kind::*;
@@ -144,7 +144,7 @@ fn ident(s: &str) -> Ident {
     [Indexed, Named(ident("my_field"))],
     [Concrete, Generic]
 )]
-fn matrix(kind: Kind, fspec: FieldSpec, gen: Genericity) {
+fn matrix(kind: Kind, fspec: EmbeddingFieldSpec, gen: Genericity) {
     dbg!(TestCase {
         input: matrix_input(kind, fspec.clone(), gen),
         expected: matrix_expected(kind, fspec, gen),
@@ -153,7 +153,7 @@ fn matrix(kind: Kind, fspec: FieldSpec, gen: Genericity) {
     .check_expansion()
 }
 
-fn matrix_input(kind: Kind, fspec: FieldSpec, gen: Genericity) -> String {
+fn matrix_input(kind: Kind, fspec: EmbeddingFieldSpec, gen: Genericity) -> String {
     let (kindkw, decl_open, decl_close) = match kind {
         Struct => ("struct ", "", ""),
         Enum => ("enum", "{ Thing", " }"),
@@ -176,7 +176,7 @@ fn matrix_input(kind: Kind, fspec: FieldSpec, gen: Genericity) -> String {
     almost
 }
 
-fn matrix_expected(kind: Kind, fspec: FieldSpec, gen: Genericity) -> String {
+fn matrix_expected(kind: Kind, fspec: EmbeddingFieldSpec, gen: Genericity) -> String {
     format!(
         indoc! { r#"
             #[automatically_derived]
