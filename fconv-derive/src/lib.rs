@@ -9,7 +9,7 @@ use syn::Error;
 
 use crate::intermediate::Intermediate;
 
-#[proc_macro_derive(Extract)]
+#[proc_macro_derive(Extract, attributes(extract))]
 pub fn extract_derive(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     extract_derive_pm2(item.into()).into()
 }

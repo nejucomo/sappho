@@ -44,6 +44,7 @@ pub type ProcExpr = BoxWise<ProcEffect>;
 /// Boxed-Spanned-Expression
 #[derive(Debug, From, Into, Extract)]
 #[from(Wise<FX>)]
+#[extract(Wise<FX>)]
 pub struct BoxWise<FX>(Box<Wise<FX>>);
 
 /// **Wi**th **S**ource **E**xpression

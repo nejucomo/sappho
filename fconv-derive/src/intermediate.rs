@@ -3,7 +3,7 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::Ident;
 
-use crate::embeddings::{EmbeddingField, EmbeddingVariant, Embeddings};
+use crate::embeddings::{EmbeddingField, EmbeddingVariant, Embeddings, Subembeddings};
 use crate::intgen::IntermediateGenerics;
 use crate::spannedext::SpannedExt;
 
@@ -92,10 +92,13 @@ impl TryFrom<syn::ItemStruct> for Intermediate {
     type Error = syn::Error;
 
     fn try_from(item: syn::ItemStruct) -> syn::Result<Self> {
+        let subs = Subembeddings::try_from(item.attrs)?;
+        let efield = EmbeddingField::try_from((subs, item.fields))?;
+
         Ok(Self::new(
             item.ident,
             item.generics.try_into()?,
-            EmbeddingField::try_from(item.fields)?.into(),
+            efield.into(),
         ))
     }
 }
