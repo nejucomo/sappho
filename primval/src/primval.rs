@@ -22,12 +22,28 @@ pub enum PrimVal {
     // ... etc?
 }
 
+// TODO: This kind of stuff should migrate to a dedicated Num crate
+
 /// A number value
 ///
 /// # TODO
 ///
 /// ints (including bytes), big ints, decimals...
 pub type Num = f64;
+
+impl PartialEq<f64> for PrimVal {
+    fn eq(&self, other: &f64) -> bool {
+        match self {
+            PrimVal::Num(f) => f.eq(other),
+        }
+    }
+}
+
+impl PartialEq<i32> for PrimVal {
+    fn eq(&self, ir: &i32) -> bool {
+        self.eq(&Num::from(*ir))
+    }
+}
 
 mod parsing {
     use chumsky::Parser as _;

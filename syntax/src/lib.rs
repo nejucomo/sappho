@@ -28,7 +28,7 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
-use sappho_primval::{Num, PrimVal};
+use sappho_primval::PrimVal;
 use sappho_with_source::WithSource;
 
 use crate::leftassoc::LeftAssoc;
@@ -48,13 +48,6 @@ pub struct BoxWise<FX>(Box<Wise<FX>>);
 /// **Wi**th **S**ource **E**xpression
 #[derive(Debug, From, Into)]
 pub struct Wise<FX>(WithSource<Expr<FX>>);
-
-// Potentially effectful expressions:
-#[derive(Debug, From, new)]
-pub struct Interactions<FX> {
-    pub effects: Vec<FX>,
-    pub confined: Confined<FX>,
-}
 
 // Generic structures across effects:
 #[derive(Debug, EnumFrom, EnumTryInto)]
@@ -131,6 +124,13 @@ pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>);
 #[derive(Debug, From)]
 pub struct Lookup(RcId);
 
+// Potentially effectful expressions:
+#[derive(Debug, From, new)]
+pub struct Interactions<FX> {
+    pub effects: Vec<FX>,
+    pub confined: Confined<FX>,
+}
+
 #[derive(Debug, EnumFrom, EnumTryInto)]
 pub enum Confined<FX> {
     Ref(RcId),
@@ -145,3 +145,6 @@ pub struct ParensExpr<FX>(BoxWise<FX>);
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod testeq;

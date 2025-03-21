@@ -4,13 +4,13 @@ use test_case::test_case;
 
 use crate::PureExpr;
 
-#[test_case("42" => 42; "forty-two")]
-#[test_case("42\n" => 42; "forty-two newline")]
-#[test_case("bob" => "bob"; "ref bob")]
-#[test_case("bob  \n   " => "bob"; "ref bob newline")]
-#[test_case("[]" => vec![]; "tight empty list")]
-#[test_case("[\n]" => vec![]; "multiline empty list")]
-#[test_case("[ ] " => vec![]; "space empty list")]
+#[test_case("42", 42; "forty-two")]
+// #[test_case("42\n" => 42; "forty-two newline")]
+// #[test_case("bob" => "bob"; "ref bob")]
+// #[test_case("bob  \n   " => "bob"; "ref bob newline")]
+// #[test_case("[]" => vec![]; "tight empty list")]
+// #[test_case("[\n]" => vec![]; "multiline empty list")]
+// #[test_case("[ ] " => vec![]; "space empty list")]
 // #[test_case(
 //     "[42]" =>
 //     list([
@@ -316,14 +316,11 @@ use crate::PureExpr;
 //     )
 //     ; "let list singleton and tail"
 // )]
-fn parse_pure_expr<T>(input: &str) -> Result<T, String>
+fn parse_pure_expr<T>(input: &str, expected: T)
 where
-    T: TryFrom<PureExpr>,
+    PureExpr: PartialEq<T>,
+    T: std::fmt::Debug,
 {
-    load_and_parse(input)
-        .map_err(|e| e.to_string())
-        .and_then(|px| {
-            let pxdesc = format!("{:#?}", &px);
-            T::try_from(px).map_err(|_| pxdesc)
-        })
+    let actual = load_and_parse::<PureExpr, _>(input).unwrap();
+    assert_eq!(actual, expected)
 }

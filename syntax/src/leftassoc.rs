@@ -10,6 +10,14 @@ pub struct LeftAssoc<L, R> {
 }
 
 impl<L, R> LeftAssoc<L, R> {
+    pub fn ref_left(&self) -> &L {
+        &self.left
+    }
+
+    pub fn is_just_left(&self) -> bool {
+        self.rights.is_empty()
+    }
+
     pub fn map_left<ML, L2>(self, map_left: ML) -> LeftAssoc<L2, R>
     where
         ML: FnOnce(L) -> L2,
