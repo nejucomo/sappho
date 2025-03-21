@@ -4,10 +4,10 @@ use test_case::test_case;
 
 use crate::PureExpr;
 
-#[test_case("42", 42; "forty-two")]
-// #[test_case("42\n" => 42; "forty-two newline")]
-// #[test_case("bob" => "bob"; "ref bob")]
-// #[test_case("bob  \n   " => "bob"; "ref bob newline")]
+#[test_case("42", &42; "forty-two")]
+#[test_case("42\n", &42; "forty-two newline")]
+#[test_case("bob", "bob"; "ref bob")]
+#[test_case("bob  \n   ", "bob"; "ref bob newline")]
 // #[test_case("[]" => vec![]; "tight empty list")]
 // #[test_case("[\n]" => vec![]; "multiline empty list")]
 // #[test_case("[ ] " => vec![]; "space empty list")]
@@ -316,11 +316,11 @@ use crate::PureExpr;
 //     )
 //     ; "let list singleton and tail"
 // )]
-fn parse_pure_expr<T>(input: &str, expected: T)
+fn parse_pure_expr<T>(input: &str, expected: &T)
 where
     PureExpr: PartialEq<T>,
-    T: std::fmt::Debug,
+    T: ?Sized + std::fmt::Debug,
 {
     let actual = load_and_parse::<PureExpr, _>(input).unwrap();
-    assert_eq!(actual, expected)
+    assert_eq!(actual, *expected)
 }

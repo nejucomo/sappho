@@ -19,6 +19,8 @@ where
             .or(crate::Let::parser_with(pep.clone()).map(Let))
             .or(crate::Match::parser_with(pep.clone()).map(Match))
             .or(crate::Applications::parser_with(pep).map(Applications))
+            // The primary enabler of trailing whitespace
+            .then_opt_space()
     }
 }
 

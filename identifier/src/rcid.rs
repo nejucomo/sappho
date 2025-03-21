@@ -78,6 +78,12 @@ impl Unparse for RcId {
     }
 }
 
+impl PartialEq<str> for RcId {
+    fn eq(&self, s: &str) -> bool {
+        self.as_str().eq(s)
+    }
+}
+
 impl fmt::Display for RcId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let idr: &IdentRef = self.borrow();
