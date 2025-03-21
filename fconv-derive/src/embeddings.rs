@@ -28,8 +28,7 @@ pub(crate) struct EmbeddingVariant {
 pub(crate) struct EmbeddingField {
     pub(crate) fspec: EmbeddingFieldSpec,
     pub(crate) ftype: syn::Type,
-    #[allow(dead_code)]
-    pub(crate) subs: Subembeddings,
+    pub(crate) fsubs: Subembeddings,
 }
 
 #[derive(Debug, Clone)]
@@ -98,7 +97,11 @@ impl From<(Subembeddings, syn::Field)> for EmbeddingField {
 
         let fspec = EmbeddingFieldSpec::from(fspec);
 
-        Self { fspec, ftype, subs }
+        Self {
+            fspec,
+            ftype,
+            fsubs: subs,
+        }
     }
 }
 
@@ -107,6 +110,12 @@ impl From<Option<syn::Ident>> for EmbeddingFieldSpec {
         use EmbeddingFieldSpec::{Indexed, Named};
 
         optid.map(Named).unwrap_or(Indexed)
+    }
+}
+
+impl Subembeddings {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = &syn::Type> {
+        self.0.iter()
     }
 }
 

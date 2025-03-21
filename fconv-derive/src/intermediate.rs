@@ -22,8 +22,10 @@ impl ToTokens for Intermediate {
         let genparams = &self.generics.optparams;
         let optwhere = &self.generics.optwhere;
 
-        let (varctrs, fspecs, ftypes): (Vec<_>, Vec<_>, Vec<_>) =
-            unzip_twice(self.embeddings.iter().map(|(optvarid, emfield)| {
+        let (varctrs, fspecs, ftypes): (Vec<_>, Vec<_>, Vec<_>) = self
+            .embeddings
+            .iter()
+            .map(|(optvarid, emfield)| {
                 (
                     optvarid
                         .map(|varid| quote! { #container_type :: #varid })
@@ -34,7 +36,8 @@ impl ToTokens for Intermediate {
                     },
                     &emfield.ftype,
                 )
-            }));
+            })
+            .collect();
 
         let catch_all_pat = if self.embeddings.is_struct() {
             quote! {}
@@ -61,6 +64,39 @@ impl ToTokens for Intermediate {
                     }
                 }
             )*
+        }));
+
+        tokens.extend(self.embeddings.iter().map(|(_, emfield)| {
+            let ftype = &emfield.ftype;
+            let fsubs = emfield.fsubs.iter();
+
+            quote! {
+                #(
+                    #[automatically_derived]
+                    impl #genparams ::sappho_fconv::Extract< #fsubs > for (
+                        #container_type #genparams
+                    )
+                    #optwhere
+                    {
+                        fn extract(self) -> Result< #fsubs , Self> {
+                            let intermediate = <Self as ::sappho_fconv::Extract< #ftype >>::extract(self)?;
+                            <#ftype as ::sappho_fconv::Extract< #fsubs >>::extract(intermediate).map_err(<Self as ::sappho_fconv::Embed< #ftype >>::embed)
+                        }
+                    }
+
+                    #[automatically_derived]
+                    impl #genparams ::sappho_fconv::Embed< #fsubs > for (
+                        #container_type #genparams
+                    )
+                    #optwhere
+                    {
+                        fn embed(x: #fsubs ) -> Self {
+                            let ft = <#ftype as ::sappho_fconv::Embed<#fsubs>>::embed(x);
+                            <Self as ::sappho_fconv::Embed<#ftype>>::embed(ft)
+                        }
+                    }
+                )*
+            }
         }));
     }
 }
@@ -117,13 +153,4 @@ impl TryFrom<syn::ItemEnum> for Intermediate {
                 .into(),
         ))
     }
-}
-
-fn unzip_twice<I, A, B, C>(it: I) -> (Vec<A>, Vec<B>, Vec<C>)
-where
-    I: Iterator<Item = (A, B, C)>,
-{
-    let (veca, vecbc): (Vec<A>, Vec<(B, C)>) = it.map(|(a, b, c)| (a, (b, c))).unzip();
-    let (vecb, vecc): (Vec<B>, Vec<C>) = vecbc.into_iter().unzip();
-    (veca, vecb, vecc)
 }
