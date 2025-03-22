@@ -1,10 +1,12 @@
+use either::Either::{Left, Right};
+
 use crate::leftassoc::LeftAssoc;
 use crate::{Applications, BoxWise, Confined, Expr, Interactions, Lookups, Wise};
 
 impl<FX, T> PartialEq<T> for BoxWise<FX>
 where
     T: ?Sized,
-    Wise<FX>: PartialEq<T>,
+    Confined<FX>: PartialEq<T>,
 {
     fn eq(&self, other: &T) -> bool {
         self.0.eq(other)
@@ -14,7 +16,7 @@ where
 impl<FX, T> PartialEq<T> for Wise<FX>
 where
     T: ?Sized,
-    Expr<FX>: PartialEq<T>,
+    Confined<FX>: PartialEq<T>,
 {
     fn eq(&self, other: &T) -> bool {
         self.0.parsed.eq(other)
@@ -24,7 +26,7 @@ where
 impl<FX, T> PartialEq<T> for Expr<FX>
 where
     T: ?Sized,
-    Applications<FX>: PartialEq<T>,
+    Confined<FX>: PartialEq<T>,
 {
     fn eq(&self, other: &T) -> bool {
         match self {
@@ -37,7 +39,7 @@ where
 impl<FX, T> PartialEq<T> for Applications<FX>
 where
     T: ?Sized,
-    Lookups<FX>: PartialEq<T>,
+    Confined<FX>: PartialEq<T>,
 {
     fn eq(&self, other: &T) -> bool {
         self.0.eq(other)
@@ -61,7 +63,7 @@ where
 impl<FX, T> PartialEq<T> for Lookups<FX>
 where
     T: ?Sized,
-    Interactions<FX>: PartialEq<T>,
+    Confined<FX>: PartialEq<T>,
 {
     fn eq(&self, other: &T) -> bool {
         self.0.eq(other)
@@ -78,6 +80,49 @@ where
             self.confined.eq(other)
         } else {
             false
+        }
+    }
+}
+
+// `Confined` comparables
+//
+// These "terminate" the expression type hierarchy, although they can be recursive, since confined expressions can contain general parenthesized expressions.
+impl<FX, T, const K: usize> PartialEq<[T; K]> for Confined<FX>
+where
+    Confined<FX>: PartialEq<T>,
+{
+    fn eq(&self, other: &[T; K]) -> bool {
+        <Self as PartialEq<[T]>>::eq(self, other.as_slice())
+    }
+}
+
+impl<FX, T> PartialEq<[T]> for Confined<FX>
+where
+    Confined<FX>: PartialEq<T>,
+{
+    fn eq(&self, other: &[T]) -> bool {
+        match self {
+            Confined::ListExpr(x) => {
+                let mut it = other.iter();
+
+                for subx in x.iter() {
+                    if let Some(other) = it.next() {
+                        let eq = match subx {
+                            Left(l) => l.eq(other),
+                            Right(r) => r.eq(other),
+                        };
+                        if !eq {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+
+                // `x.iter()` is complete, so we match if `it` is complete:
+                it.next().is_none()
+            }
+            _ => false,
         }
     }
 }

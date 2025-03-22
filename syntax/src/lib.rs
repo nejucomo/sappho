@@ -67,7 +67,7 @@ pub struct FuncDef {
     body: PureExpr,
 }
 
-#[derive(Clone, Debug, PartialEq, EnumFrom, EnumTryInto)]
+#[derive(Clone, Debug, EnumFrom, EnumTryInto)]
 pub enum Pattern {
     Bind(BindPattern),
     LitEq(PrimVal),
@@ -75,7 +75,7 @@ pub enum Pattern {
     List(ListForm<Pattern, BindPattern>),
 }
 
-#[derive(Clone, Debug, PartialEq, From)]
+#[derive(Clone, Debug, From)]
 pub struct BindPattern(RcId);
 
 #[derive(Debug, From)]

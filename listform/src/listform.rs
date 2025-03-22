@@ -28,6 +28,10 @@ impl<X, T> ListForm<X, T> {
         self
     }
 
+    pub fn iter(&self) -> impl Iterator<Item = Either<&X, &T>> {
+        self.lfg_ref().into_iter()
+    }
+
     pub(crate) fn lfg_ref(&self) -> ListFormGeneric<&Vec<X>, &T> {
         self.0.as_ref()
     }

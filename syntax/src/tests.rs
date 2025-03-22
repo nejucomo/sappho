@@ -4,13 +4,15 @@ use test_case::test_case;
 
 use crate::PureExpr;
 
+const EMPTY_LIST: &[i32; 0] = &[];
+
 #[test_case("42", &42; "forty-two")]
 #[test_case("42\n", &42; "forty-two newline")]
 #[test_case("bob", "bob"; "ref bob")]
 #[test_case("bob  \n   ", "bob"; "ref bob newline")]
-// #[test_case("[]" => vec![]; "tight empty list")]
-// #[test_case("[\n]" => vec![]; "multiline empty list")]
-// #[test_case("[ ] " => vec![]; "space empty list")]
+#[test_case("[]", EMPTY_LIST; "tight empty list")]
+#[test_case("[\n]", EMPTY_LIST; "multiline empty list")]
+#[test_case("[ ] ", EMPTY_LIST; "space empty list")]
 // #[test_case(
 //     "[42]" =>
 //     list([
