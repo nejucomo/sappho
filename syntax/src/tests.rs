@@ -13,20 +13,8 @@ const EMPTY_LIST: &[i32; 0] = &[];
 #[test_case("[]", EMPTY_LIST; "tight empty list")]
 #[test_case("[\n]", EMPTY_LIST; "multiline empty list")]
 #[test_case("[ ] ", EMPTY_LIST; "space empty list")]
-// #[test_case(
-//     "[42]" =>
-//     list([
-//         num(42.0)
-//     ])
-//     ; "tight singleton list"
-// )]
-// #[test_case(
-//     "[\n  42\n]" =>
-//     list([
-//         num(42.0)
-//     ])
-//     ; "multiline singleton list"
-// )]
+#[test_case("[42]", &[42]; "tight singleton list")]
+#[test_case("[\n  42\n]", &[42]; "multiline singleton list" )]
 // #[test_case(
 //     "[42,bob]" =>
 //     list([
