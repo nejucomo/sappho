@@ -7,13 +7,13 @@ members = [
   "ast/red",
   "ast/rich",
   "attrs",
-  "cli",
-  "eval",
+#   "cli",
+#   "eval",
   "fconv",
   "fconv-derive",
   "identifier",
-  "integration-tests",
-  "interpreter",
+#   "integration-tests",
+#   "interpreter",
   "keyword",
   "listform",
   "object",
@@ -25,9 +25,9 @@ members = [
   "source",
   "syntax",
   "tfi",
-  "transform",
+#   "transform",
   "unparse",
-  "value",
+#   "value",
   "with-source",
 ]
 
@@ -62,13 +62,13 @@ sappho-ast-kernel = { path = "ast/kernel" }
 sappho-ast-red = { path = "ast/red" }
 sappho-ast-rich = { path = "ast/rich" }
 sappho-attrs = { path = "attrs" }
-sappho-cli = { path = "cli" }
-sappho-eval = { path = "eval" }
+# sappho-cli = { path = "cli" }
+# sappho-eval = { path = "eval" }
 sappho-fconv-derive = { path = "fconv-derive" }
 sappho-fconv = { path = "fconv" }
 sappho-identifier = { path = "identifier" }
-sappho-integration-tests = { path = "integration-tests" }
-sappho-interpreter = { path = "interpreter" }
+# sappho-integration-tests = { path = "integration-tests" }
+# sappho-interpreter = { path = "interpreter" }
 sappho-keyword = { path = "keyword" }
 sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
@@ -80,9 +80,9 @@ sappho-regression-vectors = { path = "regression-vectors" }
 sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
 sappho-tfi = { path = "tfi" }
-sappho-transform = { path = "transform" }
+# sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
-sappho-value = { path = "value" }
+# sappho-value = { path = "value" }
 sappho-with-source = { path = "with-source" }
 simplelog = "0.12.0"
 syn = "2.0.100"

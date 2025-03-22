@@ -32,6 +32,6 @@ pub use self::lookup::LookupExpr;
 pub use self::matchexpr::{MatchClause, MatchExpr};
 pub use self::objectdef::ObjectDef;
 pub use self::proc::{ProcDef, Statements};
-pub use self::provider::AstProvider;
+pub use self::provider::{AstNode, AstNodeBase, AstProvider};
 pub use self::querydef::QueryDef;
 pub use self::wise::Wise;
