@@ -1,4 +1,4 @@
-use either::Either::{Left, Right};
+use either::Either::{self, Left, Right};
 
 use crate::leftassoc::LeftAssoc;
 use crate::{Applications, BoxWise, Confined, Expr, Interactions, Lookups, Wise};
@@ -87,6 +87,29 @@ where
 // `Confined` comparables
 //
 // These "terminate" the expression type hierarchy, although they can be recursive, since confined expressions can contain general parenthesized expressions.
+impl<FX, A, B> PartialEq<(A, B)> for Confined<FX>
+where
+    Confined<FX>: PartialEq<A>,
+    Confined<FX>: PartialEq<B>,
+{
+    fn eq(&self, other: &(A, B)) -> bool {
+        let (a, b) = other;
+        match self {
+            Confined::ListExpr(x) => {
+                let mut it = x.iter().map(ListIterItemEq);
+                if let Some((xa, xb)) = it.next().zip(it.next()) {
+                    // The list had two items and they equal (a, b):
+                    it.next().is_none() && xa.eq(a) && xb.eq(b)
+                } else {
+                    // Too few list items:
+                    false
+                }
+            }
+            _ => false,
+        }
+    }
+}
+
 impl<FX, T, const K: usize> PartialEq<[T; K]> for Confined<FX>
 where
     Confined<FX>: PartialEq<T>,
@@ -105,13 +128,9 @@ where
             Confined::ListExpr(x) => {
                 let mut it = other.iter();
 
-                for subx in x.iter() {
+                for subx in x.iter().map(ListIterItemEq) {
                     if let Some(other) = it.next() {
-                        let eq = match subx {
-                            Left(l) => l.eq(other),
-                            Right(r) => r.eq(other),
-                        };
-                        if !eq {
+                        if !subx.eq(other) {
                             return false;
                         }
                     } else {
@@ -127,10 +146,34 @@ where
     }
 }
 
+#[derive(Debug)]
+struct ListIterItemEq<'a, FX>(Either<&'a Wise<FX>, &'a BoxWise<FX>>);
+
+impl<FX, T> PartialEq<T> for ListIterItemEq<'_, FX>
+where
+    Confined<FX>: PartialEq<T>,
+{
+    fn eq(&self, other: &T) -> bool {
+        match self.0 {
+            Left(l) => l.eq(other),
+            Right(r) => r.eq(other),
+        }
+    }
+}
+
 impl<FX> PartialEq<str> for Confined<FX> {
     fn eq(&self, other: &str) -> bool {
         match self {
             Confined::Ref(x) => x.eq(other),
+            _ => false,
+        }
+    }
+}
+
+impl<'a, FX> PartialEq<&'a str> for Confined<FX> {
+    fn eq(&self, other: &&'a str) -> bool {
+        match self {
+            Confined::Ref(x) => x.eq(*other),
             _ => false,
         }
     }

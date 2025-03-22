@@ -15,22 +15,8 @@ const EMPTY_LIST: &[i32; 0] = &[];
 #[test_case("[ ] ", EMPTY_LIST; "space empty list")]
 #[test_case("[42]", &[42]; "tight singleton list")]
 #[test_case("[\n  42\n]", &[42]; "multiline singleton list" )]
-// #[test_case(
-//     "[42,bob]" =>
-//     list([
-//         num(42.0),
-//         refexpr("bob"),
-//     ])
-//     ; "tight pair list"
-// )]
-// #[test_case(
-//     "[42, bob]" =>
-//     list([
-//         num(42.0),
-//         refexpr("bob"),
-//     ])
-//     ; "natural pair list"
-// )]
+#[test_case("[42,bob]", &(42, "bob"); "tight pair list")]
+#[test_case("[42, bob]", &(42, "bob"); "natural pair list")]
 // #[test_case(
 //     "let x = 42; x" =>
 //     let_expr(
