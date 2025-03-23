@@ -5,7 +5,7 @@ use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
 use test_case::test_case;
 
-use crate::{PureExpr, Wise};
+use crate::{Let, PureExpr, Wise};
 
 #[test_case("42", 42; "forty-two")]
 #[test_case("42\n", 42; "forty-two newline")]
@@ -18,28 +18,16 @@ use crate::{PureExpr, Wise};
 #[test_case("[\n  42\n]", [42i32]; "multiline singleton list" )]
 #[test_case("[42,bob]", (42, "bob"); "tight pair list")]
 #[test_case("[42, bob]", (42, "bob"); "natural pair list")]
-// #[test_case(
-//     "let x = 42; x" =>
-//     let_expr(
-//         [(
-//             bind("x"),
-//             num(42.0),
-//         )],
-//         refexpr("x"),
-//     )
-//     ; "let x x space"
-// )]
-// #[test_case(
-//     "let x = 42;\nx" =>
-//     let_expr(
-//         [(
-//             bind("x"),
-//             num(42.0),
-//         )],
-//         refexpr("x"),
-//     )
-//     ; "let x x newline"
-// )]
+#[test_case(
+    "let x = 42; x",
+    Let::new([("x", 42)], "x")
+    ; "let x x space"
+)]
+#[test_case(
+    "let x = 42;\nx",
+    Let::new([("x", 42)], "x")
+    ; "let x x newline"
+)]
 // #[test_case(
 //     "fn x -> x" =>
 //     func_def_expr(

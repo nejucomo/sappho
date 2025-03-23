@@ -8,6 +8,34 @@ use sappho_unparse::{Stream, Unparse};
 use crate::parseparams::ParseParams;
 use crate::{BoxWise, Let, LetClause, Pattern};
 
+impl<FX> Let<FX>
+where
+    FX: Effect,
+{
+    pub fn new<I, C, W>(clauses: I, inner: W) -> Self
+    where
+        I: IntoIterator<Item = C>,
+        LetClause<FX>: From<C>,
+        BoxWise<FX>: From<W>,
+    {
+        Let {
+            clauses: clauses.into_iter().map(LetClause::from).collect(),
+            inner: BoxWise::from(inner),
+        }
+    }
+}
+
+impl<FX, P, W> From<(P, W)> for LetClause<FX>
+where
+    FX: Effect,
+    Pattern: From<P>,
+    BoxWise<FX>: From<W>,
+{
+    fn from((p, w): (P, W)) -> Self {
+        Self::new(p, w)
+    }
+}
+
 impl<FX> ParsableWith<ParseParams<'_>> for Let<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,

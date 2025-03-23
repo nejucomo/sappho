@@ -75,6 +75,7 @@ pub struct FuncDef {
 
 #[derive(Clone, Debug, PartialEq, From, TryInto)]
 pub enum Pattern {
+    #[from(BindPattern, RcId, &'static str)]
     Bind(BindPattern),
     LitEq(PrimVal),
     Unpack(Attrs<Pattern>),
@@ -82,6 +83,7 @@ pub enum Pattern {
 }
 
 #[derive(Clone, Debug, PartialEq, From)]
+#[from(RcId, &'static str)]
 pub struct BindPattern(RcId);
 
 #[derive(Debug, PartialEq, From)]
@@ -90,13 +92,12 @@ pub struct QueryDef(QueryExpr);
 #[derive(Debug, PartialEq, From)]
 pub struct ProcDef(ProcExpr);
 
-#[derive(Debug, PartialEq, new)]
+#[derive(Debug, PartialEq)]
 pub struct Let<FX>
 where
     FX: Effect,
 {
     clauses: Vec<LetClause<FX>>,
-    #[new(into)]
     inner: BoxWise<FX>,
 }
 
@@ -105,6 +106,7 @@ pub struct LetClause<FX>
 where
     FX: Effect,
 {
+    #[new(into)]
     binding: Pattern,
     #[new(into)]
     definition: BoxWise<FX>,
