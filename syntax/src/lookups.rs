@@ -8,12 +8,21 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::Interactions;
+use crate::{Confined, Interactions};
 
 #[derive(Debug, PartialEq, From)]
 pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)
 where
     FX: Effect;
+
+impl<FX> From<Confined<FX>> for Lookups<FX>
+where
+    FX: Effect,
+{
+    fn from(c: Confined<FX>) -> Self {
+        Lookups(LeftAssoc::new_just_left(c.into()))
+    }
+}
 
 #[derive(Debug, PartialEq, From)]
 pub struct Lookup(RcId);

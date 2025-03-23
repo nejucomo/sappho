@@ -1,10 +1,11 @@
-use derive_enum_from_into::{EnumFrom, EnumTryInto};
+use derive_more::{From, TryInto};
 
 /// A [PrimVal] is a value the language inherently provides which excludes containing other values or value-references
 ///
 /// Note that some [PrimVal] values _can_ be containers of [PrimVal] types. For example, a string contains chars, and a char is also a [PrimVal].
-#[derive(Copy, Clone, Debug, PartialEq, EnumFrom, EnumTryInto)]
+#[derive(Copy, Clone, Debug, PartialEq, From, TryInto)]
 pub enum PrimVal {
+    #[from(Num, i32)]
     Num(Num),
     // TODO:
     //Bool(bool),

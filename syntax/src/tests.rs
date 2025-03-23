@@ -1,5 +1,3 @@
-mod fromimpls;
-
 use sappho_ast_effect::PureEffect;
 use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;

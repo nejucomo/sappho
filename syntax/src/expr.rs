@@ -5,7 +5,7 @@ use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{Applications, FuncDef, Let, Match, ProcDef, QueryDef};
+use crate::{Applications, Confined, FuncDef, Let, Match, ProcDef, QueryDef};
 
 /// The bare top-level expression without source annotation
 #[derive(Debug, PartialEq, From, TryInto)]
@@ -13,11 +13,17 @@ pub enum Expr<FX>
 where
     FX: Effect,
 {
+    #[from]
     Func(FuncDef),
+    #[from]
     Query(QueryDef),
+    #[from]
     Proc(ProcDef),
+    #[from]
     Let(Let<FX>),
+    #[from]
     Match(Match<FX>),
+    #[from(Applications<FX>, Confined<FX>)]
     Applications(Applications<FX>),
 }
 

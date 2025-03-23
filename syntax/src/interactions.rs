@@ -18,6 +18,15 @@ where
     pub confined: Confined<FX>,
 }
 
+impl<FX> From<Confined<FX>> for Interactions<FX>
+where
+    FX: Effect,
+{
+    fn from(confined: Confined<FX>) -> Self {
+        Interactions::new(vec![], confined)
+    }
+}
+
 impl<FX> ParsableWith<ParseParams<'_>> for Interactions<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,

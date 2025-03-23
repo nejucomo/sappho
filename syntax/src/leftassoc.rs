@@ -12,6 +12,10 @@ pub struct LeftAssoc<L, R> {
 }
 
 impl<L, R> LeftAssoc<L, R> {
+    pub fn new_just_left(left: L) -> Self {
+        LeftAssoc::new(left, vec![])
+    }
+
     pub fn ref_left(&self) -> &L {
         &self.left
     }

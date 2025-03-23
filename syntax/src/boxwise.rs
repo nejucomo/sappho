@@ -4,7 +4,7 @@ use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::Wise;
+use crate::{Confined, FuncDef, Let, Wise};
 
 /// Boxed-Spanned-Expression
 #[derive(Debug, PartialEq, From, Into)]
@@ -12,6 +12,25 @@ use crate::Wise;
 pub struct BoxWise<FX>(Box<Wise<FX>>)
 where
     FX: Effect;
+
+impl_from_via_confined!(BoxWise<FX>);
+
+macro_rules! from_via_wise {
+    ( $t:ty ) => {
+        impl<FX> From<$t> for BoxWise<FX>
+        where
+            FX: Effect,
+        {
+            fn from(v: $t) -> Self {
+                BoxWise::from(Wise::from(v))
+            }
+        }
+    };
+}
+
+from_via_wise!(Confined<FX>);
+from_via_wise!(Let<FX>);
+from_via_wise!(FuncDef);
 
 impl<T, FX> ParsableWith<T> for BoxWise<FX>
 where

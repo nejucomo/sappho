@@ -8,7 +8,7 @@ use sappho_with_source::WithSource;
 
 use crate::parseparams::ParseParams;
 use crate::parserext::ParserExt as _;
-use crate::Expr;
+use crate::{Confined, Expr, FuncDef, Let};
 
 /// **Wi**th **S**ource **E**xpression
 ///
@@ -19,6 +19,25 @@ use crate::Expr;
 pub struct Wise<FX>(WithSource<Expr<FX>>)
 where
     FX: Effect;
+
+impl_from_via_confined!(Wise<FX>);
+
+macro_rules! from_no_source {
+    ( $t:ty ) => {
+        impl<FX> From<$t> for Wise<FX>
+        where
+            FX: Effect,
+        {
+            fn from(v: $t) -> Self {
+                Wise(WithSource::new(v, None))
+            }
+        }
+    };
+}
+
+from_no_source!(Confined<FX>);
+from_no_source!(Let<FX>);
+from_no_source!(FuncDef);
 
 impl<'a, FX> ParsableWith<&'a SourceCodeLink> for Wise<FX>
 where

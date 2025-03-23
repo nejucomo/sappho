@@ -7,12 +7,21 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::Lookups;
+use crate::{Confined, Lookups};
 
 #[derive(Debug, PartialEq, From)]
 pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
 where
     FX: Effect;
+
+impl<FX> From<Confined<FX>> for Applications<FX>
+where
+    FX: Effect,
+{
+    fn from(c: Confined<FX>) -> Self {
+        Applications(LeftAssoc::new_just_left(c.into()))
+    }
+}
 
 #[derive(Debug, PartialEq, From)]
 pub struct Application<FX>(Lookups<FX>)
