@@ -5,7 +5,7 @@ use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
 use test_case::test_case;
 
-use crate::{Let, PureExpr, Wise};
+use crate::{FuncDef, Let, PureExpr, Wise};
 
 #[test_case("42", 42; "forty-two")]
 #[test_case("42\n", 42; "forty-two newline")]
@@ -28,14 +28,11 @@ use crate::{Let, PureExpr, Wise};
     Let::new([("x", 42)], "x")
     ; "let x x newline"
 )]
-// #[test_case(
-//     "fn x -> x" =>
-//     func_def_expr(
-//         bind("x"),
-//         refexpr("x"),
-//     )
-//     ; "identify fn"
-// )]
+#[test_case(
+    "fn x -> x",
+    FuncDef::new("x", "x")
+    ; "identify fn"
+)]
 // #[test_case(
 //     "f x" =>
 //     app_expr(

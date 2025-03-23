@@ -7,7 +7,7 @@ use sappho_source::{Source, SourceCodeRef};
 use sappho_with_source::WithSource;
 
 use crate::leftassoc::LeftAssoc;
-use crate::{Applications, BoxWise, Confined, Expr, Interactions, Let, Lookups, Wise};
+use crate::{Applications, BoxWise, Confined, Expr, FuncDef, Interactions, Let, Lookups, Wise};
 
 // Basic Entry points
 macro_rules! impl_entrypoints {
@@ -120,6 +120,15 @@ where
 {
     fn from(letx: Let<FX>) -> Self {
         Wise::from(Expr::from(letx))
+    }
+}
+
+impl<FX> From<FuncDef> for Wise<FX>
+where
+    FX: Effect,
+{
+    fn from(x: FuncDef) -> Self {
+        Wise::from(Expr::from(x))
     }
 }
 

@@ -68,6 +68,7 @@ where
 
 #[derive(Debug, PartialEq, new)]
 pub struct FuncDef {
+    #[new(into)]
     argpat: Pattern,
     #[new(into)]
     body: PureExpr,
