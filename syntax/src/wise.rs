@@ -51,3 +51,12 @@ where
         WithSource::restrict(src.0).map(Wise)
     }
 }
+
+impl<FX> PartialEq for Wise<FX>
+where
+    FX: Effect,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.0.parsed == other.0.parsed
+    }
+}

@@ -1,22 +1,23 @@
+mod fromimpls;
+
+use sappho_ast_effect::PureEffect;
 use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
 use test_case::test_case;
 
-use crate::PureExpr;
+use crate::{PureExpr, Wise};
 
-const EMPTY_LIST: &[i32; 0] = &[];
-
-#[test_case("42", &42; "forty-two")]
-#[test_case("42\n", &42; "forty-two newline")]
+#[test_case("42", 42; "forty-two")]
+#[test_case("42\n", 42; "forty-two newline")]
 #[test_case("bob", "bob"; "ref bob")]
 #[test_case("bob  \n   ", "bob"; "ref bob newline")]
-#[test_case("[]", EMPTY_LIST; "tight empty list")]
-#[test_case("[\n]", EMPTY_LIST; "multiline empty list")]
-#[test_case("[ ] ", EMPTY_LIST; "space empty list")]
-#[test_case("[42]", &[42]; "tight singleton list")]
-#[test_case("[\n  42\n]", &[42]; "multiline singleton list" )]
-#[test_case("[42,bob]", &(42, "bob"); "tight pair list")]
-#[test_case("[42, bob]", &(42, "bob"); "natural pair list")]
+#[test_case("[]", (); "tight empty list")]
+#[test_case("[\n]", (); "multiline empty list")]
+#[test_case("[ ] ", (); "space empty list")]
+#[test_case("[42]", [42]; "tight singleton list")]
+#[test_case("[\n  42\n]", [42i32]; "multiline singleton list" )]
+#[test_case("[42,bob]", (42, "bob"); "tight pair list")]
+#[test_case("[42, bob]", (42, "bob"); "natural pair list")]
 // #[test_case(
 //     "let x = 42; x" =>
 //     let_expr(
@@ -292,11 +293,10 @@ const EMPTY_LIST: &[i32; 0] = &[];
 //     )
 //     ; "let list singleton and tail"
 // )]
-fn parse_pure_expr<T>(input: &str, expected: &T)
+fn parse_pure_expr<T>(input: &str, expected: T)
 where
-    PureExpr: PartialEq<T>,
-    T: ?Sized + std::fmt::Debug,
+    Wise<PureEffect>: From<T>,
 {
     let actual = load_and_parse::<PureExpr, _>(input).unwrap();
-    assert_eq!(actual, *expected)
+    assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }

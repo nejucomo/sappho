@@ -20,10 +20,9 @@ mod procdef;
 mod querydef;
 mod wise;
 
-use derive_enum_from_into::{EnumFrom, EnumTryInto};
-use derive_more::{From, Into};
+use derive_more::{From, Into, TryInto};
 use derive_new::new;
-use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
+use sappho_ast_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
@@ -41,17 +40,24 @@ pub type ProcExpr = BoxWise<ProcEffect>;
 // Top-Level Recursion Nexus
 
 /// Boxed-Spanned-Expression
-#[derive(Debug, From, Into)]
+#[derive(Debug, PartialEq, From, Into)]
 #[from(Wise<FX>)]
-pub struct BoxWise<FX>(Box<Wise<FX>>);
+pub struct BoxWise<FX>(Box<Wise<FX>>)
+where
+    FX: Effect;
 
 /// **Wi**th **S**ource **E**xpression
 #[derive(Debug, From, Into)]
-pub struct Wise<FX>(WithSource<Expr<FX>>);
+pub struct Wise<FX>(WithSource<Expr<FX>>)
+where
+    FX: Effect;
 
 // Generic structures across effects:
-#[derive(Debug, EnumFrom, EnumTryInto)]
-pub enum Expr<FX> {
+#[derive(Debug, PartialEq, From, TryInto)]
+pub enum Expr<FX>
+where
+    FX: Effect,
+{
     Func(FuncDef),
     Query(QueryDef),
     Proc(ProcDef),
@@ -60,14 +66,14 @@ pub enum Expr<FX> {
     Applications(Applications<FX>),
 }
 
-#[derive(Debug, new)]
+#[derive(Debug, PartialEq, new)]
 pub struct FuncDef {
     argpat: Pattern,
     #[new(into)]
     body: PureExpr,
 }
 
-#[derive(Clone, Debug, EnumFrom, EnumTryInto)]
+#[derive(Clone, Debug, PartialEq, From, TryInto)]
 pub enum Pattern {
     Bind(BindPattern),
     LitEq(PrimVal),
@@ -75,64 +81,88 @@ pub enum Pattern {
     List(ListForm<Pattern, BindPattern>),
 }
 
-#[derive(Clone, Debug, From)]
+#[derive(Clone, Debug, PartialEq, From)]
 pub struct BindPattern(RcId);
 
-#[derive(Debug, From)]
+#[derive(Debug, PartialEq, From)]
 pub struct QueryDef(QueryExpr);
 
-#[derive(Debug, From)]
+#[derive(Debug, PartialEq, From)]
 pub struct ProcDef(ProcExpr);
 
-#[derive(Debug, new)]
-pub struct Let<FX> {
+#[derive(Debug, PartialEq, new)]
+pub struct Let<FX>
+where
+    FX: Effect,
+{
     clauses: Vec<LetClause<FX>>,
     #[new(into)]
     inner: BoxWise<FX>,
 }
 
-#[derive(Debug, new)]
-pub struct LetClause<FX> {
+#[derive(Debug, PartialEq, new)]
+pub struct LetClause<FX>
+where
+    FX: Effect,
+{
     binding: Pattern,
     #[new(into)]
     definition: BoxWise<FX>,
 }
 
-#[derive(Debug, new)]
-pub struct Match<FX> {
+#[derive(Debug, PartialEq, new)]
+pub struct Match<FX>
+where
+    FX: Effect,
+{
     #[new(into)]
     candidate: BoxWise<FX>,
     clauses: Vec<MatchClause<FX>>,
 }
 
-#[derive(Debug, new)]
-pub struct MatchClause<FX> {
+#[derive(Debug, PartialEq, new)]
+pub struct MatchClause<FX>
+where
+    FX: Effect,
+{
     binding: Pattern,
     #[new(into)]
     consequent: BoxWise<FX>,
 }
 
-#[derive(Debug, From)]
-pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>);
+#[derive(Debug, PartialEq, From)]
+pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
+where
+    FX: Effect;
 
-#[derive(Debug, From)]
-pub struct Application<FX>(Lookups<FX>);
+#[derive(Debug, PartialEq, From)]
+pub struct Application<FX>(Lookups<FX>)
+where
+    FX: Effect;
 
-#[derive(Debug, From)]
-pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>);
+#[derive(Debug, PartialEq, From)]
+pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)
+where
+    FX: Effect;
 
-#[derive(Debug, From)]
+#[derive(Debug, PartialEq, From)]
 pub struct Lookup(RcId);
 
 // Potentially effectful expressions:
-#[derive(Debug, From, new)]
-pub struct Interactions<FX> {
+#[derive(Debug, PartialEq, From, new)]
+pub struct Interactions<FX>
+where
+    FX: Effect,
+{
     pub effects: Vec<FX>,
     pub confined: Confined<FX>,
 }
 
-#[derive(Debug, EnumFrom, EnumTryInto)]
-pub enum Confined<FX> {
+#[derive(Debug, PartialEq, From, TryInto)]
+pub enum Confined<FX>
+where
+    FX: Effect,
+{
     Ref(RcId),
     Prim(PrimVal),
     Parens(ParensExpr<FX>),
@@ -140,11 +170,10 @@ pub enum Confined<FX> {
     ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
 }
 
-#[derive(Debug, From)]
-pub struct ParensExpr<FX>(BoxWise<FX>);
+#[derive(Debug, PartialEq, From)]
+pub struct ParensExpr<FX>(BoxWise<FX>)
+where
+    FX: Effect;
 
 #[cfg(test)]
 mod tests;
-
-#[cfg(test)]
-mod testeq;

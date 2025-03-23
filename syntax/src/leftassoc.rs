@@ -1,9 +1,11 @@
 use chumsky::Parser as _;
+use derive_more::From;
+use derive_new::new;
 use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
-#[derive(Debug, derive_more::From, derive_new::new)]
+#[derive(Debug, PartialEq, From, new)]
 pub struct LeftAssoc<L, R> {
     left: L,
     rights: Vec<R>,
