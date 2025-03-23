@@ -139,7 +139,7 @@ where
 {
     fn from(x: Expr<FX>) -> Self {
         let fake_code = "<TEST FAKE CODE>";
-        Self(WithSource::new(
+        Self::from(WithSource::new(
             x,
             SourceCodeRef::new(
                 Source::Literal(fake_code.to_string()).load().unwrap(),

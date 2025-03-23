@@ -1,10 +1,22 @@
 use chumsky::Parser as _;
+use derive_more::From;
+use derive_new::new;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{Confined, Interactions};
+use crate::Confined;
+
+/// Potentially effectful expressions
+#[derive(Debug, PartialEq, From, new)]
+pub struct Interactions<FX>
+where
+    FX: Effect,
+{
+    pub effects: Vec<FX>,
+    pub confined: Confined<FX>,
+}
 
 impl<FX> ParsableWith<ParseParams<'_>> for Interactions<FX>
 where

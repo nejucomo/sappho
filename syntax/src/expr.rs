@@ -1,17 +1,33 @@
 use chumsky::Parser as _;
+use derive_more::{From, TryInto};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::Expr::{self, *};
-use crate::{FuncDef, ProcDef, QueryDef};
+use crate::{Applications, FuncDef, Let, Match, ProcDef, QueryDef};
+
+/// The bare top-level expression without source annotation
+#[derive(Debug, PartialEq, From, TryInto)]
+pub enum Expr<FX>
+where
+    FX: Effect,
+{
+    Func(FuncDef),
+    Query(QueryDef),
+    Proc(ProcDef),
+    Let(Let<FX>),
+    Match(Match<FX>),
+    Applications(Applications<FX>),
+}
 
 impl<FX> ParsableWith<ParseParams<'_>> for Expr<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,
 {
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+        use Expr::*;
+
         FuncDef::parser_with(pep.clone())
             .map(Func)
             .or(QueryDef::parser_with(pep.clone()).map(Query))
@@ -29,6 +45,8 @@ where
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
+        use Expr::*;
+
         match self {
             Func(x) => x.unparse_into(s),
             Query(x) => x.unparse_into(s),

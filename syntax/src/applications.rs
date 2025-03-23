@@ -1,4 +1,5 @@
 use chumsky::Parser as _;
+use derive_more::From;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};
@@ -6,7 +7,17 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::{Application, Applications, Lookups};
+use crate::Lookups;
+
+#[derive(Debug, PartialEq, From)]
+pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
+where
+    FX: Effect;
+
+#[derive(Debug, PartialEq, From)]
+pub struct Application<FX>(Lookups<FX>)
+where
+    FX: Effect;
 
 impl<FX> ParsableWith<ParseParams<'_>> for Applications<FX>
 where

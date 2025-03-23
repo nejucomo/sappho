@@ -1,12 +1,21 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
+use derive_new::new;
 use sappho_keyword::Keyword::Fn;
 use sappho_parsable::primitive::space;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{FuncDef, Pattern, PureExpr};
+use crate::{Pattern, PureExpr};
+
+#[derive(Debug, PartialEq, new)]
+pub struct FuncDef {
+    #[new(into)]
+    argpat: Pattern,
+    #[new(into)]
+    body: PureExpr,
+}
 
 impl ParsableWith<ParseParams<'_>> for FuncDef {
     fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {

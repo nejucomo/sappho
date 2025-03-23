@@ -1,5 +1,6 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
+use derive_new::new;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_keyword::Keyword::Match as KwMatch;
 use sappho_parsable::primitive::bracketed;
@@ -7,7 +8,27 @@ use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, Match, MatchClause, Pattern};
+use crate::{BoxWise, Pattern};
+
+#[derive(Debug, PartialEq, new)]
+pub struct Match<FX>
+where
+    FX: Effect,
+{
+    #[new(into)]
+    candidate: BoxWise<FX>,
+    clauses: Vec<MatchClause<FX>>,
+}
+
+#[derive(Debug, PartialEq, new)]
+pub struct MatchClause<FX>
+where
+    FX: Effect,
+{
+    binding: Pattern,
+    #[new(into)]
+    consequent: BoxWise<FX>,
+}
 
 impl<FX> ParsableWith<ParseParams<'_>> for Match<FX>
 where

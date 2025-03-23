@@ -1,4 +1,5 @@
 use chumsky::Parser as _;
+use derive_more::{From, TryInto};
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
@@ -6,8 +7,20 @@ use sappho_parsable::{Parsable, ParsableWith, Parser, Recursive};
 use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::BindPattern;
-use crate::Pattern::{self, *};
+use self::Pattern::*;
+
+#[derive(Clone, Debug, PartialEq, From, TryInto)]
+pub enum Pattern {
+    #[from(BindPattern, RcId, &'static str)]
+    Bind(BindPattern),
+    LitEq(PrimVal),
+    Unpack(Attrs<Pattern>),
+    List(ListForm<Pattern, BindPattern>),
+}
+
+#[derive(Clone, Debug, PartialEq, From)]
+#[from(RcId, &'static str)]
+pub struct BindPattern(RcId);
 
 impl Parsable for Pattern {
     fn parser() -> impl Parser<Self> {

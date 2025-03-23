@@ -1,12 +1,33 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
+use derive_new::new;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_keyword::Keyword::Let as KwLet;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, Let, LetClause, Pattern};
+use crate::{BoxWise, Pattern};
+
+#[derive(Debug, PartialEq)]
+pub struct Let<FX>
+where
+    FX: Effect,
+{
+    clauses: Vec<LetClause<FX>>,
+    inner: BoxWise<FX>,
+}
+
+#[derive(Debug, PartialEq, new)]
+pub struct LetClause<FX>
+where
+    FX: Effect,
+{
+    #[new(into)]
+    binding: Pattern,
+    #[new(into)]
+    definition: BoxWise<FX>,
+}
 
 impl<FX> Let<FX>
 where

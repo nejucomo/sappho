@@ -1,4 +1,5 @@
 use chumsky::Parser as _;
+use derive_more::{From, Into};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_source::SourceCodeLink;
@@ -7,7 +8,17 @@ use sappho_with_source::WithSource;
 
 use crate::parseparams::ParseParams;
 use crate::parserext::ParserExt as _;
-use crate::Wise;
+use crate::Expr;
+
+/// **Wi**th **S**ource **E**xpression
+///
+/// An [Expr] with attached source code for errors and other diagnostics.
+///
+/// This is the top-level expression recursion point, without `Box`. Expression recursions to [Wise] are either through [Box] or another container, like [ListForm](sappho_listform::ListForm).
+#[derive(Debug, From, Into)]
+pub struct Wise<FX>(WithSource<Expr<FX>>)
+where
+    FX: Effect;
 
 impl<'a, FX> ParsableWith<&'a SourceCodeLink> for Wise<FX>
 where

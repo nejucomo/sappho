@@ -1,4 +1,5 @@
 use chumsky::Parser as _;
+use derive_more::{From, TryInto};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
@@ -8,8 +9,21 @@ use sappho_primval::PrimVal;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::Confined::{self, *};
-use crate::ParensExpr;
+use crate::{BoxWise, FuncDef, ParensExpr, ProcDef, QueryDef, Wise};
+
+use self::Confined::*;
+
+#[derive(Debug, PartialEq, From, TryInto)]
+pub enum Confined<FX>
+where
+    FX: Effect,
+{
+    Ref(RcId),
+    Prim(PrimVal),
+    Parens(ParensExpr<FX>),
+    ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),
+    ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
+}
 
 impl<FX> ParsableWith<ParseParams<'_>> for Confined<FX>
 where

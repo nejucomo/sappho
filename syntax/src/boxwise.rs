@@ -1,9 +1,17 @@
 use chumsky::Parser as _;
+use derive_more::{From, Into};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::{BoxWise, Wise};
+use crate::Wise;
+
+/// Boxed-Spanned-Expression
+#[derive(Debug, PartialEq, From, Into)]
+#[from(Wise<FX>)]
+pub struct BoxWise<FX>(Box<Wise<FX>>)
+where
+    FX: Effect;
 
 impl<T, FX> ParsableWith<T> for BoxWise<FX>
 where

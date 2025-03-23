@@ -1,11 +1,15 @@
 use chumsky::Parser as _;
+use derive_more::From;
 use sappho_keyword::Keyword::Proc as KwProc;
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{ProcDef, ProcExpr};
+use crate::ProcExpr;
+
+#[derive(Debug, PartialEq, From)]
+pub struct ProcDef(ProcExpr);
 
 impl ParsableWith<ParseParams<'_>> for ProcDef {
     fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
