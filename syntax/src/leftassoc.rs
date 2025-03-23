@@ -1,19 +1,46 @@
 use chumsky::Parser as _;
-use derive_more::From;
-use derive_new::new;
-use sappho_ast_effect::{RestrictFrom, Restriction};
+use sappho_ast_effect::{Effect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
-#[derive(Debug, PartialEq, From, new)]
+use crate::Confined;
+
+#[derive(Debug, PartialEq)]
 pub struct LeftAssoc<L, R> {
     left: L,
     rights: Vec<R>,
 }
 
+impl<FX, L, R> From<Confined<FX>> for LeftAssoc<L, R>
+where
+    FX: Effect,
+    L: From<Confined<FX>>,
+{
+    fn from(c: Confined<FX>) -> Self {
+        LeftAssoc::new(L::from(c), vec![])
+    }
+}
+
+impl<L, R, LS, RS, RI> From<(LS, RI)> for LeftAssoc<L, R>
+where
+    L: From<LS>,
+    R: From<RS>,
+    RI: IntoIterator<Item = RS>,
+{
+    fn from((l, rs): (LS, RI)) -> Self {
+        LeftAssoc {
+            left: L::from(l),
+            rights: rs.into_iter().map(R::from).collect(),
+        }
+    }
+}
+
 impl<L, R> LeftAssoc<L, R> {
-    pub fn new_just_left(left: L) -> Self {
-        LeftAssoc::new(left, vec![])
+    pub fn new<LN, RN>(left: LN, right: RN) -> Self
+    where
+        Self: From<(LN, RN)>,
+    {
+        Self::from((left, right))
     }
 
     pub fn ref_left(&self) -> &L {

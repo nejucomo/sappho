@@ -8,7 +8,7 @@ use sappho_with_source::WithSource;
 
 use crate::parseparams::ParseParams;
 use crate::parserext::ParserExt as _;
-use crate::{Confined, Expr, FuncDef, Let};
+use crate::{Applications, Confined, Expr, FuncDef, Let};
 
 /// **Wi**th **S**ource **E**xpression
 ///
@@ -35,9 +35,10 @@ macro_rules! from_no_source {
     };
 }
 
+from_no_source!(FuncDef);
 from_no_source!(Confined<FX>);
 from_no_source!(Let<FX>);
-from_no_source!(FuncDef);
+from_no_source!(Applications<FX>);
 
 impl<'a, FX> ParsableWith<&'a SourceCodeLink> for Wise<FX>
 where

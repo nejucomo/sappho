@@ -11,18 +11,12 @@ use crate::parseparams::ParseParams;
 use crate::{Confined, Interactions};
 
 #[derive(Debug, PartialEq, From)]
+#[from(LeftAssoc<Interactions<FX>, Lookup>, Confined<FX>)]
 pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)
 where
     FX: Effect;
 
-impl<FX> From<Confined<FX>> for Lookups<FX>
-where
-    FX: Effect,
-{
-    fn from(c: Confined<FX>) -> Self {
-        Lookups(LeftAssoc::new_just_left(c.into()))
-    }
-}
+impl_from_via_confined!(Lookups<FX>);
 
 #[derive(Debug, PartialEq, From)]
 pub struct Lookup(RcId);
