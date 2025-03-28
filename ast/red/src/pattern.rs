@@ -1,6 +1,7 @@
 use sappho_ast_kernel::Literal;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
+use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 use std::fmt;
 
@@ -8,7 +9,7 @@ use std::fmt;
 pub enum Pattern {
     #[from]
     Bind(RcId),
-    #[from(f64)]
+    #[from(Num)]
     LitEq(Literal),
     #[from]
     Unpack(Attrs<Pattern>),

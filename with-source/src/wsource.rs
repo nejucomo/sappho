@@ -45,3 +45,12 @@ impl<T, E> WithSource<Result<T, E>> {
         res.map(|parsed| WithSource { parsed, sourcecode })
     }
 }
+
+impl<T> From<T> for WithSource<T> {
+    fn from(parsed: T) -> Self {
+        WithSource {
+            parsed,
+            sourcecode: None,
+        }
+    }
+}

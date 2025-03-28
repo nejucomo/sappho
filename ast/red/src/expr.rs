@@ -8,6 +8,7 @@ use sappho_ast_kernel::{
 };
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
+use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::AstRed;
@@ -16,7 +17,7 @@ use crate::AstRed;
 #[from(
     Kernel<AstRed, FX>,
     RcId,
-    f64,
+    Num,
     ObjectDef<AstRed, FX>,
     LetExpr<AstRed, FX>,
     MatchExpr<AstRed, FX>,

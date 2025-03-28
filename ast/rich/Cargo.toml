@@ -16,3 +16,4 @@ sappho-identifier.workspace = true
 sappho-listform.workspace = true
 sappho-object.workspace = true
 sappho-unparse.workspace = true
+sappho-primval.workspace = true

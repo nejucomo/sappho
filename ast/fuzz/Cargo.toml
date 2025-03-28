@@ -18,3 +18,4 @@ sappho-object.workspace = true
 sappho-rand-dcomp.workspace = true
 sappho-with-source.workspace = true
 sappho-source.workspace = true
+sappho-primval.workspace = true

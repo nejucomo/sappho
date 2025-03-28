@@ -19,6 +19,7 @@ where
     FX: Effect,
 {
     Ref(RcId),
+    #[from(PrimVal, i32)]
     Prim(PrimVal),
     Parens(ParensExpr<FX>),
     ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),

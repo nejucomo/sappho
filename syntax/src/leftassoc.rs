@@ -50,6 +50,33 @@ impl<L, R> LeftAssoc<L, R> {
     }
 }
 
+mod fromimpls {
+    use sappho_ast_effect::Effect;
+
+    use crate::leftassoc::LeftAssoc;
+    use crate::{Application, Interactions, Lookup, Lookups};
+
+    impl<FX, L> From<L> for LeftAssoc<Lookups<FX>, Application<FX>>
+    where
+        FX: Effect,
+        Lookups<FX>: From<L>,
+    {
+        fn from(left: L) -> Self {
+            Self::new(Lookups::from(left), vec![])
+        }
+    }
+
+    impl<FX, L> From<L> for LeftAssoc<Interactions<FX>, Lookup>
+    where
+        FX: Effect,
+        Interactions<FX>: From<L>,
+    {
+        fn from(left: L) -> Self {
+            Self::new(Interactions::from(left), vec![])
+        }
+    }
+}
+
 impl<L, R, T> ParsableWith<T> for LeftAssoc<L, R>
 where
     L: ParsableWith<T>,

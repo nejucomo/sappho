@@ -1,9 +1,9 @@
-use derive_enum_from_into::{EnumFrom, EnumTryInto};
+use derive_more::{From, TryInto};
 
 /// A [PrimVal] is a value the language inherently provides which excludes containing other values or value-references
 ///
 /// Note that some [PrimVal] values _can_ be containers of [PrimVal] types. For example, a string contains chars, and a char is also a [PrimVal].
-#[derive(Copy, Clone, Debug, PartialEq, EnumFrom, EnumTryInto)]
+#[derive(Copy, Clone, Debug, PartialEq, From, TryInto)]
 pub enum PrimVal {
     Num(Num),
     // TODO:
@@ -29,19 +29,13 @@ pub enum PrimVal {
 /// # TODO
 ///
 /// ints (including bytes), big ints, decimals...
-pub type Num = f64;
+pub type Num = i32;
 
-impl PartialEq<f64> for PrimVal {
-    fn eq(&self, other: &f64) -> bool {
+impl PartialEq<Num> for PrimVal {
+    fn eq(&self, other: &Num) -> bool {
         match self {
             PrimVal::Num(f) => f.eq(other),
         }
-    }
-}
-
-impl PartialEq<i32> for PrimVal {
-    fn eq(&self, ir: &i32) -> bool {
-        self.eq(&Num::from(*ir))
     }
 }
 

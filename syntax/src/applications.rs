@@ -10,6 +10,11 @@ use crate::parseparams::ParseParams;
 use crate::Lookups;
 
 #[derive(Debug, PartialEq, From)]
+#[from(
+    LeftAssoc<Lookups<FX>, Application<FX>>,
+    Lookups<FX>,
+    i32,
+)]
 pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
 where
     FX: Effect;

@@ -14,8 +14,20 @@ pub struct Interactions<FX>
 where
     FX: Effect,
 {
+    #[new(into)]
     pub effects: Vec<FX>,
+    #[new(into)]
     pub confined: Confined<FX>,
+}
+
+impl<FX, T> From<T> for Interactions<FX>
+where
+    FX: Effect,
+    Confined<FX>: From<T>,
+{
+    fn from(value: T) -> Self {
+        Self::new(vec![], Confined::from(value))
+    }
 }
 
 impl<FX> ParsableWith<ParseParams<'_>> for Interactions<FX>

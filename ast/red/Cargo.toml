@@ -14,6 +14,7 @@ sappho-attrs.workspace = true
 sappho-identifier.workspace = true
 sappho-object.workspace = true
 sappho-unparse.workspace = true
+sappho-primval.workspace = true
 
 [dev-dependencies]
 test-case.workspace = true

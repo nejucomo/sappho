@@ -2,12 +2,13 @@ use rand::distr::{Distribution, StandardUniform};
 use rand::Rng;
 use sappho_ast_kernel::Literal;
 use sappho_identifier::{Identifier, RcId};
+use sappho_primval::Num;
 
 use crate::AstFuzz;
 
 impl Distribution<Literal> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Literal {
-        let f: f64 = if rng.random_ratio(4, 5) {
+        let f: Num = if rng.random_ratio(4, 5) {
             // 4 of 5 numbers are an integer:
             let range = if rng.random_ratio(2, 3) {
                 // 2 out of 3 integers is 0 or 1:
@@ -18,7 +19,7 @@ impl Distribution<Literal> for AstFuzz {
             };
 
             let i: i32 = rng.random_range(range);
-            f64::from(i)
+            Num::from(i)
         } else {
             // The rest are random floats:
             self.sample(rng)
@@ -43,8 +44,8 @@ impl Distribution<Identifier> for AstFuzz {
     }
 }
 
-impl Distribution<f64> for AstFuzz {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+impl Distribution<Num> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Num {
         StandardUniform.sample(rng)
     }
 }

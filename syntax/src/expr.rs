@@ -13,11 +13,20 @@ pub enum Expr<FX>
 where
     FX: Effect,
 {
+    #[from]
     Func(FuncDef),
+    #[from]
     Query(QueryDef),
+    #[from]
     Proc(ProcDef),
+    #[from]
     Let(Let<FX>),
+    #[from]
     Match(Match<FX>),
+    #[from(
+        Applications<FX>,
+        i32,
+    )]
     Applications(Applications<FX>),
 }
 

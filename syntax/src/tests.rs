@@ -1,5 +1,3 @@
-mod fromimpls;
-
 use sappho_ast_effect::PureEffect;
 use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
@@ -33,6 +31,14 @@ use crate::{FuncDef, Let, PureExpr, Wise};
     FuncDef::new("x", "x")
     ; "identify fn"
 )]
+fn parse_pure_expr<T>(input: &str, expected: T)
+where
+    Wise<PureEffect>: From<T>,
+{
+    let actual = load_and_parse::<PureExpr, _>(input).unwrap();
+    assert_eq!(actual, PureExpr::from(Wise::from(expected)))
+}
+
 // #[test_case(
 //     "f x" =>
 //     app_expr(
@@ -278,10 +284,3 @@ use crate::{FuncDef, Let, PureExpr, Wise};
 //     )
 //     ; "let list singleton and tail"
 // )]
-fn parse_pure_expr<T>(input: &str, expected: T)
-where
-    Wise<PureEffect>: From<T>,
-{
-    let actual = load_and_parse::<PureExpr, _>(input).unwrap();
-    assert_eq!(actual, PureExpr::from(Wise::from(expected)))
-}

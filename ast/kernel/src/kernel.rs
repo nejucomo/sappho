@@ -5,6 +5,7 @@ use crate::{
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
+use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 // TODO: Remove Clone/PartialEq impls in favor of derivations w/ XP impl hack
@@ -15,7 +16,7 @@ where
     XP: AstProvider,
     FX: Effect,
 {
-    #[from(f64)]
+    #[from(Num)]
     Lit(Literal),
     #[from]
     Ref(RcId),

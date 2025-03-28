@@ -2,6 +2,7 @@ use crate::Literal;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
+use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 pub type ListPattern = ListForm<Pattern, RcId>;
@@ -10,7 +11,7 @@ pub type ListPattern = ListForm<Pattern, RcId>;
 pub enum Pattern {
     #[from]
     Bind(RcId),
-    #[from(f64)]
+    #[from(Num)]
     LitEq(Literal),
     #[from]
     Unpack(Attrs<Pattern>),
