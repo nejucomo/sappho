@@ -3,6 +3,7 @@ use derive_more::From;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};
+use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
@@ -13,7 +14,7 @@ use crate::Lookups;
 #[from(
     LeftAssoc<Lookups<FX>, Application<FX>>,
     Lookups<FX>,
-    i32,
+    Num,
 )]
 pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
 where

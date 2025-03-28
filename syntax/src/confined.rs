@@ -5,7 +5,7 @@ use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
-use sappho_primval::PrimVal;
+use sappho_primval::{Num, PrimVal};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
@@ -19,7 +19,7 @@ where
     FX: Effect,
 {
     Ref(RcId),
-    #[from(PrimVal, i32)]
+    #[from(PrimVal, Num)]
     Prim(PrimVal),
     Parens(ParensExpr<FX>),
     ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),

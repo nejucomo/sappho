@@ -4,6 +4,7 @@ use derive_more::From;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_identifier::RcId;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
+use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
@@ -14,7 +15,7 @@ use crate::Interactions;
 #[from(
     LeftAssoc<Interactions<FX>, Lookup>,
     Interactions<FX>,
-    i32,
+    Num,
 )]
 pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)
 where

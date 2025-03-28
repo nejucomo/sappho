@@ -2,6 +2,7 @@ use chumsky::Parser as _;
 use derive_more::{From, TryInto};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
+use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
@@ -25,7 +26,7 @@ where
     Match(Match<FX>),
     #[from(
         Applications<FX>,
-        i32,
+        Num,
     )]
     Applications(Applications<FX>),
 }
