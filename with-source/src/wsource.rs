@@ -6,9 +6,11 @@ use sappho_source::SourceCodeRef;
 #[derive(Clone, Debug, PartialEq, Eq, new, Into)]
 pub struct WithSource<T> {
     /// The parsed item
+    #[new(into)]
     pub parsed: T,
     /// The [SourceCodeRef] from which [Self::parsed] came
-    pub sourcecode: SourceCodeRef,
+    #[new(into)]
+    pub sourcecode: Option<SourceCodeRef>,
 }
 
 impl<T> WithSource<T> {
