@@ -9,11 +9,12 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, Lookups, Wise};
+use crate::{BoxWise, Interactions, Lookups, Wise};
 
 #[derive(Debug, PartialEq, From)]
 #[from(
     LeftAssoc<Lookups<FX>, Application<FX>>,
+    Interactions<FX>,
     Lookups<FX>,
     &'static str,
     Num,

@@ -2,9 +2,12 @@ use sappho_ast_effect::PureEffect;
 use sappho_listform::ListForm;
 use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
+use sappho_ast_effect::QueryEffect;
 use test_case::test_case;
 
-use crate::{Applications, BoxWise, FuncDef, Let, ParensExpr, PureExpr, Wise};
+use crate::{
+    Applications, BoxWise, FuncDef, Interactions, Let, ParensExpr, PureExpr, QueryDef, Wise,
+};
 
 fn list<T>(t: T) -> ListForm<Wise<PureEffect>, BoxWise<PureEffect>>
 where
@@ -54,6 +57,16 @@ where
     Applications::new("g", [ParensExpr::from(Applications::new("f", ["x"]))])
     ; "applications-g-of-f-of-x"
 )]
+#[test_case(
+    "query x",
+    QueryDef::new("x")
+    ; "query x"
+)]
+#[test_case(
+    "query $x",
+    QueryDef::new(Interactions::new(vec![QueryEffect::Inquire], "x"))
+    ; "query inquire x"
+)]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
     Wise<PureEffect>: From<T>,
@@ -62,20 +75,6 @@ where
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
 
-// #[test_case(
-//     "query x" =>
-//     query_def_expr(refexpr("x"))
-//     ; "query x"
-// )]
-// #[test_case(
-//     "query $x" =>
-//     query_def_expr(
-//         inquire(
-//             refexpr("x")
-//         )
-//     )
-//     ; "query inquire x"
-// )]
 // #[test_case(
 //     "{}" =>
 //     attrs_def([])

@@ -1,5 +1,5 @@
 use chumsky::Parser as _;
-use derive_more::From;
+use derive_new::new;
 use sappho_keyword::Keyword::Query as KwQuery;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
@@ -7,8 +7,8 @@ use sappho_unparse::{Stream, Unparse};
 use crate::parseparams::ParseParams;
 use crate::QueryExpr;
 
-#[derive(Debug, PartialEq, From)]
-pub struct QueryDef(QueryExpr);
+#[derive(Debug, PartialEq, new)]
+pub struct QueryDef(#[new(into)] QueryExpr);
 
 impl ParsableWith<ParseParams<'_>> for QueryDef {
     fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {

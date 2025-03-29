@@ -7,7 +7,7 @@ use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{Applications, BoxWise, FuncDef, Let, Match, ProcDef, QueryDef, Wise};
+use crate::{Applications, BoxWise, FuncDef, Interactions, Let, Match, ProcDef, QueryDef, Wise};
 
 /// The bare top-level expression without source annotation
 #[derive(Debug, PartialEq, From, TryInto)]
@@ -27,6 +27,7 @@ where
     Match(Match<FX>),
     #[from(
         Applications<FX>,
+        Interactions<FX>,
         &'static str,
         Num,
         ListForm<Wise<FX>, BoxWise<FX>>,
