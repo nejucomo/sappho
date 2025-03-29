@@ -18,11 +18,15 @@ pub enum Confined<FX>
 where
     FX: Effect,
 {
+    #[from(RcId, &'static str)]
     Ref(RcId),
     #[from(PrimVal, Num)]
     Prim(PrimVal),
     Parens(ParensExpr<FX>),
     ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),
+    #[from(
+        ListForm<Wise<FX>, BoxWise<FX>>,
+    )]
     ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
 }
 

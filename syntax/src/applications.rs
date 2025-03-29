@@ -1,6 +1,7 @@
 use chumsky::Parser as _;
 use derive_more::From;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_listform::ListForm;
 use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_primval::Num;
@@ -8,13 +9,15 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::Lookups;
+use crate::{BoxWise, Lookups, Wise};
 
 #[derive(Debug, PartialEq, From)]
 #[from(
     LeftAssoc<Lookups<FX>, Application<FX>>,
     Lookups<FX>,
+    &'static str,
     Num,
+    ListForm<Wise<FX>, BoxWise<FX>>,
 )]
 pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
 where

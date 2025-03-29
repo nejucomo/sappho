@@ -1,4 +1,4 @@
-use either::Either;
+use either::Either::{self, Left};
 use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_unparse::Unparse;
 use std::fmt;
@@ -46,6 +46,32 @@ impl<X, T> Default for ListForm<X, T> {
 impl<X, T, E> ListForm<X, Result<T, E>> {
     pub fn transpose_tail(self) -> Result<ListForm<X, T>, E> {
         Ok(ListForm::new(self.0.xs, self.0.optail.transpose()?))
+    }
+}
+
+impl<X, T> From<()> for ListForm<X, T> {
+    fn from(_: ()) -> Self {
+        Self::default()
+    }
+}
+
+impl<XS, XT, T, const K: usize> From<[XS; K]> for ListForm<XT, T>
+where
+    XT: From<XS> + fmt::Debug,
+    T: fmt::Debug,
+{
+    fn from(v: [XS; K]) -> Self {
+        v.into_iter().map(XT::from).map(Left).collect()
+    }
+}
+
+impl<A, B, X, T> From<(A, B)> for ListForm<X, T>
+where
+    X: From<A> + From<B> + fmt::Debug,
+    T: fmt::Debug,
+{
+    fn from((a, b): (A, B)) -> Self {
+        ListForm::from([X::from(a), X::from(b)])
     }
 }
 

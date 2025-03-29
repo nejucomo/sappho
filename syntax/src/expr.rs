@@ -1,12 +1,13 @@
 use chumsky::Parser as _;
 use derive_more::{From, TryInto};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_listform::ListForm;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{Applications, FuncDef, Let, Match, ProcDef, QueryDef};
+use crate::{Applications, BoxWise, FuncDef, Let, Match, ProcDef, QueryDef, Wise};
 
 /// The bare top-level expression without source annotation
 #[derive(Debug, PartialEq, From, TryInto)]
@@ -26,7 +27,9 @@ where
     Match(Match<FX>),
     #[from(
         Applications<FX>,
+        &'static str,
         Num,
+        ListForm<Wise<FX>, BoxWise<FX>>,
     )]
     Applications(Applications<FX>),
 }

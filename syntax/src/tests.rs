@@ -1,21 +1,29 @@
 use sappho_ast_effect::PureEffect;
+use sappho_listform::ListForm;
 use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
 use test_case::test_case;
 
-use crate::{FuncDef, Let, PureExpr, Wise};
+use crate::{BoxWise, FuncDef, Let, PureExpr, Wise};
+
+fn list<T>(t: T) -> ListForm<Wise<PureEffect>, BoxWise<PureEffect>>
+where
+    ListForm<Wise<PureEffect>, BoxWise<PureEffect>>: From<T>,
+{
+    ListForm::from(t)
+}
 
 #[test_case("42", 42; "forty-two")]
 #[test_case("42\n", 42; "forty-two newline")]
 #[test_case("bob", "bob"; "ref bob")]
 #[test_case("bob  \n   ", "bob"; "ref bob newline")]
-#[test_case("[]", (); "tight empty list")]
-#[test_case("[\n]", (); "multiline empty list")]
-#[test_case("[ ] ", (); "space empty list")]
-#[test_case("[42]", [42]; "tight singleton list")]
-#[test_case("[\n  42\n]", [42i32]; "multiline singleton list" )]
-#[test_case("[42,bob]", (42, "bob"); "tight pair list")]
-#[test_case("[42, bob]", (42, "bob"); "natural pair list")]
+#[test_case("[]", list(()); "tight empty list")]
+#[test_case("[\n]", list(()); "multiline empty list")]
+#[test_case("[ ] ", list(()); "space empty list")]
+#[test_case("[42]", list([42]); "tight singleton list")]
+#[test_case("[\n  42\n]", list([42i32]); "multiline singleton list" )]
+#[test_case("[42,bob]", list((42, "bob")); "tight pair list")]
+#[test_case("[42, bob]", list((42, "bob")); "natural pair list")]
 #[test_case(
     "let x = 42; x",
     Let::new([("x", 42)], "x")

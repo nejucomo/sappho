@@ -8,10 +8,19 @@ use crate::Wise;
 
 /// Boxed-Spanned-Expression
 #[derive(Debug, PartialEq, From, Into)]
-#[from(Wise<FX>)]
 pub struct BoxWise<FX>(Box<Wise<FX>>)
 where
     FX: Effect;
+
+impl<T, FX> From<T> for BoxWise<FX>
+where
+    FX: Effect,
+    Wise<FX>: From<T>,
+{
+    fn from(t: T) -> Self {
+        Self::from(Box::new(Wise::from(t)))
+    }
+}
 
 impl<T, FX> ParsableWith<T> for BoxWise<FX>
 where
