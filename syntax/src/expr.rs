@@ -1,7 +1,9 @@
 use chumsky::Parser as _;
 use derive_more::{From, TryInto};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_attrs::Attrs;
 use sappho_listform::ListForm;
+use sappho_object::Object;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
@@ -30,6 +32,8 @@ where
         Interactions<FX>,
         &'static str,
         Num,
+        Object<FuncDef, QueryDef, ProcDef, Wise<FX>>,
+        Attrs<Wise<FX>>,
         ListForm<Wise<FX>, BoxWise<FX>>,
     )]
     Applications(Applications<FX>),

@@ -2,15 +2,17 @@ use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_more::From;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
+use sappho_object::Object;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, Interactions, ParensExpr, Wise};
+use crate::{BoxWise, FuncDef, Interactions, ParensExpr, ProcDef, QueryDef, Wise};
 
 #[derive(Debug, PartialEq, From)]
 #[from(
@@ -19,6 +21,8 @@ use crate::{BoxWise, Interactions, ParensExpr, Wise};
     &'static str,
     Num,
     ParensExpr<FX>,
+    Object<FuncDef, QueryDef, ProcDef, Wise<FX>>,
+    Attrs<Wise<FX>>,
     ListForm<Wise<FX>, BoxWise<FX>>,
 )]
 pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)

@@ -1,12 +1,17 @@
 use sappho_ast_effect::PureEffect;
+use sappho_attrs::Attrs;
+use sappho_identifier::RcId;
 use sappho_listform::ListForm;
+use sappho_object::Object;
 use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
 use sappho_ast_effect::QueryEffect;
+use sappho_tfi::TryFromIterator as _;
 use test_case::test_case;
 
 use crate::{
-    Applications, BoxWise, FuncDef, Interactions, Let, ParensExpr, PureExpr, QueryDef, Wise,
+    Applications, BoxWise, FuncDef, Interactions, Let, ParensExpr, ProcDef, PureExpr, QueryDef,
+    Wise,
 };
 
 fn list<T>(t: T) -> ListForm<Wise<PureEffect>, BoxWise<PureEffect>>
@@ -14,6 +19,18 @@ where
     ListForm<Wise<PureEffect>, BoxWise<PureEffect>>: From<T>,
 {
     ListForm::from(t)
+}
+
+fn attrs<I, S, T>(items: I) -> Object<FuncDef, QueryDef, ProcDef, Wise<PureEffect>>
+where
+    I: IntoIterator<Item = (S, T)>,
+    RcId: TryFrom<S>,
+    sappho_attrs::AttrsError: From<<RcId as TryFrom<S>>::Error>,
+    Wise<PureEffect>: From<T>,
+{
+    Object::new_attrs(
+        Attrs::try_from_iterator(items.into_iter().map(|(k, v)| (k, Wise::from(v)))).unwrap(),
+    )
 }
 
 #[test_case("42", 42; "forty-two")]
@@ -67,6 +84,16 @@ where
     QueryDef::new(Interactions::new(vec![QueryEffect::Inquire], "x"))
     ; "query inquire x"
 )]
+#[test_case(
+    "{}",
+    Attrs::default()
+    ; "empty object"
+)]
+#[test_case(
+    "{ a: x, b: x }",
+    attrs([("a", "x"), ("b", "x")])
+    ; "attrs-only object single line spacey"
+)]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
     Wise<PureEffect>: From<T>,
@@ -75,16 +102,6 @@ where
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
 
-// #[test_case(
-//     "{}" =>
-//     attrs_def([])
-//     ; "empty object"
-// )]
-// #[test_case(
-//     "{ a: x, b: x }" =>
-//     attrs_def([("a", refexpr("x")), ("b", refexpr("x"))])
-//     ; "attrs-only object single line spacey"
-// )]
 // #[test_case(
 //     regression::UNPACK_MISSING_ATTRS =>
 //     let_expr([

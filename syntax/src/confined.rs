@@ -1,6 +1,7 @@
 use chumsky::Parser as _;
 use derive_more::{From, TryInto};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_object::Object;
@@ -24,9 +25,19 @@ where
     Prim(PrimVal),
     #[from]
     Parens(ParensExpr<FX>),
+    #[from]
     ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),
     #[from]
     ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
+}
+
+impl<FX> From<Attrs<Wise<FX>>> for Confined<FX>
+where
+    FX: Effect,
+{
+    fn from(attrs: Attrs<Wise<FX>>) -> Self {
+        Object::new_attrs(attrs).into()
+    }
 }
 
 impl<FX> ParsableWith<ParseParams<'_>> for Confined<FX>
