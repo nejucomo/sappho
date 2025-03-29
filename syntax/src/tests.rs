@@ -4,7 +4,7 @@ use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
 use test_case::test_case;
 
-use crate::{BoxWise, FuncDef, Let, PureExpr, Wise};
+use crate::{Applications, BoxWise, FuncDef, Let, ParensExpr, PureExpr, Wise};
 
 fn list<T>(t: T) -> ListForm<Wise<PureEffect>, BoxWise<PureEffect>>
 where
@@ -39,6 +39,21 @@ where
     FuncDef::new("x", "x")
     ; "identify fn"
 )]
+#[test_case(
+    "f x",
+    Applications::new("f", ["x"])
+    ; "applications-f-of-x"
+)]
+#[test_case(
+    "f x y",
+    Applications::new("f", ["x", "y"])
+    ; "applications-f-of-x-then-y"
+)]
+#[test_case(
+    "g (f x)",
+    Applications::new("g", [ParensExpr::from(Applications::new("f", ["x"]))])
+    ; "applications-g-of-f-of-x"
+)]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
     Wise<PureEffect>: From<T>,
@@ -47,36 +62,6 @@ where
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
 
-// #[test_case(
-//     "f x" =>
-//     app_expr(
-//         refexpr("f"),
-//         refexpr("x"),
-//     )
-//     ; "application"
-// )]
-// #[test_case(
-//     "f x y" =>
-//     app_expr(
-//         app_expr(
-//             refexpr("f"),
-//             refexpr("x"),
-//         ),
-//         refexpr("y"),
-//     )
-//     ; "subsequent app_expr"
-// )]
-// #[test_case(
-//     "g (f x)" =>
-//     app_expr(
-//         refexpr("g"),
-//         app_expr(
-//             refexpr("f"),
-//             refexpr("x"),
-//         ),
-//     )
-//     ; "rightwards app_expr"
-// )]
 // #[test_case(
 //     "query x" =>
 //     query_def_expr(refexpr("x"))

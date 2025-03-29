@@ -1,17 +1,28 @@
 use chumsky::Parser as _;
 use derive_more::From;
-use derive_new::new;
 use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
-#[derive(Debug, PartialEq, From, new)]
+#[derive(Debug, PartialEq, From)]
 pub struct LeftAssoc<L, R> {
     left: L,
     rights: Vec<R>,
 }
 
 impl<L, R> LeftAssoc<L, R> {
+    pub fn new<LS, RSI, RS>(left: LS, rights: RSI) -> Self
+    where
+        L: From<LS>,
+        R: From<RS>,
+        RSI: IntoIterator<Item = RS>,
+    {
+        LeftAssoc {
+            left: L::from(left),
+            rights: rights.into_iter().map(R::from).collect(),
+        }
+    }
+
     pub fn ref_left(&self) -> &L {
         &self.left
     }
@@ -62,7 +73,7 @@ mod fromimpls {
         Lookups<FX>: From<L>,
     {
         fn from(left: L) -> Self {
-            Self::new(Lookups::from(left), vec![])
+            Self::from((Lookups::from(left), vec![]))
         }
     }
 
@@ -72,7 +83,7 @@ mod fromimpls {
         Interactions<FX>: From<L>,
     {
         fn from(left: L) -> Self {
-            Self::new(Interactions::from(left), vec![])
+            Self::from((Interactions::from(left), vec![]))
         }
     }
 }

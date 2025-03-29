@@ -23,10 +23,34 @@ pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
 where
     FX: Effect;
 
-#[derive(Debug, PartialEq, From)]
+#[derive(Debug, PartialEq)]
 pub struct Application<FX>(Lookups<FX>)
 where
     FX: Effect;
+
+impl<FX> Applications<FX>
+where
+    FX: Effect,
+{
+    pub fn new<L, R, RI>(left: L, rights: RI) -> Self
+    where
+        Lookups<FX>: From<L>,
+        Application<FX>: From<R>,
+        RI: IntoIterator<Item = R>,
+    {
+        Applications(LeftAssoc::new(left, rights))
+    }
+}
+
+impl<FX, T> From<T> for Application<FX>
+where
+    FX: Effect,
+    Lookups<FX>: From<T>,
+{
+    fn from(t: T) -> Self {
+        Application(Lookups::from(t))
+    }
+}
 
 impl<FX> ParsableWith<ParseParams<'_>> for Applications<FX>
 where

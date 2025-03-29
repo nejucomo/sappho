@@ -10,7 +10,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, Interactions, Wise};
+use crate::{BoxWise, Interactions, ParensExpr, Wise};
 
 #[derive(Debug, PartialEq, From)]
 #[from(
@@ -18,6 +18,7 @@ use crate::{BoxWise, Interactions, Wise};
     Interactions<FX>,
     &'static str,
     Num,
+    ParensExpr<FX>,
     ListForm<Wise<FX>, BoxWise<FX>>,
 )]
 pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)

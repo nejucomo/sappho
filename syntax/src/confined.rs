@@ -22,11 +22,10 @@ where
     Ref(RcId),
     #[from(PrimVal, Num)]
     Prim(PrimVal),
+    #[from]
     Parens(ParensExpr<FX>),
     ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),
-    #[from(
-        ListForm<Wise<FX>, BoxWise<FX>>,
-    )]
+    #[from]
     ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
 }
 
