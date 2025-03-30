@@ -1,10 +1,10 @@
 use sappho_ast_effect::PureEffect;
+use sappho_ast_effect::QueryEffect;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_parsable::load_and_parse;
-// use sappho_regression_vectors as regression;
-use sappho_ast_effect::QueryEffect;
+use sappho_regression_vectors as regression;
 use sappho_tfi::TryFromIterator as _;
 use test_case::test_case;
 
@@ -28,18 +28,18 @@ where
     src.into()
 }
 
-fn attrs_() -> Attrs<Wise<PureEffect>> {
+fn attrs_<T>() -> Attrs<T> {
     Attrs::default()
 }
 
-fn attrs<I, S, T>(items: I) -> Attrs<Wise<PureEffect>>
+fn attrs<I, K, S, T>(items: I) -> Attrs<T>
 where
-    I: IntoIterator<Item = (S, T)>,
-    RcId: TryFrom<S>,
-    sappho_attrs::AttrsError: From<<RcId as TryFrom<S>>::Error>,
-    Wise<PureEffect>: From<T>,
+    I: IntoIterator<Item = (K, S)>,
+    RcId: TryFrom<K>,
+    sappho_attrs::AttrsError: From<<RcId as TryFrom<K>>::Error>,
+    S: Into<T>,
 {
-    Attrs::try_from_iterator(items.into_iter().map(|(k, v)| (k, Wise::from(v)))).unwrap()
+    Attrs::try_from_iterator(items.into_iter().map(|(k, v)| (k, v.into()))).unwrap()
 }
 
 #[test_case("42", 42; "forty-two")]
@@ -208,6 +208,23 @@ where
     )
     ; "let list singleton and tail"
 )]
+#[test_case(
+    regression::UNPACK_MISSING_ATTRS,
+    Let::new(
+        [(
+            attrs([
+                ("a", "x"),
+                ("b", "y"),
+                ("c", "z"),
+            ]),
+            attrs([
+                ("a", 2),
+            ])
+        )],
+        "z"
+    )
+    ; "attrs-only object unpack missing attrs integration regression"
+)]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
     Wise<PureEffect>: From<T>,
@@ -215,21 +232,3 @@ where
     let actual = load_and_parse::<PureExpr, _>(input).unwrap();
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
-
-// #[test_case(
-//     regression::UNPACK_MISSING_ATTRS =>
-//     let_expr([
-//         (
-//             unpack_pat([
-//                 ("a", "x"),
-//                 ("b", "y"),
-//                 ("c", "z"),
-//             ]),
-//             attrs_def([
-//                 ("a", num(2.0)),
-//             ])
-//         )],
-//         refexpr("z")
-//     )
-//     ; "attrs-only object unpack missing attrs integration regression"
-// )]
