@@ -145,6 +145,11 @@ where
     Lookups::new(Applications::new("f", ["x"]), ["a"])
     ; "the a of f applied to x with disambiguating parentheses"
 )]
+#[test_case(
+    "let [] = {}; 42",
+    Let::new([(ListForm::default(), Attrs::default())], 42)
+    ; "let list empty"
+)]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
     Wise<PureEffect>: From<T>,
@@ -153,17 +158,6 @@ where
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
 
-// #[test_case(
-//     "let [] = {}; 42" =>
-//     let_expr(
-//         [(
-//             list_pat([], None),
-//             attrs_def([]),
-//         )],
-//         num(42.0),
-//     )
-//     ; "let list empty"
-// )]
 // #[test_case(
 //     "let [x] = {head: 42, tail: {}}; x" =>
 //     let_expr(

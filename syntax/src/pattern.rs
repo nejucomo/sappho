@@ -13,8 +13,11 @@ use self::Pattern::*;
 pub enum Pattern {
     #[from(BindPattern, RcId, &'static str)]
     Bind(BindPattern),
+    #[from]
     LitEq(PrimVal),
+    #[from]
     Unpack(Attrs<Pattern>),
+    #[from]
     List(ListForm<Pattern, BindPattern>),
 }
 
