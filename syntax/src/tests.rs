@@ -13,6 +13,13 @@ use crate::{
     Wise,
 };
 
+fn list_<X, T>() -> ListForm<X, T>
+where
+    X: std::fmt::Debug,
+{
+    list(())
+}
+
 fn list<S, X, T>(src: S) -> ListForm<X, T>
 where
     S: Into<ListForm<X, T>>,
@@ -39,9 +46,9 @@ where
 #[test_case("42\n", 42; "forty-two newline")]
 #[test_case("bob", "bob"; "ref bob")]
 #[test_case("bob  \n   ", "bob"; "ref bob newline")]
-#[test_case("[]", list(()); "tight empty list")]
-#[test_case("[\n]", list(()); "multiline empty list")]
-#[test_case("[ ] ", list(()); "space empty list")]
+#[test_case("[]", list_(); "tight empty list")]
+#[test_case("[\n]", list_(); "multiline empty list")]
+#[test_case("[ ] ", list_(); "space empty list")]
 #[test_case("[42]", list([42]); "tight singleton list")]
 #[test_case("[\n  42\n]", list([42i32]); "multiline singleton list" )]
 #[test_case("[42,bob]", list((42, "bob")); "tight pair list")]
@@ -148,7 +155,7 @@ where
 )]
 #[test_case(
     "let [] = {}; 42",
-    Let::new([(ListForm::default(), attrs_())], 42)
+    Let::new([(list_(), attrs_())], 42)
     ; "let list empty"
 )]
 #[test_case(
@@ -182,6 +189,25 @@ where
     )
     ; "let list pair"
 )]
+#[test_case(
+    "let [..t] = 42; t",
+    Let::new([(list_().with_tail("t"), 42)], "t")
+    ; "let list tail"
+)]
+#[test_case(
+    "let [h, ..t] = 42; {head: h, tail: t}",
+    Let::new(
+        [(
+            list(["h"]).with_tail("t"),
+            42
+        )],
+        attrs([
+            ("head", "h"),
+            ("tail", "t")
+        ])
+    )
+    ; "let list singleton and tail"
+)]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
     Wise<PureEffect>: From<T>,
@@ -190,31 +216,6 @@ where
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
 
-// #[test_case(
-//     "let [..t] = 42; t" =>
-//     let_expr(
-//         [(
-//             list_pat([], Some("t")),
-//             num(42.0),
-//         )],
-//         refexpr("t"),
-//     )
-//     ; "let list tail"
-// )]
-// #[test_case(
-//     "let [h, ..t] = 42; {head: h, tail: t}" =>
-//     let_expr(
-//         [(
-//             list_pat([bind("h")], Some("t")),
-//             num(42.0),
-//         )],
-//         attrs_def([
-//             ("head", refexpr("h")),
-//             ("tail", refexpr("t")),
-//         ]),
-//     )
-//     ; "let list singleton and tail"
-// )]
 // #[test_case(
 //     regression::UNPACK_MISSING_ATTRS =>
 //     let_expr([

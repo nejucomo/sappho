@@ -19,6 +19,27 @@ impl<X, T> ListForm<X, T> {
         ListForm(ListFormGeneric::new(body.into_iter().collect(), tail))
     }
 
+    pub fn try_with_tail<S>(mut self, tail: S) -> Result<Self, Self>
+    where
+        S: Into<T>,
+    {
+        if self.0.optail.is_none() {
+            self.0.optail = Some(tail.into());
+            Ok(self)
+        } else {
+            Err(self)
+        }
+    }
+
+    pub fn with_tail<S>(self, tail: S) -> Self
+    where
+        X: fmt::Debug,
+        T: fmt::Debug,
+        S: Into<T>,
+    {
+        self.try_with_tail(tail).unwrap()
+    }
+
     pub fn is_empty(&self) -> bool {
         self.0.xs.is_empty() && self.0.optail.is_none()
     }
