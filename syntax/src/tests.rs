@@ -2,7 +2,6 @@ use sappho_ast_effect::PureEffect;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
-use sappho_object::Object;
 use sappho_parsable::load_and_parse;
 // use sappho_regression_vectors as regression;
 use sappho_ast_effect::QueryEffect;
@@ -10,7 +9,7 @@ use sappho_tfi::TryFromIterator as _;
 use test_case::test_case;
 
 use crate::{
-    Applications, BoxWise, FuncDef, Interactions, Let, ParensExpr, ProcDef, PureExpr, QueryDef,
+    Applications, BoxWise, FuncDef, Interactions, Let, ObjectDef, ParensExpr, PureExpr, QueryDef,
     Wise,
 };
 
@@ -21,16 +20,18 @@ where
     ListForm::from(t)
 }
 
-fn attrs<I, S, T>(items: I) -> Object<FuncDef, QueryDef, ProcDef, Wise<PureEffect>>
+fn empty_attrs() -> Attrs<Wise<PureEffect>> {
+    Attrs::default()
+}
+
+fn attrs<I, S, T>(items: I) -> Attrs<Wise<PureEffect>>
 where
     I: IntoIterator<Item = (S, T)>,
     RcId: TryFrom<S>,
     sappho_attrs::AttrsError: From<<RcId as TryFrom<S>>::Error>,
     Wise<PureEffect>: From<T>,
 {
-    Object::new_attrs(
-        Attrs::try_from_iterator(items.into_iter().map(|(k, v)| (k, Wise::from(v)))).unwrap(),
-    )
+    Attrs::try_from_iterator(items.into_iter().map(|(k, v)| (k, Wise::from(v)))).unwrap()
 }
 
 #[test_case("42", 42; "forty-two")]
@@ -86,13 +87,33 @@ where
 )]
 #[test_case(
     "{}",
-    Attrs::default()
+    empty_attrs()
     ; "empty object"
 )]
 #[test_case(
     "{ a: x, b: x }",
     attrs([("a", "x"), ("b", "x")])
     ; "attrs-only object single line spacey"
+)]
+#[test_case(
+    "{ query x }",
+    ObjectDef::from(QueryDef::new("x"))
+    ; "object query"
+)]
+#[test_case(
+    "{ fn x -> x }",
+    ObjectDef::from(FuncDef::new("x", "x"))
+    ; "object fn"
+)]
+#[test_case(
+    "{ query x, fn x -> x }",
+    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, Attrs::default())
+    ; "object query and fn"
+)]
+#[test_case(
+    "{ fn x -> x, query x }",
+    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, Attrs::default())
+    ; "object fn and query"
 )]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
@@ -118,47 +139,6 @@ where
 //         refexpr("z")
 //     )
 //     ; "attrs-only object unpack missing attrs integration regression"
-// )]
-// #[test_case(
-//     "{ query x }" =>
-//     object_def(
-//         None,
-//         Some(query_def(refexpr("x"))),
-//     )
-//     ; "object query"
-// )]
-// #[test_case(
-//     "{ fn x -> x }" =>
-//     object_def(
-//         Some(func_def(
-//             bind("x"),
-//             refexpr("x"),
-//         )),
-//         None,
-//     )
-//     ; "object fn"
-// )]
-// #[test_case(
-//     "{ query x, fn x -> x }" =>
-//     object_def(
-//         Some(func_def(
-//             bind("x"),
-//             refexpr("x"),
-//         )),
-//         Some(query_def(refexpr("x"))),
-//     )
-//     ; "object query and fn"
-// )]
-// #[test_case(
-//     "{ fn x -> x, query x }" =>
-//     object_def(
-//         Some(func_def(
-//             bind("x"),
-//             refexpr("x"),
-//         )),
-//         Some(query_def(refexpr("x"))),
-//     )
-//     ; "object fn and query"
 // )]
 // #[test_case(
 //     "x.a" =>

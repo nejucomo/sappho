@@ -13,9 +13,13 @@ use crate::{Element, IntoIter, Unbundled};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct Object<F, Q, P, A> {
+    #[new(into)]
     f: Option<F>,
+    #[new(into)]
     q: Option<Q>,
+    #[new(into)]
     p: Option<P>,
+    #[new(into)]
     a: Attrs<A>,
 }
 

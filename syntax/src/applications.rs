@@ -3,7 +3,6 @@ use derive_more::From;
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_attrs::Attrs;
 use sappho_listform::ListForm;
-use sappho_object::Object;
 use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_primval::Num;
@@ -11,7 +10,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, FuncDef, Interactions, Lookups, ProcDef, QueryDef, Wise};
+use crate::{BoxWise, FuncDef, Interactions, Lookups, ObjectDef, ProcDef, QueryDef, Wise};
 
 #[derive(Debug, PartialEq, From)]
 #[from(
@@ -20,7 +19,10 @@ use crate::{BoxWise, FuncDef, Interactions, Lookups, ProcDef, QueryDef, Wise};
     Lookups<FX>,
     &'static str,
     Num,
-    Object<FuncDef, QueryDef, ProcDef, Wise<FX>>,
+    ObjectDef<FX>,
+    FuncDef,
+    QueryDef,
+    ProcDef,
     Attrs<Wise<FX>>,
     ListForm<Wise<FX>, BoxWise<FX>>,
 )]

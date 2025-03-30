@@ -4,7 +4,6 @@ use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
-use sappho_object::Object;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_primval::{Num, PrimVal};
 use sappho_unparse::{Stream, Unparse};
@@ -25,19 +24,16 @@ where
     Prim(PrimVal),
     #[from]
     Parens(ParensExpr<FX>),
-    #[from]
-    ObjectDef(Object<FuncDef, QueryDef, ProcDef, Wise<FX>>),
+    #[from(
+        crate::ObjectDef<FX>,
+        FuncDef,
+        QueryDef,
+        ProcDef,
+        Attrs<Wise<FX>>,
+    )]
+    ObjectDef(crate::ObjectDef<FX>),
     #[from]
     ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
-}
-
-impl<FX> From<Attrs<Wise<FX>>> for Confined<FX>
-where
-    FX: Effect,
-{
-    fn from(attrs: Attrs<Wise<FX>>) -> Self {
-        Object::new_attrs(attrs).into()
-    }
 }
 
 impl<FX> ParsableWith<ParseParams<'_>> for Confined<FX>
@@ -49,7 +45,7 @@ where
             .map(Ref)
             .or(PrimVal::parser().map(Prim))
             .or(ParensExpr::parser_with(pep.clone()).map(Parens))
-            .or(Object::parser_with(pep.clone()).map(ObjectDef))
+            .or(crate::ObjectDef::parser_with(pep.clone()).map(ObjectDef))
             .or(ListForm::parser_with(pep).map(ListExpr))
     }
 }
@@ -80,7 +76,7 @@ where
             Ref(x) => Ok(Ref(x)),
             Prim(x) => Ok(Prim(x)),
             Parens(x) => ParensExpr::restrict(x).map(Parens),
-            ObjectDef(x) => Object::restrict(x).map(ObjectDef),
+            ObjectDef(x) => crate::ObjectDef::restrict(x).map(ObjectDef),
             ListExpr(x) => ListForm::restrict(x).map(ListExpr),
         }
     }

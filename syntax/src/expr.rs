@@ -3,13 +3,14 @@ use derive_more::{From, TryInto};
 use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_attrs::Attrs;
 use sappho_listform::ListForm;
-use sappho_object::Object;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{Applications, BoxWise, FuncDef, Interactions, Let, Match, ProcDef, QueryDef, Wise};
+use crate::{
+    Applications, BoxWise, FuncDef, Interactions, Let, Match, ObjectDef, ProcDef, QueryDef, Wise,
+};
 
 /// The bare top-level expression without source annotation
 #[derive(Debug, PartialEq, From, TryInto)]
@@ -32,7 +33,7 @@ where
         Interactions<FX>,
         &'static str,
         Num,
-        Object<FuncDef, QueryDef, ProcDef, Wise<FX>>,
+        ObjectDef<FX>,
         Attrs<Wise<FX>>,
         ListForm<Wise<FX>, BoxWise<FX>>,
     )]
