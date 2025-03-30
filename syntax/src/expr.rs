@@ -9,7 +9,8 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
 use crate::{
-    Applications, BoxWise, FuncDef, Interactions, Let, Match, ObjectDef, ProcDef, QueryDef, Wise,
+    Applications, BoxWise, FuncDef, Interactions, Let, Lookups, Match, ObjectDef, ProcDef,
+    QueryDef, Wise,
 };
 
 /// The bare top-level expression without source annotation
@@ -30,6 +31,7 @@ where
     Match(Match<FX>),
     #[from(
         Applications<FX>,
+        Lookups<FX>,
         Interactions<FX>,
         &'static str,
         Num,

@@ -9,7 +9,7 @@ use sappho_primval::{Num, PrimVal};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, FuncDef, ParensExpr, ProcDef, QueryDef, Wise};
+use crate::{Applications, BoxWise, FuncDef, ParensExpr, ProcDef, QueryDef, Wise};
 
 use self::Confined::*;
 
@@ -22,8 +22,6 @@ where
     Ref(RcId),
     #[from(PrimVal, Num)]
     Prim(PrimVal),
-    #[from]
-    Parens(ParensExpr<FX>),
     #[from(
         crate::ObjectDef<FX>,
         FuncDef,
@@ -34,6 +32,11 @@ where
     ObjectDef(crate::ObjectDef<FX>),
     #[from]
     ListExpr(ListForm<Wise<FX>, BoxWise<FX>>),
+    #[from(
+        ParensExpr<FX>,
+        Applications<FX>,
+    )]
+    Parens(ParensExpr<FX>),
 }
 
 impl<FX> ParsableWith<ParseParams<'_>> for Confined<FX>

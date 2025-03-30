@@ -9,8 +9,8 @@ use sappho_tfi::TryFromIterator as _;
 use test_case::test_case;
 
 use crate::{
-    Applications, BoxWise, FuncDef, Interactions, Let, ObjectDef, ParensExpr, PureExpr, QueryDef,
-    Wise,
+    Applications, BoxWise, FuncDef, Interactions, Let, Lookups, ObjectDef, ParensExpr, PureExpr,
+    QueryDef, Wise,
 };
 
 fn list<T>(t: T) -> ListForm<Wise<PureEffect>, BoxWise<PureEffect>>
@@ -115,6 +115,36 @@ where
     ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, Attrs::default())
     ; "object fn and query"
 )]
+#[test_case(
+    "x.a",
+    Lookups::new("x", ["a"])
+    ; "x dot a"
+)]
+#[test_case(
+    "x.a.b",
+    Lookups::new("x", ["a", "b"])
+    ; "x dot a dot b"
+)]
+#[test_case(
+    "f x.a",
+    Applications::new("f", [Lookups::new("x", ["a"])])
+    ; "f applied to the a of x"
+)]
+#[test_case(
+    "f (x.a)",
+    Applications::new("f", [Lookups::new("x", ["a"])])
+    ; "f applied to the a of x with disambiguating parentheses"
+)]
+#[test_case(
+    "f (x).a",
+    Applications::new("f", [Lookups::new("x", ["a"])])
+    ; "f applied to the a of x with confusing parentheses"
+)]
+#[test_case(
+    "(f x).a",
+    Lookups::new(Applications::new("f", ["x"]), ["a"])
+    ; "the a of f applied to x with disambiguating parentheses"
+)]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
     Wise<PureEffect>: From<T>,
@@ -123,86 +153,6 @@ where
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
 
-// #[test_case(
-//     regression::UNPACK_MISSING_ATTRS =>
-//     let_expr([
-//         (
-//             unpack_pat([
-//                 ("a", "x"),
-//                 ("b", "y"),
-//                 ("c", "z"),
-//             ]),
-//             attrs_def([
-//                 ("a", num(2.0)),
-//             ])
-//         )],
-//         refexpr("z")
-//     )
-//     ; "attrs-only object unpack missing attrs integration regression"
-// )]
-// #[test_case(
-//     "x.a" =>
-//     lookup(
-//         refexpr("x"),
-//         "a",
-//     )
-//     ; "x dot a"
-// )]
-// #[test_case(
-//     "x.a.b" =>
-//     lookup(
-//         lookup(
-//             refexpr("x"),
-//             "a",
-//         ),
-//         "b",
-//     )
-//     ; "x dot a dot b"
-// )]
-// #[test_case(
-//     "f x.a" =>
-//     app_expr(
-//         refexpr("f"),
-//         lookup(
-//             refexpr("x"),
-//             "a",
-//         ),
-//     )
-//     ; "f applied to the a of x"
-// )]
-// #[test_case(
-//     "f (x.a)" =>
-//     app_expr(
-//         refexpr("f"),
-//         lookup(
-//             refexpr("x"),
-//             "a",
-//         ),
-//     )
-//     ; "f applied to the a of x with disambiguating parentheses"
-// )]
-// #[test_case(
-//     "f (x).a" =>
-//     app_expr(
-//         refexpr("f"),
-//         lookup(
-//             refexpr("x"),
-//             "a",
-//         ),
-//     )
-//     ; "f applied to the a of x with confusing parentheses"
-// )]
-// #[test_case(
-//     "(f x).a" =>
-//     lookup(
-//         app_expr(
-//             refexpr("f"),
-//             refexpr("x"),
-//         ),
-//         "a",
-//     )
-//     ; "the a of f applied to x with disambiguating parentheses"
-// )]
 // #[test_case(
 //     "let [] = {}; 42" =>
 //     let_expr(
@@ -272,4 +222,21 @@ where
 //         ]),
 //     )
 //     ; "let list singleton and tail"
+// )]
+// #[test_case(
+//     regression::UNPACK_MISSING_ATTRS =>
+//     let_expr([
+//         (
+//             unpack_pat([
+//                 ("a", "x"),
+//                 ("b", "y"),
+//                 ("c", "z"),
+//             ]),
+//             attrs_def([
+//                 ("a", num(2.0)),
+//             ])
+//         )],
+//         refexpr("z")
+//     )
+//     ; "attrs-only object unpack missing attrs integration regression"
 // )]

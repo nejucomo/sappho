@@ -15,8 +15,8 @@ use crate::{BoxWise, FuncDef, Interactions, Lookups, ObjectDef, ProcDef, QueryDe
 #[derive(Debug, PartialEq, From)]
 #[from(
     LeftAssoc<Lookups<FX>, Application<FX>>,
-    Interactions<FX>,
     Lookups<FX>,
+    Interactions<FX>,
     &'static str,
     Num,
     ObjectDef<FX>,

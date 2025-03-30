@@ -32,7 +32,22 @@ where
     FX: Effect;
 
 #[derive(Debug, PartialEq, From)]
+#[from(RcId, &'static str)]
 pub struct Lookup(RcId);
+
+impl<FX> Lookups<FX>
+where
+    FX: Effect,
+{
+    pub fn new<I, LI, L>(interactions: I, lookups: LI) -> Self
+    where
+        Interactions<FX>: From<I>,
+        Lookup: From<L>,
+        LI: IntoIterator<Item = L>,
+    {
+        LeftAssoc::new(interactions, lookups).into()
+    }
+}
 
 impl<FX> ParsableWith<ParseParams<'_>> for Lookups<FX>
 where
