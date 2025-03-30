@@ -2,15 +2,15 @@ use chumsky::Parser as _;
 use derive_more::From;
 use sappho_attrs::Attrs;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_kast::ProcWiseParser;
 use sappho_listform::ListForm;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::parseparams::ParseParams;
 use crate::{
     Applications, BoxWise, FuncDef, Interactions, Let, Lookups, Match, ObjectDef, ProcDef,
-    QueryDef, Wise,
+    QueryDef, SyntaxProvider, Wise,
 };
 
 /// The bare top-level expression without source annotation
@@ -42,11 +42,11 @@ where
     Applications(Applications<FX>),
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Expr<FX>
+impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for Expr<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,
 {
-    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         use Expr::*;
 
         FuncDef::parser_with(pep.clone())

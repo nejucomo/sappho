@@ -9,8 +9,9 @@ mod expr;
 mod interactions;
 mod lookups;
 mod parens;
-mod parseparams;
 mod provider;
+
+use sappho_effect::{ProcEffect, PureEffect, QueryEffect};
 
 pub use crate::applications::{Application, Applications};
 pub use crate::confined::Confined;
@@ -21,6 +22,10 @@ pub use crate::parens::ParensExpr;
 pub use crate::provider::SyntaxProvider;
 
 // Aliases:
+pub type PureExpr = BoxWise<PureEffect>;
+pub type QueryExpr = BoxWise<QueryEffect>;
+pub type ProcExpr = BoxWise<ProcEffect>;
+
 pub type FuncDef = sappho_kast::FuncDef<SyntaxProvider>;
 pub type QueryDef = sappho_kast::QueryDef<SyntaxProvider>;
 pub type ProcDef = sappho_kast::ProcDef<SyntaxProvider>;

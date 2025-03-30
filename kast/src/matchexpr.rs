@@ -10,7 +10,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::{BoxWise, KastProvider, ProcWiseParser};
 
-#[derive(Debug, PartialEq, new)]
+#[derive(Clone, Debug, PartialEq, new)]
 pub struct Match<K, FX>
 where
     K: KastProvider,
@@ -21,7 +21,7 @@ where
     clauses: Vec<MatchClause<K, FX>>,
 }
 
-#[derive(Debug, PartialEq, new)]
+#[derive(Clone, Debug, PartialEq, new)]
 pub struct MatchClause<K, FX>
 where
     K: KastProvider,

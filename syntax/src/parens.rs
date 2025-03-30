@@ -1,16 +1,16 @@
 use chumsky::Parser as _;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_kast::ProcWiseParser;
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::parseparams::ParseParams;
-use crate::BoxWise;
+use crate::{BoxWise, Expr, SyntaxProvider};
 
 /// # TODO
 ///
 /// Rename to `Parens` for consistency.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ParensExpr<FX>(BoxWise<FX>)
 where
     FX: Effect;
@@ -18,18 +18,18 @@ where
 impl<FX, T> From<T> for ParensExpr<FX>
 where
     FX: Effect,
-    BoxWise<FX>: From<T>,
+    Expr<FX>: From<T>,
 {
     fn from(v: T) -> Self {
-        ParensExpr(BoxWise::from(v))
+        ParensExpr(BoxWise::new(v, None))
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for ParensExpr<FX>
+impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for ParensExpr<FX>
 where
     FX: Effect,
 {
-    fn make_parser_with(rec: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(rec: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         bracketed(['(', ')'], BoxWise::parser_with(rec)).map(ParensExpr)
     }
 }

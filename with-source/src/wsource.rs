@@ -7,19 +7,21 @@ use sappho_source::SourceCodeRef;
 pub struct WithSource<T> {
     /// The parsed item
     #[new(into)]
-    pub parsed: T,
+    parsed: T,
     /// The [SourceCodeRef] from which [Self::parsed] came
     #[new(into)]
-    pub sourcecode: Option<SourceCodeRef>,
+    sourcecode: Option<SourceCodeRef>,
 }
 
 impl<T> WithSource<T> {
-    /// Get a reference to [Self::parsed] which carries the [SourceCodeRef]
-    pub fn as_ref(&self) -> WithSource<&T> {
-        WithSource {
-            parsed: &self.parsed,
-            sourcecode: self.sourcecode.clone(),
-        }
+    /// Refer to the parsed value
+    pub fn parsed(&self) -> &T {
+        &self.parsed
+    }
+
+    /// Get the [SourceCodeRef] if any
+    pub fn sourcecode(&self) -> Option<&SourceCodeRef> {
+        self.sourcecode.as_ref()
     }
 
     /// Map the parsed value while retaining the [SourceCodeRef]

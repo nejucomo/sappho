@@ -1,19 +1,32 @@
 mod fromimpls;
 mod parsing;
 
-use derive_more::From;
+use derive_more::{Deref, From};
 use sappho_effect::Effect;
+use sappho_source::SourceCodeRef;
 use sappho_with_source::WithSource;
 
 use crate::KastProvider;
 
 /// **Wi**th **S**ource **E**xpression
 ///
-/// An [Expr] with attached source code for errors and other diagnostics.
-///
-/// This is the top-level expression recursion point, without `Box`. Expression recursions to [Wise] are either through [Box] or another container, like [ListForm](sappho_listform::ListForm).
-#[derive(Clone, Debug, PartialEq, From)]
+/// The top-level expression entry-point with attached source code for errors and other diagnostics. This contains the [KastProvider] expression directly; see [BoxWise](crate::BoxWise) for heap-stored [Wise] expressions.
+#[derive(Clone, Debug, PartialEq, From, Deref)]
 pub struct Wise<K, FX>(WithSource<K::Expr<FX>>)
 where
     K: KastProvider,
     FX: Effect;
+
+impl<K, FX> Wise<K, FX>
+where
+    K: KastProvider,
+    FX: Effect,
+{
+    pub fn new<T, C>(expr: T, sourcecode: C) -> Self
+    where
+        T: Into<K::Expr<FX>>,
+        C: Into<Option<SourceCodeRef>>,
+    {
+        Wise(WithSource::new(expr, sourcecode))
+    }
+}

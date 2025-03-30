@@ -10,6 +10,10 @@ use crate::ProcWiseParser;
 /// # Hack
 ///
 /// Note: this uninhabited trait extends traits which we want to apply to expressions. This is a hack to work-around the `derive` limitation which gates directly on a parameter (rather than the types actually used).
+///
+/// # TODO:
+///
+/// Move parsing constraints out of these requirements
 pub trait KastProvider: ExprDerivableTraits + 'static {
     type Expr<FX>: ExprDerivableTraits
         + for<'a> ParsableWith<ProcWiseParser<'a, Self>>

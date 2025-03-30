@@ -1,17 +1,34 @@
 use chumsky::Parser as _;
-use derive_more::{From, Into};
+use derive_more::{Deref, From, Into};
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
+use sappho_source::SourceCodeRef;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::{KastProvider, Wise};
 
 /// Boxed-Spanned-Expression
-#[derive(Clone, Debug, PartialEq, From, Into)]
+#[derive(Clone, Debug, PartialEq, From, Into, Deref)]
+#[from(Wise<K, FX>)]
+#[deref(forward)]
 pub struct BoxWise<K, FX>(Box<Wise<K, FX>>)
 where
     K: KastProvider,
     FX: Effect;
+
+impl<K, FX> BoxWise<K, FX>
+where
+    K: KastProvider,
+    FX: Effect,
+{
+    pub fn new<T, C>(expr: T, sourcecode: C) -> Self
+    where
+        T: Into<K::Expr<FX>>,
+        C: Into<Option<SourceCodeRef>>,
+    {
+        Wise::new(expr, sourcecode).into()
+    }
+}
 
 impl<K, FX, T> ParsableWith<T> for BoxWise<K, FX>
 where

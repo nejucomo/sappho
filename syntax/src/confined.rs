@@ -3,17 +3,17 @@ use derive_more::{From, TryInto};
 use sappho_attrs::Attrs;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_identifier::RcId;
+use sappho_kast::ProcWiseParser;
 use sappho_listform::ListForm;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_primval::{Num, PrimVal};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::parseparams::ParseParams;
-use crate::{Applications, BoxWise, FuncDef, ParensExpr, ProcDef, QueryDef, Wise};
+use crate::{Applications, BoxWise, FuncDef, ParensExpr, ProcDef, QueryDef, SyntaxProvider, Wise};
 
-use self::Confined::*;
+use Confined::*;
 
-#[derive(Debug, PartialEq, From, TryInto)]
+#[derive(Clone, Debug, PartialEq, From, TryInto)]
 pub enum Confined<FX>
 where
     FX: Effect,
@@ -39,11 +39,11 @@ where
     Parens(ParensExpr<FX>),
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Confined<FX>
+impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for Confined<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,
 {
-    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         RcId::parser()
             .map(Ref)
             .or(PrimVal::parser().map(Prim))

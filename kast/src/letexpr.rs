@@ -9,7 +9,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::{BoxWise, KastProvider, ProcWiseParser};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Let<K, FX>
 where
     K: KastProvider,
@@ -19,7 +19,7 @@ where
     inner: BoxWise<K, FX>,
 }
 
-#[derive(Debug, PartialEq, new)]
+#[derive(Clone, Debug, PartialEq, new)]
 pub struct LetClause<K, FX>
 where
     K: KastProvider,

@@ -4,16 +4,18 @@ use derive_more::From;
 use sappho_attrs::Attrs;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_identifier::RcId;
+use sappho_kast::ProcWiseParser;
 use sappho_listform::ListForm;
 use sappho_parsable::{Parsable, ParsableWith, Parser};
 use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
-use crate::parseparams::ParseParams;
-use crate::{BoxWise, FuncDef, Interactions, ObjectDef, ParensExpr, ProcDef, QueryDef, Wise};
+use crate::{
+    BoxWise, FuncDef, Interactions, ObjectDef, ParensExpr, ProcDef, QueryDef, SyntaxProvider, Wise,
+};
 
-#[derive(Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From)]
 #[from(
     LeftAssoc<Interactions<FX>, Lookup>,
     Interactions<FX>,
@@ -31,7 +33,7 @@ pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)
 where
     FX: Effect;
 
-#[derive(Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From)]
 #[from(RcId, &'static str)]
 pub struct Lookup(RcId);
 
@@ -49,17 +51,17 @@ where
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Lookups<FX>
+impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for Lookups<FX>
 where
     FX: Effect,
 {
-    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         LeftAssoc::parser_with(pep).map(Self)
     }
 }
 
-impl ParsableWith<ParseParams<'_>> for Lookup {
-    fn make_parser_with(_: ParseParams<'_>) -> impl Parser<Self> {
+impl ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for Lookup {
+    fn make_parser_with(_: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         just('.').ignore_then(RcId::parser()).map(Self)
     }
 }

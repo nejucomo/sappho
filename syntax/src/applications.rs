@@ -2,6 +2,7 @@ use chumsky::Parser as _;
 use derive_more::From;
 use sappho_attrs::Attrs;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_kast::ProcWiseParser;
 use sappho_listform::ListForm;
 use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};
@@ -9,10 +10,11 @@ use sappho_primval::Num;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::leftassoc::LeftAssoc;
-use crate::parseparams::ParseParams;
-use crate::{BoxWise, FuncDef, Interactions, Lookups, ObjectDef, ProcDef, QueryDef, Wise};
+use crate::{
+    BoxWise, FuncDef, Interactions, Lookups, ObjectDef, ProcDef, QueryDef, SyntaxProvider, Wise,
+};
 
-#[derive(Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From)]
 #[from(
     LeftAssoc<Lookups<FX>, Application<FX>>,
     Lookups<FX>,
@@ -30,7 +32,7 @@ pub struct Applications<FX>(LeftAssoc<Lookups<FX>, Application<FX>>)
 where
     FX: Effect;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Application<FX>(Lookups<FX>)
 where
     FX: Effect;
@@ -59,20 +61,20 @@ where
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Applications<FX>
+impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for Applications<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,
 {
-    fn make_parser_with(pp: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pp: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         LeftAssoc::parser_with(pp).map(Self)
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Application<FX>
+impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for Application<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,
 {
-    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         space().ignore_then(Lookups::parser_with(pep)).map(Self)
     }
 }

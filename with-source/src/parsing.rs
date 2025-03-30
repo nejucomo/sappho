@@ -20,7 +20,7 @@ where
     P: Unparse,
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
-        self.parsed.unparse_into(s)
+        self.parsed().unparse_into(s)
     }
 }
 

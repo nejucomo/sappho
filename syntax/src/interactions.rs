@@ -2,14 +2,14 @@ use chumsky::Parser as _;
 use derive_more::From;
 use derive_new::new;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_kast::ProcWiseParser;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 
-use crate::parseparams::ParseParams;
-use crate::Confined;
+use crate::{Confined, SyntaxProvider};
 
 /// Potentially effectful expressions
-#[derive(Debug, PartialEq, From, new)]
+#[derive(Clone, Debug, PartialEq, From, new)]
 pub struct Interactions<FX>
 where
     FX: Effect,
@@ -30,11 +30,11 @@ where
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Interactions<FX>
+impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for Interactions<FX>
 where
     FX: Effect + RestrictFrom<ProcEffect>,
 {
-    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'_, SyntaxProvider>) -> impl Parser<Self> {
         FX::parser()
             .repeated()
             .then(Confined::parser_with(pep))

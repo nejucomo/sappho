@@ -4,7 +4,7 @@ use sappho_effect::{RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
-#[derive(Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From)]
 pub struct LeftAssoc<L, R> {
     left: L,
     rights: Vec<R>,

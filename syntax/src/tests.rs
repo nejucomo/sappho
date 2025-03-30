@@ -1,6 +1,6 @@
 use sappho_attrs::Attrs;
-use sappho_effect::PureEffect;
 use sappho_effect::QueryEffect;
+use sappho_effect::{Effect, PureEffect};
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_parsable::load_and_parse;
@@ -9,9 +9,17 @@ use sappho_tfi::TryFromIterator as _;
 use test_case::test_case;
 
 use crate::{
-    Applications, FuncDef, Interactions, Let, Lookups, ObjectDef, ParensExpr, PureExpr, QueryDef,
-    Wise,
+    Applications, BoxWise, Expr, FuncDef, Interactions, Let, Lookups, ObjectDef, ParensExpr,
+    PureExpr, QueryDef, Wise,
 };
+
+fn w<T, FX>(value: T) -> Wise<FX>
+where
+    T: Into<Expr<FX>>,
+    FX: Effect,
+{
+    Wise::new(value, None)
+}
 
 fn list_<X, T>() -> ListForm<X, T>
 where
@@ -49,23 +57,23 @@ where
 #[test_case("[]", list_(); "tight empty list")]
 #[test_case("[\n]", list_(); "multiline empty list")]
 #[test_case("[ ] ", list_(); "space empty list")]
-#[test_case("[42]", list([42]); "tight singleton list")]
-#[test_case("[\n  42\n]", list([42i32]); "multiline singleton list" )]
-#[test_case("[42,bob]", list((42, "bob")); "tight pair list")]
-#[test_case("[42, bob]", list((42, "bob")); "natural pair list")]
+#[test_case("[42]", list([w(42)]); "tight singleton list")]
+#[test_case("[\n  42\n]", list([w(42i32)]); "multiline singleton list")]
+#[test_case("[42,bob]", list((w(42), w("bob"))); "tight pair list")]
+#[test_case("[42, bob]", list((w(42), w("bob"))); "natural pair list")]
 #[test_case(
     "let x = 42; x",
-    Let::new([("x", 42)], "x")
+    Let::new([("x", w(42))], w("x"))
     ; "let x x space"
 )]
 #[test_case(
     "let x = 42;\nx",
-    Let::new([("x", 42)], "x")
+    Let::new([("x", w(42))], w("x"))
     ; "let x x newline"
 )]
 #[test_case(
     "fn x -> x",
-    FuncDef::new("x", "x")
+    FuncDef::new("x", w("x"))
     ; "identify fn"
 )]
 #[test_case(
@@ -85,12 +93,12 @@ where
 )]
 #[test_case(
     "query x",
-    QueryDef::new("x")
+    QueryDef::new(w("x"))
     ; "query x"
 )]
 #[test_case(
     "query $x",
-    QueryDef::new(Interactions::new(vec![QueryEffect::Inquire], "x"))
+    QueryDef::new(w(Interactions::new(vec![QueryEffect::Inquire], "x")))
     ; "query inquire x"
 )]
 #[test_case(
@@ -100,27 +108,27 @@ where
 )]
 #[test_case(
     "{ a: x, b: x }",
-    attrs([("a", "x"), ("b", "x")])
+    attrs([("a", w("x")), ("b", w("x"))])
     ; "attrs-only object single line spacey"
 )]
 #[test_case(
     "{ query x }",
-    ObjectDef::from(QueryDef::new("x"))
+    ObjectDef::from(QueryDef::new(w("x")))
     ; "object query"
 )]
 #[test_case(
     "{ fn x -> x }",
-    ObjectDef::from(FuncDef::new("x", "x"))
+    ObjectDef::from(FuncDef::new("x", w("x")))
     ; "object fn"
 )]
 #[test_case(
     "{ query x, fn x -> x }",
-    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, attrs_())
+    ObjectDef::new(FuncDef::new("x", w("x")), QueryDef::new(w("x")), None, attrs_())
     ; "object query and fn"
 )]
 #[test_case(
     "{ fn x -> x, query x }",
-    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, attrs_())
+    ObjectDef::new(FuncDef::new("x", w("x")), QueryDef::new(w("x")), None, attrs_())
     ; "object fn and query"
 )]
 #[test_case(
@@ -155,7 +163,7 @@ where
 )]
 #[test_case(
     "let [] = {}; 42",
-    Let::new([(list_(), attrs_())], 42)
+    Let::new([(list_(), w(attrs_()))], w(42))
     ; "let list empty"
 )]
 #[test_case(
@@ -163,11 +171,11 @@ where
     Let::new(
         [(
             list(["x"]),
-            attrs_()
-                .with("head", 42)
-                .with("tail", attrs_())
+            w(attrs_()
+                .with("head", w(42))
+                .with("tail", w(attrs_())))
         )],
-        "x"
+        w("x")
     )
     ; "let list singleton"
 )]
@@ -176,22 +184,22 @@ where
     Let::new(
         [(
             list(["x", "y"]),
-            attrs_()
-                .with("head", 2)
+            w(attrs_()
+                .with("head", w(2))
                 .with(
                     "tail",
-                    attrs_()
-                        .with("head", 3)
-                        .with("tail", attrs_())
-                )
+                    w(attrs_()
+                        .with("head", w(3))
+                        .with("tail", w(attrs_()))))
+            )
         )],
-        attrs([("a", "x"), ("b", "y")])
+        w(attrs([("a", w("x")), ("b", w("y"))]))
     )
     ; "let list pair"
 )]
 #[test_case(
     "let [..t] = 42; t",
-    Let::new([(list_().with_tail("t"), 42)], "t")
+    Let::new([(list_().with_tail("t"), w(42))], w("t"))
     ; "let list tail"
 )]
 #[test_case(
@@ -199,12 +207,12 @@ where
     Let::new(
         [(
             list(["h"]).with_tail("t"),
-            42
+            w(42)
         )],
-        attrs([
-            ("head", "h"),
-            ("tail", "t")
-        ])
+        w(attrs([
+            ("head", w("h")),
+            ("tail", w("t")),
+        ]))
     )
     ; "let list singleton and tail"
 )]
@@ -217,18 +225,19 @@ where
                 ("b", "y"),
                 ("c", "z"),
             ]),
-            attrs([
-                ("a", 2),
-            ])
+            w(attrs([
+                ("a", w(2)),
+            ]))
         )],
-        "z"
+        w("z")
     )
     ; "attrs-only object unpack missing attrs integration regression"
 )]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
-    Wise<PureEffect>: From<T>,
+    T: Into<Expr<PureEffect>>,
 {
     let actual = load_and_parse::<PureExpr, _>(input).unwrap();
-    assert_eq!(actual, PureExpr::from(Wise::from(expected)))
+    let sc = actual.sourcecode().cloned();
+    assert_eq!(actual, BoxWise::new(expected, sc));
 }

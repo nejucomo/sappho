@@ -8,7 +8,7 @@ use crate::{FuncDef, KastProvider, ProcDef, QueryDef, Wise};
 /// # TODO
 ///
 /// Change the attributes to `Wise<PureEffect>` as a new restriction on object definitions.
-#[derive(Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From)]
 pub struct ObjectDef<K, FX>(Object<FuncDef<K>, QueryDef<K>, ProcDef<K>, Wise<K, FX>>)
 where
     K: KastProvider,
