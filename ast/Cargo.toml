@@ -6,3 +6,8 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+sappho-identifier.workspace = true
+sappho-listform.workspace = true
+sappho-object.workspace = true
+sappho-primval.workspace = true
+sappho-with-source.workspace = true
