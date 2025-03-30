@@ -3,11 +3,12 @@ use chumsky::Parser as _;
 use derive_new::new;
 use sappho_keyword::Keyword::Fn;
 use sappho_parsable::primitive::space;
-use sappho_parsable::{Parsable, ParsableWith, Parser};
+use sappho_parsable::{Parsable as _, ParsableWith, Parser};
+use sappho_pattern::Pattern;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{Pattern, PureExpr};
+use crate::PureExpr;
 
 #[derive(Debug, PartialEq, new)]
 pub struct FuncDef {

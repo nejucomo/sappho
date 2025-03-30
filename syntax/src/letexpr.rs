@@ -3,11 +3,12 @@ use chumsky::Parser as _;
 use derive_new::new;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_keyword::Keyword::Let as KwLet;
-use sappho_parsable::{Parsable, ParsableWith, Parser};
+use sappho_parsable::{Parsable as _, ParsableWith, Parser};
+use sappho_pattern::Pattern;
 use sappho_unparse::{Stream, Unparse};
 
 use crate::parseparams::ParseParams;
-use crate::{BoxWise, Pattern};
+use crate::BoxWise;
 
 #[derive(Debug, PartialEq)]
 pub struct Let<FX>

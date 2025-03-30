@@ -1,0 +1,16 @@
+[package]
+name = "sappho-pattern"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+chumsky.workspace = true
+derive_more.workspace = true
+sappho-attrs.workspace = true
+sappho-identifier.workspace = true
+sappho-listform.workspace = true
+sappho-parsable.workspace = true
+sappho-primval.workspace = true
+sappho-unparse.workspace = true

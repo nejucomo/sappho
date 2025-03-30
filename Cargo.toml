@@ -15,6 +15,7 @@ members = [
   "object",
   "parsable",
   "parser",
+  "pattern",
   "primval",
   "rand-dcomp",
   "regression-vectors",
@@ -65,6 +66,7 @@ sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
 sappho-parsable = { path = "parsable" }
 sappho-parser = { path = "parser" }
+sappho-pattern = { path = "pattern" }
 sappho-primval = { path = "primval" }
 sappho-rand-dcomp = { path = "rand-dcomp" }
 sappho-regression-vectors = { path = "regression-vectors" }
