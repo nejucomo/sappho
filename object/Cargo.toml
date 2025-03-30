@@ -13,4 +13,4 @@ sappho-identifier.workspace = true
 sappho-parsable.workspace = true
 sappho-tfi.workspace = true
 sappho-unparse.workspace = true
-sappho-ast-effect.workspace = true
+sappho-effect.workspace = true

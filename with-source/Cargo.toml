@@ -12,4 +12,4 @@ derive_more.workspace = true
 sappho-parsable.workspace = true
 sappho-source.workspace = true
 sappho-unparse.workspace = true
-sappho-ast-effect.workspace = true
+sappho-effect.workspace = true

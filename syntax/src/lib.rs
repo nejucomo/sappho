@@ -21,7 +21,7 @@ mod procdef;
 mod querydef;
 mod wise;
 
-use sappho_ast_effect::{ProcEffect, PureEffect, QueryEffect};
+use sappho_effect::{ProcEffect, PureEffect, QueryEffect};
 
 pub use crate::applications::{Application, Applications};
 pub use crate::boxwise::BoxWise;

@@ -1,6 +1,6 @@
 use derive_more::From;
-use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
+use sappho_effect::Effect;
 use sappho_object::Object;
 
 use crate::{FuncDef, ProcDef, QueryDef, Wise};
@@ -71,7 +71,7 @@ where
 
 mod parsing {
     use chumsky::Parser as _;
-    use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+    use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
     use sappho_object::Object;
     use sappho_parsable::{ParsableWith, Parser};
     use sappho_unparse::{Stream, Unparse};

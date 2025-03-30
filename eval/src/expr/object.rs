@@ -1,5 +1,5 @@
 use crate::{Eval, EvalV, Result};
-use sappho_ast_effect::Effect;
+use sappho_effect::Effect;
 use sappho_ast_kernel::{Interaction, ObjectDef};
 use sappho_ast_red::AstRed;
 use sappho_value::{AttrVals, Func, Object, Proc, Query, ScopeRef, Value};

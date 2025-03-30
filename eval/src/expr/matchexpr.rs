@@ -1,5 +1,5 @@
 use crate::{Eval, Result};
-use sappho_ast_effect::Effect;
+use sappho_effect::Effect;
 use sappho_ast_kernel::{Interaction, MatchExpr};
 use sappho_ast_red::AstRed;
 use sappho_value::{ScopeRef, ValRef};

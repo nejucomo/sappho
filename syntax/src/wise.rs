@@ -2,7 +2,7 @@ mod fromimpls;
 mod parsing;
 
 use derive_more::{From, Into};
-use sappho_ast_effect::Effect;
+use sappho_effect::Effect;
 use sappho_with_source::WithSource;
 
 use crate::Expr;

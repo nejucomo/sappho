@@ -2,8 +2,8 @@ use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_new::new;
 
-use sappho_ast_effect::{RestrictFrom, Restriction};
 use sappho_attrs::Attrs;
+use sappho_effect::{RestrictFrom, Restriction};
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_tfi::TryFromIterator;

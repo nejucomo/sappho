@@ -1,6 +1,6 @@
 use chumsky::Parser as _;
 use derive_more::{From, Into};
-use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};
 

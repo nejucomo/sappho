@@ -1,7 +1,7 @@
 use chumsky::Parser as _;
 use derive_more::{From, TryInto};
-use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_attrs::Attrs;
+use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_parsable::{Parsable, ParsableWith, Parser};

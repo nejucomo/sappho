@@ -1,7 +1,7 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_new::new;
-use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_keyword::Keyword::Match as KwMatch;
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{Parsable, ParsableWith, Parser};

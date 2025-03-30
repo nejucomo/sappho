@@ -1,5 +1,5 @@
 use derive_new::new;
-use sappho_ast_effect::ProcEffect;
+use sappho_effect::ProcEffect;
 use sappho_parsable::Recursive;
 
 use crate::Wise;

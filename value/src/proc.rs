@@ -1,5 +1,5 @@
 use crate::{GenThunk, ScopeRef};
-use sappho_ast_effect::ProcEffect;
+use sappho_effect::ProcEffect;
 use sappho_ast_kernel::{Interaction, ObjectDef, ProcDef};
 use sappho_ast_red::{AstRed, Expr};
 use sappho_unparse::{Stream, Unparse};

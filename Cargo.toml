@@ -1,13 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-  "ast/effect",
-  "ast/fuzz",
-  "ast/kernel",
-  "ast/red",
-  "ast/rich",
   "attrs",
 #   "cli",
+  "effect",
 #   "eval",
   "fconv",
   "fconv-derive",
@@ -25,7 +21,6 @@ members = [
   "source",
   "syntax",
   "tfi",
-#   "transform",
   "unparse",
 #   "value",
   "with-source",
@@ -56,13 +51,9 @@ log = "0.4.17"
 proc-macro2 = "1.0.94"
 quote = "1.0.40"
 rand = "0.9.0"
-sappho-ast-effect = { path = "ast/effect" }
-sappho-ast-fuzz = { path = "ast/fuzz" }
-sappho-ast-kernel = { path = "ast/kernel" }
-sappho-ast-red = { path = "ast/red" }
-sappho-ast-rich = { path = "ast/rich" }
 sappho-attrs = { path = "attrs" }
 # sappho-cli = { path = "cli" }
+sappho-effect = { path = "effect" }
 # sappho-eval = { path = "eval" }
 sappho-fconv-derive = { path = "fconv-derive" }
 sappho-fconv = { path = "fconv" }
@@ -80,7 +71,6 @@ sappho-regression-vectors = { path = "regression-vectors" }
 sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
 sappho-tfi = { path = "tfi" }
-# sappho-transform = { path = "transform" }
 sappho-unparse = { path = "unparse" }
 # sappho-value = { path = "value" }
 sappho-with-source = { path = "with-source" }

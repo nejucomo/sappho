@@ -1,6 +1,6 @@
 use chumsky::Parser as _;
 use derive_more::From;
-use sappho_ast_effect::{RestrictFrom, Restriction};
+use sappho_effect::{RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::Unparse;
 
@@ -62,7 +62,7 @@ impl<L, R> LeftAssoc<L, R> {
 }
 
 mod fromimpls {
-    use sappho_ast_effect::Effect;
+    use sappho_effect::Effect;
 
     use crate::leftassoc::LeftAssoc;
     use crate::{Application, Interactions, Lookup, Lookups};

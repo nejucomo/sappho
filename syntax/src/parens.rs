@@ -1,5 +1,5 @@
 use chumsky::Parser as _;
-use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_unparse::{Stream, Unparse};

@@ -1,5 +1,5 @@
 use chumsky::Parser as _;
-use sappho_ast_effect::{RestrictFrom, Restriction};
+use sappho_effect::{RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_source::SourceCodeLink;
 use sappho_unparse::Unparse;

@@ -1,7 +1,7 @@
 use chumsky::Parser as _;
 use derive_more::From;
-use sappho_ast_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_attrs::Attrs;
+use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_listform::ListForm;
 use sappho_parsable::primitive::space;
 use sappho_parsable::{ParsableWith, Parser};

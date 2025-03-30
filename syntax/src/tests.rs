@@ -1,6 +1,6 @@
-use sappho_ast_effect::PureEffect;
-use sappho_ast_effect::QueryEffect;
 use sappho_attrs::Attrs;
+use sappho_effect::PureEffect;
+use sappho_effect::QueryEffect;
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_parsable::load_and_parse;

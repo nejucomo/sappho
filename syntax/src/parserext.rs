@@ -1,4 +1,4 @@
-use sappho_ast_effect::RestrictFrom;
+use sappho_effect::RestrictFrom;
 use sappho_parsable::error::ChumskyError;
 use sappho_parsable::Parser;
 

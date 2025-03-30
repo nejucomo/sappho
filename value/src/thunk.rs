@@ -1,5 +1,5 @@
 use derive_new::new;
-use sappho_ast_effect::Effect;
+use sappho_effect::Effect;
 use sappho_ast_red::Expr;
 
 use crate::ScopeRef;

@@ -1,5 +1,5 @@
 use either::Either::{self, Left};
-use sappho_ast_effect::{RestrictFrom, Restriction};
+use sappho_effect::{RestrictFrom, Restriction};
 use sappho_unparse::Unparse;
 use std::fmt;
 
