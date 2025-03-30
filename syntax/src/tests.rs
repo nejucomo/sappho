@@ -9,18 +9,19 @@ use sappho_tfi::TryFromIterator as _;
 use test_case::test_case;
 
 use crate::{
-    Applications, BoxWise, FuncDef, Interactions, Let, Lookups, ObjectDef, ParensExpr, PureExpr,
-    QueryDef, Wise,
+    Applications, FuncDef, Interactions, Let, Lookups, ObjectDef, ParensExpr, PureExpr, QueryDef,
+    Wise,
 };
 
-fn list<T>(t: T) -> ListForm<Wise<PureEffect>, BoxWise<PureEffect>>
+fn list<S, X, T>(src: S) -> ListForm<X, T>
 where
-    ListForm<Wise<PureEffect>, BoxWise<PureEffect>>: From<T>,
+    S: Into<ListForm<X, T>>,
+    X: std::fmt::Debug,
 {
-    ListForm::from(t)
+    src.into()
 }
 
-fn empty_attrs() -> Attrs<Wise<PureEffect>> {
+fn attrs_() -> Attrs<Wise<PureEffect>> {
     Attrs::default()
 }
 
@@ -87,7 +88,7 @@ where
 )]
 #[test_case(
     "{}",
-    empty_attrs()
+    attrs_()
     ; "empty object"
 )]
 #[test_case(
@@ -107,12 +108,12 @@ where
 )]
 #[test_case(
     "{ query x, fn x -> x }",
-    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, Attrs::default())
+    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, attrs_())
     ; "object query and fn"
 )]
 #[test_case(
     "{ fn x -> x, query x }",
-    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, Attrs::default())
+    ObjectDef::new(FuncDef::new("x", "x"), QueryDef::new("x"), None, attrs_())
     ; "object fn and query"
 )]
 #[test_case(
@@ -147,8 +148,39 @@ where
 )]
 #[test_case(
     "let [] = {}; 42",
-    Let::new([(ListForm::default(), Attrs::default())], 42)
+    Let::new([(ListForm::default(), attrs_())], 42)
     ; "let list empty"
+)]
+#[test_case(
+    "let [x] = {head: 42, tail: {}}; x",
+    Let::new(
+        [(
+            list(["x"]),
+            attrs_()
+                .with("head", 42)
+                .with("tail", attrs_())
+        )],
+        "x"
+    )
+    ; "let list singleton"
+)]
+#[test_case(
+    "let [x, y] = {head: 2, tail: {head: 3, tail: {}}}; {a: x, b: y}",
+    Let::new(
+        [(
+            list(["x", "y"]),
+            attrs_()
+                .with("head", 2)
+                .with(
+                    "tail",
+                    attrs_()
+                        .with("head", 3)
+                        .with("tail", attrs_())
+                )
+        )],
+        attrs([("a", "x"), ("b", "y")])
+    )
+    ; "let list pair"
 )]
 fn parse_pure_expr<T>(input: &str, expected: T)
 where
@@ -158,40 +190,6 @@ where
     assert_eq!(actual, PureExpr::from(Wise::from(expected)))
 }
 
-// #[test_case(
-//     "let [x] = {head: 42, tail: {}}; x" =>
-//     let_expr(
-//         [(
-//             list_pat([bind("x")], None),
-//             attrs_def([
-//                 ("head", num(42.0)),
-//                 ("tail", attrs_def([])),
-//             ]),
-//         )],
-//         refexpr("x"),
-//     )
-//     ; "let list singleton"
-// )]
-// #[test_case(
-//     "let [x, y] = {head: 2, tail: {head: 3, tail: {}}}; {a: x, b: y}" =>
-//     let_expr(
-//         [(
-//             list_pat([bind("x"), bind("y")], None),
-//             attrs_def([
-//                 ("head", num(2.0)),
-//                 ("tail", attrs_def([
-//                     ("head", num(3.0)),
-//                     ("tail", attrs_def([])),
-//                 ]))
-//             ]),
-//         )],
-//         attrs_def([
-//             ("a", refexpr("x")),
-//             ("b", refexpr("y")),
-//         ]),
-//     )
-//     ; "let list pair"
-// )]
 // #[test_case(
 //     "let [..t] = 42; t" =>
 //     let_expr(

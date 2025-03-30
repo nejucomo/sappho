@@ -41,6 +41,31 @@ impl<T> Attrs<T> {
         Ok(())
     }
 
+    /// Define an entry then return `Self` on success
+    ///
+    /// # TODO
+    ///
+    /// Move the `S: Into<T>` clause to [Self::define]
+    pub fn try_with<K, S>(mut self, id: K, val: S) -> AttrsResult<Self>
+    where
+        RcId: TryFrom<K>,
+        AttrsError: From<<RcId as TryFrom<K>>::Error>,
+        S: Into<T>,
+    {
+        self.define(id, val.into())?;
+        Ok(self)
+    }
+
+    /// Define an entry then return `Self`, panicking on error
+    pub fn with<K, S>(self, id: K, val: S) -> Self
+    where
+        RcId: TryFrom<K>,
+        AttrsError: From<<RcId as TryFrom<K>>::Error>,
+        S: Into<T>,
+    {
+        self.try_with(id, val).unwrap()
+    }
+
     /// Get an output for any key, `K`, which includes `&IdentRef`
     ///
     /// Three common impls are `&IdentRef`, `&'static str`, and `(k1, k2)` which is a tuple of keys.
@@ -164,6 +189,9 @@ where
     }
 }
 
+/// # TODO
+///
+/// Remove in favor of `TryFromIterator`
 impl<S, T> FromIterator<(S, T)> for Attrs<T>
 where
     RcId: From<S>,
