@@ -132,12 +132,12 @@ where
 )]
 #[test_case(
     "f (x.a)",
-    Applications::new("f", [Lookups::new("x", ["a"])])
+    Applications::new("f", [ParensExpr::from(Lookups::new("x", ["a"]))])
     ; "f applied to the a of x with disambiguating parentheses"
 )]
 #[test_case(
     "f (x).a",
-    Applications::new("f", [Lookups::new("x", ["a"])])
+    Applications::new("f", [Lookups::new(ParensExpr::from("x"), ["a"])])
     ; "f applied to the a of x with confusing parentheses"
 )]
 #[test_case(
