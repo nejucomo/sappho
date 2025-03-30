@@ -8,34 +8,36 @@ use sappho_parsable::{Parsable as _, ParsableWith, Parser};
 use sappho_pattern::Pattern;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::parseparams::ParseParams;
-use crate::BoxWise;
+use crate::{BoxWise, KastProvider, ProcWiseParser};
 
 #[derive(Debug, PartialEq, new)]
-pub struct Match<FX>
+pub struct Match<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     #[new(into)]
-    candidate: BoxWise<FX>,
-    clauses: Vec<MatchClause<FX>>,
+    candidate: BoxWise<K, FX>,
+    clauses: Vec<MatchClause<K, FX>>,
 }
 
 #[derive(Debug, PartialEq, new)]
-pub struct MatchClause<FX>
+pub struct MatchClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     binding: Pattern,
     #[new(into)]
-    consequent: BoxWise<FX>,
+    consequent: BoxWise<K, FX>,
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Match<FX>
+impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for Match<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
-    fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(sep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
         KwMatch
             .parse()
             .then_space()
@@ -51,11 +53,12 @@ where
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for MatchClause<FX>
+impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for MatchClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
-    fn make_parser_with(sep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(sep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
         Pattern::parser()
             .then_ignore(just("->").space_around())
             .then(BoxWise::parser_with(sep))
@@ -63,8 +66,9 @@ where
     }
 }
 
-impl<FX> Unparse for Match<FX>
+impl<K, FX> Unparse for Match<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -84,8 +88,9 @@ where
     }
 }
 
-impl<FX> Unparse for MatchClause<FX>
+impl<K, FX> Unparse for MatchClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -95,11 +100,12 @@ where
     }
 }
 
-impl<FX> RestrictFrom<Match<ProcEffect>> for Match<FX>
+impl<K, FX> RestrictFrom<Match<K, ProcEffect>> for Match<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
-    fn restrict(src: Match<ProcEffect>) -> Result<Match<FX>, Restriction> {
+    fn restrict(src: Match<K, ProcEffect>) -> Result<Match<K, FX>, Restriction> {
         let clauses = src
             .clauses
             .into_iter()
@@ -111,11 +117,12 @@ where
     }
 }
 
-impl<FX> RestrictFrom<MatchClause<ProcEffect>> for MatchClause<FX>
+impl<K, FX> RestrictFrom<MatchClause<K, ProcEffect>> for MatchClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
-    fn restrict(src: MatchClause<ProcEffect>) -> Result<MatchClause<FX>, Restriction> {
+    fn restrict(src: MatchClause<K, ProcEffect>) -> Result<MatchClause<K, FX>, Restriction> {
         let MatchClause {
             binding,
             consequent,

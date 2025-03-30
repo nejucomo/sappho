@@ -1,5 +1,5 @@
 use chumsky::Parser as _;
-use derive_more::{From, TryInto};
+use derive_more::From;
 use sappho_attrs::Attrs;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_listform::ListForm;
@@ -14,7 +14,7 @@ use crate::{
 };
 
 /// The bare top-level expression without source annotation
-#[derive(Debug, PartialEq, From, TryInto)]
+#[derive(Clone, Debug, PartialEq, From)]
 pub enum Expr<FX>
 where
     FX: Effect,

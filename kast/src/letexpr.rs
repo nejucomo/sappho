@@ -7,38 +7,40 @@ use sappho_parsable::{Parsable as _, ParsableWith, Parser};
 use sappho_pattern::Pattern;
 use sappho_unparse::{Stream, Unparse};
 
-use crate::parseparams::ParseParams;
-use crate::BoxWise;
+use crate::{BoxWise, KastProvider, ProcWiseParser};
 
 #[derive(Debug, PartialEq)]
-pub struct Let<FX>
+pub struct Let<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
-    clauses: Vec<LetClause<FX>>,
-    inner: BoxWise<FX>,
+    clauses: Vec<LetClause<K, FX>>,
+    inner: BoxWise<K, FX>,
 }
 
 #[derive(Debug, PartialEq, new)]
-pub struct LetClause<FX>
+pub struct LetClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     #[new(into)]
     binding: Pattern,
     #[new(into)]
-    definition: BoxWise<FX>,
+    definition: BoxWise<K, FX>,
 }
 
-impl<FX> Let<FX>
+impl<K, FX> Let<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     pub fn new<I, C, W>(clauses: I, inner: W) -> Self
     where
         I: IntoIterator<Item = C>,
-        LetClause<FX>: From<C>,
-        BoxWise<FX>: From<W>,
+        LetClause<K, FX>: From<C>,
+        BoxWise<K, FX>: From<W>,
     {
         Let {
             clauses: clauses.into_iter().map(LetClause::from).collect(),
@@ -47,22 +49,24 @@ where
     }
 }
 
-impl<FX, P, W> From<(P, W)> for LetClause<FX>
+impl<K, FX, P, W> From<(P, W)> for LetClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
     Pattern: From<P>,
-    BoxWise<FX>: From<W>,
+    BoxWise<K, FX>: From<W>,
 {
     fn from((p, w): (P, W)) -> Self {
         Self::new(p, w)
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for Let<FX>
+impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for Let<K, FX>
 where
+    K: KastProvider,
     FX: Effect + RestrictFrom<ProcEffect>,
 {
-    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
         LetClause::parser_with(pep.clone())
             .then_space()
             .repeated()
@@ -73,11 +77,12 @@ where
     }
 }
 
-impl<FX> ParsableWith<ParseParams<'_>> for LetClause<FX>
+impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for LetClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect + RestrictFrom<ProcEffect>,
 {
-    fn make_parser_with(pep: ParseParams<'_>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
         KwLet
             .parse()
             .ignore_then(Pattern::parser())
@@ -88,8 +93,9 @@ where
     }
 }
 
-impl<FX> Unparse for Let<FX>
+impl<K, FX> Unparse for Let<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -115,8 +121,9 @@ where
     }
 }
 
-impl<FX> Unparse for LetClause<FX>
+impl<K, FX> Unparse for LetClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
     fn unparse_into(&self, s: &mut Stream) {
@@ -128,11 +135,12 @@ where
     }
 }
 
-impl<FX> RestrictFrom<Let<ProcEffect>> for Let<FX>
+impl<K, FX> RestrictFrom<Let<K, ProcEffect>> for Let<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
-    fn restrict(src: Let<ProcEffect>) -> Result<Let<FX>, Restriction> {
+    fn restrict(src: Let<K, ProcEffect>) -> Result<Let<K, FX>, Restriction> {
         let clauses = src
             .clauses
             .into_iter()
@@ -144,11 +152,12 @@ where
     }
 }
 
-impl<FX> RestrictFrom<LetClause<ProcEffect>> for LetClause<FX>
+impl<K, FX> RestrictFrom<LetClause<K, ProcEffect>> for LetClause<K, FX>
 where
+    K: KastProvider,
     FX: Effect,
 {
-    fn restrict(src: LetClause<ProcEffect>) -> Result<LetClause<FX>, Restriction> {
+    fn restrict(src: LetClause<K, ProcEffect>) -> Result<LetClause<K, FX>, Restriction> {
         let LetClause {
             binding,
             definition,

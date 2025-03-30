@@ -1,9 +1,10 @@
-use sappho_effect::RestrictFrom;
 use sappho_parsable::error::ChumskyError;
 use sappho_parsable::Parser;
 
-pub(crate) trait ParserExt<O>: Parser<O> {
-    fn restrict<D>(self) -> impl Parser<D>
+use crate::RestrictFrom;
+
+pub trait RestrictableParser<O>: Parser<O> {
+    fn restricted<D>(self) -> impl Parser<D>
     where
         D: RestrictFrom<O>,
     {
@@ -11,4 +12,4 @@ pub(crate) trait ParserExt<O>: Parser<O> {
     }
 }
 
-impl<P, O> ParserExt<O> for P where P: Parser<O> {}
+impl<P, O> RestrictableParser<O> for P where P: Parser<O> {}

@@ -1,0 +1,24 @@
+use std::fmt::Debug;
+
+use sappho_effect::{Effect, ProcEffect, RestrictFrom};
+use sappho_parsable::ParsableWith;
+
+use crate::ProcWiseParser;
+
+/// The top-level AST provider which embeds KAST components
+///
+/// # Hack
+///
+/// Note: this uninhabited trait extends traits which we want to apply to expressions. This is a hack to work-around the `derive` limitation which gates directly on a parameter (rather than the types actually used).
+pub trait KastProvider: ExprDerivableTraits + 'static {
+    type Expr<FX>: ExprDerivableTraits
+        + for<'a> ParsableWith<ProcWiseParser<'a, Self>>
+        + RestrictFrom<Self::Expr<ProcEffect>>
+    where
+        FX: Effect;
+}
+
+/// Traits which expressions must extend
+pub trait ExprDerivableTraits: Clone + Debug + PartialEq {}
+
+impl<T> ExprDerivableTraits for T where T: Clone + Debug + PartialEq {}
