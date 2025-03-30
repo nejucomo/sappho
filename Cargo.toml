@@ -10,6 +10,7 @@ members = [
   "identifier",
 #   "integration-tests",
 #   "interpreter",
+  "kast",
   "keyword",
   "listform",
   "object",
@@ -61,6 +62,7 @@ sappho-fconv = { path = "fconv" }
 sappho-identifier = { path = "identifier" }
 # sappho-integration-tests = { path = "integration-tests" }
 # sappho-interpreter = { path = "interpreter" }
+sappho-kast = { path = "kast" }
 sappho-keyword = { path = "keyword" }
 sappho-listform = { path = "listform" }
 sappho-object = { path = "object" }
