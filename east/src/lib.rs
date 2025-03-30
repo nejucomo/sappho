@@ -1,3 +1,4 @@
+//! Evaluatable Abstract Syntax Tree
 mod boxwise;
 mod expr;
 mod objectdef;
