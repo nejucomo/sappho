@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "attrs",
 #   "cli",
+  "east",
   "effect",
 #   "eval",
   "fconv",
@@ -54,6 +55,7 @@ quote = "1.0.40"
 rand = "0.9.0"
 sappho-attrs = { path = "attrs" }
 # sappho-cli = { path = "cli" }
+sappho-east = { path = "east" }
 sappho-effect = { path = "effect" }
 # sappho-eval = { path = "eval" }
 sappho-fconv-derive = { path = "fconv-derive" }
