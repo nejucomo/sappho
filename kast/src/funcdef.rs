@@ -1,7 +1,7 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_new::new;
-use sappho_effect::PureEffect;
+use sappho_effect::{ProcEffect, PureEffect, RestrictFrom};
 use sappho_keyword::Keyword::Fn;
 use sappho_parsable::primitive::space;
 use sappho_parsable::{Parsable as _, ParsableWith, Parser};
@@ -21,11 +21,12 @@ where
     body: BoxWise<K, PureEffect>,
 }
 
-impl<K> ParsableWith<ProcWiseParser<'_, K>> for FuncDef<K>
+impl<'a, K> ParsableWith<ProcWiseParser<'a, K>> for FuncDef<K>
 where
     K: KastProvider,
+    K::Expr<PureEffect>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
 {
-    fn make_parser_with(proc: ProcWiseParser<'_, K>) -> impl Parser<Self> {
+    fn make_parser_with(proc: ProcWiseParser<'a, K>) -> impl Parser<Self> {
         Fn.parse()
             .then_space()
             .ignore_then(Pattern::parser())
@@ -39,6 +40,7 @@ where
 impl<K> Unparse for FuncDef<K>
 where
     K: KastProvider,
+    K::Expr<PureEffect>: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         s.write(&Fn);

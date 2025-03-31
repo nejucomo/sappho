@@ -1,6 +1,6 @@
 use chumsky::Parser as _;
 use derive_more::From;
-use sappho_effect::ProcEffect;
+use sappho_effect::{ProcEffect, RestrictFrom};
 use sappho_keyword::Keyword::Proc as KwProc;
 use sappho_parsable::primitive::bracketed;
 use sappho_parsable::{ParsableWith, Parser};
@@ -13,11 +13,12 @@ pub struct ProcDef<K>(BoxWise<K, ProcEffect>)
 where
     K: KastProvider;
 
-impl<K> ParsableWith<ProcWiseParser<'_, K>> for ProcDef<K>
+impl<'a, K> ParsableWith<ProcWiseParser<'a, K>> for ProcDef<K>
 where
     K: KastProvider,
+    K::Expr<ProcEffect>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
 {
-    fn make_parser_with(sep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
+    fn make_parser_with(sep: ProcWiseParser<'a, K>) -> impl Parser<Self> {
         KwProc
             .parse()
             .then_space()
@@ -29,6 +30,7 @@ where
 impl<K> Unparse for ProcDef<K>
 where
     K: KastProvider,
+    K::Expr<ProcEffect>: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Brackets::Squiggle;

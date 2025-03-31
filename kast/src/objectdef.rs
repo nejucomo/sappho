@@ -77,19 +77,26 @@ where
 
 mod parsing {
     use chumsky::Parser as _;
-    use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
+    use sappho_effect::{Effect, ProcEffect, PureEffect, QueryEffect, RestrictFrom, Restriction};
     use sappho_object::Object;
     use sappho_parsable::{ParsableWith, Parser};
     use sappho_unparse::{Stream, Unparse};
 
-    use crate::{KastProvider, ObjectDef, ProcWiseParser};
+    use crate::{FuncDef, KastProvider, ObjectDef, ProcDef, ProcWiseParser, QueryDef};
 
-    impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for ObjectDef<K, FX>
+    impl<'a, K, FX> ParsableWith<ProcWiseParser<'a, K>> for ObjectDef<K, FX>
     where
         K: KastProvider,
-        FX: Effect + RestrictFrom<ProcEffect>,
+        FX: Effect,
+        K::Expr<PureEffect>:
+            ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<QueryEffect>:
+            ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<ProcEffect>:
+            ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<FX>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
     {
-        fn make_parser_with(pep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
+        fn make_parser_with(pep: ProcWiseParser<'a, K>) -> impl Parser<Self> {
             Object::make_parser_with(pep).map(Self)
         }
     }
@@ -98,6 +105,10 @@ mod parsing {
     where
         K: KastProvider,
         FX: Effect,
+        FuncDef<K>: Unparse,
+        QueryDef<K>: Unparse,
+        ProcDef<K>: Unparse,
+        K::Expr<FX>: Unparse,
     {
         fn unparse_into(&self, s: &mut Stream) {
             self.0.unparse_into(s)
@@ -108,6 +119,7 @@ mod parsing {
     where
         K: KastProvider,
         FX: Effect,
+        K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>>,
     {
         fn restrict(src: ObjectDef<K, ProcEffect>) -> Result<ObjectDef<K, FX>, Restriction> {
             Object::restrict(src.0).map(Self)

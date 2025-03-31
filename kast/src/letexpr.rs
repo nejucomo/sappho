@@ -61,12 +61,13 @@ where
     }
 }
 
-impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for Let<K, FX>
+impl<'a, K, FX> ParsableWith<ProcWiseParser<'a, K>> for Let<K, FX>
 where
     K: KastProvider,
     FX: Effect + RestrictFrom<ProcEffect>,
+    K::Expr<FX>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
 {
-    fn make_parser_with(pep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'a, K>) -> impl Parser<Self> {
         LetClause::parser_with(pep.clone())
             .then_space()
             .repeated()
@@ -77,12 +78,13 @@ where
     }
 }
 
-impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for LetClause<K, FX>
+impl<'a, K, FX> ParsableWith<ProcWiseParser<'a, K>> for LetClause<K, FX>
 where
     K: KastProvider,
-    FX: Effect + RestrictFrom<ProcEffect>,
+    FX: Effect,
+    K::Expr<FX>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
 {
-    fn make_parser_with(pep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
+    fn make_parser_with(pep: ProcWiseParser<'a, K>) -> impl Parser<Self> {
         KwLet
             .parse()
             .ignore_then(Pattern::parser())
@@ -97,6 +99,7 @@ impl<K, FX> Unparse for Let<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::{Brackets::Parens, Break::Mandatory};
@@ -125,6 +128,7 @@ impl<K, FX> Unparse for LetClause<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         s.write(&KwLet);
@@ -139,6 +143,7 @@ impl<K, FX> RestrictFrom<Let<K, ProcEffect>> for Let<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>>,
 {
     fn restrict(src: Let<K, ProcEffect>) -> Result<Let<K, FX>, Restriction> {
         let clauses = src
@@ -156,6 +161,7 @@ impl<K, FX> RestrictFrom<LetClause<K, ProcEffect>> for LetClause<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>>,
 {
     fn restrict(src: LetClause<K, ProcEffect>) -> Result<LetClause<K, FX>, Restriction> {
         let LetClause {

@@ -35,6 +35,7 @@ where
     K: KastProvider,
     FX: Effect,
     Wise<K, FX>: ParsableWith<T>,
+    K::Expr<FX>: ParsableWith<T>,
 {
     fn make_parser_with(param: T) -> impl Parser<Self> {
         Wise::<K, FX>::parser_with(param).map(Box::new).map(Self)
@@ -45,6 +46,7 @@ impl<K, FX> Unparse for BoxWise<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         self.0.unparse_into(s)
@@ -55,6 +57,7 @@ impl<K, FX> RestrictFrom<BoxWise<K, ProcEffect>> for BoxWise<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>>,
 {
     fn restrict(src: BoxWise<K, ProcEffect>) -> Result<BoxWise<K, FX>, Restriction> {
         Box::restrict(src.0).map(BoxWise)

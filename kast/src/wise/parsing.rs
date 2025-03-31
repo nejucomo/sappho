@@ -11,28 +11,25 @@ impl<'a, K, FX> ParsableWith<Option<&'a SourceCodeLink>> for Wise<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<ProcEffect>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
+    K::Expr<FX>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
 {
     fn make_parser_with(sclink: Option<&'a SourceCodeLink>) -> impl Parser<Self> {
-        make_proc_wise_parser(sclink).restricted()
+        chumsky::recursive::recursive(|proc| {
+            WithSource::parser_with((sclink, proc)).map(Wise::from)
+        })
+        .restricted()
     }
 }
 
-fn make_proc_wise_parser<K>(
-    sclink: Option<&SourceCodeLink>,
-) -> impl Parser<Wise<K, ProcEffect>> + '_
-where
-    K: KastProvider,
-{
-    chumsky::recursive::recursive(|proc| WithSource::parser_with((sclink, proc)).map(Wise::from))
-}
-
 /// This impl terminates recursion within the parser layer
-impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for Wise<K, FX>
+impl<'a, K, FX> ParsableWith<ProcWiseParser<'a, K>> for Wise<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: ParsableWith<ProcWiseParser<'a, K>> + RestrictFrom<K::Expr<ProcEffect>>,
 {
-    fn make_parser_with(proc: ProcWiseParser<'_, K>) -> impl Parser<Self> {
+    fn make_parser_with(proc: ProcWiseParser<'a, K>) -> impl Parser<Self> {
         proc.restricted()
     }
 }
@@ -41,6 +38,7 @@ impl<K, FX> Unparse for Wise<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: Unparse,
 {
     fn unparse_into(&self, s: &mut Stream) {
         self.0.unparse_into(s)
@@ -51,6 +49,7 @@ impl<K, FX> RestrictFrom<Wise<K, ProcEffect>> for Wise<K, FX>
 where
     K: KastProvider,
     FX: Effect,
+    K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>>,
 {
     fn restrict(src: Wise<K, ProcEffect>) -> Result<Wise<K, FX>, Restriction> {
         WithSource::restrict(src.0).map(Wise::from)
