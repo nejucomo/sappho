@@ -6,12 +6,14 @@ use sappho_unparse::Unparse;
 
 use crate::wsource::WithSource;
 
-impl<'l, T, P> ParsableWith<(&'l SourceCodeLink, T)> for WithSource<P>
+impl<'l, T, P> ParsableWith<(Option<&'l SourceCodeLink>, T)> for WithSource<P>
 where
     P: ParsableWith<T>,
 {
-    fn make_parser_with((sc, t): (&'l SourceCodeLink, T)) -> impl Parser<Self> {
-        P::parser_with(t).map_with_span(|p, span| WithSource::new(p, sc.refer_to_span(span)))
+    fn make_parser_with((optsc, t): (Option<&'l SourceCodeLink>, T)) -> impl Parser<Self> {
+        P::parser_with(t).map_with_span(move |p, span| {
+            WithSource::new(p, optsc.map(|sc| sc.refer_to_span(span)))
+        })
     }
 }
 

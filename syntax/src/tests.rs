@@ -3,7 +3,7 @@ use sappho_effect::QueryEffect;
 use sappho_effect::{Effect, PureEffect};
 use sappho_identifier::RcId;
 use sappho_listform::ListForm;
-use sappho_parsable::load_and_parse;
+use sappho_parsable::{ParsableWith, Parser as _};
 use sappho_regression_vectors as regression;
 use sappho_tfi::TryFromIterator as _;
 use test_case::test_case;
@@ -237,7 +237,7 @@ fn parse_pure_expr<T>(input: &str, expected: T)
 where
     T: Into<Expr<PureEffect>>,
 {
-    let actual = load_and_parse::<PureExpr, _>(input).unwrap();
-    let sc = actual.sourcecode().cloned();
-    assert_eq!(actual, BoxWise::new(expected, sc));
+    // Parse it with the source link `None`'d out:
+    let actual = PureExpr::parser_with(None).load_and_parse(input).unwrap();
+    assert_eq!(actual, BoxWise::new(expected, None));
 }

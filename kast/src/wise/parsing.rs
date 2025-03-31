@@ -7,17 +7,19 @@ use sappho_with_source::WithSource;
 
 use crate::{KastProvider, ProcWiseParser, Wise};
 
-impl<'a, K, FX> ParsableWith<&'a SourceCodeLink> for Wise<K, FX>
+impl<'a, K, FX> ParsableWith<Option<&'a SourceCodeLink>> for Wise<K, FX>
 where
     K: KastProvider,
     FX: Effect,
 {
-    fn make_parser_with(sclink: &'a SourceCodeLink) -> impl Parser<Self> {
+    fn make_parser_with(sclink: Option<&'a SourceCodeLink>) -> impl Parser<Self> {
         make_proc_wise_parser(sclink).restricted()
     }
 }
 
-fn make_proc_wise_parser<K>(sclink: &SourceCodeLink) -> impl Parser<Wise<K, ProcEffect>> + '_
+fn make_proc_wise_parser<K>(
+    sclink: Option<&SourceCodeLink>,
+) -> impl Parser<Wise<K, ProcEffect>> + '_
 where
     K: KastProvider,
 {

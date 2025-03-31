@@ -5,7 +5,7 @@ use crate::{ParsableWith, Parser as _};
 
 pub fn load_and_parse<P, S>(source: S) -> Result<P, Error>
 where
-    P: for<'a> ParsableWith<&'a SourceCodeLink>,
+    P: for<'a> ParsableWith<Option<&'a SourceCodeLink>>,
     Source: From<S>,
 {
     let sc = Source::from(source).load().map_err(Error::Load)?;
@@ -15,7 +15,7 @@ where
 
 fn parse_with_sourcecode<'a, P>(sc: &'a SourceCodeLink) -> Result<P, ParseError>
 where
-    P: ParsableWith<&'a SourceCodeLink>,
+    P: ParsableWith<Option<&'a SourceCodeLink>>,
 {
-    P::parser_with(sc).parse_sourcecode(sc)
+    P::parser_with(Some(sc)).parse_sourcecode(sc)
 }
