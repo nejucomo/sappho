@@ -8,3 +8,6 @@ homepage.workspace = true
 [dependencies]
 sappho-effect.workspace = true
 sappho-kast.workspace = true
+sappho-listform.workspace = true
+sappho-identifier.workspace = true
+sappho-primval.workspace = true
