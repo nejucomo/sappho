@@ -25,7 +25,6 @@ sappho-regression-vectors.workspace = true
 sappho-unparse.workspace = true
 sappho-source.workspace = true
 sappho-with-source.workspace = true
-sappho-fconv.workspace = true
 sappho-tfi.workspace = true
 
 [dev-dependencies]
