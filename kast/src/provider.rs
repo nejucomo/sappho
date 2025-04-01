@@ -1,9 +1,6 @@
 use std::fmt::Debug;
 
-use sappho_effect::{Effect, ProcEffect, RestrictFrom};
-use sappho_parsable::ParsableWith;
-
-use crate::ProcWiseParser;
+use sappho_effect::Effect;
 
 /// The top-level AST provider which embeds KAST components
 ///
@@ -16,11 +13,11 @@ use crate::ProcWiseParser;
 /// Move parsing constraints out of these requirements
 pub trait KastProvider: ExprDerivableTraits + 'static {
     type Expr<FX>: ExprDerivableTraits
-        + for<'a> ParsableWith<ProcWiseParser<'a, Self>>
-        + RestrictFrom<Self::Expr<ProcEffect>>
     where
         FX: Effect;
 }
+// + for<'a> ParsableWith<ProcWiseParser<'a, Self>>
+// + RestrictFrom<Self::Expr<ProcEffect>>
 
 /// Traits which expressions must extend
 pub trait ExprDerivableTraits: Clone + Debug + PartialEq {}
