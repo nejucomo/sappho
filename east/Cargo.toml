@@ -6,3 +6,5 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+sappho-effect.workspace = true
+sappho-kast.workspace = true
