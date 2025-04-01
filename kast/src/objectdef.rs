@@ -75,42 +75,54 @@ where
     }
 }
 
-// mod parsing {
-//     use chumsky::Parser as _;
-//     use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
-//     use sappho_object::Object;
-//     use sappho_parsable::{ParsableWith, Parser};
-//     use sappho_unparse::{Stream, Unparse};
+mod parsing {
+    use chumsky::Parser as _;
+    use sappho_effect::{Effect, ProcEffect, PureEffect, QueryEffect, RestrictFrom, Restriction};
+    use sappho_object::Object;
+    use sappho_parsable::{ParsableWith, Parser};
+    use sappho_unparse::{Stream, Unparse};
 
-//     use crate::{KastProvider, ObjectDef, ProcWiseParser};
+    use crate::{KastProvider, ObjectDef, ProcWiseParser};
 
-//     impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for ObjectDef<K, FX>
-//     where
-//         K: KastProvider,
-//         FX: Effect + RestrictFrom<ProcEffect>,
-//     {
-//         fn make_parser_with(pep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
-//             Object::make_parser_with(pep).map(Self)
-//         }
-//     }
+    impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for ObjectDef<K, FX>
+    where
+        K: KastProvider,
+        K::Expr<FX>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<PureEffect>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<QueryEffect>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<ProcEffect>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
+        FX: Effect,
+    {
+        fn make_parser_with(pep: ProcWiseParser<'_, K>) -> impl Parser<Self> {
+            Object::make_parser_with(pep).map(Self)
+        }
+    }
 
-//     impl<K, FX> Unparse for ObjectDef<K, FX>
-//     where
-//         K: KastProvider,
-//         FX: Effect,
-//     {
-//         fn unparse_into(&self, s: &mut Stream) {
-//             self.0.unparse_into(s)
-//         }
-//     }
+    impl<K, FX> Unparse for ObjectDef<K, FX>
+    where
+        K: KastProvider,
+        K::Expr<FX>: Unparse,
+        K::Expr<PureEffect>: Unparse,
+        K::Expr<QueryEffect>: Unparse,
+        K::Expr<ProcEffect>: Unparse,
+        FX: Effect,
+    {
+        fn unparse_into(&self, s: &mut Stream) {
+            self.0.unparse_into(s)
+        }
+    }
 
-//     impl<K, FX> RestrictFrom<ObjectDef<K, ProcEffect>> for ObjectDef<K, FX>
-//     where
-//         K: KastProvider,
-//         FX: Effect,
-//     {
-//         fn restrict(src: ObjectDef<K, ProcEffect>) -> Result<ObjectDef<K, FX>, Restriction> {
-//             Object::restrict(src.0).map(Self)
-//         }
-//     }
-// }
+    impl<K, FX> RestrictFrom<ObjectDef<K, ProcEffect>> for ObjectDef<K, FX>
+    where
+        K: KastProvider,
+        K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<PureEffect>: RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<QueryEffect>: RestrictFrom<K::Expr<ProcEffect>>,
+        K::Expr<ProcEffect>: RestrictFrom<K::Expr<ProcEffect>>,
+        FX: Effect,
+    {
+        fn restrict(src: ObjectDef<K, ProcEffect>) -> Result<ObjectDef<K, FX>, Restriction> {
+            Object::restrict(src.0).map(Self)
+        }
+    }
+}

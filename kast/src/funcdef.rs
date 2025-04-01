@@ -1,7 +1,7 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_new::new;
-use sappho_effect::PureEffect;
+use sappho_effect::{ProcEffect, PureEffect, RestrictFrom};
 use sappho_keyword::Keyword::Fn;
 use sappho_parsable::primitive::space;
 use sappho_parsable::{Parsable as _, ParsableWith, Parser};
@@ -24,7 +24,7 @@ where
 impl<K> ParsableWith<ProcWiseParser<'_, K>> for FuncDef<K>
 where
     K: KastProvider,
-    K::Expr<PureEffect>: Unparse,
+    K::Expr<PureEffect>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
 {
     fn make_parser_with(proc: ProcWiseParser<'_, K>) -> impl Parser<Self> {
         Fn.parse()

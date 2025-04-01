@@ -10,7 +10,7 @@ use crate::{KastProvider, ProcWiseParser, Wise};
 impl<'a, K, FX> ParsableWith<Option<&'a SourceCodeLink>> for Wise<K, FX>
 where
     K: KastProvider,
-    K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>> + Unparse,
+    K::Expr<FX>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
     K::Expr<ProcEffect>: ParsableWith<ProcWiseParser<'a, K>>,
     FX: Effect,
 {
@@ -26,7 +26,7 @@ where
 impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for Wise<K, FX>
 where
     K: KastProvider,
-    K::Expr<FX>: RestrictFrom<K::Expr<ProcEffect>> + Unparse,
+    K::Expr<FX>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
     FX: Effect,
 {
     fn make_parser_with(proc: ProcWiseParser<'_, K>) -> impl Parser<Self> {
