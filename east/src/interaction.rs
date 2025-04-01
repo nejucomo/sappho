@@ -1,12 +1,15 @@
+use derive_new::new;
 use sappho_effect::Effect;
 
-use crate::BoxWise;
+use crate::Expr;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, new)]
 pub struct Interaction<FX>
 where
     FX: Effect,
 {
-    effect: FX,
-    target: BoxWise<FX>,
+    #[new(into)]
+    pub effect: FX,
+    #[new(into)]
+    pub target: Box<Expr<FX>>,
 }

@@ -1,6 +1,6 @@
 use chumsky::prelude::just;
 use chumsky::Parser as _;
-use derive_more::From;
+use derive_more::{From, Into};
 use sappho_attrs::Attrs;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_identifier::RcId;
@@ -33,7 +33,7 @@ pub struct Lookups<FX>(LeftAssoc<Interactions<FX>, Lookup>)
 where
     FX: Effect;
 
-#[derive(Clone, Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From, Into)]
 #[from(RcId, &'static str)]
 pub struct Lookup(RcId);
 
@@ -48,6 +48,10 @@ where
         LI: IntoIterator<Item = L>,
     {
         LeftAssoc::new(interactions, lookups).into()
+    }
+
+    pub fn unwrap(self) -> LeftAssoc<Interactions<FX>, Lookup> {
+        self.0
     }
 }
 

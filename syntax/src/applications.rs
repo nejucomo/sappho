@@ -49,6 +49,19 @@ where
     {
         Applications(LeftAssoc::new(left, rights))
     }
+
+    pub fn unwrap(self) -> LeftAssoc<Lookups<FX>, Application<FX>> {
+        self.0
+    }
+}
+
+impl<FX> Application<FX>
+where
+    FX: Effect,
+{
+    pub fn unwrap(self) -> Lookups<FX> {
+        self.0
+    }
 }
 
 impl<FX, T> From<T> for Application<FX>

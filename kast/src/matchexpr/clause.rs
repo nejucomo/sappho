@@ -14,9 +14,9 @@ where
     K: KastProvider,
     FX: Effect,
 {
-    binding: Pattern,
+    pub binding: Pattern,
     #[new(into)]
-    consequent: BoxWise<K, FX>,
+    pub consequent: BoxWise<K, FX>,
 }
 
 impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for MatchClause<K, FX>

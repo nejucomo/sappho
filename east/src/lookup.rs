@@ -1,13 +1,16 @@
+use derive_new::new;
 use sappho_effect::Effect;
 use sappho_identifier::RcId;
 
-use crate::BoxWise;
+use crate::Expr;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, new)]
 pub struct Lookup<FX>
 where
     FX: Effect,
 {
-    target: BoxWise<FX>,
-    attrname: RcId,
+    #[new(into)]
+    pub target: Box<Expr<FX>>,
+    #[new(into)]
+    pub attrname: RcId,
 }

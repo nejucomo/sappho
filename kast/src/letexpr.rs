@@ -15,8 +15,8 @@ where
     K: KastProvider,
     FX: Effect,
 {
-    clauses: Vec<LetClause<K, FX>>,
-    inner: BoxWise<K, FX>,
+    pub clauses: Vec<LetClause<K, FX>>,
+    pub inner: BoxWise<K, FX>,
 }
 
 impl<K, FX> Let<K, FX>

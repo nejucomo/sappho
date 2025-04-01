@@ -29,4 +29,8 @@ where
     {
         Wise(WithSource::new(expr, sourcecode))
     }
+
+    pub fn unwrap(self) -> WithSource<K::Expr<FX>> {
+        self.0
+    }
 }

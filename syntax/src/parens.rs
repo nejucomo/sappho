@@ -15,6 +15,15 @@ pub struct ParensExpr<FX>(BoxWise<FX>)
 where
     FX: Effect;
 
+impl<FX> ParensExpr<FX>
+where
+    FX: Effect,
+{
+    pub fn unwrap(self) -> BoxWise<FX> {
+        self.0
+    }
+}
+
 impl<FX, T> From<T> for ParensExpr<FX>
 where
     FX: Effect,

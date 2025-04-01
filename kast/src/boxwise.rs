@@ -28,6 +28,10 @@ where
     {
         Wise::new(expr, sourcecode).into()
     }
+
+    pub fn unwrap(self) -> Wise<K, FX> {
+        *self.0
+    }
 }
 
 impl<K, FX, T> ParsableWith<T> for BoxWise<K, FX>

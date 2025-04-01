@@ -1,4 +1,4 @@
-use derive_more::From;
+use derive_more::{From, Into};
 use sappho_attrs::Attrs;
 use sappho_effect::Effect;
 use sappho_object::Object;
@@ -8,7 +8,7 @@ use crate::{FuncDef, KastProvider, ProcDef, QueryDef, Wise};
 /// # TODO
 ///
 /// Change the attributes to `Wise<PureEffect>` as a new restriction on object definitions.
-#[derive(Clone, Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From, Into)]
 pub struct ObjectDef<K, FX>(Object<FuncDef<K>, QueryDef<K>, ProcDef<K>, Wise<K, FX>>)
 where
     K: KastProvider,
@@ -32,6 +32,10 @@ where
             Option::<ProcDef<K>>::from(proc),
             Attrs::from(attrs),
         ))
+    }
+
+    pub fn unwrap(self) -> Object<FuncDef<K>, QueryDef<K>, ProcDef<K>, Wise<K, FX>> {
+        self.0
     }
 }
 

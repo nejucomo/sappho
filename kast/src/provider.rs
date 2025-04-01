@@ -16,8 +16,6 @@ pub trait KastProvider: ExprDerivableTraits + 'static {
     where
         FX: Effect;
 }
-// + for<'a> ParsableWith<ProcWiseParser<'a, Self>>
-// + RestrictFrom<Self::Expr<ProcEffect>>
 
 /// Traits which expressions must extend
 pub trait ExprDerivableTraits: Clone + Debug + PartialEq {}

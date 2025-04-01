@@ -23,6 +23,14 @@ impl<L, R> LeftAssoc<L, R> {
         }
     }
 
+    pub fn fold<F, A>(self, f: F) -> A
+    where
+        A: From<L>,
+        F: Fn(A, R) -> A,
+    {
+        self.rights.into_iter().fold(A::from(self.left), f)
+    }
+
     pub fn ref_left(&self) -> &L {
         &self.left
     }
@@ -38,6 +46,16 @@ impl<L, R> LeftAssoc<L, R> {
         LeftAssoc {
             left: map_left(self.left),
             rights: self.rights,
+        }
+    }
+
+    pub fn map_rights<MR, R2>(self, map_right: MR) -> LeftAssoc<L, R2>
+    where
+        MR: Fn(R) -> R2,
+    {
+        LeftAssoc {
+            left: self.left,
+            rights: self.rights.into_iter().map(map_right).collect(),
         }
     }
 

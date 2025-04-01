@@ -20,8 +20,8 @@ where
     FX: Effect,
 {
     #[new(into)]
-    candidate: BoxWise<K, FX>,
-    clauses: Vec<MatchClause<K, FX>>,
+    pub candidate: BoxWise<K, FX>,
+    pub clauses: Vec<MatchClause<K, FX>>,
 }
 
 impl<K, FX> ParsableWith<ProcWiseParser<'_, K>> for Match<K, FX>

@@ -16,9 +16,9 @@ where
     K: KastProvider,
 {
     #[new(into)]
-    argpat: Pattern,
+    pub argpat: Pattern,
     #[new(into)]
-    body: BoxWise<K, PureEffect>,
+    pub body: BoxWise<K, PureEffect>,
 }
 
 impl<K> ParsableWith<ProcWiseParser<'_, K>> for FuncDef<K>

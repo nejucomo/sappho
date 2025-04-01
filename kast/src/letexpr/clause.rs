@@ -16,9 +16,9 @@ where
     FX: Effect,
 {
     #[new(into)]
-    binding: Pattern,
+    pub binding: Pattern,
     #[new(into)]
-    definition: BoxWise<K, FX>,
+    pub definition: BoxWise<K, FX>,
 }
 
 impl<K, FX, P, W> From<(P, W)> for LetClause<K, FX>

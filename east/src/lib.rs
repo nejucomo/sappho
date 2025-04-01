@@ -1,5 +1,6 @@
 mod application;
 mod expr;
+mod fromhelper;
 mod interaction;
 mod lookup;
 mod provider;
@@ -16,6 +17,10 @@ pub use crate::provider::EastProvider;
 pub type PureExpr = BoxWise<PureEffect>;
 pub type QueryExpr = BoxWise<QueryEffect>;
 pub type ProcExpr = BoxWise<ProcEffect>;
+
+pub type FuncDef = sappho_kast::FuncDef<EastProvider>;
+pub type QueryDef = sappho_kast::QueryDef<EastProvider>;
+pub type ProcDef = sappho_kast::ProcDef<EastProvider>;
 
 pub type BoxWise<FX> = sappho_kast::BoxWise<EastProvider, FX>;
 pub type Let<FX> = sappho_kast::Let<EastProvider, FX>;

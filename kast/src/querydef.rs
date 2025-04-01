@@ -12,6 +12,15 @@ pub struct QueryDef<K>(#[new(into)] BoxWise<K, QueryEffect>)
 where
     K: KastProvider;
 
+impl<K> QueryDef<K>
+where
+    K: KastProvider,
+{
+    pub fn unwrap(self) -> BoxWise<K, QueryEffect> {
+        self.0
+    }
+}
+
 impl<K> ParsableWith<ProcWiseParser<'_, K>> for QueryDef<K>
 where
     K: KastProvider,
