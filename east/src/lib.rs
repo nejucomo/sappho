@@ -1,10 +1,16 @@
+mod application;
 mod expr;
+mod interaction;
+mod lookup;
 mod provider;
 
 use sappho_effect::{ProcEffect, PureEffect, QueryEffect};
 use sappho_listform::ListForm;
 
+pub use crate::application::Application;
 pub use crate::expr::Expr;
+pub use crate::interaction::Interaction;
+pub use crate::lookup::Lookup;
 pub use crate::provider::EastProvider;
 
 pub type PureExpr = BoxWise<PureEffect>;
