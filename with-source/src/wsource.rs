@@ -34,6 +34,11 @@ impl<T> WithSource<T> {
             sourcecode: self.sourcecode,
         }
     }
+
+    /// Just return the parsed value; ignoring the source
+    pub fn ignore_source(self) -> T {
+        self.parsed
+    }
 }
 
 impl<T, E> WithSource<Result<T, E>> {

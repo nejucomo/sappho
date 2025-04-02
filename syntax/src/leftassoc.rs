@@ -23,12 +23,11 @@ impl<L, R> LeftAssoc<L, R> {
         }
     }
 
-    pub fn fold<F, A>(self, f: F) -> A
+    pub fn fold<F>(self, f: F) -> L
     where
-        A: From<L>,
-        F: Fn(A, R) -> A,
+        F: Fn(L, R) -> L,
     {
-        self.rights.into_iter().fold(A::from(self.left), f)
+        self.rights.into_iter().fold(self.left, f)
     }
 
     pub fn ref_left(&self) -> &L {

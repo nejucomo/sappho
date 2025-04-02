@@ -1,9 +1,9 @@
 use sappho_effect::Effect;
 use sappho_identifier::RcId;
 use sappho_syntax as syntax;
-use sappho_with_source::WithSource;
+use sappho_syntax::leftassoc::LeftAssoc;
 
-use crate::fromhelper::from_unwrap;
+use crate::transform::TransformInto;
 use crate::{Application, Expr, Interaction, Lookup};
 
 impl<FX> From<syntax::Expr<FX>> for Expr<FX>
@@ -11,146 +11,123 @@ where
     FX: Effect,
 {
     fn from(synex: syntax::Expr<FX>) -> Self {
+        synex.transform_into()
+    }
+}
+
+impl<FX> TransformInto<Expr<FX>> for syntax::Expr<FX>
+where
+    FX: Effect,
+{
+    fn transform_into(self) -> Expr<FX> {
         use syntax::Expr::*;
-        match synex {
-            Func(x) => Self::from(x),
-            Query(x) => Self::from(x),
-            Proc(x) => Self::from(x),
-            Let(x) => Self::from(x),
-            Match(x) => Self::from(x),
-            Applications(x) => Self::from(x),
+
+        match self {
+            Func(x) => x.transform_into().into(),
+            Query(x) => x.transform_into().into(),
+            Proc(x) => x.transform_into().into(),
+            Let(x) => x.transform_into().into(),
+            Match(x) => x.transform_into().into(),
+            Applications(x) => x.transform_into(),
         }
     }
 }
 
-impl<FX> From<syntax::FuncDef> for Expr<FX>
+impl<FX> TransformInto<Expr<FX>> for syntax::Applications<FX>
 where
     FX: Effect,
 {
-    fn from(syn: syntax::FuncDef) -> Self {
-        Self::from(syntax::ObjectDef::from(syn))
+    fn transform_into(self) -> Expr<FX> {
+        self.unwrap().transform_into()
     }
 }
 
-impl<FX> From<syntax::QueryDef> for Expr<FX>
+impl<FX> TransformInto<Expr<FX>> for (Expr<FX>, syntax::Application<FX>)
 where
     FX: Effect,
 {
-    fn from(syn: syntax::QueryDef) -> Self {
-        Self::from(syntax::ObjectDef::from(syn))
+    fn transform_into(self) -> Expr<FX> {
+        let (target, synapp) = self;
+        Application::new(target, synapp.transform_into()).into()
     }
 }
 
-impl<FX> From<syntax::ProcDef> for Expr<FX>
+impl<FX> TransformInto<Expr<FX>> for syntax::Application<FX>
 where
     FX: Effect,
 {
-    fn from(syn: syntax::ProcDef) -> Self {
-        Self::from(syntax::ObjectDef::from(syn))
+    fn transform_into(self) -> Expr<FX> {
+        self.unwrap().transform_into()
     }
 }
 
-impl<FX> From<syntax::ObjectDef<FX>> for Expr<FX>
+impl<FX> TransformInto<Expr<FX>> for syntax::Lookups<FX>
 where
     FX: Effect,
 {
-    fn from(value: syntax::ObjectDef<FX>) -> Self {
-        Self::from(from_unwrap(value))
+    fn transform_into(self) -> Expr<FX> {
+        self.unwrap().transform_into()
     }
 }
 
-impl<FX> From<syntax::Let<FX>> for Expr<FX>
+impl<FX> TransformInto<Expr<FX>> for (Expr<FX>, syntax::Lookup)
 where
     FX: Effect,
 {
-    fn from(value: syntax::Let<FX>) -> Self {
-        Self::from(from_unwrap(value))
+    fn transform_into(self) -> Expr<FX> {
+        let (target, attr) = self;
+        Lookup::new(target, RcId::from(attr)).into()
     }
 }
 
-impl<FX> From<syntax::Match<FX>> for Expr<FX>
+impl<FX, L, R> TransformInto<Expr<FX>> for LeftAssoc<L, R>
 where
     FX: Effect,
+    L: TransformInto<Expr<FX>>,
+    (Expr<FX>, R): TransformInto<Expr<FX>>,
 {
-    fn from(value: syntax::Match<FX>) -> Self {
-        Self::from(from_unwrap(value))
+    fn transform_into(self) -> Expr<FX> {
+        self.map_left(L::transform_into)
+            .fold(|east, syntax| (east, syntax).transform_into())
     }
 }
 
-impl<FX> From<syntax::Applications<FX>> for Expr<FX>
+impl<FX> TransformInto<Expr<FX>> for syntax::Interactions<FX>
 where
     FX: Effect,
 {
-    fn from(syn: syntax::Applications<FX>) -> Self {
-        syn.unwrap()
-            .map_left(Expr::from)
-            .map_rights(Expr::from)
-            .fold(|x, arg| Application::new(x, arg).into())
-    }
-}
-
-impl<FX> From<syntax::Application<FX>> for Expr<FX>
-where
-    FX: Effect,
-{
-    fn from(syn: syntax::Application<FX>) -> Self {
-        Self::from(syn.unwrap())
-    }
-}
-
-impl<FX> From<syntax::Lookups<FX>> for Expr<FX>
-where
-    FX: Effect,
-{
-    fn from(syn: syntax::Lookups<FX>) -> Self {
-        syn.unwrap()
-            .map_left(Expr::from)
-            .map_rights(RcId::from)
-            .fold(|t, attr| Lookup::new(t, attr).into())
-    }
-}
-
-impl<FX> From<syntax::Interactions<FX>> for Expr<FX>
-where
-    FX: Effect,
-{
-    fn from(syn: syntax::Interactions<FX>) -> Self {
-        syn.effects
+    fn transform_into(self) -> Expr<FX> {
+        self.effects
             .into_iter()
-            .fold(Self::from(syn.confined), |t, fx| {
-                Interaction::new(fx, t).into()
+            .fold(self.confined.transform_into(), |target, effect| {
+                Interaction::new(effect, target).into()
             })
     }
 }
 
-impl<FX> From<syntax::Confined<FX>> for Expr<FX>
+impl<FX> TransformInto<Expr<FX>> for syntax::Confined<FX>
 where
     FX: Effect,
 {
-    fn from(syn: syntax::Confined<FX>) -> Self {
+    fn transform_into(self) -> Expr<FX> {
         use syntax::Confined::*;
 
-        match syn {
-            Ref(x) => Expr::Ref(x),
-            Prim(x) => Expr::Prim(x),
-            ObjectDef(x) => Expr::from(x),
-            ListExpr(x) => Expr::from(from_unwrap(x)),
-            Parens(x) => Expr::from(x),
+        match self {
+            Ref(x) => x.into(),
+            Prim(x) => x.into(),
+            ObjectDef(x) => x.transform_into().into(),
+            ListExpr(x) => x.transform_into().into(),
+            Parens(x) => x.transform_into(),
         }
     }
 }
 
-// This is a weird hack where we throw away the inner source link:
-impl<FX> From<syntax::ParensExpr<FX>> for Expr<FX>
+/// Bug: We unwrap Wise and throw away the source link... Fix this impedance mismatch by introducing `WithSource` into syntax at the appropriate places
+impl<FX> TransformInto<Expr<FX>> for syntax::ParensExpr<FX>
 where
     FX: Effect,
 {
-    fn from(syn: syntax::ParensExpr<FX>) -> Self {
-        let syn: syntax::BoxWise<FX> = syn.unwrap();
-        let syn: Box<syntax::Wise<FX>> = syn.into();
-        let syn: syntax::Wise<FX> = *syn;
-        let syn: WithSource<syntax::Expr<FX>> = syn.unwrap();
-        let (syn, _): (syntax::Expr<FX>, _) = syn.into();
-        Self::from(syn)
+    fn transform_into(self) -> Expr<FX> {
+        self.unwrap().unwrap().unwrap().ignore_source().into()
     }
 }
