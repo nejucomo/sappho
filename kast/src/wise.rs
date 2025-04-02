@@ -1,4 +1,3 @@
-mod fromimpls;
 mod parsing;
 
 use derive_more::{Deref, From};
@@ -32,5 +31,15 @@ where
 
     pub fn unwrap(self) -> WithSource<K::Expr<FX>> {
         self.0
+    }
+}
+
+impl<K, FX> From<Wise<K, FX>> for (K::Expr<FX>, Option<SourceCodeRef>)
+where
+    K: KastProvider,
+    FX: Effect,
+{
+    fn from(value: Wise<K, FX>) -> Self {
+        value.0.into()
     }
 }

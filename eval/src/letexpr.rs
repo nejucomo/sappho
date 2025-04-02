@@ -1,26 +1,51 @@
-use sappho_east::{Expr, Let};
+use either::Either::Right;
+use sappho_east::{BoxWise, Let, LetClause};
 use sappho_effect::Effect;
+use sappho_pattern::Pattern;
+use sappho_scope::Locals;
+use sappho_value::Value;
 
-use crate::eval::Evaluatable;
-use crate::expr::ContExpr;
-use crate::step::Step;
+use crate::continuation::Continuation;
+use crate::step::{EvalNext, EvalStep, State, Step};
 
-impl<FX> Evaluatable<Step<Expr<FX>, ContExpr<FX>>> for Let<FX>
+impl<FX> EvalStep<FX> for Let<FX>
 where
     FX: Effect,
 {
-    fn eval(self) -> Step<Expr<FX>, ContExpr<FX>> {
-        let step: Step<Expr<FX>, ContLet<FX>> = self.eval();
-        step.map_continuation(ContExpr::from)
+    type Continuation = ContLet<FX>;
+
+    fn eval_step(self, state: State) -> Step<FX, Self::Continuation> {
+        StepLet {
+            locals: Locals::default(),
+            clauses: self.clauses.into_iter(),
+            inner: self.inner,
+        }
+        .eval_step(state)
     }
 }
 
-impl<FX> Evaluatable<Step<Expr<FX>, ContLet<FX>>> for Let<FX>
+#[derive(Debug)]
+pub(crate) struct StepLet<FX>
 where
     FX: Effect,
 {
-    fn eval(self) -> Step<Expr<FX>, ContLet<FX>> {
-        todo!()
+    locals: Locals,
+    clauses: <Vec<LetClause<FX>> as IntoIterator>::IntoIter,
+    inner: BoxWise<FX>,
+}
+
+impl<FX> EvalStep<FX> for StepLet<FX>
+where
+    FX: Effect,
+{
+    type Continuation = ContLet<FX>;
+
+    fn eval_step(self, state: State) -> Step<FX, Self::Continuation> {
+        if let Some(clause) = self.clauses.next() {
+            xxx
+        } else {
+            Right(EvalNext::new_ws(state, self.inner, None))
+        }
     }
 }
 
@@ -29,6 +54,23 @@ pub(crate) struct ContLet<FX>
 where
     FX: Effect,
 {
-    scope: Scope,
-    let_remaining: Let<FX>,
+    binding: Pattern,
+    steplet: StepLet<FX>,
+}
+
+impl<FX> Continuation<FX> for ContLet<FX>
+where
+    FX: Effect,
+{
+    type EvalStep = StepLet<FX>;
+
+    fn continue_eval(self, v: Value) -> Self::EvalStep {
+        let ContLet {
+            mut binding,
+            steplet,
+        } = self;
+
+        steplet.locals.bind(binding, v).unwrap();
+        steplet
+    }
 }

@@ -1,8 +1,5 @@
-use derive_more::From;
-use sappho_primval::{Num, PrimVal};
+mod valuable;
+mod value;
 
-#[derive(Clone, Debug, PartialEq, From)]
-pub enum Value {
-    #[from(PrimVal, Num)]
-    PrimVal(PrimVal),
-}
+pub use crate::valuable::Valuable;
+pub use crate::value::Value;

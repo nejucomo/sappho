@@ -23,7 +23,9 @@ pub type QueryDef = sappho_kast::QueryDef<EastProvider>;
 pub type ProcDef = sappho_kast::ProcDef<EastProvider>;
 
 pub type BoxWise<FX> = sappho_kast::BoxWise<EastProvider, FX>;
+pub type LetClause<FX> = sappho_kast::LetClause<EastProvider, FX>;
 pub type Let<FX> = sappho_kast::Let<EastProvider, FX>;
+pub type MatchClause<FX> = sappho_kast::MatchClause<EastProvider, FX>;
 pub type Match<FX> = sappho_kast::Match<EastProvider, FX>;
 pub type ObjectDef<FX> = sappho_kast::ObjectDef<EastProvider, FX>;
 pub type Wise<FX> = sappho_kast::Wise<EastProvider, FX>;

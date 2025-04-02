@@ -1,12 +1,12 @@
 use chumsky::Parser as _;
-use derive_more::From;
+use derive_more::{From, Into};
 use sappho_identifier::RcId;
 use sappho_parsable::{Parsable as _, ParsableWith, Parser, Recursive};
 use sappho_unparse::{Stream, Unparse};
 
 use crate::Pattern;
 
-#[derive(Clone, Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From, Into)]
 #[from(RcId, &'static str)]
 pub struct BindPattern(RcId);
 

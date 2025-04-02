@@ -66,3 +66,13 @@ where
         Box::restrict(src.0).map(BoxWise)
     }
 }
+
+impl<K, FX> From<BoxWise<K, FX>> for (K::Expr<FX>, Option<SourceCodeRef>)
+where
+    K: KastProvider,
+    FX: Effect,
+{
+    fn from(value: BoxWise<K, FX>) -> Self {
+        (*value.0).into()
+    }
+}

@@ -59,4 +59,10 @@ mod parsing {
             }
         }
     }
+
+    impl std::fmt::Display for PrimVal {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            self.unparse().fmt(f)
+        }
+    }
 }

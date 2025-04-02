@@ -6,3 +6,11 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+derive-new.workspace = true
+sappho-attrs.workspace = true
+sappho-listform.workspace = true
+sappho-list.workspace = true
+sappho-pattern.workspace = true
+sappho-primval.workspace = true
+sappho-value.workspace = true
+thiserror.workspace = true
