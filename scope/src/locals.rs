@@ -39,7 +39,10 @@ impl BindValue for Pattern {
 
 impl BindValue for BindPattern {
     fn bind_value(self, locals: &mut Locals, value: Value) -> BindResult<()> {
-        locals.0.define(self, value)?;
+        locals
+            .0
+            .define(self, value)
+            .map_err(|e| e.into().with(value))?;
         Ok(())
     }
 }

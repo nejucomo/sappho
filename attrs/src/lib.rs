@@ -3,4 +3,4 @@ mod error;
 mod parsable;
 
 pub use crate::attrs::Attrs;
-pub use crate::error::AttrsError;
+pub use crate::error::{AttrsError, Redefinition};

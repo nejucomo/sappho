@@ -1,26 +1,34 @@
 use std::fmt;
 
 use derive_more::From;
-use sappho_attrs::AttrsError;
 use sappho_identifier::RcId;
+use sappho_list::List;
 use sappho_primval::{Num, PrimVal};
 
-use crate::Valuable;
+use crate::{VResult, Valuable};
 
 use self::Value::*;
 
 #[derive(Clone, Debug, PartialEq, From)]
 pub enum Value {
     #[from(PrimVal, Num)]
-    Prim(PrimVal),
+    VPrim(PrimVal),
     #[from]
-    List(sappho_list::List<Value>),
+    VList(List<Value>),
 }
 
 impl Valuable for Value {
-    fn attr_lookup<'s>(&'s self, name: &RcId) -> Result<&'s Value, AttrsError> {
+    fn attr_lookup<'s>(&'s self, name: &RcId) -> VResult<&'s Value> {
         match self {
-            Prim(x) => x.attr_lookup(name),
+            VPrim(x) => x.attr_lookup(name),
+            VList(x) => x.attr_lookup(name),
+        }
+    }
+
+    fn as_list(&self) -> VResult<&List<Value>> {
+        match self {
+            VPrim(x) => x.as_list(),
+            VList(x) => x.as_list(),
         }
     }
 }
@@ -28,7 +36,8 @@ impl Valuable for Value {
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Prim(x) => (*x).fmt(f),
+            VPrim(x) => (*x).fmt(f),
+            VList(x) => x.fmt(f),
         }
     }
 }

@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_new::new;
@@ -12,7 +14,10 @@ use sappho_unparse::{Stream, Unparse};
 use crate::{Element, IntoIter, Unbundled};
 
 #[derive(Clone, Debug, PartialEq, new)]
-pub struct Object<F, Q, P, A> {
+pub struct Object<F, Q, P, A>
+where
+    A: Debug,
+{
     #[new(into)]
     f: Option<F>,
     #[new(into)]
@@ -23,13 +28,19 @@ pub struct Object<F, Q, P, A> {
     a: Attrs<A>,
 }
 
-impl<F, Q, P, A> Default for Object<F, Q, P, A> {
+impl<F, Q, P, A> Default for Object<F, Q, P, A>
+where
+    A: Debug,
+{
     fn default() -> Self {
         Object::new(None, None, None, Attrs::default())
     }
 }
 
-impl<F, Q, P, A> Object<F, Q, P, A> {
+impl<F, Q, P, A> Object<F, Q, P, A>
+where
+    A: Debug,
+{
     pub fn new_func(func: F) -> Self {
         Self::new(Some(func), None, None, Attrs::default())
     }
@@ -113,6 +124,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
         tattr: TA,
     ) -> Object<FR, QR, PR, AR>
     where
+        AR: Debug,
         TF: FnOnce(F) -> FR,
         TQ: FnOnce(Q) -> QR,
         TP: FnOnce(P) -> PR,
@@ -128,6 +140,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
 
     pub fn into_try_map_values<TA, DA, E>(self, tattr: TA) -> Result<Object<F, Q, P, DA>, E>
     where
+        DA: Debug,
         TA: Fn(A) -> Result<DA, E>,
     {
         let mut dsta = Attrs::default();
@@ -148,7 +161,10 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
     }
 }
 
-impl<F, Q, P, A> IntoIterator for Object<F, Q, P, A> {
+impl<F, Q, P, A> IntoIterator for Object<F, Q, P, A>
+where
+    A: Debug,
+{
     type Item = Element<F, Q, P, A>;
     type IntoIter = IntoIter<F, Q, P, A>;
 
@@ -163,7 +179,10 @@ impl<F, Q, P, A> IntoIterator for Object<F, Q, P, A> {
     }
 }
 
-impl<F, Q, P, A> TryFromIterator<Element<F, Q, P, A>> for Object<F, Q, P, A> {
+impl<F, Q, P, A> TryFromIterator<Element<F, Q, P, A>> for Object<F, Q, P, A>
+where
+    A: Debug,
+{
     type Error = String;
 
     fn try_append(mut self, elem: Element<F, Q, P, A>) -> Result<Self, Self::Error> {
@@ -196,7 +215,10 @@ impl<F, Q, P, A> TryFromIterator<Element<F, Q, P, A>> for Object<F, Q, P, A> {
     }
 }
 
-impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>, String> {
+impl<F, Q, P, A> FromIterator<Element<F, Q, P, A>> for Result<Object<F, Q, P, A>, String>
+where
+    A: Debug,
+{
     fn from_iter<I>(iter: I) -> Self
     where
         I: IntoIterator<Item = Element<F, Q, P, A>>,
@@ -215,7 +237,7 @@ where
     F: ParsableWith<ParseParam>,
     Q: ParsableWith<ParseParam>,
     P: ParsableWith<ParseParam>,
-    A: ParsableWith<ParseParam>,
+    A: ParsableWith<ParseParam> + Debug,
 {
     fn make_parser_with(param: ParseParam) -> impl Parser<Self> {
         bracketed(
@@ -232,7 +254,7 @@ where
     F: Unparse,
     Q: Unparse,
     P: Unparse,
-    A: Unparse,
+    A: Unparse + Debug,
 {
     fn unparse_into(&self, s: &mut Stream) {
         use sappho_unparse::Brackets::Squiggle;
@@ -267,7 +289,8 @@ where
 
 impl<F, Q, P, AS, AT> RestrictFrom<Object<F, Q, P, AS>> for Object<F, Q, P, AT>
 where
-    AT: RestrictFrom<AS>,
+    AS: Debug,
+    AT: RestrictFrom<AS> + Debug,
 {
     fn restrict(src: Object<F, Q, P, AS>) -> Result<Self, Restriction> {
         src.into_try_map_values(|asrc| AT::restrict(asrc))

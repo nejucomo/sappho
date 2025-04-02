@@ -11,3 +11,4 @@ sappho-attrs.workspace = true
 sappho-identifier.workspace = true
 sappho-list.workspace = true
 sappho-primval.workspace = true
+thiserror.workspace = true

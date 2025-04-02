@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use sappho_identifier::RcId;
@@ -11,7 +13,7 @@ use crate::Attrs;
 impl<P, T> ParsableWith<P> for Attrs<T>
 where
     P: Parser<T>,
-    T: Unparse + std::fmt::Debug,
+    T: Unparse + Debug,
 {
     fn make_parser_with(attr: P) -> impl Parser<Self> {
         bracketed(
@@ -28,7 +30,7 @@ where
 
 impl<T> Unparse for Attrs<T>
 where
-    T: Unparse,
+    T: Unparse + Debug,
 {
     fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
         use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};

@@ -1,13 +1,12 @@
-use sappho_attrs::AttrsError;
 use sappho_primval::PrimVal;
-use sappho_value::Value;
+use sappho_value::{Value, ValueError};
 
 pub type BindResult<T> = Result<T, BindError>;
 
 #[derive(Debug, thiserror::Error)]
 pub enum BindError {
     #[error(transparent)]
-    AttrsError(#[from] AttrsError),
+    ValueError(#[from] ValueError),
     #[error("literal pattern mismatch: expected {0}, found {0}")]
     LitEqFailed(PrimVal, Value),
 }
