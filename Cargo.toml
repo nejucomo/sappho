@@ -22,7 +22,7 @@ members = [
   "syntax",
   "tfi",
   "unparse",
-#   "value",
+  "value",
   "with-source",
 ]
 
@@ -72,7 +72,7 @@ sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
 sappho-tfi = { path = "tfi" }
 sappho-unparse = { path = "unparse" }
-# sappho-value = { path = "value" }
+sappho-value = { path = "value" }
 sappho-with-source = { path = "with-source" }
 simplelog = "0.12.0"
 syn = "2.0.100"
