@@ -6,16 +6,3 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-derive_more.workspace = true
-log.workspace = true
-sappho-ast-kernel.workspace = true
-sappho-effect.workspace = true
-sappho-ast-red.workspace = true
-sappho-ast-rich.workspace = true
-sappho-identifier.workspace = true
-sappho-listform.workspace = true
-sappho-unparse.workspace = true
-sappho-value.workspace = true
-
-[dev-dependencies]
-sappho-parser.workspace = true

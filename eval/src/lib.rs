@@ -1,17 +1,14 @@
-//! Low level evaluation of Abstract-Syntax-Tree (AST) expressions via [eval()].
-//!
-//! For a high-level parse-and-eval functionality, use `sappho-interpreter`.
+pub fn add(left: u64, right: u64) -> u64 {
+    left + right
+}
 
-mod error;
-mod eval;
-mod expr;
-mod thunk;
-mod traits;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-pub use self::error::{Error, Result};
-pub use self::eval::eval;
-
-/// A gc-aware reference to a value. See [sappho_value] crate for more detail.
-pub use sappho_value::ValRef;
-
-pub(crate) use self::traits::{Eval, EvalThunk, EvalV};
+    #[test]
+    fn it_works() {
+        let result = add(2, 2);
+        assert_eq!(result, 4);
+    }
+}
