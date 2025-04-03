@@ -8,7 +8,9 @@ homepage.workspace = true
 [dependencies]
 derive_more.workspace = true
 sappho-attrs.workspace = true
+sappho-east.workspace = true
 sappho-identifier.workspace = true
 sappho-list.workspace = true
+sappho-object.workspace = true
 sappho-primval.workspace = true
 thiserror.workspace = true

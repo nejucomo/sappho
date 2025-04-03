@@ -14,6 +14,8 @@ use crate::{AttrsError, Redefinition};
 pub struct Attrs<T>(BTreeMap<RcId, T>);
 
 /// TODO: Change the `&IdentRef` looksup to `&RcId` after introducing an Identifier "interning" facility.
+///
+/// TODO: overhaul errors and apis
 impl<T> Attrs<T>
 where
     T: Debug,
