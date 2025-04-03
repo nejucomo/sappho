@@ -1,21 +1,20 @@
 use derive_new::new;
+use sappho_value::Scope;
 
-use crate::Scope;
-
-#[derive(Clone, Debug, new)]
-pub struct Scoped<T> {
-    pub scope: Scope,
-    pub node: T,
+#[derive(Debug, new)]
+pub(crate) struct Scoped<T> {
+    pub(crate) scope: Scope,
+    pub(crate) node: T,
 }
 
 impl<T> From<T> for Scoped<T> {
     fn from(node: T) -> Self {
-        Scoped::new(Scope::default(), node)
+        Self::new(Scope::default(), node)
     }
 }
 
 impl<T> Scoped<T> {
-    pub fn map<F, U>(self, f: F) -> Scoped<U>
+    pub(crate) fn map<F, U>(self, f: F) -> Scoped<U>
     where
         F: FnOnce(T) -> U,
     {

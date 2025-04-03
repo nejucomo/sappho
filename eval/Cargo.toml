@@ -15,7 +15,6 @@ sappho-effect.workspace = true
 sappho-identifier.workspace = true
 sappho-pattern.workspace = true
 sappho-primval.workspace = true
-sappho-scope.workspace = true
 sappho-source.workspace = true
 sappho-value.workspace = true
 sappho-with-source.workspace = true

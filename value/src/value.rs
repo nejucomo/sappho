@@ -23,6 +23,7 @@ impl Valuable for Value {
     fn attr_lookup<'s>(&'s self, name: &RcId) -> VResult<&'s Value> {
         match self {
             VPrim(x) => x.attr_lookup(name),
+            VObj(_) => todo!(),
             VList(x) => x.attr_lookup(name),
         }
     }
@@ -30,6 +31,7 @@ impl Valuable for Value {
     fn as_list(&self) -> VResult<&List<Value>> {
         match self {
             VPrim(x) => x.as_list(),
+            VObj(_) => todo!(),
             VList(x) => x.as_list(),
         }
     }
@@ -39,6 +41,7 @@ impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             VPrim(x) => (*x).fmt(f),
+            VObj(_) => todo!(),
             VList(x) => x.fmt(f),
         }
     }

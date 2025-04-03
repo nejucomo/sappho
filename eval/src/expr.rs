@@ -1,11 +1,11 @@
 use derive_more::From;
 use sappho_east::{Expr, Wise};
 use sappho_effect::Effect;
-use sappho_scope::Scoped;
 use sappho_value::Value;
 
 use crate::evco::{Continuation, Eval};
 use crate::letexpr::LetCont;
+use crate::scoped::Scoped;
 use crate::step::Step;
 
 #[derive(Debug, From)]
@@ -30,7 +30,7 @@ where
             Prim(x) => Produce(x.into()),
             Ref(x) => Produce(self.scope.get(&x).unwrap().clone()),
             ObjectDef(x) => todo!(),
-            Let(x) => self.scope.wrap(x).eval_step().cont_from(),
+            Let(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
             other => todo!("{other:?}"),
         }
     }

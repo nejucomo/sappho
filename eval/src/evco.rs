@@ -1,10 +1,10 @@
 use sappho_east::{BoxWise, Expr, Wise};
 use sappho_effect::Effect;
-use sappho_scope::Scoped;
 use sappho_value::Value;
 use sappho_with_source::WithSource;
 
 use crate::expr::ExprCont;
+use crate::scoped::Scoped;
 use crate::step::Step;
 
 pub(crate) trait Eval<FX>: Sized

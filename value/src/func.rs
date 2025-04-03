@@ -1,10 +1,9 @@
-use sappho_attrs::Attrs;
 use sappho_east::FuncDef;
 
-use crate::Value;
+use crate::Scope;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Func {
-    closure: Attrs<Value>,
+    closure: Scope,
     fdef: FuncDef,
 }

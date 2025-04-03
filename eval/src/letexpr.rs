@@ -1,10 +1,10 @@
 use sappho_east::{Let, LetClause, Wise};
 use sappho_effect::Effect;
 use sappho_pattern::Pattern;
-use sappho_scope::{Locals, Scope, Scoped};
-use sappho_value::Value;
+use sappho_value::{Locals, Scope, Value};
 
 use crate::evco::{Continuation, Eval};
+use crate::scoped::Scoped;
 use crate::step::Step::{self, Continue};
 
 type ClauseIter<FX> = <Vec<LetClause<FX>> as IntoIterator>::IntoIter;
