@@ -1,3 +1,4 @@
+mod bind;
 mod error;
 mod func;
 mod object;

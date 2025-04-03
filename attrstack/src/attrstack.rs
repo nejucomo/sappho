@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use sappho_attrs::Attrs;
+use sappho_attrs::{Attrs, Missing};
 use sappho_identifier::RcId;
 use sappho_list::List;
 
@@ -26,13 +26,13 @@ where
         AttrStack(self.0.prepend(locals))
     }
 
-    pub fn get(&self, key: &RcId) -> Option<&T> {
+    pub fn get(&self, key: &RcId) -> Result<&T, Missing> {
         for attrs in self.0.iter() {
-            let sv = attrs.get_opt(key);
-            if sv.is_some() {
+            let sv = attrs.get(key);
+            if sv.is_ok() {
                 return sv;
             }
         }
-        None
+        Err(Missing::from(key))
     }
 }
