@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 
@@ -72,19 +73,7 @@ where
         self.try_with(id, val).unwrap()
     }
 
-    /// Get an output for any key, `K`, which includes `&IdentRef`
-    ///
-    /// Three common impls are `&IdentRef`, `&'static str`, and `(k1, k2)` which is a tuple of keys.
-    ///
-    /// For non-tuple keys, the output is just `&T`. For tuple keys the output is a tuple of the sub-key outputs.
-    ///
-    /// # Panics
-    ///
-    /// A `&'static str` key must be valid as an [IdentRef] and will cause a panic if not.
-    ///
-    /// # Performance
-    ///
-    /// This method is `self.as_refs().take(key)` which is nicely composable and terribly inefficient.
+    /// Refer to the item stored at `key`
     pub fn get<K>(&self, key: K) -> AttrsResult<&T, T>
     where
         RcId: From<K>,
@@ -92,9 +81,15 @@ where
         with_id(key, |id| self.0.get(id))
     }
 
+    /// Refer to the item stored at `key`
+    pub fn get_opt<K>(&self, key: K) -> Option<&T>
+    where
+        K: Borrow<RcId>,
+    {
+        self.0.get(key.borrow())
+    }
+
     /// Take the value(s) for the given `key`
-    ///
-    /// See [Attrs::get] for the semantics of keys, their outputs, and panic conditions. However, the performance issue of [Attrs::get] is not present here.
     pub fn take<K>(&mut self, key: K) -> AttrsResult<T, T>
     where
         RcId: From<K>,

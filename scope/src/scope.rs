@@ -1,4 +1,6 @@
+use sappho_identifier::RcId;
 use sappho_list::List;
+use sappho_value::Value;
 
 use crate::{Locals, Scoped};
 
@@ -12,5 +14,15 @@ impl Scope {
 
     pub fn push_locals(self, locals: Locals) -> Self {
         Scope(self.0.prepend(locals))
+    }
+
+    pub fn get(&self, key: &RcId) -> Option<&Value> {
+        for locals in self.0.iter() {
+            let sv = locals.get(key);
+            if sv.is_some() {
+                return sv;
+            }
+        }
+        None
     }
 }

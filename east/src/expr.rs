@@ -15,9 +15,9 @@ where
     FX: Effect,
 {
     #[from]
-    Ref(RcId),
-    #[from]
     Prim(PrimVal),
+    #[from]
+    Ref(RcId),
     #[from(
         ObjectDef<FX>,
         FuncDef,

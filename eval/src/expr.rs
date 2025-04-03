@@ -28,8 +28,9 @@ where
 
         match self.node {
             Prim(x) => Produce(x.into()),
+            Ref(x) => Produce(self.scope.get(&x).unwrap().clone()),
             Let(x) => self.scope.wrap(x).eval_step().cont_from(),
-            _ => todo!(),
+            other => todo!("{other:?}"),
         }
     }
 }

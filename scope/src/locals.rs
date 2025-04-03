@@ -1,5 +1,6 @@
 use either::Either::{Left, Right};
 use sappho_attrs::Attrs;
+use sappho_identifier::RcId;
 use sappho_listform::ListForm;
 use sappho_pattern::{BindPattern, Pattern};
 use sappho_primval::PrimVal;
@@ -16,6 +17,10 @@ pub struct Locals(Attrs<Value>);
 impl Locals {
     pub fn bind(&mut self, binding: Pattern, value: Value) -> BindResult<()> {
         binding.bind_value(self, value)
+    }
+
+    pub fn get(&self, key: &RcId) -> Option<&Value> {
+        self.0.get_opt(key)
     }
 }
 
