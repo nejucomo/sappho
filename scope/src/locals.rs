@@ -1,8 +1,9 @@
+use either::Either::{Left, Right};
 use sappho_attrs::Attrs;
 use sappho_listform::ListForm;
 use sappho_pattern::{BindPattern, Pattern};
 use sappho_primval::PrimVal;
-use sappho_value::{Valuable, Value};
+use sappho_value::{Valuable, Value, ValueError};
 
 use crate::{BindError, BindResult};
 
@@ -13,10 +14,8 @@ use crate::{BindError, BindResult};
 pub struct Locals(Attrs<Value>);
 
 impl Locals {
-    pub fn from_binding(binding: Pattern, value: Value) -> BindResult<Self> {
-        let mut myself = Locals::default();
-        binding.bind_value(&mut myself, value)?;
-        Ok(myself)
+    pub fn bind(&mut self, binding: Pattern, value: Value) -> BindResult<()> {
+        binding.bind_value(self, value)
     }
 }
 
@@ -42,7 +41,7 @@ impl BindValue for BindPattern {
         locals
             .0
             .define(self, value)
-            .map_err(|e| e.into().with(value))?;
+            .map_err(|e| ValueError::try_from(e).unwrap())?;
         Ok(())
     }
 }
@@ -69,6 +68,25 @@ impl BindValue for Attrs<Pattern> {
 
 impl BindValue for ListForm<Pattern, BindPattern> {
     fn bind_value(self, locals: &mut Locals, value: Value) -> BindResult<()> {
-        xxx
+        let lval = value.as_list()?;
+        let mut it = lval.iter();
+        let mut optail = None;
+        for (ei, v) in self.into_iter().zip(it.by_ref()) {
+            match ei {
+                Left(pat) => pat.bind_value(locals, v.clone())?,
+                Right(pat) => {
+                    optail = Some(pat);
+                    break;
+                }
+            }
+        }
+
+        let tail = it.into();
+
+        if let Some(pat) = optail {
+            pat.bind_value(locals, Value::from(tail))
+        } else {
+            Err(BindError::UnboundTail(tail))
+        }
     }
 }

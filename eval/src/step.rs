@@ -1,60 +1,38 @@
-use derive_new::new;
-use either::Either::{self, Right};
-use sappho_east::Expr;
-use sappho_effect::Effect;
-use sappho_scope::Scope;
-use sappho_source::SourceCodeRef;
 use sappho_value::Value;
-use sappho_with_source::WithSource;
 
-use crate::continuation::Continuation;
+use self::Step::*;
 
-pub(crate) type State = WithSource<Scope>;
-
-pub(crate) trait EvalStep<FX>
-where
-    FX: Effect,
-{
-    type Continuation: Continuation<FX>;
-
-    fn eval_step(self, state: State) -> Step<FX, Self::Continuation>;
+#[derive(Debug)]
+pub(crate) enum Step<X, C> {
+    Produce(Value),
+    Continue(X, Option<C>),
 }
 
-pub(crate) type Step<FX, C> = Either<Value, EvalNext<FX, C>>;
+impl<X, C> Step<X, C> {
+    // pub(crate) fn map_node<F, X2>(self, f: F) -> Step<X2, C>
+    // where
+    //     F: FnOnce(X) -> X2,
+    // {
+    //     match self {
+    //         Produce(v) => Produce(v),
+    //         Continue(x, c) => Continue(f(x), c),
+    //     }
+    // }
 
-#[derive(Debug, new)]
-pub(crate) struct EvalNext<FX, C>
-where
-    FX: Effect,
-{
-    state: State,
-    expr: Expr<FX>,
-    cont: Option<C>,
-}
-
-impl<FX, C> EvalNext<FX, C>
-where
-    FX: Effect,
-{
-    pub(crate) fn new_ws<T>(state: State, withsrc: T, cont: Option<C>) -> Self
+    pub(crate) fn map_cont<F, C2>(self, f: F) -> Step<X, C2>
     where
-        T: Into<(Expr<FX>, Option<SourceCodeRef>)>,
+        F: FnOnce(C) -> C2,
     {
-        let (scope, _) = state.into();
-        let (expr, sourcecode) = withsrc.into();
-        Self::new(WithSource::new(scope, sourcecode), expr, cont)
+        match self {
+            Produce(v) => Produce(v),
+            Continue(x, optc) => Continue(x, optc.map(f)),
+        }
     }
 
-    pub(crate) fn wrap_continuation<C2>(self) -> Step<FX, C2>
+    pub(crate) fn cont_from<C2>(self) -> Step<X, C2>
     where
         C2: From<C>,
     {
-        let EvalNext { state, expr, cont } = self;
-
-        Right(EvalNext {
-            state,
-            expr,
-            cont: cont.map(C2::from),
-        })
+        self.map_cont(C2::from)
     }
 }

@@ -1,46 +1,48 @@
 use derive_more::From;
-use sappho_east::Expr;
+use sappho_east::{Expr, Wise};
 use sappho_effect::Effect;
-use sappho_scope::{Scope, Scoped};
+use sappho_scope::Scoped;
 use sappho_value::Value;
 
-use crate::continuation::Continuation;
-use crate::letexpr::ContLet;
-use crate::step::{EvalStep, State, Step};
+use crate::evco::{Continuation, Eval};
+use crate::letexpr::LetCont;
+use crate::step::Step;
 
-impl<FX> EvalStep<FX> for Expr<FX>
+#[derive(Debug, From)]
+pub(crate) enum ExprCont<FX>
 where
     FX: Effect,
 {
-    type Continuation = ContExpr<FX>;
+    Let(LetCont<FX>),
+}
 
-    fn eval_step(self, state: State) -> Step<FX, Self::Continuation> {
+impl<FX> Eval<FX> for Scoped<Expr<FX>>
+where
+    FX: Effect,
+{
+    type Continuation = ExprCont<FX>;
+
+    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
         use Expr::*;
+        use Step::*;
 
-        match self {
-            Prim(x) => x.into(),
-            Let(x) => x.eval(state).wrap_continuation(),
+        match self.node {
+            Prim(x) => Produce(x.into()),
+            Let(x) => self.scope.wrap(x).eval_step().cont_from(),
+            _ => todo!(),
         }
     }
 }
 
-#[derive(Debug, From)]
-pub(crate) enum ContExpr<FX>
+impl<FX> Continuation<FX> for ExprCont<FX>
 where
     FX: Effect,
 {
-    Let(ContLet<FX>),
-}
+    fn eval_from_value(self, v: Value) -> Step<Scoped<Wise<FX>>, Self> {
+        use ExprCont::*;
 
-impl<FX> Continuation<FX> for ContExpr<FX>
-where
-    FX: Effect,
-{
-    fn continue_eval(self, v: Value) -> Step<FX, Self> {
-        use ContExpr::*;
-
-        match node {
-            Let(x) => x.continue_eval(v),
+        match self {
+            Let(x) => x.eval_from_value(v).cont_from(),
         }
     }
 }

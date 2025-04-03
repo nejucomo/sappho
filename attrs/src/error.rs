@@ -25,9 +25,9 @@ impl<T> From<Infallible> for AttrsError<T> {
 }
 
 #[derive(Clone, Debug, Error, new)]
-#[error("attempt to redefine attr {attr}; existing {old:?}; new {new:?}")]
+#[error("attempt to redefine attr {attr}; existing {existing:?}; new {new:?}")]
 pub struct Redefinition<T> {
-    attr: RcId,
-    old: T,
-    new: T,
+    pub attr: RcId,
+    pub existing: T,
+    pub new: T,
 }

@@ -1,31 +1,34 @@
 use sappho_east::Wise;
-use sappho_effect::ProcEffect;
-use sappho_scope::Scope;
+use sappho_effect::PureEffect;
 use sappho_value::Value;
 
-use crate::expr::ContExpr;
+use crate::evco::{Continuation, Eval};
+use crate::expr::ExprCont;
 use crate::step::Step;
 
 pub fn eval<X>(expr: X) -> Value
 where
-    X: Into<Wise<ProcEffect>>,
+    X: Into<Wise<PureEffect>>,
 {
-    let (expr, sourcecode) = expr.into().unwrap().into();
-    let mut stack: Vec<ContExpr<ProcEffect>> = vec![];
-    let mut step = expr.eval_step(sourcecode, Scope::default());
+    use Step::*;
+
+    let mut stack: Vec<ExprCont<PureEffect>> = vec![];
+    let mut step = expr.into().eval_step();
 
     loop {
         match step {
-            Step::Value(v) => {
+            Produce(v) => {
                 if let Some(cont) = stack.pop() {
-                    step = cont.eval_step(v);
+                    step = cont.eval_from_value(v);
                 } else {
                     return v;
                 }
             }
-            Step::Continue(scope, next, cont) => {
-                stack.push(cont);
-                step = next.eval_step(scope);
+            Continue(next, optcont) => {
+                if let Some(cont) = optcont {
+                    stack.push(cont);
+                }
+                step = next.eval_step();
             }
         }
     }

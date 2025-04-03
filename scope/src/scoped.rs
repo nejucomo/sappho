@@ -13,3 +13,15 @@ impl<T> From<T> for Scoped<T> {
         Scoped::new(Scope::default(), node)
     }
 }
+
+impl<T> Scoped<T> {
+    pub fn map<F, U>(self, f: F) -> Scoped<U>
+    where
+        F: FnOnce(T) -> U,
+    {
+        Scoped {
+            scope: self.scope,
+            node: f(self.node),
+        }
+    }
+}

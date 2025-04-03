@@ -44,8 +44,9 @@ fn attrs<I, K, S, T>(items: I) -> Attrs<T>
 where
     I: IntoIterator<Item = (K, S)>,
     RcId: TryFrom<K>,
-    sappho_attrs::AttrsError: From<<RcId as TryFrom<K>>::Error>,
+    sappho_attrs::AttrsError<T>: From<<RcId as TryFrom<K>>::Error>,
     S: Into<T>,
+    T: std::fmt::Debug,
 {
     Attrs::try_from_iterator(items.into_iter().map(|(k, v)| (k, v.into()))).unwrap()
 }

@@ -1,76 +1,92 @@
-use either::Either::Right;
-use sappho_east::{BoxWise, Let, LetClause};
+use sappho_east::{Let, LetClause, Wise};
 use sappho_effect::Effect;
 use sappho_pattern::Pattern;
-use sappho_scope::Locals;
+use sappho_scope::{Locals, Scope, Scoped};
 use sappho_value::Value;
 
-use crate::continuation::Continuation;
-use crate::step::{EvalNext, EvalStep, State, Step};
+use crate::evco::{Continuation, Eval};
+use crate::step::Step::{self, Continue};
 
-impl<FX> EvalStep<FX> for Let<FX>
-where
-    FX: Effect,
-{
-    type Continuation = ContLet<FX>;
+type ClauseIter<FX> = <Vec<LetClause<FX>> as IntoIterator>::IntoIter;
 
-    fn eval_step(self, state: State) -> Step<FX, Self::Continuation> {
-        StepLet {
-            locals: Locals::default(),
-            clauses: self.clauses.into_iter(),
-            inner: self.inner,
-        }
-        .eval_step(state)
-    }
-}
-
+/// # BUGs
+///
+/// - BUG: this evaluates in the containing lexical scope, which prevents sequential value composition and (single or mutual) recursion.
 #[derive(Debug)]
-pub(crate) struct StepLet<FX>
-where
-    FX: Effect,
-{
-    locals: Locals,
-    clauses: <Vec<LetClause<FX>> as IntoIterator>::IntoIter,
-    inner: BoxWise<FX>,
-}
-
-impl<FX> EvalStep<FX> for StepLet<FX>
-where
-    FX: Effect,
-{
-    type Continuation = ContLet<FX>;
-
-    fn eval_step(self, state: State) -> Step<FX, Self::Continuation> {
-        if let Some(clause) = self.clauses.next() {
-            xxx
-        } else {
-            Right(EvalNext::new_ws(state, self.inner, None))
-        }
-    }
-}
-
-#[derive(Debug)]
-pub(crate) struct ContLet<FX>
+pub(crate) struct LetCont<FX>
 where
     FX: Effect,
 {
     binding: Pattern,
-    steplet: StepLet<FX>,
+    state: State<FX>,
 }
 
-impl<FX> Continuation<FX> for ContLet<FX>
+#[derive(Debug)]
+struct State<FX>
 where
     FX: Effect,
 {
-    type EvalStep = StepLet<FX>;
+    scope: Scope,
+    locals: Locals,
+    clauses: ClauseIter<FX>,
+    inner: Wise<FX>,
+}
 
-    fn continue_eval(self, v: Value) -> Self::EvalStep {
-        let ContLet {
-            mut binding,
-            steplet,
-        } = self;
+impl<FX> Eval<FX> for Scoped<Let<FX>>
+where
+    FX: Effect,
+{
+    type Continuation = LetCont<FX>;
 
-        steplet.locals.bind(binding, v).unwrap();
-        steplet
+    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+        let state = State::from(self);
+        state.step()
+    }
+}
+
+impl<FX> Continuation<FX> for LetCont<FX>
+where
+    FX: Effect,
+{
+    fn eval_from_value(mut self, v: Value) -> Step<Scoped<Wise<FX>>, Self> {
+        self.state.locals.bind(self.binding, v).unwrap();
+        self.state.step()
+    }
+}
+
+impl<FX> From<Scoped<Let<FX>>> for State<FX>
+where
+    FX: Effect,
+{
+    fn from(sclet: Scoped<Let<FX>>) -> Self {
+        State {
+            scope: sclet.scope,
+            locals: Locals::default(),
+            clauses: sclet.node.clauses.into_iter(),
+            inner: sclet.node.inner.unwrap(),
+        }
+    }
+}
+
+impl<FX> State<FX>
+where
+    FX: Effect,
+{
+    fn step(mut self) -> Step<Scoped<Wise<FX>>, LetCont<FX>> {
+        if let Some(LetClause {
+            binding,
+            definition,
+        }) = self.clauses.next()
+        {
+            Continue(
+                self.scope.clone().wrap(definition.unwrap()),
+                Some(LetCont {
+                    binding,
+                    state: self,
+                }),
+            )
+        } else {
+            Continue(self.scope.wrap(self.inner), None)
+        }
     }
 }
