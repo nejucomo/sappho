@@ -2,6 +2,7 @@ use std::fmt;
 use std::rc::Rc;
 
 use derive_more::{Deref, From};
+use derive_new::new;
 use sappho_attrs::errors::Missing;
 use sappho_east::{FuncDef, ProcDef, QueryDef};
 use sappho_identifier::RcId;
@@ -10,13 +11,15 @@ use sappho_object::Object;
 use crate::{Scope, VResult, Valuable, Value};
 
 #[derive(Clone, Debug, PartialEq, From, Deref)]
+#[from(ObjectVal)]
 #[deref(forward)]
 pub struct ObjectRc(Rc<ObjectVal>);
 
-#[derive(Clone, Debug, PartialEq, Deref)]
+#[derive(Clone, Debug, PartialEq, Deref, From, new)]
 pub struct ObjectVal {
     closure: Scope,
     #[deref]
+    #[new(into)]
     obj: Object<FuncDef, QueryDef, ProcDef, Value>,
 }
 

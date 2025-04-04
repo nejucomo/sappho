@@ -2,6 +2,7 @@ use std::fmt::Debug;
 
 use chumsky::prelude::just;
 use chumsky::Parser as _;
+use derive_more::{From, Into};
 use derive_new::new;
 
 use sappho_attrs::Attrs;
@@ -13,7 +14,7 @@ use sappho_unparse::{Stream, Unparse};
 
 use crate::{Element, IntoIter, Unbundled};
 
-#[derive(Clone, Debug, PartialEq, new)]
+#[derive(Clone, Debug, PartialEq, From, Into, new)]
 pub struct Object<F, Q, P, A>
 where
     A: Debug,

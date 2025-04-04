@@ -8,6 +8,7 @@ homepage.workspace = true
 [dependencies]
 chumsky.workspace = true
 derive-new.workspace = true
+derive_more.workspace = true
 sappho-attrs.workspace = true
 sappho-identifier.workspace = true
 sappho-parsable.workspace = true

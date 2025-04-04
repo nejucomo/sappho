@@ -6,7 +6,7 @@ use sappho_identifier::RcId;
 use sappho_list::List;
 use sappho_primval::{Num, PrimVal};
 
-use crate::{AsError, ObjectRc, VResult, Valuable};
+use crate::{AsError, ObjectRc, ObjectVal, VResult, Valuable};
 
 use self::Value::*;
 
@@ -14,7 +14,7 @@ use self::Value::*;
 pub enum Value {
     #[from(PrimVal, Num)]
     VPrim(PrimVal),
-    #[from]
+    #[from(ObjectRc, ObjectVal)]
     VObj(ObjectRc),
     #[from]
     VList(List<Value>),

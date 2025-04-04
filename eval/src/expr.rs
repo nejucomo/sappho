@@ -5,6 +5,7 @@ use sappho_value::Value;
 
 use crate::evco::{Continuation, Eval};
 use crate::letexpr::LetCont;
+use crate::objectdef::ObjDefCont;
 use crate::scoped::Scoped;
 use crate::step::Step;
 
@@ -14,6 +15,7 @@ where
     FX: Effect,
 {
     Let(LetCont<FX>),
+    ObjDef(ObjDefCont<FX>),
 }
 
 impl<FX> Eval<FX> for Scoped<Expr<FX>>
@@ -29,7 +31,7 @@ where
         match self.node {
             Prim(x) => Produce(x.into()),
             Ref(x) => Produce(self.scope.get(&x).unwrap().clone()),
-            ObjectDef(_) => todo!(),
+            ObjectDef(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
             Let(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
             other => todo!("{other:?}"),
         }
@@ -45,6 +47,7 @@ where
 
         match self {
             Let(x) => x.eval_from_value(v).cont_from(),
+            ObjDef(x) => x.eval_from_value(v).cont_from(),
         }
     }
 }
