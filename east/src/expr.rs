@@ -10,14 +10,13 @@ use crate::{
 };
 
 #[derive(Clone, Debug, PartialEq, From)]
-pub enum Expr<FX>
+pub enum Expr<FX, Ref = RcId>
 where
     FX: Effect,
 {
     #[from]
     Prim(PrimVal),
-    #[from]
-    Ref(RcId),
+    Ref(Ref),
     #[from(
         ObjectDef<FX>,
         FuncDef,

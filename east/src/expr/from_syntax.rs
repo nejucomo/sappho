@@ -113,7 +113,7 @@ where
         use syntax::Confined::*;
 
         match self {
-            Ref(x) => x.into(),
+            Ref(x) => Expr::Ref(x),
             Prim(x) => x.into(),
             ObjectDef(x) => x.transform_into().into(),
             ListExpr(x) => x.transform_into().into(),
