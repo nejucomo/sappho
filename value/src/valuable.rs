@@ -18,6 +18,9 @@ pub trait Valuable: Clone + Debug + Display + PartialEq + Into<Value> {
         Err(self.wrap_error(Missing::from(name)))
     }
 
+    /// # TODO
+    ///
+    /// Make a more principled/universal type system.
     fn as_list(&self) -> VResult<&List<Value>, AsError> {
         Err(self.wrap_error(AsError("list")))
     }
