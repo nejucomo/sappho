@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "attrs",
   "attrstack",
+  "beast",
 #   "cli",
   "effect",
   "east",
@@ -56,6 +57,7 @@ quote = "1.0.40"
 rand = "0.9.0"
 sappho-attrs = { path = "attrs" }
 sappho-attrstack = { path = "attrstack" }
+sappho-beast = { path = "beast" }
 # sappho-cli = { path = "cli" }
 sappho-effect = { path = "effect" }
 sappho-east = { path = "east" }
