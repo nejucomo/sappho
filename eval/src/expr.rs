@@ -29,7 +29,7 @@ where
         match self.node {
             Prim(x) => Produce(x.into()),
             Ref(x) => Produce(self.scope.get(&x).unwrap().clone()),
-            ObjectDef(x) => todo!(),
+            ObjectDef(_) => todo!(),
             Let(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
             other => todo!("{other:?}"),
         }

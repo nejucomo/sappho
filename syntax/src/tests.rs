@@ -43,8 +43,7 @@ fn attrs_<T>() -> Attrs<T> {
 fn attrs<I, K, S, T>(items: I) -> Attrs<T>
 where
     I: IntoIterator<Item = (K, S)>,
-    RcId: TryFrom<K>,
-    sappho_attrs::AttrsError<T>: From<<RcId as TryFrom<K>>::Error>,
+    K: Into<RcId>,
     S: Into<T>,
     T: std::fmt::Debug,
 {

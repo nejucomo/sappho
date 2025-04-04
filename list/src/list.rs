@@ -7,7 +7,7 @@ use crate::node::Node;
 pub struct List<T>(Option<Rc<Node<T>>>);
 
 impl<T> List<T> {
-    pub fn iter(&self) -> impl Iterator<Item = &T> + Into<Self> {
+    pub fn iter(&self) -> impl Iterator<Item = &T> + Into<Self> + Into<&Self> {
         ListIter { listptr: self }
     }
 
@@ -85,6 +85,12 @@ impl<'a, T> Iterator for ListIter<'a, T> {
             self.listptr = node.tail();
             node.elem()
         })
+    }
+}
+
+impl<'a, T> From<ListIter<'a, T>> for &'a List<T> {
+    fn from(li: ListIter<'a, T>) -> Self {
+        li.listptr
     }
 }
 

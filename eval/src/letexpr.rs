@@ -1,7 +1,7 @@
 use sappho_east::{Let, LetClause, Wise};
 use sappho_effect::Effect;
 use sappho_pattern::Pattern;
-use sappho_value::{Locals, Scope, Value};
+use sappho_value::{Bind, Locals, Scope, Value};
 
 use crate::evco::{Continuation, Eval};
 use crate::scoped::Scoped;
@@ -79,14 +79,14 @@ where
         }) = self.clauses.next()
         {
             Continue(
-                self.scope.clone().wrap(definition.unwrap()),
+                Scoped::new(self.scope.clone(), definition.unwrap()),
                 Some(LetCont {
                     binding,
                     state: self,
                 }),
             )
         } else {
-            Continue(self.scope.wrap(self.inner), None)
+            Continue(Scoped::new(self.scope, self.inner), None)
         }
     }
 }

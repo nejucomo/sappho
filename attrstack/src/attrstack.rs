@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
-use sappho_attrs::{Attrs, Missing};
+use sappho_attrs::errors::Missing;
+use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_list::List;
 

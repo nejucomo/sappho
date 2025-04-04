@@ -98,7 +98,7 @@ where
         let mut av = ArrayVec::default();
         for key in keys {
             let rcid = key.into();
-            if let Some(v) = self.take(&rcid).ok() {
+            if let Ok(v) = self.take(&rcid) {
                 av.push((rcid, v));
             } else {
                 // Unwind mutations:
