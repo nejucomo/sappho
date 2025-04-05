@@ -1,14 +1,11 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+//! Index-based runtime scope
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#![deny(missing_docs, unsafe_code)]
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+mod ixref;
+mod rtmd;
+mod scope;
+
+pub use crate::ixref::IxRef;
+pub use crate::rtmd::RtMetadata;
+pub use crate::scope::Scope;
