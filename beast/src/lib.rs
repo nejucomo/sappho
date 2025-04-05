@@ -1,14 +1,16 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+mod annotate;
+mod ast;
+mod closureinfo;
+mod error;
+mod ixref;
+mod lsib;
+mod provider;
+mod scian;
+mod scib;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use crate::annotate::AnnotateScope;
+pub use crate::closureinfo::ClosureInfo;
+pub use crate::error::{AnnotationError, AnnotationResult};
+pub use crate::ixref::IxRef;
+pub use crate::lsib::LexStackInfoBuilder;
+pub use crate::scib::ScopeInfoBuilder;

@@ -6,3 +6,12 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+thiserror.workspace = true
+derive_more.workspace = true
+sappho-attrs.workspace = true
+sappho-kast.workspace = true
+sappho-east.workspace = true
+sappho-effect.workspace = true
+sappho-primval.workspace = true
+sappho-identifier.workspace = true
+

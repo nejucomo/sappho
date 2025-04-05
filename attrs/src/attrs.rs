@@ -22,6 +22,10 @@ where
         self.0.is_empty()
     }
 
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
     pub fn define<K>(&mut self, id: K, val: T) -> Result<(), Redefinition<T>>
     where
         K: Into<RcId>,
