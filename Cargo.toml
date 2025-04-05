@@ -20,6 +20,7 @@ members = [
   "pattern",
   "primval",
   "regression-vectors",
+  "scope",
   "source",
   "syntax",
   "tfi",
@@ -72,6 +73,7 @@ sappho-parser = { path = "parser" }
 sappho-pattern = { path = "pattern" }
 sappho-primval = { path = "primval" }
 sappho-regression-vectors = { path = "regression-vectors" }
+sappho-scope = { path = "scope" }
 sappho-source = { path = "source" }
 sappho-syntax = { path = "syntax" }
 sappho-tfi = { path = "tfi" }
