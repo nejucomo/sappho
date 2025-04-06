@@ -1,19 +1,27 @@
 use sappho_east::Wise;
-use sappho_effect::PureEffect;
 use sappho_value::Value;
 
 use crate::continuation::{Continuation, EvalStep};
-use crate::expr::ExprCont;
+use crate::evfx::{ContinuationStack as _, HasCStack};
 use crate::step::Step;
+use crate::EvalEffect;
 
-pub fn eval<X>(expr: X) -> Value
+pub fn eval<FX, X>(expr: X) -> Value
 where
-    X: Into<Wise<PureEffect>>,
+    FX: EvalEffect,
+    X: Into<Wise<FX>>,
+{
+    eval_inner(expr.into())
+}
+
+fn eval_inner<FX>(expr: Wise<FX>) -> Value
+where
+    FX: HasCStack,
 {
     use Step::*;
 
-    let mut stack: Vec<ExprCont<PureEffect>> = vec![];
-    let mut step = expr.into().eval_step();
+    let mut stack = FX::Stack::default();
+    let mut step = expr.eval_step().cont_from();
 
     loop {
         match step {
@@ -28,7 +36,7 @@ where
                 if let Some(cont) = optcont {
                     stack.push(cont);
                 }
-                step = next.eval_step();
+                step = next.eval_step().cont_from();
             }
         }
     }
