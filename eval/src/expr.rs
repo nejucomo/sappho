@@ -3,7 +3,7 @@ use sappho_east::{Expr, Wise};
 use sappho_effect::Effect;
 use sappho_value::Value;
 
-use crate::evco::{Continuation, Eval};
+use crate::continuation::{Continuation, EvalStep};
 use crate::letexpr::LetCont;
 use crate::listdef::ListDefCont;
 use crate::objectdef::ObjDefCont;
@@ -20,7 +20,7 @@ where
     ListDef(Scoped<ListDefCont<FX>>),
 }
 
-impl<FX> Eval<FX> for Scoped<Expr<FX>>
+impl<FX> EvalStep<FX> for Scoped<Expr<FX>>
 where
     FX: Effect,
 {

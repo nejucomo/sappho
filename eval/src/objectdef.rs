@@ -5,7 +5,7 @@ use sappho_effect::Effect;
 use sappho_identifier::RcId;
 use sappho_value::{ObjectVal, Scope, Value};
 
-use crate::evco::{Continuation, Eval};
+use crate::continuation::{Continuation, EvalStep};
 use crate::scoped::Scoped;
 use crate::step::Step::{self, Continue, Produce};
 
@@ -46,7 +46,7 @@ where
     }
 }
 
-impl<FX> Eval<FX> for Scoped<ObjectDef<FX>>
+impl<FX> EvalStep<FX> for Scoped<ObjectDef<FX>>
 where
     FX: Effect,
 {

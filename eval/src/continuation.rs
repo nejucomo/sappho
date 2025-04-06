@@ -7,7 +7,7 @@ use crate::expr::ExprCont;
 use crate::scoped::Scoped;
 use crate::step::Step;
 
-pub(crate) trait Eval<FX>: Sized
+pub(crate) trait EvalStep<FX>: Sized
 where
     FX: Effect,
 {
@@ -23,7 +23,7 @@ where
     fn eval_from_value(self, v: Value) -> Step<Scoped<Wise<FX>>, Self>;
 }
 
-impl<FX> Eval<FX> for Scoped<BoxWise<FX>>
+impl<FX> EvalStep<FX> for Scoped<BoxWise<FX>>
 where
     FX: Effect,
 {
@@ -34,7 +34,7 @@ where
     }
 }
 
-impl<FX> Eval<FX> for Wise<FX>
+impl<FX> EvalStep<FX> for Wise<FX>
 where
     FX: Effect,
 {
@@ -45,7 +45,7 @@ where
     }
 }
 
-impl<FX> Eval<FX> for Scoped<Wise<FX>>
+impl<FX> EvalStep<FX> for Scoped<Wise<FX>>
 where
     FX: Effect,
 {
@@ -59,7 +59,7 @@ where
 /// # TODO
 ///
 /// Use the source code to annotate error messages. Currently there is no error handling.
-impl<FX> Eval<FX> for Scoped<WithSource<Expr<FX>>>
+impl<FX> EvalStep<FX> for Scoped<WithSource<Expr<FX>>>
 where
     FX: Effect,
 {

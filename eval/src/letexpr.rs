@@ -3,7 +3,7 @@ use sappho_effect::Effect;
 use sappho_pattern::Pattern;
 use sappho_value::{Bind, Locals, Scope, Value};
 
-use crate::evco::{Continuation, Eval};
+use crate::continuation::{Continuation, EvalStep};
 use crate::scoped::Scoped;
 use crate::step::Step::{self, Continue};
 
@@ -32,7 +32,7 @@ where
     inner: Wise<FX>,
 }
 
-impl<FX> Eval<FX> for Scoped<Let<FX>>
+impl<FX> EvalStep<FX> for Scoped<Let<FX>>
 where
     FX: Effect,
 {

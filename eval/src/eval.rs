@@ -2,7 +2,7 @@ use sappho_east::Wise;
 use sappho_effect::PureEffect;
 use sappho_value::Value;
 
-use crate::evco::{Continuation, Eval};
+use crate::continuation::{Continuation, EvalStep};
 use crate::expr::ExprCont;
 use crate::step::Step;
 
