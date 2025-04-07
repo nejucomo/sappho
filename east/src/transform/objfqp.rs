@@ -25,7 +25,7 @@ where
             syntax::FuncDef::transform_into,
             syntax::QueryDef::transform_into,
             syntax::ProcDef::transform_into,
-            syntax::Wise::<FX>::transform_into,
+            syntax::Wise::transform_into,
         )
     }
 }

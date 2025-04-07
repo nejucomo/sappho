@@ -1,11 +1,22 @@
 use sappho_effect::Effect;
-use sappho_kast::{BoxWise, KastProvider, Wise};
+use sappho_syntax as syntax;
 use sappho_with_source::WithSource;
 
 use crate::transform::TransformWithSource;
+use crate::{BoxWise, Wise};
 
 pub(crate) trait TransformInto<T> {
     fn transform_into(self) -> T;
+}
+
+impl<S, T> TransformInto<T> for WithSource<S>
+where
+    S: TransformWithSource<T>,
+{
+    fn transform_into(self) -> T {
+        let (parsed, source) = self.unwrap();
+        parsed.transform_with_source(&source)
+    }
 }
 
 impl<S, T> TransformInto<Vec<T>> for Vec<S>
@@ -17,36 +28,20 @@ where
     }
 }
 
-impl<S, T> TransformInto<WithSource<T>> for WithSource<S>
+impl<FX> TransformInto<BoxWise<FX>> for syntax::BoxWise<FX>
 where
-    S: TransformWithSource<T>,
-{
-    fn transform_into(self) -> WithSource<T> {
-        let (parsed, source) = self.unwrap();
-        parsed.transform_with_source(source)
-    }
-}
-
-impl<KS, KT, FX> TransformInto<BoxWise<KT, FX>> for BoxWise<KS, FX>
-where
-    KS: KastProvider,
-    KT: KastProvider,
-    KS::Expr<FX>: TransformWithSource<KT::Expr<FX>>,
     FX: Effect,
 {
-    fn transform_into(self) -> BoxWise<KT, FX> {
+    fn transform_into(self) -> BoxWise<FX> {
         BoxWise::from(self.unwrap().transform_into())
     }
 }
 
-impl<KS, KT, FX> TransformInto<Wise<KT, FX>> for Wise<KS, FX>
+impl<FX> TransformInto<Wise<FX>> for syntax::Wise<FX>
 where
-    KS: KastProvider,
-    KT: KastProvider,
-    KS::Expr<FX>: TransformWithSource<KT::Expr<FX>>,
     FX: Effect,
 {
-    fn transform_into(self) -> Wise<KT, FX> {
+    fn transform_into(self) -> Wise<FX> {
         Wise::from(self.unwrap().transform_into())
     }
 }

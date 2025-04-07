@@ -32,7 +32,9 @@ pub type ProcDef = sappho_kast::ProcDef<SyntaxProvider>;
 
 pub type BoxWise<FX> = sappho_kast::BoxWise<SyntaxProvider, FX>;
 pub type Let<FX> = sappho_kast::Let<SyntaxProvider, FX>;
+pub type LetClause<FX> = sappho_kast::LetClause<SyntaxProvider, FX>;
 pub type Match<FX> = sappho_kast::Match<SyntaxProvider, FX>;
+pub type MatchClause<FX> = sappho_kast::MatchClause<SyntaxProvider, FX>;
 pub type ObjectDef<FX> = sappho_kast::ObjectDef<SyntaxProvider, FX>;
 pub type Wise<FX> = sappho_kast::Wise<SyntaxProvider, FX>;
 

@@ -1,24 +1,23 @@
 use sappho_effect::Effect;
 use sappho_source::SourceCodeRef;
 use sappho_syntax as syntax;
-use sappho_with_source::WithSource;
 
-use crate::transform::{TransformInto, TransformWithSource};
-use crate::Expr;
+use crate::transform::{TransformInto as _, TransformWithSource};
+use crate::Wise;
 
-impl<FX> TransformWithSource<Expr<FX>> for syntax::Expr<FX>
+impl<FX> TransformWithSource<Wise<FX>> for syntax::Expr<FX>
 where
     FX: Effect,
 {
-    fn transform_with_source(self, src: Option<SourceCodeRef>) -> WithSource<Expr<FX>> {
+    fn transform_with_source(self, src: &Option<SourceCodeRef>) -> Wise<FX> {
         use syntax::Expr::*;
 
         match self {
-            Func(x) => WithSource::new(Expr::from(x.transform_into()), src),
-            Query(x) => WithSource::new(Expr::from(x.transform_into()), src),
-            Proc(x) => WithSource::new(Expr::from(x.transform_into()), src),
-            Let(x) => WithSource::new(Expr::from(x.transform_into()), src),
-            Match(x) => WithSource::new(Expr::from(x.transform_into()), src),
+            Func(x) => Wise::new(x.transform_into(), src.clone()),
+            Query(x) => Wise::new(x.transform_into(), src.clone()),
+            Proc(x) => Wise::new(x.transform_into(), src.clone()),
+            Let(x) => Wise::new(x.transform_into(), src.clone()),
+            Match(x) => Wise::new(x.transform_into(), src.clone()),
             Applications(x) => x.transform_with_source(src),
         }
     }

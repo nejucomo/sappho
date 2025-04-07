@@ -5,8 +5,18 @@ mod lookup;
 mod provider;
 mod transform;
 
-use sappho_effect::{ProcEffect, PureEffect, QueryEffect};
+use sappho_effect::{Effect, ProcEffect, PureEffect, QueryEffect};
 use sappho_listform::ListForm;
+use sappho_syntax as syntax;
+
+use crate::transform::TransformInto;
+
+pub fn from_syntax<FX>(w: syntax::Wise<FX>) -> Wise<FX>
+where
+    FX: Effect,
+{
+    w.transform_into()
+}
 
 pub use crate::application::Application;
 pub use crate::expr::Expr;
