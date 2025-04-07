@@ -4,6 +4,7 @@ use sappho_effect::{Effect, ProcEffect, RestrictFrom, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_source::SourceCodeRef;
 use sappho_unparse::{Stream, Unparse};
+use sappho_with_source::WithSource;
 
 use crate::{KastProvider, Wise};
 
@@ -31,6 +32,16 @@ where
 
     pub fn unwrap(self) -> Wise<K, FX> {
         *self.0
+    }
+}
+
+impl<K, FX> From<WithSource<K::Expr<FX>>> for BoxWise<K, FX>
+where
+    K: KastProvider,
+    FX: Effect,
+{
+    fn from(value: WithSource<K::Expr<FX>>) -> Self {
+        Wise::from(value).into()
     }
 }
 

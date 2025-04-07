@@ -10,12 +10,17 @@ use crate::{VResult, Value, ValueError};
 
 #[derive(Debug, Error)]
 #[error("could not adapt value as {0}")]
-pub struct AsError(&'static str);
+pub struct AsError(pub &'static str);
 
 /// All of the user-space operations possible with a value
 pub trait Valuable: Clone + Debug + Display + PartialEq + Into<Value> {
     fn attr_lookup<'s>(&'s self, name: &RcId) -> VResult<&'s Value, Missing> {
         Err(self.wrap_error(Missing::from(name)))
+    }
+
+    fn apply(&self, argument: Value) -> VResult<Value, AsError> {
+        let _ = argument;
+        Err(self.wrap_error(AsError("fn")))
     }
 
     /// # TODO

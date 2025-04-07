@@ -7,6 +7,8 @@ use sappho_value::Value;
 use crate::scoped::Scoped;
 use crate::step::Step;
 
+// BUG: These should carry through a `Scope` and `Scoped` should be removed.
+
 pub(crate) trait EvalStep<FX>: Sized
 where
     FX: Effect,

@@ -39,6 +39,11 @@ impl<T> WithSource<T> {
     pub fn ignore_source(self) -> T {
         self.parsed
     }
+
+    /// Unbundle the fields
+    pub fn unwrap(self) -> (T, Option<SourceCodeRef>) {
+        (self.parsed, self.sourcecode)
+    }
 }
 
 impl<T, E> WithSource<Result<T, E>> {

@@ -1,5 +1,3 @@
-mod from_syntax;
-
 use derive_more::From;
 use sappho_effect::Effect;
 use sappho_identifier::RcId;

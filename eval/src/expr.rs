@@ -36,6 +36,7 @@ where
             ObjectDef(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
             ListDef(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
             Let(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
+            Application(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
             other => todo!("{other:?}"),
         }
     }

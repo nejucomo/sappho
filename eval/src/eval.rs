@@ -1,18 +1,19 @@
 use sappho_east::Wise;
-use sappho_effect::PureEffect;
+use sappho_effect::Effect;
 use sappho_value::Value;
 
 use crate::continuation::{Continuation, EvalStep};
 use crate::expr::ExprCont;
 use crate::step::Step;
 
-pub fn eval<X>(expr: X) -> Value
+pub fn eval<FX, X>(expr: X) -> Value
 where
-    X: Into<Wise<PureEffect>>,
+    FX: Effect,
+    X: Into<Wise<FX>>,
 {
     use Step::*;
 
-    let mut stack: Vec<ExprCont<PureEffect>> = vec![];
+    let mut stack: Vec<ExprCont<FX>> = vec![];
     let mut step = expr.into().eval_step();
 
     loop {
