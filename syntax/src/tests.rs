@@ -158,7 +158,7 @@ where
 )]
 #[test_case(
     "(f x).a",
-    Lookups::new(Applications::new("f", ["x"]), ["a"])
+    Lookups::new(ParensExpr::from(Applications::new("f", ["x"])), ["a"])
     ; "the a of f applied to x with disambiguating parentheses"
 )]
 #[test_case(

@@ -31,6 +31,16 @@ where
     }
 }
 
+impl<T, FX> From<T> for ParensExpr<FX>
+where
+    FX: Effect,
+    Expr<FX>: From<T>,
+{
+    fn from(value: T) -> Self {
+        Expr::from(value).into()
+    }
+}
+
 impl<FX> ParsableWith<ProcWiseParser<'_, SyntaxProvider>> for ParensExpr<FX>
 where
     FX: Effect,
