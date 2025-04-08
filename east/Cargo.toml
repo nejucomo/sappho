@@ -6,6 +6,7 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+chumsky.workspace = true
 derive_more.workspace = true
 derive-new.workspace = true
 either.workspace = true
@@ -14,7 +15,9 @@ sappho-identifier.workspace = true
 sappho-kast.workspace = true
 sappho-listform.workspace = true
 sappho-object.workspace = true
+sappho-parsable.workspace = true
 sappho-primval.workspace = true
-sappho-syntax.workspace = true
 sappho-source.workspace = true
+sappho-syntax.workspace = true
+sappho-unparse.workspace = true
 sappho-with-source.workspace = true

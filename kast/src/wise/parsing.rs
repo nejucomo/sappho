@@ -1,4 +1,3 @@
-use chumsky::Parser as _;
 use sappho_effect::{Effect, ProcEffect, RestrictFrom, RestrictableParser as _, Restriction};
 use sappho_parsable::{ParsableWith, Parser};
 use sappho_source::SourceCodeLink;
@@ -10,15 +9,10 @@ use crate::{KastProvider, ProcWiseParser, Wise};
 impl<'a, K, FX> ParsableWith<Option<&'a SourceCodeLink>> for Wise<K, FX>
 where
     K: KastProvider,
-    K::Expr<FX>: Unparse + RestrictFrom<K::Expr<ProcEffect>>,
-    K::Expr<ProcEffect>: ParsableWith<ProcWiseParser<'a, K>>,
     FX: Effect,
 {
     fn make_parser_with(sclink: Option<&'a SourceCodeLink>) -> impl Parser<Self> {
-        chumsky::recursive::recursive(|proc| {
-            WithSource::parser_with((sclink, proc)).map(Wise::from)
-        })
-        .restricted()
+        K::make_wise_parser(sclink)
     }
 }
 
