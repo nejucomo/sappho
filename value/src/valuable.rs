@@ -1,35 +1,39 @@
 use std::fmt::{Debug, Display};
 
 use sappho_attrs::errors::Missing;
-use sappho_east::FuncDef;
 use sappho_identifier::RcId;
 use sappho_list::List;
 use sappho_primval::PrimVal;
-use thiserror::Error;
 
-use crate::{VResult, Value, ValueError};
-
-#[derive(Debug, Error)]
-#[error("could not adapt value as {0}")]
-pub struct AsError(pub &'static str);
+use crate::{CastTo, FuncVal, ObjectVal, PseudoType, PseudoTypeError, VResult, Value, ValueError};
 
 /// All of the user-space operations possible with a value
-pub trait Valuable: Clone + Debug + Display + PartialEq + Into<Value> {
+pub trait Valuable:
+    Clone
+    + Debug
+    + Display
+    + PartialEq
+    + Into<Value>
+    + CastTo<PrimVal>
+    + CastTo<ObjectVal>
+    + CastTo<FuncVal>
+    + CastTo<List<Value>>
+{
     fn attr_lookup<'s>(&'s self, name: &RcId) -> VResult<&'s Value, Missing> {
         Err(self.wrap_error(Missing::from(name)))
+    }
+
+    fn cast<T>(&self) -> VResult<&T, PseudoTypeError>
+    where
+        Self: CastTo<T>,
+        T: PseudoType,
+    {
+        self.wrap_res(CastTo::<T>::cast(self))
     }
 
     /// # TODO
     ///
     /// Make a more principled/universal type system.
-    fn as_fn(&self) -> VResult<&FuncDef, AsError> {
-        Err(self.wrap_error(AsError("fn")))
-    }
-
-    fn as_list(&self) -> VResult<&List<Value>, AsError> {
-        Err(self.wrap_error(AsError("list")))
-    }
-
     fn clone_into_value(&self) -> Value {
         self.clone().into()
     }
@@ -37,12 +41,8 @@ pub trait Valuable: Clone + Debug + Display + PartialEq + Into<Value> {
     fn wrap_error<E>(&self, inner: E) -> ValueError<E> {
         ValueError::new(self.clone_into_value(), inner)
     }
-}
 
-impl Valuable for PrimVal {}
-
-impl Valuable for List<Value> {
-    fn as_list(&self) -> VResult<&List<Value>, AsError> {
-        Ok(self)
+    fn wrap_res<T, E>(&self, res: Result<T, E>) -> VResult<T, E> {
+        res.map_err(|e| self.wrap_error(e))
     }
 }

@@ -6,7 +6,7 @@ use sappho_identifier::RcId;
 use sappho_list::List;
 use sappho_primval::{Num, PrimVal};
 
-use crate::{AsError, FuncRef, ObjectRc, ObjectVal, VResult, Valuable};
+use crate::{CastTo, FuncVal, ObjectRc, ObjectVal, VResult, Valuable};
 
 use self::Value::*;
 
@@ -28,23 +28,37 @@ impl Valuable for Value {
             VList(x) => x.attr_lookup(name),
         }
     }
+}
 
-    fn as_list(&self) -> VResult<&List<Value>, AsError> {
+impl CastTo<PrimVal> for Value {
+    fn cast_opt(&self) -> Option<&PrimVal> {
         match self {
-            VPrim(x) => x.as_list(),
-            VObj(x) => x.as_list(),
-            VList(x) => x.as_list(),
+            VPrim(x) => Some(x),
+            _ => None,
         }
     }
 }
 
-impl<'a> TryFrom<&'a Value> for FuncRef<'a> {
-    type Error = &'a Value;
+impl CastTo<ObjectVal> for Value {
+    fn cast_opt(&self) -> Option<&ObjectVal> {
+        match self {
+            VObj(x) => Some(x),
+            _ => None,
+        }
+    }
+}
 
-    fn try_from(v: &'a Value) -> Result<Self, Self::Error> {
-        match v {
-            VObj(x) => Self::try_from(x).map_err(|_| v),
-            _ => Err(v),
+impl CastTo<FuncVal> for Value {
+    fn cast_opt(&self) -> Option<&FuncVal> {
+        self.cast_opt().and_then(|obj: &ObjectVal| obj.cast_opt())
+    }
+}
+
+impl CastTo<List<Value>> for Value {
+    fn cast_opt(&self) -> Option<&List<Value>> {
+        match self {
+            VList(x) => Some(x),
+            _ => None,
         }
     }
 }

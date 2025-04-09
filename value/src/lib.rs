@@ -1,17 +1,23 @@
 mod bind;
+mod castto;
 mod error;
-mod func;
+mod funcval;
+mod listval;
 mod objectval;
+mod primval;
+mod pseudotype;
 mod scope;
 mod scoped;
 mod valuable;
 mod value;
 
 pub use crate::bind::{Bind, BindError, BindErrorReason};
+pub use crate::castto::CastTo;
 pub use crate::error::{VResult, ValueError};
-pub use crate::func::FuncRef;
+pub use crate::funcval::FuncVal;
 pub use crate::objectval::{ObjectRc, ObjectVal};
+pub use crate::pseudotype::{PseudoType, PseudoTypeError};
 pub use crate::scope::{Locals, Scope};
 pub use crate::scoped::Scoped;
-pub use crate::valuable::{AsError, Valuable};
+pub use crate::valuable::Valuable;
 pub use crate::value::Value;

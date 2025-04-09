@@ -2,7 +2,6 @@ use sappho_east::{Application, BoxWise, Expr, Wise};
 use sappho_effect::Effect;
 use sappho_value::Value;
 
-use crate::applicable::Applicable as _;
 use crate::continuation::{Continuation, EvalStep};
 use crate::scoped::Scoped;
 use crate::step::Step::{self, Continue, Produce};

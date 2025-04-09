@@ -1,15 +1,16 @@
 use std::fmt;
-use std::ops::Deref as _;
 use std::rc::Rc;
 
 use derive_more::{Deref, From};
 use derive_new::new;
 use sappho_attrs::errors::Missing;
-use sappho_east::{FuncDef, ProcDef, QueryDef};
+use sappho_east::{ProcDef, QueryDef};
 use sappho_identifier::RcId;
+use sappho_list::List;
 use sappho_object::Object;
+use sappho_primval::PrimVal;
 
-use crate::{FuncRef, Scope, VResult, Valuable, Value};
+use crate::{CastTo, FuncVal, PseudoType, VResult, Valuable, Value};
 
 #[derive(Clone, Debug, PartialEq, From, Deref)]
 #[from(ObjectVal)]
@@ -17,40 +18,32 @@ use crate::{FuncRef, Scope, VResult, Valuable, Value};
 pub struct ObjectRc(Rc<ObjectVal>);
 
 #[derive(Clone, Debug, PartialEq, Deref, From, new)]
-pub struct ObjectVal {
-    closure: Scope,
-    #[deref]
-    #[new(into)]
-    obj: Object<FuncDef, QueryDef, ProcDef, Value>,
+#[new(into)]
+pub struct ObjectVal(Object<FuncVal, QueryDef, ProcDef, Value>);
+
+impl PseudoType for ObjectVal {
+    fn pseudo_type_name() -> &'static str {
+        "object"
+    }
 }
 
-impl Valuable for ObjectRc {
+impl Valuable for ObjectVal {
     fn attr_lookup<'s>(&'s self, name: &RcId) -> VResult<&'s Value, Missing> {
         self.attrs().get(name).map_err(|e| self.wrap_error(e))
     }
 }
 
-impl<'a> TryFrom<&'a ObjectRc> for FuncRef<'a> {
-    type Error = &'a ObjectRc;
+impl CastTo<PrimVal> for ObjectVal {}
 
-    fn try_from(value: &'a ObjectRc) -> Result<Self, Self::Error> {
-        value.deref().try_into().map_err(|_| value)
+impl CastTo<FuncVal> for ObjectVal {
+    fn cast_opt(&self) -> Option<&FuncVal> {
+        self.func()
     }
 }
 
-impl<'a> TryFrom<&'a ObjectVal> for FuncRef<'a> {
-    type Error = &'a ObjectVal;
+impl CastTo<List<Value>> for ObjectVal {}
 
-    fn try_from(value: &'a ObjectVal) -> Result<Self, Self::Error> {
-        value
-            .obj
-            .func()
-            .map(|fdef| FuncRef::new(&value.closure, fdef))
-            .ok_or(value)
-    }
-}
-
-impl fmt::Display for ObjectRc {
+impl fmt::Display for ObjectVal {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // TODO: Fix this to a less lazy, more "native" impl:
         write!(f, "{self:#?}")

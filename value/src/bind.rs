@@ -10,8 +10,7 @@ use sappho_pattern::{BindPattern, Pattern};
 use sappho_primval::PrimVal;
 use thiserror::Error;
 
-use crate::valuable::AsError;
-use crate::{Locals, VResult, Valuable, Value, ValueError};
+use crate::{Locals, PseudoTypeError, VResult, Valuable, Value, ValueError};
 
 pub trait Bind {
     fn bind(&mut self, bindings: Pattern, value: Value) -> VResult<(), BindError>;
@@ -40,7 +39,7 @@ pub enum BindErrorReason {
     #[error(transparent)]
     AttrRedefinition(#[from] Redefinition<Value>),
     #[error(transparent)]
-    AsError(#[from] AsError),
+    PseudoTypeError(#[from] PseudoTypeError),
     #[error("does not equal literal match")]
     LitNotEq,
     #[error("unmatched list tail")]
@@ -59,7 +58,7 @@ enum Transport {
     #[from]
     Vem(ValueError<Missing>),
     #[from]
-    Veae(ValueError<AsError>),
+    Vepte(ValueError<PseudoTypeError>),
     #[from]
     Vebe(ValueError<BindError>),
 }
@@ -71,7 +70,7 @@ impl Transport {
         match self {
             Ber(e) => v.wrap_error(BindError::new(b, e)),
             Vem(e) => e.map(|r| BindError::new(b, r)),
-            Veae(e) => e.map(|r| BindError::new(b, r)),
+            Vepte(e) => e.map(|r| BindError::new(b, r)),
             Vebe(e) => e,
         }
     }
@@ -130,7 +129,7 @@ impl BindInner<ListForm<Pattern, BindPattern>> for Locals {
         bindings: &ListForm<Pattern, BindPattern>,
         value: &Value,
     ) -> Result<(), Transport> {
-        let lval = value.as_list()?;
+        let lval: &List<Value> = value.cast()?;
         let mut it = lval.iter();
         let mut optail = None;
         for (ei, v) in bindings.iter().zip(it.by_ref()) {
