@@ -9,7 +9,7 @@ mod value;
 
 pub use crate::bind::{Bind, BindError, BindErrorReason};
 pub use crate::error::{VResult, ValueError};
-pub use crate::func::Func;
+pub use crate::func::FuncRef;
 pub use crate::objectval::{ObjectRc, ObjectVal};
 pub use crate::scope::{Locals, Scope};
 pub use crate::scoped::Scoped;
