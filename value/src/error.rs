@@ -27,3 +27,18 @@ impl<E> ValueError<E> {
         }
     }
 }
+
+pub trait ValueResultExt<T, E> {
+    fn convert_inner_err<E2>(self) -> VResult<T, E2>
+    where
+        E: Into<E2>;
+}
+
+impl<T, E> ValueResultExt<T, E> for VResult<T, E> {
+    fn convert_inner_err<E2>(self) -> VResult<T, E2>
+    where
+        E: Into<E2>,
+    {
+        self.map_err(|vale| vale.map(E::into))
+    }
+}

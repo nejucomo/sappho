@@ -1,9 +1,11 @@
 use std::rc::Rc;
+use thiserror::Error;
 
 use derive_new::new;
 use sappho_east::{FuncDef, PureExpr};
 
-use crate::{BindError, PseudoType, Scope, VResult, Value};
+use crate::error::{VResult, ValueResultExt as _};
+use crate::{BindError, PseudoType, PseudoTypeError, Scope, Value};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct FuncVal {
@@ -11,13 +13,24 @@ pub struct FuncVal {
     fdef: Rc<FuncDef>,
 }
 
+#[derive(Debug, Error)]
+pub enum ApplicationFailure {
+    #[error(transparent)]
+    Cast(#[from] PseudoTypeError),
+    #[error(transparent)]
+    Bind(#[from] BindError),
+}
+
 impl FuncVal {
-    pub fn apply<F, T>(&self, eval: F, arg: Value) -> VResult<T, BindError>
+    pub fn apply<F, T>(&self, eval: F, arg: Value) -> VResult<T, ApplicationFailure>
     where
-        F: FnOnce(Scope, &PureExpr) -> VResult<T, BindError>,
+        F: FnOnce(Scope, &PureExpr) -> T,
     {
-        let callscope = self.closure.bind_call_scope(&self.fdef.argpat, arg)?;
-        eval(callscope, &self.fdef.body)
+        let callscope = self
+            .closure
+            .bind_call_scope(&self.fdef.argpat, arg)
+            .convert_inner_err()?;
+        Ok(eval(callscope, &self.fdef.body))
     }
 }
 

@@ -1,13 +1,22 @@
 use std::fmt::{Debug, Display};
 
 use sappho_attrs::errors::Missing;
+use sappho_east::PureExpr;
 use sappho_identifier::RcId;
 use sappho_list::List;
 use sappho_primval::PrimVal;
 
-use crate::{CastTo, FuncVal, ObjectVal, PseudoType, PseudoTypeError, VResult, Value, ValueError};
+use crate::error::ValueResultExt as _;
+use crate::funcval::ApplicationFailure;
+use crate::{
+    CastTo, FuncVal, ObjectVal, PseudoType, PseudoTypeError, Scope, VResult, Value, ValueError,
+};
 
 /// All of the user-space operations possible with a value
+///
+/// # TODO
+///
+/// Reconsider this trait, pseudo-types, duck-typing etc...
 pub trait Valuable:
     Clone
     + Debug
@@ -23,12 +32,21 @@ pub trait Valuable:
         Err(self.wrap_error(Missing::from(name)))
     }
 
+    fn apply<F, T>(&self, eval: F, arg: Value) -> VResult<T, ApplicationFailure>
+    where
+        F: FnOnce(Scope, &PureExpr) -> T,
+    {
+        let f = self.cast::<FuncVal>().convert_inner_err()?;
+        let t = f.apply(eval, arg).convert_inner_err()?;
+        Ok(t)
+    }
+
     fn cast<T>(&self) -> VResult<&T, PseudoTypeError>
     where
         Self: CastTo<T>,
         T: PseudoType,
     {
-        self.wrap_res(CastTo::<T>::cast(self))
+        self.wrap_fres(|| self.cast_opt().ok_or(T::pseudo_type_error()))
     }
 
     /// # TODO
@@ -42,7 +60,10 @@ pub trait Valuable:
         ValueError::new(self.clone_into_value(), inner)
     }
 
-    fn wrap_res<T, E>(&self, res: Result<T, E>) -> VResult<T, E> {
-        res.map_err(|e| self.wrap_error(e))
+    fn wrap_fres<F, T, E>(&self, f: F) -> VResult<T, E>
+    where
+        F: FnOnce() -> Result<T, E>,
+    {
+        f().map_err(|e| self.wrap_error(e))
     }
 }

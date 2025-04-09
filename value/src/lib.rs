@@ -14,7 +14,7 @@ mod value;
 pub use crate::bind::{Bind, BindError, BindErrorReason};
 pub use crate::castto::CastTo;
 pub use crate::error::{VResult, ValueError};
-pub use crate::funcval::FuncVal;
+pub use crate::funcval::{ApplicationFailure, FuncVal};
 pub use crate::objectval::{ObjectRc, ObjectVal};
 pub use crate::pseudotype::{PseudoType, PseudoTypeError};
 pub use crate::scope::{Locals, Scope};

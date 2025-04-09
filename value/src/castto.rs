@@ -1,13 +1,9 @@
-use crate::{PseudoType, PseudoTypeError};
+use crate::PseudoType;
 
 pub trait CastTo<T>
 where
     T: PseudoType,
 {
-    fn cast(&self) -> Result<&T, PseudoTypeError> {
-        self.cast_opt().ok_or(T::pseudo_type_error())
-    }
-
     fn cast_opt(&self) -> Option<&T> {
         None
     }
