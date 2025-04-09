@@ -1,13 +1,12 @@
 use derive_more::From;
-use sappho_east::{Expr, Wise};
+use sappho_east::Expr;
 use sappho_effect::Effect;
-use sappho_value::Value;
+use sappho_value::{Scope, Value};
 
 use crate::continuation::{Continuation, EvalStep};
 use crate::letexpr::LetCont;
 use crate::listdef::ListDefCont;
 use crate::objectdef::ObjDefCont;
-use crate::scoped::Scoped;
 use crate::step::Step;
 
 #[derive(Debug, From)]
@@ -17,26 +16,26 @@ where
 {
     Let(LetCont<FX>),
     ObjDef(ObjDefCont<FX>),
-    ListDef(Scoped<ListDefCont<FX>>),
+    ListDef(ListDefCont<FX>),
 }
 
-impl<FX> EvalStep<FX> for Scoped<Expr<FX>>
+impl<FX> EvalStep<FX> for Expr<FX>
 where
     FX: Effect,
 {
     type Continuation = ExprCont<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         use Expr::*;
         use Step::*;
 
-        match self.node {
+        match self {
             Prim(x) => Produce(x.into()),
-            Ref(x) => Produce(self.scope.get(&x).unwrap().clone()),
-            ObjectDef(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
-            ListDef(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
-            Let(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
-            Application(x) => Scoped::new(self.scope, x).eval_step().cont_from(),
+            Ref(x) => Produce(scope.get(&x).unwrap().clone()),
+            ObjectDef(x) => x.eval_step(scope).cont_from(),
+            ListDef(x) => x.eval_step(scope).cont_from(),
+            Let(x) => x.eval_step(scope).cont_from(),
+            Application(x) => x.eval_step(scope).cont_from(),
             other => todo!("{other:?}"),
         }
     }
@@ -46,7 +45,7 @@ impl<FX> Continuation<FX> for ExprCont<FX>
 where
     FX: Effect,
 {
-    fn eval_from_value(self, v: Value) -> Step<Scoped<Wise<FX>>, Self> {
+    fn eval_from_value<'a>(&'a self, v: Value) -> Step<'a, FX, Self> {
         use ExprCont::*;
 
         match self {

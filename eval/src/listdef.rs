@@ -42,7 +42,7 @@ where
 {
     type Continuation = Scoped<ListDefCont<FX>>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         let mut elemexprs = self.node.into_iter();
         if let Some(ei) = elemexprs.next() {
             let (is_tail, expr) = ei.either(|x| (false, x), |x| (true, x.unwrap()));
@@ -63,7 +63,7 @@ impl<FX> Continuation<FX> for Scoped<ListDefCont<FX>>
 where
     FX: Effect,
 {
-    fn eval_from_value(self, v: Value) -> Step<Scoped<Wise<FX>>, Self> {
+    fn eval_from_value<'a>(&'a self, v: Value) -> Step<'a, FX, Self> {
         let Scoped { scope, mut node } = self;
 
         if node.is_tail {

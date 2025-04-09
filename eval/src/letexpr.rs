@@ -38,7 +38,7 @@ where
 {
     type Continuation = LetCont<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         let state = State::from(self);
         state.step()
     }
@@ -48,7 +48,7 @@ impl<FX> Continuation<FX> for LetCont<FX>
 where
     FX: Effect,
 {
-    fn eval_from_value(mut self, v: Value) -> Step<Scoped<Wise<FX>>, Self> {
+    fn eval_from_value(mut self, v: Value) -> Step<'a, FX, Self> {
         self.state.locals.bind(self.binding, v).unwrap();
         self.state.step()
     }
@@ -72,7 +72,7 @@ impl<FX> State<FX>
 where
     FX: Effect,
 {
-    fn step(mut self) -> Step<Scoped<Wise<FX>>, LetCont<FX>> {
+    fn step(mut self) -> Step<'a, FX, LetCont<FX>> {
         if let Some(LetClause {
             binding,
             definition,

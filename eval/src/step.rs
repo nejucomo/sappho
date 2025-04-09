@@ -1,35 +1,33 @@
-use sappho_value::Value;
+use sappho_east::Wise;
+use sappho_effect::Effect;
+use sappho_value::{Scope, Value};
 
 use self::Step::*;
 
 #[derive(Debug)]
-pub(crate) enum Step<X, C> {
+pub(crate) enum Step<'a, FX, C>
+where
+    FX: Effect,
+{
     Produce(Value),
-    Continue(X, Option<C>),
+    Continue(Scope, &'a Wise<FX>, Option<C>),
 }
 
-impl<X, C> Step<X, C> {
-    // pub(crate) fn map_node<F, X2>(self, f: F) -> Step<X2, C>
-    // where
-    //     F: FnOnce(X) -> X2,
-    // {
-    //     match self {
-    //         Produce(v) => Produce(v),
-    //         Continue(x, c) => Continue(f(x), c),
-    //     }
-    // }
-
-    pub(crate) fn map_cont<F, C2>(self, f: F) -> Step<X, C2>
+impl<'a, FX, C> Step<'a, FX, C>
+where
+    FX: Effect,
+{
+    pub(crate) fn map_cont<F, C2>(self, f: F) -> Step<'a, FX, C2>
     where
         F: FnOnce(C) -> C2,
     {
         match self {
             Produce(v) => Produce(v),
-            Continue(x, optc) => Continue(x, optc.map(f)),
+            Continue(s, x, optc) => Continue(s, x, optc.map(f)),
         }
     }
 
-    pub(crate) fn cont_from<C2>(self) -> Step<X, C2>
+    pub(crate) fn cont_from<C2>(self) -> Step<'a, FX, C2>
     where
         C2: From<C>,
     {

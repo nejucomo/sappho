@@ -52,7 +52,7 @@ where
 {
     type Continuation = ObjDefCont<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         let (optf, optq, optp, exprattrs) = self.node.unwrap().into();
         let mut expritems = exprattrs.into_iter();
         if let Some((rcid, expr)) = expritems.next() {
@@ -77,7 +77,7 @@ impl<FX> Continuation<FX> for ObjDefCont<FX>
 where
     FX: Effect,
 {
-    fn eval_from_value(mut self, v: Value) -> Step<Scoped<Wise<FX>>, Self> {
+    fn eval_from_value(mut self, v: Value) -> Step<'a, FX, Self> {
         self.attrvals
             .define(self.attrname.take().unwrap(), v)
             .unwrap();

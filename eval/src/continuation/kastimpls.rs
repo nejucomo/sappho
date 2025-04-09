@@ -14,7 +14,7 @@ where
 {
     type Continuation = ExprCont<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         self.map(BoxWise::unwrap).eval_step()
     }
 }
@@ -25,7 +25,7 @@ where
 {
     type Continuation = ExprCont<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         Scoped::from(self).eval_step()
     }
 }
@@ -36,7 +36,7 @@ where
 {
     type Continuation = ExprCont<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         self.map(Wise::unwrap).eval_step()
     }
 }
@@ -50,7 +50,7 @@ where
 {
     type Continuation = ExprCont<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation> {
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
         self.map(WithSource::ignore_source).eval_step()
     }
 }

@@ -15,12 +15,12 @@ where
 {
     type Continuation: Continuation<FX>;
 
-    fn eval_step(self) -> Step<Scoped<Wise<FX>>, Self::Continuation>;
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation>;
 }
 
 pub(crate) trait Continuation<FX>: Sized
 where
     FX: Effect,
 {
-    fn eval_from_value(self, v: Value) -> Step<Scoped<Wise<FX>>, Self>;
+    fn eval_from_value<'a>(&'a self, v: Value) -> Step<'a, FX, Self>;
 }
