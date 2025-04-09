@@ -37,7 +37,7 @@ where
     Expr<FX>: From<T>,
 {
     fn from(value: T) -> Self {
-        Expr::from(value).into()
+        ParensExpr::from(WithSource::from(Expr::from(value)))
     }
 }
 

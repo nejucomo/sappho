@@ -3,7 +3,6 @@ use std::fmt::Debug;
 use sappho_effect::Effect;
 use sappho_parsable::Parser;
 use sappho_source::SourceCodeLink;
-use sappho_unparse::Unparse;
 
 use crate::Wise;
 
@@ -17,7 +16,7 @@ use crate::Wise;
 ///
 /// Move parsing constraints out of these requirements
 pub trait KastProvider: ExprDerivableTraits + 'static {
-    type Expr<FX>: ExprDerivableTraits + Unparse
+    type Expr<FX>: ExprDerivableTraits
     where
         FX: Effect;
 
