@@ -11,8 +11,8 @@ impl<T> List<T> {
         ListIter { listptr: self }
     }
 
-    pub fn prepend(self, elem: T) -> Self {
-        List(Some(Rc::new(Node::new(elem, self))))
+    pub fn prepend(&self, elem: T) -> Self {
+        List(Some(Rc::new(Node::new(elem, self.clone()))))
     }
 
     pub fn length(&self) -> usize {

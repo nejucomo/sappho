@@ -12,13 +12,19 @@ use thiserror::Error;
 
 use crate::{Locals, PseudoTypeError, VResult, Valuable, Value, ValueError};
 
-pub trait Bind {
-    fn bind(&mut self, bindings: Pattern, value: Value) -> VResult<(), BindError>;
+pub trait Bind: Sized + Default {
+    fn new_bindings(bindings: &Pattern, value: Value) -> VResult<Self, BindError> {
+        let mut b = Self::default();
+        b.bind(bindings, value)?;
+        Ok(b)
+    }
+
+    fn bind(&mut self, bindings: &Pattern, value: Value) -> VResult<(), BindError>;
 }
 
 impl Bind for Locals {
-    fn bind(&mut self, bindings: Pattern, value: Value) -> VResult<(), BindError> {
-        self.bind_inner(&bindings, &value)
+    fn bind(&mut self, bindings: &Pattern, value: Value) -> VResult<(), BindError> {
+        self.bind_inner(bindings, &value)
             .map_err(|t| t.convert(bindings, value))
     }
 }
@@ -64,9 +70,10 @@ enum Transport {
 }
 
 impl Transport {
-    fn convert(self, b: Pattern, v: Value) -> ValueError<BindError> {
+    fn convert(self, b: &Pattern, v: Value) -> ValueError<BindError> {
         use Transport::*;
 
+        let b = b.clone();
         match self {
             Ber(e) => v.wrap_error(BindError::new(b, e)),
             Vem(e) => e.map(|r| BindError::new(b, r)),
@@ -145,7 +152,8 @@ impl BindInner<ListForm<Pattern, BindPattern>> for Locals {
 
         let remainder: List<Value> = it.into();
         if let Some(bindpat) = optail {
-            self.bind(bindpat.clone().into(), remainder.into())?;
+            let tailpat = bindpat.clone().into();
+            self.bind(&tailpat, remainder.into())?;
             Ok(())
         } else if remainder.length() > 0 {
             Err(BindErrorReason::UnmatchedTail.into())
