@@ -2,7 +2,7 @@ use derive_more::Deref;
 use sappho_attrs::Attrs;
 use sappho_attrstack::AttrStack;
 
-use crate::Value;
+use crate::{Scoped, Value};
 
 /// # TODO
 ///
@@ -11,3 +11,9 @@ use crate::Value;
 pub struct Scope(AttrStack<Value>);
 
 pub type Locals = Attrs<Value>;
+
+impl Scope {
+    pub fn wrap<T>(self, node: T) -> Scoped<T> {
+        Scoped::new(self, node)
+    }
+}

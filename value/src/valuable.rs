@@ -1,6 +1,7 @@
 use std::fmt::{Debug, Display};
 
 use sappho_attrs::errors::Missing;
+use sappho_east::FuncDef;
 use sappho_identifier::RcId;
 use sappho_list::List;
 use sappho_primval::PrimVal;
@@ -18,14 +19,13 @@ pub trait Valuable: Clone + Debug + Display + PartialEq + Into<Value> {
         Err(self.wrap_error(Missing::from(name)))
     }
 
-    fn apply(&self, argument: Value) -> VResult<Value, AsError> {
-        let _ = argument;
-        Err(self.wrap_error(AsError("fn")))
-    }
-
     /// # TODO
     ///
     /// Make a more principled/universal type system.
+    fn as_fn(&self) -> VResult<&FuncDef, AsError> {
+        Err(self.wrap_error(AsError("fn")))
+    }
+
     fn as_list(&self) -> VResult<&List<Value>, AsError> {
         Err(self.wrap_error(AsError("list")))
     }

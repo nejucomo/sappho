@@ -2,11 +2,12 @@ use std::fmt;
 
 use derive_more::From;
 use sappho_attrs::errors::Missing;
+use sappho_east::FuncDef;
 use sappho_identifier::RcId;
 use sappho_list::List;
 use sappho_primval::{Num, PrimVal};
 
-use crate::{AsError, ObjectRc, ObjectVal, VResult, Valuable};
+use crate::{tryfrom, AsError, ObjectRc, ObjectVal, VResult, Valuable};
 
 use self::Value::*;
 
@@ -35,6 +36,14 @@ impl Valuable for Value {
             VObj(x) => x.as_list(),
             VList(x) => x.as_list(),
         }
+    }
+}
+
+impl<'a> TryFrom<&'a Value> for &'a FuncDef {
+    type Error = &'a Value;
+
+    fn try_from(v: &'a Value) -> Result<Self, Self::Error> {
+        tryfrom::Helper::from(v).try_into()
     }
 }
 

@@ -8,7 +8,7 @@ use sappho_east::{FuncDef, ProcDef, QueryDef};
 use sappho_identifier::RcId;
 use sappho_object::Object;
 
-use crate::{AsError, Scope, VResult, Valuable, Value};
+use crate::{Scope, VResult, Valuable, Value};
 
 #[derive(Clone, Debug, PartialEq, From, Deref)]
 #[from(ObjectVal)]
@@ -26,15 +26,6 @@ pub struct ObjectVal {
 impl Valuable for ObjectRc {
     fn attr_lookup<'s>(&'s self, name: &RcId) -> VResult<&'s Value, Missing> {
         self.attrs().get(name).map_err(|e| self.wrap_error(e))
-    }
-
-    fn apply(&self, argument: Value) -> VResult<Value, AsError> {
-        if let Some(funcdef) = self.obj.func() {
-            // BUG: We need cyclic dependency on `eval`
-            fixme
-        } else {
-            Err(self.wrap_error(AsError("fn")))
-        }
     }
 }
 
