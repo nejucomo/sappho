@@ -1,10 +1,6 @@
-mod kastimpls;
-
-use sappho_east::Wise;
 use sappho_effect::Effect;
-use sappho_value::Value;
+use sappho_value::{Scope, Value};
 
-use crate::scoped::Scoped;
 use crate::step::Step;
 
 // BUG: These should carry through a `Scope` and `Scoped` should be removed.
@@ -13,14 +9,16 @@ pub(crate) trait EvalStep<FX>: Sized
 where
     FX: Effect,
 {
-    type Continuation: Continuation<FX>;
+    type Continuation<'a>: Continuation<'a, FX>
+    where
+        Self: 'a;
 
-    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation>;
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation<'a>>;
 }
 
-pub(crate) trait Continuation<FX>: Sized
+pub(crate) trait Continuation<'a, FX>: Sized
 where
     FX: Effect,
 {
-    fn eval_from_value<'a>(&'a self, v: Value) -> Step<'a, FX, Self>;
+    fn eval_from_value(self, scope: Scope, v: Value) -> Step<'a, FX, Self>;
 }

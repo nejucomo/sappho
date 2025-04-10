@@ -1,92 +1,55 @@
-use derive_new::new;
+use std::collections::BTreeMap;
+
+use derive_more::From;
 use sappho_attrs::Attrs;
-use sappho_east::{FuncDef, ObjectDef, ProcDef, QueryDef, Wise};
+use sappho_east::{ObjectDef, Wise};
 use sappho_effect::Effect;
 use sappho_identifier::RcId;
-use sappho_value::{ObjectVal, Scope, Value};
+use sappho_value::{FuncVal, ObjectVal, Scope, Value};
 
-use crate::continuation::{Continuation, EvalStep};
-use crate::scoped::Scoped;
-use crate::step::Step::{self, Continue, Produce};
+use crate::continuation::EvalStep;
+use crate::itercont::{IterCont, IterContinuation};
+use crate::step::Step;
 
-#[derive(Debug, new)]
-pub(crate) struct ObjDefCont<FX>
+#[derive(Debug, From)]
+pub(crate) struct ObjDefCont<'a, FX>(
+    IterCont<'a, FX, ObjectVal, <BTreeMap<RcId, &'a Wise<FX>> as IntoIterator>::IntoIter>,
+)
+where
+    FX: Effect;
+
+impl<'a, FX> IterContinuation<'a, FX> for ObjectVal
 where
     FX: Effect,
 {
-    // Pre-defined parsing outputs:
-    scope: Scope,
-    optfunc: Option<FuncDef>,
-    optquery: Option<QueryDef>,
-    optproc: Option<ProcDef>,
+    type Key = RcId;
 
-    // Pending runtime state:
-    #[new(default)]
-    attrvals: Attrs<Value>,
-    attrname: Option<RcId>,
-    expritems: <Attrs<Wise<FX>> as IntoIterator>::IntoIter,
-}
+    fn eval_from_iter_done(self) -> Value {
+        Value::from(self)
+    }
 
-impl<FX> From<ObjDefCont<FX>> for Value
-where
-    FX: Effect,
-{
-    fn from(mut value: ObjDefCont<FX>) -> Self {
-        assert!(value.attrname.take().is_none());
-
-        let ObjDefCont {
-            scope,
-            optfunc,
-            optquery,
-            optproc,
-            attrvals,
-            ..
-        } = value;
-        ObjectVal::new(scope, (optfunc, optquery, optproc, attrvals)).into()
+    fn extend_with_key_value(&mut self, k: Self::Key, v: Value) {
+        self.attrs_mut()
+            .define(k, v)
+            .expect("TODO: propagate user-space errors")
     }
 }
 
-impl<FX> EvalStep<FX> for Scoped<ObjectDef<FX>>
+impl<FX> EvalStep<FX> for ObjectDef<FX>
 where
     FX: Effect,
 {
-    type Continuation = ObjDefCont<FX>;
+    type Continuation<'a> = ObjDefCont<'a, FX>;
 
-    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
-        let (optf, optq, optp, exprattrs) = self.node.unwrap().into();
-        let mut expritems = exprattrs.into_iter();
-        if let Some((rcid, expr)) = expritems.next() {
-            Continue(
-                Scoped::new(self.scope.clone(), expr),
-                Some(ObjDefCont::new(
-                    self.scope,
-                    optf,
-                    optq,
-                    optp,
-                    Some(rcid),
-                    expritems,
-                )),
-            )
-        } else {
-            Produce(ObjectVal::new(self.scope, (optf, optq, optp, Attrs::default())).into())
-        }
-    }
-}
-
-impl<FX> Continuation<FX> for ObjDefCont<FX>
-where
-    FX: Effect,
-{
-    fn eval_from_value(mut self, v: Value) -> Step<'a, FX, Self> {
-        self.attrvals
-            .define(self.attrname.take().unwrap(), v)
-            .unwrap();
-
-        if let Some((rcid, expr)) = self.expritems.next() {
-            self.attrname = Some(rcid);
-            Continue(Scoped::new(self.scope.clone(), expr), Some(self))
-        } else {
-            Produce(self.into())
-        }
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation<'a>> {
+        let (optf, optq, optp, exprattrs) = self.as_refs().into();
+        ObjectVal::new(
+            optf.map(|fdef| FuncVal::new(scope.clone(), fdef.clone())),
+            optq.cloned(),
+            optp.cloned(),
+            Attrs::default(),
+        )
+        .eval_from_iter(scope.clone(), exprattrs)
+        .cont_from()
     }
 }

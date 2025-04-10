@@ -1,9 +1,9 @@
 use std::fmt;
 use std::rc::Rc;
 
-use derive_more::{Deref, From};
-use derive_new::new;
+use derive_more::{Deref, DerefMut, From};
 use sappho_attrs::errors::Missing;
+use sappho_attrs::Attrs;
 use sappho_east::{ProcDef, QueryDef};
 use sappho_identifier::RcId;
 use sappho_list::List;
@@ -17,9 +17,19 @@ use crate::{CastTo, FuncVal, PseudoType, VResult, Valuable, Value};
 #[deref(forward)]
 pub struct ObjectRc(Rc<ObjectVal>);
 
-#[derive(Clone, Debug, PartialEq, Deref, From, new)]
-#[new(into)]
+#[derive(Clone, Debug, PartialEq, Deref, DerefMut, From)]
 pub struct ObjectVal(Object<FuncVal, QueryDef, ProcDef, Value>);
+
+impl ObjectVal {
+    pub fn new(
+        optf: Option<FuncVal>,
+        optq: Option<QueryDef>,
+        optp: Option<ProcDef>,
+        attrs: Attrs<Value>,
+    ) -> Self {
+        ObjectVal(Object::new(optf, optq, optp, attrs))
+    }
+}
 
 impl PseudoType for ObjectVal {
     fn pseudo_type_name() -> &'static str {

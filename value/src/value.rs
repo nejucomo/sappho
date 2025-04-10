@@ -1,6 +1,6 @@
 use std::fmt;
 
-use derive_more::From;
+use derive_more::{From, TryInto};
 use sappho_attrs::errors::Missing;
 use sappho_identifier::RcId;
 use sappho_list::List;
@@ -10,7 +10,7 @@ use crate::{CastTo, FuncVal, ObjectRc, ObjectVal, VResult, Valuable};
 
 use self::Value::*;
 
-#[derive(Clone, Debug, PartialEq, From)]
+#[derive(Clone, Debug, PartialEq, From, TryInto)]
 pub enum Value {
     #[from(PrimVal, Num)]
     VPrim(PrimVal),

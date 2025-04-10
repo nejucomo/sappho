@@ -49,7 +49,7 @@ impl<X, T> ListForm<X, T> {
         self
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Either<&X, &T>> {
+    pub fn iter(&self) -> ListFormIter<std::slice::Iter<'_, X>, &T> {
         self.lfg_ref().into_iter()
     }
 

@@ -1,3 +1,4 @@
+use std::collections::btree_map::Iter;
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 
@@ -128,7 +129,7 @@ where
         self.iter().collect()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&RcId, &T)> {
+    pub fn iter(&self) -> Iter<'_, RcId, T> {
         self.0.iter()
     }
 

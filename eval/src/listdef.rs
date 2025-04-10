@@ -1,86 +1,71 @@
-use derive_new::new;
-use sappho_east::{ListDef, Wise};
+use derive_more::From;
+use either::Either;
+use sappho_east::{BoxWise, ListDef, Wise};
 use sappho_effect::Effect;
 use sappho_list::List;
-use sappho_value::{Valuable as _, Value};
+use sappho_listform::ListFormIter;
+use sappho_value::{Scope, Value};
 
-use crate::continuation::{Continuation, EvalStep};
-use crate::scoped::Scoped;
-use crate::step::Step::{self, Continue, Produce};
+use crate::continuation::EvalStep;
+use crate::itercont::{IterCont, IterContinuation};
+use crate::step::Step;
 
-#[derive(Debug, new)]
-pub(crate) struct ListDefCont<FX>
+impl<FX> EvalStep<FX> for ListDef<FX>
 where
     FX: Effect,
 {
-    elemexprs: <ListDef<FX> as IntoIterator>::IntoIter,
-    #[new(default)]
-    vals: Vec<Value>,
-    is_tail: bool,
-}
+    type Continuation<'a> = ListDefCont<'a, FX>;
 
-impl<FX> ListDefCont<FX>
-where
-    FX: Effect,
-{
-    fn build_list(self, tail: Option<Value>) -> List<Value> {
-        let mut list = tail
-            // BUG: Propagate exceptions into user-space?
-            .map(|v| v.as_list().unwrap().clone())
-            .unwrap_or_default();
-
-        for v in self.vals.into_iter().rev() {
-            list = list.prepend(v);
-        }
-        list
+    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation<'a>> {
+        Inner::default()
+            .eval_from_iter(scope.clone(), self.iter())
+            .cont_from()
     }
 }
 
-impl<FX> EvalStep<FX> for Scoped<ListDef<FX>>
+#[derive(Debug, From)]
+pub(crate) struct ListDefCont<'a, FX>
 where
     FX: Effect,
 {
-    type Continuation = Scoped<ListDefCont<FX>>;
-
-    fn eval_step<'a>(&'a self, scope: &Scope) -> Step<'a, FX, Self::Continuation> {
-        let mut elemexprs = self.node.into_iter();
-        if let Some(ei) = elemexprs.next() {
-            let (is_tail, expr) = ei.either(|x| (false, x), |x| (true, x.unwrap()));
-            Continue(
-                Scoped::new(self.scope.clone(), expr),
-                Some(Scoped::new(
-                    self.scope,
-                    ListDefCont::new(elemexprs, is_tail),
-                )),
-            )
-        } else {
-            Produce(List::default().into())
-        }
-    }
+    ic: IterCont<'a, FX, Inner, ListFormIter<std::slice::Iter<'a, Wise<FX>>, &'a BoxWise<FX>>>,
 }
 
-impl<FX> Continuation<FX> for Scoped<ListDefCont<FX>>
+#[derive(Debug, Default)]
+struct Inner {
+    items: Vec<Value>,
+    optail: Option<List<Value>>,
+}
+
+impl<'a, FX> IterContinuation<'a, FX> for Inner
 where
-    FX: Effect,
+    FX: Effect + 'a,
 {
-    fn eval_from_value<'a>(&'a self, v: Value) -> Step<'a, FX, Self> {
-        let Scoped { scope, mut node } = self;
+    type Item = Either<&'a Wise<FX>, &'a BoxWise<FX>>;
 
-        if node.is_tail {
-            Produce(node.build_list(Some(v)).into())
+    /// A `bool` representing `the value is the tail`
+    type Key = bool;
+
+    fn unpack_item(item: Self::Item) -> (Self::Key, &'a Wise<FX>) {
+        item.either(|w| (false, w), |bw| (true, &**bw))
+    }
+
+    fn eval_from_iter_done(self) -> Value {
+        todo!()
+    }
+
+    fn extend_with_key_value(&mut self, is_tail: bool, v: Value) {
+        if is_tail {
+            let old = self.optail.replace(v.try_into().expect(
+                "Expected tail to be a list. TODO: Add a way to propagate user-space exceptions.",
+            ));
+
+            assert!(
+                old.is_none(),
+                "`ListForm::into_iter/iter` postcondition failure."
+            );
         } else {
-            node.vals.push(v);
-
-            if let Some(ei) = node.elemexprs.next() {
-                let (is_tail, expr) = ei.either(|x| (false, x), |x| (true, x.unwrap()));
-                node.is_tail = is_tail;
-                Continue(
-                    Scoped::new(scope.clone(), expr),
-                    Some(Scoped::new(scope, node)),
-                )
-            } else {
-                Produce(node.build_list(None).into())
-            }
+            self.items.push(v);
         }
     }
 }

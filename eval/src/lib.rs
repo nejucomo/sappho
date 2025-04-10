@@ -2,6 +2,7 @@ mod application;
 mod continuation;
 mod eval;
 mod expr;
+mod itercont;
 mod letexpr;
 mod listdef;
 mod objectdef;

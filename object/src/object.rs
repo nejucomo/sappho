@@ -77,6 +77,10 @@ where
         &self.a
     }
 
+    pub fn attrs_mut(&mut self) -> &mut Attrs<A> {
+        &mut self.a
+    }
+
     pub fn unbundle(self) -> Unbundled<F, Q, P, A> {
         use Unbundled::*;
 

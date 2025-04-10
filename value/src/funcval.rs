@@ -9,7 +9,9 @@ use crate::{BindError, PseudoType, PseudoTypeError, Scope, Value};
 
 #[derive(Clone, Debug, PartialEq, new)]
 pub struct FuncVal {
+    #[new(into)]
     closure: Scope,
+    #[new(into)]
     fdef: Rc<FuncDef>,
 }
 

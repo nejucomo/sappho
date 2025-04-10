@@ -1,4 +1,4 @@
-use sappho_east::{Application, BoxWise, Expr, Wise};
+use sappho_east::{Application, BoxWise};
 use sappho_effect::Effect;
 use sappho_value::Value;
 
