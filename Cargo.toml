@@ -4,8 +4,9 @@ members = [
   "attrs",
   "attrstack",
 #   "cli",
-  "effect",
   "east",
+  "effect",
+  "evaluatable",
   "identifier",
 #   "integration-tests",
 #   "interpreter",
@@ -54,8 +55,9 @@ rand = "0.9.0"
 sappho-attrs = { path = "attrs" }
 sappho-attrstack = { path = "attrstack" }
 # sappho-cli = { path = "cli" }
-sappho-effect = { path = "effect" }
 sappho-east = { path = "east" }
+sappho-evaluatable = { path = "evaluatable" }
+sappho-effect = { path = "effect" }
 sappho-identifier = { path = "identifier" }
 # sappho-integration-tests = { path = "integration-tests" }
 # sappho-interpreter = { path = "interpreter" }
