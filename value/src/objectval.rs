@@ -31,7 +31,8 @@ impl Valuable for ObjectRc {
     fn apply(&self, argument: Value) -> VResult<Value, AsError> {
         if let Some(funcdef) = self.obj.func() {
             // BUG: We need cyclic dependency on `eval`
-            fixme
+            let _ = (argument, funcdef);
+            todo!("figure out how to manage eval<->value<->ast interdependency.")
         } else {
             Err(self.wrap_error(AsError("fn")))
         }
