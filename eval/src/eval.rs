@@ -1,16 +1,15 @@
 use std::fmt::Debug;
 
-use crate::{Continuation, EvalStep, Step};
+use crate::{Continuation, Step};
 
-pub trait Eval<V, C>: EvalStep<V, Self, C>
-where
-    V: Debug,
-    C: Continuation<V, Self>,
-{
-    fn eval(self) -> V {
+pub trait Eval: Sized + Debug {
+    type Value: Debug;
+    type Continuation: Continuation<Self::Value, Self>;
+
+    fn eval(self) -> Self::Value {
         use Step::*;
 
-        let mut stack: Vec<C> = vec![];
+        let mut stack: Vec<Self::Continuation> = vec![];
         let mut step = self.eval_step();
 
         loop {
@@ -30,4 +29,6 @@ where
             }
         }
     }
+
+    fn eval_step(self) -> Step<Self::Value, Self, Self::Continuation>;
 }
