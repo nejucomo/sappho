@@ -1,8 +1,10 @@
 [package]
-name = "sappho-evaluatable"
+name = "sappho-eval"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+derive_more.workspace = true
+derive-new.workspace = true
