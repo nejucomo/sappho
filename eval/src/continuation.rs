@@ -1,21 +1,17 @@
 use std::fmt::Debug;
 
-use crate::{Eval, Scope, Step};
-
-pub trait EvalStep<'s, X>: Sized + Debug
-where
-    X: Eval<'s>,
-{
-    type Continuation: Continuation<'s, X>;
-
-    fn eval_step(&'s self, scope: &Scope<X>) -> Step<'s, X, Self::Continuation>;
+pub trait EvalStep<V, X, C>: Sized + Debug {
+    fn eval_step(self) -> Step<V, X, C>;
 }
 
-pub trait Continuation<'s, X>: Sized + Debug
-where
-    X: Eval<'s>,
-{
-    type Auxillary: Debug;
+pub trait Continuation<V, X>: Sized + Debug {
+    fn continue_with_value(self, value: V) -> Step<V, X, Self>;
+}
 
-    fn continue_with_value(self, value: X::Value, aux: Self::Auxillary) -> Step<'s, X, Self>;
+#[derive(Debug)]
+pub enum Step<V, X, C> {
+    /// This continuation concluded and produced a value
+    Conclude(V),
+    /// Evaluate `X` and send the result to `C`
+    Continue(X, C),
 }

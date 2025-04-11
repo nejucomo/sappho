@@ -1,41 +1,28 @@
 use std::fmt::Debug;
 
-use crate::cstack::ContinuationStack;
-use crate::{Continuation, EvalStep, Scope, Step, StepContinue};
+use crate::{Continuation, EvalStep, Step};
 
-pub trait Eval<'s>: EvalStep<'s, Self> {
-    type Value: Debug;
-    type Locals: Default + Debug;
-
-    fn eval(&'s self) -> Self::Value {
-        self.eval_with_scope(&mut Scope::default())
-    }
-
-    fn eval_with_scope(&'s self, scope: &mut Scope<'s, Self>) -> Self::Value {
+pub trait Eval<V, C>: EvalStep<V, Self, C>
+where
+    V: Debug,
+    C: Continuation<V, Self>,
+{
+    fn eval(self) -> V {
         use Step::*;
 
-        let mut stack: ContinuationStack<'s, Self> = ContinuationStack::default();
-        let mut step = self.eval_step(scope);
+        let mut stack: Vec<C> = vec![];
+        let mut step = self.eval_step();
 
         loop {
             match step {
-                Continue(StepContinue {
-                    continuation,
-                    next_expr,
-                    aux,
-                    locals,
-                }) => {
-                    if let Some(locals) = locals {
-                        scope.push_locals(locals);
-                    }
+                Continue(x, c) => {
+                    stack.push(c);
 
-                    stack.push_continuation(continuation, aux);
-
-                    step = next_expr.eval_step(&scope);
+                    step = x.eval_step();
                 }
                 Conclude(v) => {
-                    if let Some((cont, aux)) = stack.pop_continuation() {
-                        step = cont.continue_with_value(v, aux);
+                    if let Some(c) = stack.pop() {
+                        step = c.continue_with_value(v);
                     } else {
                         return v;
                     }
