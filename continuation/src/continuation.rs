@@ -1,5 +1,9 @@
 use std::fmt::Debug;
 
+pub trait ContinueEval<V, X, C> {
+    fn continue_eval(self) -> Step<V, X, C>;
+}
+
 pub trait Continuation<V, X>: Sized + Debug {
     fn continue_with_value(self, value: V) -> Step<V, X, Self>;
 }
