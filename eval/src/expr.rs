@@ -1,27 +1,64 @@
-use sappho_east::{Expr, ObjectDef, Wise};
+use enum_dispatch::enum_dispatch;
+use sappho_east::Expr;
 use sappho_effect::Effect;
-use sappho_value::Value;
+use sappho_value::{Scope, Value};
 
-use crate::continuation::ContinueEval;
-use crate::continuation::Step::{self, *};
+use crate::continuation::EvalNext;
+use crate::evalstep::EvalStep;
+use crate::step::ContinueStep;
+use crate::withlocals::WithLocals;
 
-impl<'s, FX> ContinueEval<Value, &'s Wise<FX>, ExprCont<'s, FX>> for &'s Expr<FX>
+#[enum_dispatch]
+pub(crate) trait ExprEvalNext<'s, FX>:
+    EvalNext<Value, WithLocals<&'s Expr<FX>>, ContExpr<'s, FX>>
+where
+    FX: Effect + 's,
+{
+    fn expr_eval_next(self, scope: &Scope) -> EvalStep<'s, FX>;
+}
+
+impl<'s, FX, T> EvalNext<Value, WithLocals<&'s Expr<FX>>, ContExpr<'s, FX>> for T
+where
+    T: ExprEvalNext<'s, FX>,
+    FX: Effect + 's,
+{
+    fn eval_next(self, scope: &Scope) -> EvalStep<'s, FX> {
+        self.expr_eval_next(scope)
+    }
+}
+
+impl<'s, FX> ExprEvalNext<'s, FX> for &'s Expr<FX>
 where
     FX: Effect,
 {
-    fn continue_eval(self) -> Step<Value, &'s Wise<FX>, ExprCont<'s, FX>> {
+    fn expr_eval_next(self, scope: &Scope) -> EvalStep<'s, FX> {
         use Expr::*;
 
         match self {
-            Prim(x) => Step::conclude(x),
-            Ref(x) => todo!("fixme scoping {x:#?}"),,
-            ObjectDef(x) => x,
-            ListDef(x) => x,
-            Let(x) => x,
-            Match(x) => x,
-            Application(x) => x,
-            Lookup(x) => x,
-            Interaction(x) => x,
+            Prim(x) => x.into(),
+            Ref(x) => scope.lookup(x).into(),
+            ObjectDef(x) => x.eval_step(scope),
+            ListDef(x) => x.eval_step(scope),
+            Let(x) => x.eval_step(scope),
+            Match(x) => x.eval_step(scope),
+            Application(x) => x.eval_step(scope),
+            Lookup(x) => x.eval_step(scope),
+            Interaction(x) => x.eval_step(scope),
         }
+    }
+}
+
+#[derive(Debug)]
+#[enum_dispatch(ExprEvalNext)]
+pub(crate) enum ContExpr<'s, FX> {
+    ObjectDef(ContObjectDef<'s, FX>),
+}
+
+impl<'s, FX> ContExpr<'s, FX>
+where
+    FX: Effect,
+{
+    pub(crate) fn continue_from_expr(self, expr: &'s Expr<FX>) -> EvalStep<'s, FX> {
+        ContinueStep::new(expr, self).into()
     }
 }

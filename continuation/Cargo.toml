@@ -1,11 +1,11 @@
 [package]
-name = "sappho-attrstack"
+name = "sappho-continuation"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-sappho-attrs.workspace = true
-sappho-identifier.workspace = true
-sappho-list.workspace = true
+derive_more.workspace = true
+derive-new.workspace = true
+

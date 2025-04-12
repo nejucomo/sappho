@@ -20,6 +20,13 @@ pub enum Value {
     VList(List<Value>),
 }
 
+/// Value is designed to be cheapish-to-clone:
+impl From<&Value> for Value {
+    fn from(value: &Value) -> Self {
+        value.clone()
+    }
+}
+
 impl Valuable for Value {
     fn attr_lookup<'s>(&'s self, name: &RcId) -> VResult<&'s Value, Missing> {
         match self {

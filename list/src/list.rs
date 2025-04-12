@@ -15,6 +15,10 @@ impl<T> List<T> {
         List(Some(Rc::new(Node::new(elem, self))))
     }
 
+    pub fn next(&self) -> Option<(&List<T>, &T)> {
+        self.0.as_ref().map(|n| (n.tail(), n.elem()))
+    }
+
     pub fn length(&self) -> usize {
         self.map_ref(|node| node.length()).unwrap_or_default()
     }
