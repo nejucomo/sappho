@@ -5,11 +5,10 @@ use sappho_east::Expr;
 use sappho_effect::Effect;
 use sappho_value::{Locals, Scope, Value};
 
-use crate::continuation::EvalNext;
-use crate::evalstep::EvalStep;
 use crate::expr::ContExpr;
-use crate::step::{ContinueStep, Step::*};
+use crate::exprstep::ExprStep;
 use crate::withlocals::WithLocals;
+use crate::wrapper::Ev;
 
 pub type EvalResult<T> = Result<T, EvalError>;
 pub type EvalError = Box<dyn Error + 'static>;
@@ -27,7 +26,7 @@ where
 {
     let mut scopeslot = ScopeSlot(scope);
     let mut cstack = vec![];
-    let mut step: EvalStep<'s, FX> = expr.eval_next(&scopeslot);
+    let mut step: ExprStep<'s, FX> = Ev(expr).eval_next(&scopeslot);
 
     loop {
         match step {
