@@ -1,6 +1,8 @@
 use std::error::Error;
 
 use derive_more::Deref;
+use sappho_continuation::ContinueStep;
+use sappho_continuation::Step::{Continue, Produce};
 use sappho_east::Expr;
 use sappho_effect::Effect;
 use sappho_value::{Locals, Scope, Value};

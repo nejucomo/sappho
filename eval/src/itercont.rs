@@ -1,8 +1,6 @@
 use sappho_effect::Effect;
 use std::fmt::Debug;
 
-use crate::step::EvalStep;
-
 #[derive(Debug)]
 pub(crate) struct ItcState<'s, FX, IC>
 where

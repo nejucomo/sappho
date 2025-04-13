@@ -1,7 +1,7 @@
 use derive_more::From;
 
 use crate::withaux::WithAuxillary;
-use crate::ContinueStep;
+use crate::{Continuation, ContinueStep};
 
 use self::Step::{Continue, Produce};
 
@@ -21,6 +21,24 @@ impl<A, V, X, C> Step<V, (A, X), C> {
         match self {
             Produce(v) => Produce(v),
             Continue(cs) => Continue(cs.factor_auxillary()),
+        }
+    }
+}
+
+impl<V, X, C, I, A> Step<V, X, IC>
+where
+    I: IntoIterator<Item = (A, X)>,
+    C: Continuation<(A, V), V, X, C>,
+{
+    pub fn from_iter(itercont: C, it: I) -> Self {
+        let mut it = it.into_iter();
+        if let Some(pair) = it.next() {
+            ContinueStep::new(pair, IterContinuer::from(itercont))
+                .with_aux(it)
+                .factor_auxillary()
+                .into()
+        } else {
+            yyy
         }
     }
 }

@@ -9,6 +9,8 @@ pub struct ContinueStep<X, C> {
 }
 
 impl<X, C> ContinueStep<X, C> {
+    pub fn from_iter(itercont: C, init: I) -> ContinueStep<X, 
+
     pub fn with_aux<A>(self, aux: A) -> ContinueStep<X, WithAuxillary<C, A>> {
         ContinueStep {
             expr: self.expr,
