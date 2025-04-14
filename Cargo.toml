@@ -6,6 +6,7 @@ members = [
   "continuation",
   "effect",
   "east",
+  "eval",
   "identifier",
 #   "integration-tests",
 #   "interpreter",
@@ -56,6 +57,7 @@ sappho-attrs = { path = "attrs" }
 sappho-continuation = { path = "continuation" }
 sappho-effect = { path = "effect" }
 sappho-east = { path = "east" }
+sappho-eval = { path = "eval" }
 sappho-identifier = { path = "identifier" }
 # sappho-integration-tests = { path = "integration-tests" }
 # sappho-interpreter = { path = "interpreter" }
