@@ -4,7 +4,7 @@ use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
 use sappho_list::List;
 
-use crate::Value;
+use crate::{Scoped, Value};
 
 /// # TODO
 ///
@@ -23,5 +23,9 @@ impl Scope {
         }
 
         Err(Missing::from(id))
+    }
+
+    pub fn wrap<T>(self, other: T) -> Scoped<T> {
+        Scoped::new(self, other)
     }
 }

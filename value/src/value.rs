@@ -1,4 +1,5 @@
 use std::fmt;
+use std::rc::Rc;
 
 use derive_more::From;
 use sappho_attrs::errors::Missing;
@@ -6,7 +7,7 @@ use sappho_identifier::RcId;
 use sappho_list::List;
 use sappho_primval::{Num, PrimVal};
 
-use crate::{AsError, ObjectRc, ObjectVal, VResult, Valuable};
+use crate::{AsError, ObjectVal, VResult, Valuable};
 
 use self::Value::*;
 
@@ -14,8 +15,8 @@ use self::Value::*;
 pub enum Value {
     #[from(PrimVal, Num)]
     VPrim(PrimVal),
-    #[from(ObjectRc, ObjectVal)]
-    VObj(ObjectRc),
+    #[from(Rc<ObjectVal>, ObjectVal)]
+    VObj(Rc<ObjectVal>),
     #[from]
     VList(List<Value>),
 }
