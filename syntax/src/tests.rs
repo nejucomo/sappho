@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use sappho_attrs::Attrs;
 use sappho_effect::QueryEffect;
 use sappho_effect::{Effect, PureEffect};
@@ -113,22 +115,22 @@ where
 )]
 #[test_case(
     "{ query x }",
-    ObjectDef::from(QueryDef::new(w("x")))
+    ObjectDef::from(Rc::new(QueryDef::new(w("x"))))
     ; "object query"
 )]
 #[test_case(
     "{ fn x -> x }",
-    ObjectDef::from(FuncDef::new("x", w("x")))
+    ObjectDef::from(Rc::new(FuncDef::new("x", w("x"))))
     ; "object fn"
 )]
 #[test_case(
     "{ query x, fn x -> x }",
-    ObjectDef::new(FuncDef::new("x", w("x")), QueryDef::new(w("x")), None, attrs_())
+    ObjectDef::new(Rc::new(FuncDef::new("x", w("x"))), Rc::new(QueryDef::new(w("x"))), None, attrs_())
     ; "object query and fn"
 )]
 #[test_case(
     "{ fn x -> x, query x }",
-    ObjectDef::new(FuncDef::new("x", w("x")), QueryDef::new(w("x")), None, attrs_())
+    ObjectDef::new(Rc::new(FuncDef::new("x", w("x"))), Rc::new(QueryDef::new(w("x"))), None, attrs_())
     ; "object fn and query"
 )]
 #[test_case(
