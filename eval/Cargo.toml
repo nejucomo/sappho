@@ -6,6 +6,10 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+derive_more.workspace = true
+derive-new.workspace = true
 sappho-continuation.workspace = true
 sappho-east.workspace = true
+sappho-effect.workspace = true
+sappho-primval.workspace = true
 sappho-value.workspace = true
