@@ -5,6 +5,9 @@ use either::Either::{self, Left, Right};
 
 use crate::lfg::ListFormGeneric;
 
+pub type ListFormIntoIter<X, T> = ListFormIter<std::vec::IntoIter<X>, T>;
+pub type ListFormRefIter<'s, X, T> = ListFormIter<std::slice::Iter<'s, X>, &'s T>;
+
 #[derive(Clone, Debug, new)]
 #[new(visibility = "pub(crate)")]
 pub struct ListFormIter<XI, T>(ListFormGeneric<Fuse<XI>, T>);

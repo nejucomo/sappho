@@ -8,9 +8,13 @@ homepage.workspace = true
 [dependencies]
 derive_more.workspace = true
 derive-new.workspace = true
+either.workspace = true
 sappho-attrs.workspace = true
 sappho-east.workspace = true
 sappho-effect.workspace = true
 sappho-identifier.workspace = true
+sappho-listform.workspace = true
+sappho-list.workspace = true
 sappho-primval.workspace = true
 sappho-value.workspace = true
+sappho-with-source.workspace = true

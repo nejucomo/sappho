@@ -4,7 +4,7 @@ use sappho_unparse::Unparse;
 use std::fmt;
 
 use crate::lfg::ListFormGeneric;
-use crate::ListFormIter;
+use crate::{ListFormIntoIter, ListFormRefIter};
 
 /// A general structure for a sequence of items, with an optional tail, used for both list patterns
 /// and expressions in the ast, examples: `[]`, `[32]`, `[a, b, ..t]`
@@ -49,7 +49,7 @@ impl<X, T> ListForm<X, T> {
         self
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Either<&X, &T>> {
+    pub fn iter(&self) -> ListFormRefIter<X, T> {
         self.lfg_ref().into_iter()
     }
 
@@ -98,7 +98,7 @@ where
 
 impl<X, T> IntoIterator for ListForm<X, T> {
     type Item = Either<X, T>;
-    type IntoIter = ListFormIter<std::vec::IntoIter<X>, T>;
+    type IntoIter = ListFormIntoIter<X, T>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()

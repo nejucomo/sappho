@@ -4,7 +4,7 @@ use sappho_effect::Effect;
 use sappho_identifier::RcId;
 use sappho_value::{FuncVal, ObjectVal, ProcVal, QueryVal, Scope, Value};
 
-use crate::contiter::{continue_eval_via_iter, ContIter};
+use crate::contiter::{ContIter, IterContinuation};
 use crate::evaltrait::Eval;
 use crate::exprstep::ExprStep;
 
@@ -19,14 +19,13 @@ where
     fn eval(self, scope: &'s Scope) -> ExprStep<'x, FX> {
         let (fdef, qdef, pdef, exprattrs) = self.as_refs().into();
 
-        let oval = ObjectBuilder {
+        ObjectBuilder {
             f: fdef.cloned().map(|def| scope.clone_wrap(def)),
             q: qdef.cloned().map(|def| scope.clone_wrap(def)),
             p: pdef.cloned().map(|def| scope.clone_wrap(def)),
             a: Attrs::default(),
-        };
-
-        continue_eval_via_iter(oval, exprattrs.into_iter())
+        }
+        .eval_via_iter(exprattrs.into_iter())
     }
 }
 
@@ -39,6 +38,21 @@ pub(crate) struct ObjectBuilder {
     a: Attrs<Value>,
 }
 
+impl<'x, FX> IterContinuation<'x, FX, ExprAttrsIter<'x, FX>, RcId> for ObjectBuilder
+where
+    FX: Effect,
+{
+    fn split_item(item: (RcId, &'x Wise<FX>)) -> (RcId, &'x Wise<FX>) {
+        item
+    }
+}
+
+impl From<ObjectBuilder> for Value {
+    fn from(ObjectBuilder { f, q, p, a }: ObjectBuilder) -> Self {
+        ObjectVal::new_from_parts(f, q, p, a).into()
+    }
+}
+
 impl Extend<(RcId, Value)> for ObjectBuilder {
     fn extend<T: IntoIterator<Item = (RcId, Value)>>(&mut self, iter: T) {
         for (rcid, value) in iter {
@@ -46,11 +60,5 @@ impl Extend<(RcId, Value)> for ObjectBuilder {
                 .define(rcid, value)
                 .expect("Parsing failed to ensure unique attr names")
         }
-    }
-}
-
-impl From<ObjectBuilder> for Value {
-    fn from(ObjectBuilder { f, q, p, a }: ObjectBuilder) -> Self {
-        ObjectVal::new_from_parts(f, q, p, a).into()
     }
 }
