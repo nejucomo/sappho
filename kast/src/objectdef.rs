@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use derive_more::{Deref, From, Into};
 use sappho_attrs::Attrs;
 use sappho_effect::Effect;
@@ -9,10 +11,13 @@ use crate::{FuncDef, KastProvider, ProcDef, QueryDef, Wise};
 ///
 /// Change the attributes to `Wise<PureEffect>` as a new restriction on object definitions.
 #[derive(Clone, Debug, PartialEq, From, Into, Deref)]
-pub struct ObjectDef<K, FX>(Object<FuncDef<K>, QueryDef<K>, ProcDef<K>, Wise<K, FX>>)
+pub struct ObjectDef<K, FX>(ObjectDefInner<K, FX>)
 where
     K: KastProvider,
     FX: Effect;
+
+pub type ObjectDefInner<K, FX> =
+    Object<Rc<FuncDef<K>>, Rc<QueryDef<K>>, Rc<ProcDef<K>>, Wise<K, FX>>;
 
 impl<K, FX> ObjectDef<K, FX>
 where
@@ -21,50 +26,50 @@ where
 {
     pub fn new<F, Q, P, A>(func: F, query: Q, proc: P, attrs: A) -> Self
     where
-        Option<FuncDef<K>>: From<F>,
-        Option<QueryDef<K>>: From<Q>,
-        Option<ProcDef<K>>: From<P>,
-        Attrs<Wise<K, FX>>: From<A>,
+        F: Into<Option<Rc<FuncDef<K>>>>,
+        Q: Into<Option<Rc<QueryDef<K>>>>,
+        P: Into<Option<Rc<ProcDef<K>>>>,
+        A: Into<Attrs<Wise<K, FX>>>,
     {
         ObjectDef(Object::new(
-            Option::<FuncDef<K>>::from(func),
-            Option::<QueryDef<K>>::from(query),
-            Option::<ProcDef<K>>::from(proc),
-            Attrs::from(attrs),
+            func.into(),
+            query.into(),
+            proc.into(),
+            attrs.into(),
         ))
     }
 
-    pub fn unwrap(self) -> Object<FuncDef<K>, QueryDef<K>, ProcDef<K>, Wise<K, FX>> {
+    pub fn unwrap(self) -> ObjectDefInner<K, FX> {
         self.0
     }
 }
 
-impl<K, FX> From<FuncDef<K>> for ObjectDef<K, FX>
+impl<K, FX> From<Rc<FuncDef<K>>> for ObjectDef<K, FX>
 where
     K: KastProvider,
     FX: Effect,
 {
-    fn from(value: FuncDef<K>) -> Self {
+    fn from(value: Rc<FuncDef<K>>) -> Self {
         Self::new(value, None, None, Attrs::default())
     }
 }
 
-impl<K, FX> From<QueryDef<K>> for ObjectDef<K, FX>
+impl<K, FX> From<Rc<QueryDef<K>>> for ObjectDef<K, FX>
 where
     K: KastProvider,
     FX: Effect,
 {
-    fn from(value: QueryDef<K>) -> Self {
+    fn from(value: Rc<QueryDef<K>>) -> Self {
         Self::new(None, value, None, Attrs::default())
     }
 }
 
-impl<K, FX> From<ProcDef<K>> for ObjectDef<K, FX>
+impl<K, FX> From<Rc<ProcDef<K>>> for ObjectDef<K, FX>
 where
     K: KastProvider,
     FX: Effect,
 {
-    fn from(value: ProcDef<K>) -> Self {
+    fn from(value: Rc<ProcDef<K>>) -> Self {
         Self::new(None, None, value, Attrs::default())
     }
 }

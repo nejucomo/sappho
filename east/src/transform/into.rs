@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use sappho_effect::Effect;
 use sappho_syntax as syntax;
 use sappho_with_source::WithSource;
@@ -43,5 +45,14 @@ where
 {
     fn transform_into(self) -> Wise<FX> {
         Wise::from(self.unwrap().transform_into())
+    }
+}
+
+impl<S, T> TransformInto<Rc<T>> for Rc<S>
+where
+    S: Clone + TransformInto<T>,
+{
+    fn transform_into(self) -> Rc<T> {
+        Rc::new(Rc::unwrap_or_clone(self).transform_into())
     }
 }

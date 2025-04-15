@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use std::rc::Rc;
 
 use chumsky::Parser as _;
 
@@ -20,5 +21,14 @@ where
 {
     fn make_parser_with(param: T) -> impl Parser<Self> {
         P::parser_with(param).map(Box::new)
+    }
+}
+
+impl<T, P> ParsableWith<T> for Rc<P>
+where
+    P: ParsableWith<T>,
+{
+    fn make_parser_with(param: T) -> impl Parser<Self> {
+        P::parser_with(param).map(Rc::new)
     }
 }

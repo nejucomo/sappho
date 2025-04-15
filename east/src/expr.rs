@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use derive_more::From;
 use sappho_effect::Effect;
 use sappho_identifier::RcId;
@@ -19,9 +21,9 @@ where
     Ref(RcId),
     #[from(
         ObjectDef<FX>,
-        FuncDef,
-        QueryDef,
-        ProcDef,
+        Rc<FuncDef>,
+        Rc<QueryDef>,
+        Rc<ProcDef>,
     )]
     ObjectDef(ObjectDef<FX>),
     #[from]

@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use chumsky::Parser as _;
 use derive_more::From;
 use sappho_attrs::Attrs;
@@ -22,9 +24,9 @@ use crate::{
     &'static str,
     Num,
     ObjectDef<FX>,
-    FuncDef,
-    QueryDef,
-    ProcDef,
+    Rc<FuncDef>,
+    Rc<QueryDef>,
+    Rc<ProcDef>,
     Attrs<Wise<FX>>,
     ListForm<Wise<FX>, BoxWise<FX>>,
 )]

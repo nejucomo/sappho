@@ -1,10 +1,10 @@
 use sappho_effect::Effect;
+use sappho_kast::ObjectDefInner;
 use sappho_listform::ListForm;
-use sappho_object::Object;
-use sappho_syntax as syntax;
+use sappho_syntax::{self as syntax, SyntaxProvider};
 
 use crate::transform::TransformInto;
-use crate::{FuncDef, ObjectDef, ProcDef, QueryDef, Wise};
+use crate::{EastProvider, FuncDef, ObjectDef, ProcDef, QueryDef};
 
 impl<FX> TransformInto<ObjectDef<FX>> for syntax::ObjectDef<FX>
 where
@@ -15,17 +15,16 @@ where
     }
 }
 
-impl<FX> TransformInto<Object<FuncDef, QueryDef, ProcDef, Wise<FX>>>
-    for Object<syntax::FuncDef, syntax::QueryDef, syntax::ProcDef, syntax::Wise<FX>>
+impl<FX> TransformInto<ObjectDefInner<EastProvider, FX>> for ObjectDefInner<SyntaxProvider, FX>
 where
     FX: Effect,
 {
-    fn transform_into(self) -> Object<FuncDef, QueryDef, ProcDef, Wise<FX>> {
+    fn transform_into(self) -> ObjectDefInner<EastProvider, FX> {
         self.map_parts(
-            syntax::FuncDef::transform_into,
-            syntax::QueryDef::transform_into,
-            syntax::ProcDef::transform_into,
-            syntax::Wise::transform_into,
+            |f| f.transform_into(),
+            |q| q.transform_into(),
+            |p| p.transform_into(),
+            |a| a.transform_into(),
         )
     }
 }

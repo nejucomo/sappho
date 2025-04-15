@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use chumsky::prelude::just;
 use chumsky::Parser as _;
 use derive_more::{From, Into};
@@ -23,9 +25,9 @@ use crate::{
     Num,
     ParensExpr<FX>,
     ObjectDef<FX>,
-    FuncDef,
-    QueryDef,
-    ProcDef,
+    Rc<FuncDef>,
+    Rc<QueryDef>,
+    Rc<ProcDef>,
     Attrs<Wise<FX>>,
     ListForm<Wise<FX>, BoxWise<FX>>,
 )]

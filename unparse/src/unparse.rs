@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::{Break, Stream};
 
 /// # TODO
@@ -32,6 +34,15 @@ impl Unparse for Break {
 }
 
 impl<T> Unparse for Box<T>
+where
+    T: Unparse,
+{
+    fn unparse_into(&self, s: &mut Stream) {
+        s.write(self.as_ref())
+    }
+}
+
+impl<T> Unparse for Rc<T>
 where
     T: Unparse,
 {

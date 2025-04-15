@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use chumsky::Parser as _;
 use derive_more::{From, TryInto};
 use sappho_attrs::Attrs;
@@ -24,9 +26,9 @@ where
     Prim(PrimVal),
     #[from(
         crate::ObjectDef<FX>,
-        FuncDef,
-        QueryDef,
-        ProcDef,
+        Rc<FuncDef>,
+        Rc<QueryDef>,
+        Rc<ProcDef>,
         Attrs<Wise<FX>>,
     )]
     ObjectDef(crate::ObjectDef<FX>),
