@@ -5,6 +5,7 @@ members = [
 #   "cli",
   "effect",
   "east",
+  "eval",
   "identifier",
 #   "integration-tests",
 #   "interpreter",
@@ -54,6 +55,7 @@ sappho-attrs = { path = "attrs" }
 # sappho-cli = { path = "cli" }
 sappho-effect = { path = "effect" }
 sappho-east = { path = "east" }
+sappho-eval = { path = "eval" }
 sappho-identifier = { path = "identifier" }
 # sappho-integration-tests = { path = "integration-tests" }
 # sappho-interpreter = { path = "interpreter" }
