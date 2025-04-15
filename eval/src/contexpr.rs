@@ -1,21 +1,15 @@
+use derive_more::From;
+
 use sappho_east::Expr;
 use sappho_effect::Effect;
 use sappho_identifier::RcId;
 use sappho_primval::PrimVal;
-use sappho_value::Scope;
+use sappho_value::{Scope, Value};
 
 use crate::evaltrait::Eval;
 use crate::exprstep::ExprStep;
+use crate::objectdef::ContObjectDef;
 use crate::step::Step;
-
-/// The primary continuation for [crate::eval]
-#[derive(Debug)]
-pub(crate) enum ContExpr<'x, FX>
-where
-    FX: Effect,
-{
-    Fixme(&'x FX),
-}
 
 impl<'s, 'x, FX> Eval<&'s Scope, ExprStep<'x, FX>> for &'x Expr<FX>
 where
@@ -58,5 +52,27 @@ where
                 .expect("TODO: eval user-space error propagation")
                 .clone(),
         )
+    }
+}
+
+/// The primary continuation for [crate::eval]
+#[derive(Debug, From)]
+pub(crate) enum ContExpr<'x, FX>
+where
+    FX: Effect,
+{
+    Cont(ContObjectDef<'x, FX>),
+}
+
+impl<'x, FX> Eval<Value, ExprStep<'x, FX>> for ContExpr<'x, FX>
+where
+    FX: Effect,
+{
+    fn eval(self, input: Value) -> ExprStep<'x, FX> {
+        use ContExpr::*;
+
+        match self {
+            Cont(x) => x.eval(input),
+        }
     }
 }

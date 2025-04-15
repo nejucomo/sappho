@@ -28,4 +28,8 @@ impl Scope {
     pub fn wrap<T>(self, other: T) -> Scoped<T> {
         Scoped::new(self, other)
     }
+
+    pub fn clone_wrap<T>(&self, other: T) -> Scoped<T> {
+        self.clone().wrap(other)
+    }
 }
