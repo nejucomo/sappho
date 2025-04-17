@@ -4,6 +4,7 @@ mod expr;
 mod listform;
 mod restrict;
 
+use chumsky::Parser as _;
 use sappho_parsable::error::ParseError;
 use sappho_source::LoadSource;
 
@@ -14,8 +15,6 @@ where
     S: LoadSource<C>,
     C: Clone + AsRef<str> + ToString,
 {
-    use chumsky::Parser;
-
     let scode = loadsource.load()?;
 
     self::expr::expression()

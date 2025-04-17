@@ -2,7 +2,7 @@ mod procdef;
 
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
-use chumsky::Parser;
+use chumsky::Parser as _;
 use sappho_ast::{Ast, Expr, ProcExpr};
 use sappho_ast_core::{FuncDef, ObjectDef, ProcDef, QueryDef};
 use sappho_ast_effect::ProcEffect;
@@ -10,6 +10,7 @@ use sappho_identifier::RcId;
 use sappho_keyword::Keyword;
 use sappho_object::Element;
 use sappho_parsable::primitive::space;
+use sappho_parsable::Parser;
 
 use crate::delimited::delimited;
 use crate::error::BareError;
@@ -21,7 +22,7 @@ use self::procdef::proc_def;
 
 pub(crate) fn object_expr(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+) -> impl Parser<ProcExpr> + '_ {
     use Expr::{Func, Proc, Query};
 
     object_def(expr.clone())
@@ -31,9 +32,7 @@ pub(crate) fn object_expr(
         .or(proc_def(expr).map(Proc))
 }
 
-fn func_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, FuncDef<Ast>, Error = BareError> + '_ {
+fn func_def(expr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<FuncDef<Ast>> + '_ {
     Keyword::Fn
         .parse()
         .ignore_then(pattern())
@@ -46,9 +45,7 @@ fn func_def(
         .labelled("fn definition")
 }
 
-fn query_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, QueryDef<Ast>, Error = BareError> + '_ {
+fn query_def(expr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<QueryDef<Ast>> + '_ {
     Keyword::Query
         .parse()
         .ignore_then(query_expr(expr))
@@ -60,7 +57,7 @@ fn query_def(
 
 fn object_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ObjectDef<Ast, ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<ObjectDef<Ast, ProcEffect>> + '_ {
     let innards = object_clause(expr)
         .separated_by(just(',').then(space().or_not()))
         .allow_trailing();
@@ -78,9 +75,7 @@ fn object_def(
 
 type ObjectClause = Element<FuncDef<Ast>, QueryDef<Ast>, ProcDef<Ast>, ProcExpr>;
 
-fn object_clause(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ObjectClause, Error = BareError> + '_ {
+fn object_clause(expr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<ObjectClause> + '_ {
     use Element::*;
 
     attr_def(expr.clone())
@@ -90,9 +85,7 @@ fn object_clause(
         .or(proc_def(expr).map(Proc))
 }
 
-fn attr_def(
-    expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, (RcId, ProcExpr), Error = BareError> + '_ {
+fn attr_def(expr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<(RcId, ProcExpr)> + '_ {
     identifier()
         .then_ignore(space().or_not())
         .then_ignore(just(':'))

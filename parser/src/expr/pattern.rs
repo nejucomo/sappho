@@ -1,18 +1,17 @@
 use crate::error::BareError;
 use crate::expr::universal::{identifier, literal};
 use chumsky::recursive::Recursive;
-use chumsky::Parser;
+use chumsky::Parser as _;
 use sappho_ast::{ListPattern, Pattern};
 use sappho_attrs::Attrs;
 use sappho_parsable::primitive::space;
+use sappho_parsable::Parser;
 
-pub(crate) fn pattern() -> impl Parser<char, Pattern, Error = BareError> {
+pub(crate) fn pattern() -> impl Parser<Pattern> {
     chumsky::recursive::recursive(pattern_rec)
 }
 
-fn pattern_rec(
-    pat: Recursive<'_, char, Pattern, BareError>,
-) -> impl Parser<char, Pattern, Error = BareError> + '_ {
+fn pattern_rec(pat: Recursive<'_, char, Pattern, BareError>) -> impl Parser<Pattern> + '_ {
     use Pattern::*;
 
     identifier()
@@ -23,9 +22,7 @@ fn pattern_rec(
         .labelled("pattern")
 }
 
-fn unpack_attrs(
-    pat: Recursive<'_, char, Pattern, BareError>,
-) -> impl Parser<char, Attrs<Pattern>, Error = BareError> + '_ {
+fn unpack_attrs(pat: Recursive<'_, char, Pattern, BareError>) -> impl Parser<Attrs<Pattern>> + '_ {
     use crate::delimited::delimited;
     use chumsky::primitive::just;
 
@@ -41,9 +38,7 @@ fn unpack_attrs(
     .map(Attrs::from_iter)
 }
 
-fn list_pattern(
-    pat: Recursive<'_, char, Pattern, BareError>,
-) -> impl Parser<char, ListPattern, Error = BareError> + '_ {
+fn list_pattern(pat: Recursive<'_, char, Pattern, BareError>) -> impl Parser<ListPattern> + '_ {
     use crate::listform::list_form;
 
     list_form(pat, identifier()).labelled("list-pattern")

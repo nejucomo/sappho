@@ -9,10 +9,11 @@ use self::proc::proc_expr_def;
 use crate::error::BareError;
 use crate::restrict::Restrict;
 use chumsky::recursive::Recursive;
-use chumsky::Parser;
+use chumsky::Parser as _;
 use sappho_ast::{ProcExpr, PureExpr, QueryExpr};
+use sappho_parsable::Parser;
 
-pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = BareError> {
+pub(crate) fn expression() -> impl Parser<PureExpr> {
     use chumsky::primitive::end;
     use chumsky::recursive::recursive;
 
@@ -21,14 +22,10 @@ pub(crate) fn expression() -> impl Parser<char, PureExpr, Error = BareError> {
         .then_ignore(end())
 }
 
-fn query_expr(
-    proc_expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, QueryExpr, Error = BareError> + '_ {
+fn query_expr(proc_expr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<QueryExpr> + '_ {
     proc_expr.try_map(QueryExpr::restrict)
 }
 
-fn pure_expr(
-    proc_expr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, PureExpr, Error = BareError> + '_ {
+fn pure_expr(proc_expr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<PureExpr> + '_ {
     proc_expr.try_map(PureExpr::restrict)
 }

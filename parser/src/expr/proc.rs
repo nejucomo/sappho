@@ -5,14 +5,15 @@ use crate::expr::object::object_expr;
 use crate::expr::recursive::recursive_expr;
 use crate::expr::universal::universal_expr;
 use chumsky::recursive::Recursive;
-use chumsky::Parser;
+use chumsky::Parser as _;
 use sappho_ast::ProcExpr;
 use sappho_identifier::RcId;
 use sappho_parsable::primitive::space;
+use sappho_parsable::Parser;
 
 pub(super) fn proc_expr_def(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+) -> impl Parser<ProcExpr> + '_ {
     non_application(pexpr)
         .separated_by(space())
         .at_least(1)
@@ -28,9 +29,7 @@ pub(super) fn proc_expr_def(
         })
 }
 
-fn non_application(
-    pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+fn non_application(pexpr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<ProcExpr> + '_ {
     non_app_non_lookup(pexpr)
         .then(attr_lookup().repeated())
         .map(|(x, lookups)| {
@@ -42,7 +41,7 @@ fn non_application(
         })
 }
 
-fn attr_lookup() -> impl Parser<char, RcId, Error = BareError> {
+fn attr_lookup() -> impl Parser<RcId> {
     use crate::expr::universal::identifier;
     use chumsky::primitive::just;
 
@@ -51,7 +50,7 @@ fn attr_lookup() -> impl Parser<char, RcId, Error = BareError> {
 
 fn non_app_non_lookup(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+) -> impl Parser<ProcExpr> + '_ {
     parens_expr(pexpr.clone())
         .or(proc_effect(pexpr.clone()).map(ProcExpr::from))
         .or(universal_expr())
@@ -59,8 +58,6 @@ fn non_app_non_lookup(
         .or(recursive_expr(pexpr))
 }
 
-fn parens_expr(
-    pexpr: Recursive<'_, char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+fn parens_expr(pexpr: Recursive<'_, char, ProcExpr, BareError>) -> impl Parser<ProcExpr> + '_ {
     delimited('(', pexpr, ')').labelled("parenthetical-expression")
 }

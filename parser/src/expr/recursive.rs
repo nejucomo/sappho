@@ -2,16 +2,17 @@ use crate::error::BareError;
 use crate::expr::pattern::pattern;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
-use chumsky::Parser;
+use chumsky::Parser as _;
 use sappho_ast::{Ast, Expr, ListExpr, ProcExpr};
 use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr};
 use sappho_ast_effect::ProcEffect;
 use sappho_keyword::Keyword;
 use sappho_parsable::primitive::space;
+use sappho_parsable::Parser;
 
 pub(crate) fn recursive_expr(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
+) -> impl Parser<ProcExpr> + '_ {
     use Expr::List;
 
     list_expr(expr.clone())
@@ -20,9 +21,7 @@ pub(crate) fn recursive_expr(
         .or(match_expr(expr).map(Expr::from))
 }
 
-fn list_expr(
-    expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, ListExpr<ProcEffect>, Error = BareError> + '_ {
+fn list_expr(expr: Recursive<char, ProcExpr, BareError>) -> impl Parser<ListExpr<ProcEffect>> + '_ {
     use crate::listform::list_form;
 
     list_form(expr.clone(), expr.map(Box::new)).labelled("list-expression")
@@ -30,7 +29,7 @@ fn list_expr(
 
 fn let_expr(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, LetExpr<Ast, ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<LetExpr<Ast, ProcEffect>> + '_ {
     let_clause(expr.clone())
         .then_ignore(space())
         .repeated()
@@ -45,7 +44,7 @@ fn let_expr(
 
 fn let_clause(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, LetClause<Ast, ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<LetClause<Ast, ProcEffect>> + '_ {
     Keyword::Let
         .parse()
         .ignore_then(pattern())
@@ -60,7 +59,7 @@ fn let_clause(
 
 fn match_expr(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, MatchExpr<Ast, ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<MatchExpr<Ast, ProcEffect>> + '_ {
     use crate::delimited::delimited;
 
     Keyword::Match
@@ -83,7 +82,7 @@ fn match_expr(
 
 fn match_clause(
     expr: Recursive<char, ProcExpr, BareError>,
-) -> impl Parser<char, MatchClause<Ast, ProcEffect>, Error = BareError> + '_ {
+) -> impl Parser<MatchClause<Ast, ProcEffect>> + '_ {
     pattern()
         .then_ignore(just("->").delimited_by(space(), space()))
         .then(expr)
