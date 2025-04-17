@@ -1,6 +1,5 @@
 use crate::error::BareError;
 use crate::expr::pattern::pattern;
-use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
@@ -8,6 +7,7 @@ use sappho_ast::{Ast, Expr, ListExpr, ProcExpr};
 use sappho_ast_core::{LetClause, LetExpr, MatchClause, MatchExpr};
 use sappho_ast_effect::ProcEffect;
 use sappho_keyword::Keyword;
+use sappho_parsable::primitive::space;
 
 pub(crate) fn recursive_expr(
     expr: Recursive<char, ProcExpr, BareError>,
@@ -32,7 +32,7 @@ fn let_expr(
     expr: Recursive<char, ProcExpr, BareError>,
 ) -> impl Parser<char, LetExpr<Ast, ProcEffect>, Error = BareError> + '_ {
     let_clause(expr.clone())
-        .then_ignore(ws())
+        .then_ignore(space())
         .repeated()
         .at_least(1)
         .then(expr)
@@ -49,7 +49,7 @@ fn let_clause(
     Keyword::Let
         .parse()
         .ignore_then(pattern())
-        .then_ignore(just('=').delimited_by(ws(), ws()))
+        .then_ignore(just('=').delimited_by(space(), space()))
         .then(expr.clone())
         .then_ignore(just(';'))
         .map(|(binding, bindexpr)| LetClause {
@@ -66,11 +66,11 @@ fn match_expr(
     Keyword::Match
         .parse()
         .ignore_then(expr.clone())
-        .then_ignore(ws())
+        .then_ignore(space())
         .then(delimited(
             '{',
             match_clause(expr)
-                .separated_by(just(',').then(ws()))
+                .separated_by(just(',').then(space()))
                 .allow_trailing(),
             '}',
         ))
@@ -85,7 +85,7 @@ fn match_clause(
     expr: Recursive<char, ProcExpr, BareError>,
 ) -> impl Parser<char, MatchClause<Ast, ProcEffect>, Error = BareError> + '_ {
     pattern()
-        .then_ignore(just("->").delimited_by(ws(), ws()))
+        .then_ignore(just("->").delimited_by(space(), space()))
         .then(expr)
         .map(|(pattern, body)| MatchClause {
             pattern,

@@ -3,7 +3,6 @@ mod error;
 mod expr;
 mod listform;
 mod restrict;
-mod space;
 
 use sappho_parsable::error::ParseError;
 use sappho_source::LoadSource;

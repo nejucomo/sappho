@@ -4,6 +4,7 @@ use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::{ListPattern, Pattern};
 use sappho_attrs::Attrs;
+use sappho_parsable::primitive::space;
 
 pub(crate) fn pattern() -> impl Parser<char, Pattern, Error = BareError> {
     chumsky::recursive::recursive(pattern_rec)
@@ -26,15 +27,14 @@ fn unpack_attrs(
     pat: Recursive<'_, char, Pattern, BareError>,
 ) -> impl Parser<char, Attrs<Pattern>, Error = BareError> + '_ {
     use crate::delimited::delimited;
-    use crate::space::ws;
     use chumsky::primitive::just;
 
     delimited(
         '{',
         identifier()
-            .then_ignore(just(':').then(ws().or_not()))
+            .then_ignore(just(':').then(space().or_not()))
             .then(pat)
-            .separated_by(just(',').then(ws().or_not()))
+            .separated_by(just(',').then(space().or_not()))
             .allow_trailing(),
         '}',
     )

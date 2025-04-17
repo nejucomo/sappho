@@ -9,13 +9,13 @@ use sappho_ast_effect::ProcEffect;
 use sappho_identifier::RcId;
 use sappho_keyword::Keyword;
 use sappho_object::Element;
+use sappho_parsable::primitive::space;
 
 use crate::delimited::delimited;
 use crate::error::BareError;
 use crate::expr::pattern::pattern;
 use crate::expr::universal::identifier;
 use crate::expr::{pure_expr, query_expr};
-use crate::space::ws;
 
 use self::procdef::proc_def;
 
@@ -37,7 +37,7 @@ fn func_def(
     Keyword::Fn
         .parse()
         .ignore_then(pattern())
-        .then_ignore(just("->").delimited_by(ws(), ws()))
+        .then_ignore(just("->").delimited_by(space(), space()))
         .then(pure_expr(expr))
         .map(|(binding, body)| FuncDef {
             binding,
@@ -62,7 +62,7 @@ fn object_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ObjectDef<Ast, ProcEffect>, Error = BareError> + '_ {
     let innards = object_clause(expr)
-        .separated_by(just(',').then(ws().or_not()))
+        .separated_by(just(',').then(space().or_not()))
         .allow_trailing();
 
     delimited('{', innards, '}')
@@ -94,9 +94,9 @@ fn attr_def(
     expr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, (RcId, ProcExpr), Error = BareError> + '_ {
     identifier()
-        .then_ignore(ws().or_not())
+        .then_ignore(space().or_not())
         .then_ignore(just(':'))
-        .then_ignore(ws().or_not())
+        .then_ignore(space().or_not())
         .then(expr)
         .labelled("attribute definition")
 }

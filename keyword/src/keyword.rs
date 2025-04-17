@@ -36,7 +36,7 @@ impl Keyword {
         use chumsky::prelude::just;
         use chumsky::Parser as _;
 
-        just(self.as_str()).then_space().to(self)
+        just(self.as_str()).then_opt_space().to(self)
     }
 }
 

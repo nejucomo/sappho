@@ -11,9 +11,9 @@ use crate::Parser;
 /// In sappho, only ' ' and '\n' are allowed as syntactic whitespace, and '\t', '\r', or non-ASCII whitespace is rejected.
 pub fn space() -> impl Parser<()> {
     // TODO: This seems potentially more efficient but regresses error messages on expectations:
-    // chumsky::primitive::filter(|&c| c == ' ' || c == '\n').ignored().repeated().ignored()
+    // chumsky::primitive::filter(|&c| c == ' ' || c == '\n').ignored().repeated().at_least(1).ignored()
 
-    just(' ').or(just('\n')).repeated().ignored()
+    just(' ').or(just('\n')).repeated().at_least(1).ignored()
 }
 
 pub fn bracketed<P, O>([open, close]: [char; 2], inner: P) -> impl Parser<O>

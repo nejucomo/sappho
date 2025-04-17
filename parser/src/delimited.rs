@@ -1,7 +1,7 @@
 use crate::error::BareError;
-use crate::space::ws;
 use chumsky::primitive::just;
 use chumsky::Parser;
+use sappho_parsable::primitive::space;
 
 pub(crate) fn delimited<P, O>(
     open: char,
@@ -12,7 +12,7 @@ where
     P: Parser<char, O, Error = BareError>,
 {
     body.delimited_by(
-        just(open).then_ignore(ws().or_not()),
-        ws().or_not().ignore_then(just(close)),
+        just(open).then_ignore(space().or_not()),
+        space().or_not().ignore_then(just(close)),
     )
 }

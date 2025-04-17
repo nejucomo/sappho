@@ -4,17 +4,17 @@ use crate::expr::effect::proc_effect;
 use crate::expr::object::object_expr;
 use crate::expr::recursive::recursive_expr;
 use crate::expr::universal::universal_expr;
-use crate::space::ws;
 use chumsky::recursive::Recursive;
 use chumsky::Parser;
 use sappho_ast::ProcExpr;
 use sappho_identifier::RcId;
+use sappho_parsable::primitive::space;
 
 pub(super) fn proc_expr_def(
     pexpr: Recursive<'_, char, ProcExpr, BareError>,
 ) -> impl Parser<char, ProcExpr, Error = BareError> + '_ {
     non_application(pexpr)
-        .separated_by(ws())
+        .separated_by(space())
         .at_least(1)
         .map(|exprs| {
             exprs
