@@ -1,38 +1,14 @@
-use crate::error::BareError;
-use chumsky::Parser;
 use sappho_listform::ListForm;
+use sappho_parsable::{ParsableWith as _, Parser};
+use sappho_unparse::Unparse;
 
-pub(crate) fn list_form<PX, PT, X, T>(
-    item: PX,
-    tail: PT,
-) -> impl Parser<char, ListForm<X, T>, Error = BareError>
+/// Temporary shim for [sappho_parsable] transition
+pub(crate) fn list_form<PX, PT, X, T>(item: PX, tail: PT) -> impl Parser<ListForm<X, T>>
 where
-    PX: Parser<char, X, Error = BareError>,
-    PT: Parser<char, T, Error = BareError> + Clone,
+    X: Unparse + std::fmt::Debug,
+    T: Unparse + std::fmt::Debug,
+    PX: Parser<X>,
+    PT: Parser<T> + Clone,
 {
-    use crate::delimited::delimited;
-    use crate::space::ws;
-    use chumsky::primitive::just;
-
-    let tailmatch = || just("..").ignore_then(tail.clone());
-    let nonempty_body = item.separated_by(just(',').then(ws().or_not())).at_least(1);
-
-    let nonempty_opt_tail = nonempty_body
-        .then(
-            just(',')
-                .then_ignore(ws())
-                .ignore_then(tailmatch())
-                .or_not(),
-        )
-        .map(|(pats, opttail)| ListForm::new(pats, opttail));
-
-    delimited(
-        '[',
-        tailmatch()
-            .map(|t| ListForm::new([], Some(t)))
-            .or(nonempty_opt_tail)
-            .or_not()
-            .map(|opt| opt.unwrap_or_else(|| ListForm::new([], None))),
-        ']',
-    )
+    ListForm::parser_with((item, tail))
 }

@@ -1,5 +1,5 @@
-use either::Either::{self, Left, Right};
-use sappho_unparse::{Stream, Unparse};
+use either::Either;
+use sappho_unparse::Unparse;
 use std::fmt;
 
 use crate::lfg::ListFormGeneric;
@@ -25,6 +25,10 @@ impl<X, T> ListForm<X, T> {
     pub fn prepend(mut self, head: X) -> Self {
         self.0.xs.insert(0, head);
         self
+    }
+
+    pub(crate) fn lfg_ref(&self) -> ListFormGeneric<&Vec<X>, &T> {
+        self.0.as_ref()
     }
 }
 
@@ -59,47 +63,6 @@ where
 {
     fn from_iter<I: IntoIterator<Item = Either<X, T>>>(iter: I) -> Self {
         ListForm(ListFormGeneric::from_iter(iter))
-    }
-}
-
-impl<X, T> Unparse for ListForm<X, T>
-where
-    X: Unparse,
-    T: Unparse,
-{
-    fn unparse_into(&self, s: &mut Stream) {
-        use sappho_unparse::Brackets::Square;
-        use sappho_unparse::Break::OptSpace;
-
-        if self.is_empty() {
-            s.write("[]")
-        } else {
-            s.bracketed(Square, |subs| {
-                let mut first = true;
-
-                for xort in self.0.as_ref() {
-                    match xort {
-                        Left(elem) => {
-                            if first {
-                                first = false;
-                            } else {
-                                subs.write(",");
-                            }
-                            subs.write(&OptSpace);
-                            subs.write(elem);
-                        }
-                        Right(tail) => {
-                            if !first {
-                                subs.write(",");
-                            }
-                            subs.write(&OptSpace);
-                            subs.write("..");
-                            subs.write(tail);
-                        }
-                    }
-                }
-            });
-        }
     }
 }
 

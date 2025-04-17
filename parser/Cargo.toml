@@ -21,6 +21,7 @@ sappho-object.workspace = true
 sappho-parsable.workspace = true
 sappho-primval.workspace = true
 sappho-source.workspace = true
+sappho-unparse.workspace = true
 
 [dev-dependencies]
 test-case.workspace = true
