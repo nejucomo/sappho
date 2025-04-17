@@ -7,7 +7,7 @@ use crate::node::Node;
 pub struct List<T>(Option<Rc<Node<T>>>);
 
 impl<T> List<T> {
-    pub fn iter(&self) -> impl Iterator<Item = &T> + Into<Self> + Into<&Self> {
+    pub fn iter(&self) -> ListIter<T> {
         ListIter { listptr: self }
     }
 

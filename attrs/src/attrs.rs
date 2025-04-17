@@ -78,6 +78,11 @@ where
         with_id(key, |id| self.0.get(id))
     }
 
+    /// Refer to the item stored at `key`
+    pub fn get_opt(&self, key: &RcId) -> Option<&T> {
+        self.0.get(key)
+    }
+
     /// Take the value(s) for the given `key`
     pub fn take<K>(&mut self, key: K) -> Result<T, Missing>
     where

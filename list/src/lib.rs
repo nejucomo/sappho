@@ -1,4 +1,4 @@
 mod list;
 mod node;
 
-pub use crate::list::List;
+pub use crate::list::{List, ListIter};
