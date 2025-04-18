@@ -119,6 +119,7 @@ impl<F, Q, P, A> Object<F, Q, P, A> {
     pub fn into_try_map_values<TA, DA, E>(self, tattr: TA) -> Result<Object<F, Q, P, DA>, E>
     where
         TA: Fn(A) -> Result<DA, E>,
+        DA: std::fmt::Debug,
     {
         let mut dsta = Attrs::default();
         for (aname, x) in self.a {

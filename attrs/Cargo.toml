@@ -6,9 +6,13 @@ license.workspace = true
 homepage.workspace = true
 
 [dependencies]
+derive-new.workspace = true
+arrayvec.workspace = true
+chumsky.workspace = true
 derive_more.workspace = true
 either.workspace = true
-thiserror.workspace = true
 sappho-identifier.workspace = true
+sappho-parsable.workspace = true
+sappho-tfi.workspace = true
 sappho-unparse.workspace = true
-arrayvec.workspace = true
+thiserror.workspace = true

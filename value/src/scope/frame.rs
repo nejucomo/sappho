@@ -5,7 +5,7 @@ use crate::{Unbound, UnboundKind::Unfulfilled, ValRef};
 use sappho_ast_core::Literal;
 use sappho_ast_reduced::Pattern;
 use sappho_attrs::Attrs;
-use sappho_identifier::{IdentRef, RcId};
+use sappho_identifier::RcId;
 use std::cell::RefCell;
 
 pub use self::bindfailure::{BindFailure, BindFailureReason};
@@ -37,7 +37,7 @@ impl Frame {
         let into_bf = |r| BindFailure::new(pattern, value, r);
 
         match pattern {
-            Bind(ident) => self.bind_ident(ident.as_ref(), value).map_err(into_bf),
+            Bind(ident) => self.bind_ident(ident, value).map_err(into_bf),
             LitEq(lit) => bind_lit_eq(lit, value).map_err(into_bf),
             Unpack(unpack) => self.bind_unpack(unpack, value),
         }
@@ -57,7 +57,7 @@ impl Frame {
             .transpose()
     }
 
-    fn bind_ident(&self, ident: &IdentRef, value: &ValRef) -> Result<(), BindFailureReason> {
+    fn bind_ident(&self, ident: &RcId, value: &ValRef) -> Result<(), BindFailureReason> {
         let cell = self
             .0
             .get(ident)

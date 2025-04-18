@@ -1,5 +1,5 @@
 mod attrs;
-mod error;
+pub mod errors;
+mod parsable;
 
 pub use crate::attrs::Attrs;
-pub use crate::error::AttrsError;

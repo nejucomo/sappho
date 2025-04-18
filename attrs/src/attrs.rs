@@ -1,12 +1,12 @@
 use std::collections::BTreeMap;
+use std::fmt::Debug;
 
 use arrayvec::ArrayVec;
 use either::Either::{self, Left, Right};
-use sappho_identifier::{IdentRef, RcId};
-use sappho_unparse::Unparse;
+use sappho_identifier::RcId;
+use sappho_tfi::TryFromIterator;
 
-use crate::error::AttrsResult;
-use crate::AttrsError;
+use crate::errors::{Missing, Redefinition, Unexpected};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Attrs<T>(BTreeMap<RcId, T>);
@@ -17,18 +17,30 @@ impl<T> Attrs<T> {
         self.0.is_empty()
     }
 
-    pub fn define<K>(&mut self, id: K, val: T) -> AttrsResult<()>
+    pub fn define<K>(&mut self, id: K, val: T) -> Result<(), Redefinition<T>>
     where
         RcId: From<K>,
     {
+        use std::collections::btree_map::Entry::{Occupied, Vacant};
+
         let rcid = RcId::from(id);
-        match self.0.insert(rcid.clone(), val) {
-            None => Ok(()),
-            Some(_) => Err(AttrsError::Redefinition(rcid)),
+        match self.0.entry(rcid) {
+            Vacant(vacation) => {
+                vacation.insert(val);
+                Ok(())
+            }
+            Occupied(entry) => {
+                let (attr, existing) = entry.remove_entry();
+                Err(Redefinition {
+                    attr,
+                    existing,
+                    new: val,
+                })
+            }
         }
     }
 
-    pub fn define_many<I, K>(&mut self, pairs: I) -> AttrsResult<()>
+    pub fn define_many<I, K>(&mut self, pairs: I) -> Result<(), Redefinition<T>>
     where
         I: IntoIterator<Item = (K, T)>,
         RcId: From<K>,
@@ -39,34 +51,14 @@ impl<T> Attrs<T> {
         Ok(())
     }
 
-    /// Get an output for any key, `K`, which includes `&IdentRef`
-    ///
-    /// Three common impls are `&IdentRef`, `&'static str`, and `(k1, k2)` which is a tuple of keys.
-    ///
-    /// For non-tuple keys, the output is just `&T`. For tuple keys the output is a tuple of the sub-key outputs.
-    ///
-    /// # Panics
-    ///
-    /// A `&'static str` key must be valid as an [IdentRef] and will cause a panic if not.
-    ///
-    /// # Performance
-    ///
-    /// This method is `self.as_refs().take(key)` which is nicely composable and terribly inefficient.
-    pub fn get<K>(&self, key: K) -> AttrsResult<&T>
-    where
-        RcId: From<K>,
-    {
-        with_id(key, |id| self.0.get(id))
+    /// Get an output id
+    pub fn get(&self, id: &RcId) -> Result<&T, Missing> {
+        self.0.get(id).ok_or_else(|| Missing::from(id))
     }
 
     /// Take the value(s) for the given `key`
-    ///
-    /// See [Attrs::get] for the semantics of keys, their outputs, and panic conditions. However, the performance issue of [Attrs::get] is not present here.
-    pub fn take<K>(&mut self, key: K) -> AttrsResult<T>
-    where
-        RcId: From<K>,
-    {
-        with_id(key, |id| self.0.remove(id))
+    pub fn take(&mut self, id: &RcId) -> Result<T, Missing> {
+        self.0.remove(id).ok_or_else(|| Missing::from(id))
     }
 
     /// Take the value(s) for the given `key` and ensure the remaining `self` is empty
@@ -78,7 +70,7 @@ impl<T> Attrs<T> {
         let mut av = ArrayVec::default();
         for key in keys {
             let rcid = RcId::from(key);
-            match self.take::<&RcId>(&rcid) {
+            match self.take(&rcid) {
                 Ok(v) => av.push((rcid, v)),
                 Err(_) => {
                     // Unwind mutations:
@@ -97,11 +89,11 @@ impl<T> Attrs<T> {
         }
     }
 
-    pub fn expect_empty(self) -> AttrsResult<()> {
+    pub fn expect_empty(self) -> Result<(), Unexpected> {
         if self.is_empty() {
             Ok(())
         } else {
-            Err(AttrsError::Unexpected(self.0.into_keys().collect()))
+            Err(self.0.into_keys().collect())
         }
     }
 
@@ -147,6 +139,22 @@ impl<T> Default for Attrs<T> {
     }
 }
 
+impl<S, T> TryFromIterator<(S, T)> for Attrs<T>
+where
+    S: Into<RcId>,
+    T: Debug,
+{
+    type Error = Redefinition<T>;
+
+    fn try_append(mut self, (id, val): (S, T)) -> Result<Self, Self::Error> {
+        self.define(id.into(), val)?;
+        Ok(self)
+    }
+}
+
+/// # TODO
+///
+/// Remove in favor of `TryFromIterator`
 impl<S, T> FromIterator<(S, T)> for Attrs<T>
 where
     RcId: From<S>,
@@ -163,36 +171,4 @@ impl<T> IntoIterator for Attrs<T> {
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
     }
-}
-
-impl<T> Unparse for Attrs<T>
-where
-    T: Unparse,
-{
-    fn unparse_into(&self, s: &mut sappho_unparse::Stream) {
-        use sappho_unparse::{Brackets::Squiggle, Break::OptSpace};
-
-        if self.0.is_empty() {
-            s.write("{}");
-        } else {
-            s.bracketed(Squiggle, |subs| {
-                for (k, v) in self.iter() {
-                    subs.write(&OptSpace);
-                    subs.write(k);
-                    subs.write(": ");
-                    subs.write(v);
-                    subs.write(",");
-                }
-            });
-        }
-    }
-}
-
-fn with_id<K, F, T>(key: K, f: F) -> AttrsResult<T>
-where
-    RcId: From<K>,
-    F: FnOnce(&IdentRef) -> Option<T>,
-{
-    let id = RcId::from(key);
-    f(id.as_ref()).ok_or(AttrsError::Missing(id))
 }
