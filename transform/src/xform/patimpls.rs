@@ -1,7 +1,9 @@
 use either::Either::{self, Left, Right};
 use sappho_ast::{self as ast};
+use sappho_ast_core::Literal;
 use sappho_ast_reduced::{self as astred};
 use sappho_identifier::RcId;
+use sappho_primval::PrimVal;
 
 use crate::xform::listimpls::TailOrAttrs;
 use crate::xform::{TransformInto, TryTransformInto};
@@ -10,7 +12,7 @@ impl TransformInto<astred::Pattern> for ast::Pattern {
     fn transform(self) -> astred::Pattern {
         match self {
             ast::Pattern::Bind(x) => astred::Pattern::Bind(x),
-            ast::Pattern::LitEq(x) => astred::Pattern::LitEq(x),
+            ast::Pattern::LitEq(x) => astred::Pattern::LitEq(x.into()),
             ast::Pattern::Unpack(x) => astred::Pattern::Unpack(x.transform()),
             ast::Pattern::List(x) => x.transform(),
         }
@@ -21,7 +23,8 @@ impl TransformInto<ast::Pattern> for astred::Pattern {
     fn transform(self) -> ast::Pattern {
         match self {
             astred::Pattern::Bind(x) => ast::Pattern::Bind(x),
-            astred::Pattern::LitEq(x) => ast::Pattern::LitEq(x),
+            // We avoid `impl From<Literal> for PrimVal` as we intend to phase out `Literal`:
+            astred::Pattern::LitEq(Literal::Num(n)) => ast::Pattern::LitEq(PrimVal::Num(n)),
             astred::Pattern::Unpack(attrs) => {
                 attrs.try_transform().either(ast::Pattern::List, |attrs| {
                     ast::Pattern::Unpack(attrs.transform())

@@ -2,11 +2,18 @@ use rand::distr::{Distribution, StandardUniform};
 use rand::Rng;
 use sappho_ast_core::Literal;
 use sappho_identifier::{Identifier, RcId};
+use sappho_primval::PrimVal;
 
 use crate::AstFuzz;
 
 impl Distribution<Literal> for AstFuzz {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Literal {
+        <Self as Distribution<PrimVal>>::sample(self, rng).into()
+    }
+}
+
+impl Distribution<PrimVal> for AstFuzz {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> PrimVal {
         let f: f64 = if rng.random_ratio(4, 5) {
             // 4 of 5 numbers are an integer:
             let range = if rng.random_ratio(2, 3) {
@@ -23,7 +30,7 @@ impl Distribution<Literal> for AstFuzz {
             // The rest are random floats:
             self.sample(rng)
         };
-        Literal::Num(f)
+        PrimVal::Num(f)
     }
 }
 

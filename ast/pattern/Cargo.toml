@@ -1,19 +1,14 @@
 [package]
-name = "sappho-ast-fuzz"
+name = "sappho-ast-pattern"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 
 [dependencies]
-derive-new.workspace = true
-rand.workspace = true
-sappho-ast.workspace = true
-sappho-ast-core.workspace = true
-sappho-ast-effect.workspace = true
+derive_more.workspace = true
 sappho-attrs.workspace = true
 sappho-identifier.workspace = true
 sappho-listform.workspace = true
-sappho-object.workspace = true
 sappho-primval.workspace = true
-sappho-rand-dcomp.workspace = true
+sappho-unparse.workspace = true

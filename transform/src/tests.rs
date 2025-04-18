@@ -3,6 +3,7 @@ use sappho_ast_core::Literal;
 use sappho_ast_reduced as astred;
 use sappho_attrs::Attrs;
 use sappho_identifier::RcId;
+use sappho_primval::PrimVal;
 use test_case::test_case;
 
 use crate::TransformInto;
@@ -101,7 +102,7 @@ where
             ),
             (
                 "tail",
-                ast::Pattern::LitEq(Literal::Num(42.0)),
+                ast::Pattern::LitEq(PrimVal::Num(42.0)),
             )
         ]),
     )
