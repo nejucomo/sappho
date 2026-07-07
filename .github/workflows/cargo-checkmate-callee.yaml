@@ -22,5 +22,5 @@ jobs:
       - uses: taiki-e/cache-cargo-install-action@v1
         with:
           tool: cargo-checkmate@0.1.18
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: cargo-checkmate run ${{ matrix.phase }}
