@@ -3,4 +3,16 @@ name: cargo-checkmate Continuous Integration
 on: pull_request
 jobs:
   phases:
-    uses: cargo-checkmate/cargo-checkmate/.github/workflows/callee.yaml@gh-callee-v1
+    name: phases / ${{ matrix.phase }}
+    strategy:
+      matrix:
+        phase: [cache-checkmate, audit, build, check, clippy, doc, format, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: taiki-e/cache-cargo-install-action@v1
+        with:
+          tool: cargo-checkmate@0.1.18
+      - uses: actions/checkout@v3
+        if: matrix.phase != 'cache-checkmate'
+      - run: cargo-checkmate run ${{ matrix.phase }}
+        if: matrix.phase != 'cache-checkmate'
