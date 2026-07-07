@@ -20,7 +20,7 @@ impl Options {
         <Options as Parser>::parse()
     }
 
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self) -> Result<'_, ()> {
         use self::runcmd::RunCommand;
 
         self.cmd_run(self)
