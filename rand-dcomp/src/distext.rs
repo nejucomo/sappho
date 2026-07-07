@@ -67,7 +67,7 @@ pub trait DistributionExt<T>: Sized + Distribution<T> {
     /// assert!(matches!(FruitSampler.sample(&mut rng), Grape(Green)));
     /// assert!(matches!(FruitSampler.sample(&mut rng), Banana));
     /// ```
-    fn weighted_case(&self, freq: u32) -> WeightedCaseBase<Self> {
+    fn weighted_case(&self, freq: u32) -> WeightedCaseBase<'_, Self> {
         WeightedCaseBase::new(self, freq)
     }
 }
