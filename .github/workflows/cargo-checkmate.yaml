@@ -1,6 +1,9 @@
 name: cargo-checkmate Continuous Integration
 
 on: pull_request
+permissions:
+  contents: read
+
 jobs:
   phases:
     uses: ./.github/workflows/cargo-checkmate-callee.yaml
