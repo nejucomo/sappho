@@ -2,6 +2,11 @@ use sappho_ast::PureExpr;
 
 use crate::{Result, SourceOption, UnparseFormat};
 
+// HACK FIXME: we need a new error type rather than a source-based error.
+pub fn repl() -> Result<'static, ()> {
+    todo!();
+}
+
 pub fn eval(source: &SourceOption) -> Result<'_, ()> {
     let x = sappho_interpreter::interpret(source)?;
     println!("{}", x);

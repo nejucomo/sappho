@@ -11,7 +11,7 @@ pub struct Options {
     pub trace: bool,
 
     #[clap(subcommand)]
-    command: Command,
+    command: Option<Command>,
 }
 
 impl Options {
@@ -29,6 +29,9 @@ impl Options {
 /// subcommands
 #[derive(Debug, Subcommand)]
 pub enum Command {
+    /// Start the interactive REPL (default command)
+    Repl,
+
     /// Eval an input
     Eval(SourceOptions),
 

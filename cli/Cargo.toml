@@ -17,3 +17,4 @@ sappho-parser.workspace = true
 sappho-source.workspace = true
 sappho-transform.workspace = true
 simplelog.workspace = true
+thiserror.workspace = true

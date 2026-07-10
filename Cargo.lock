@@ -545,6 +545,7 @@ dependencies = [
  "sappho-source",
  "sappho-transform",
  "simplelog",
+ "thiserror",
 ]
 
 [[package]]
