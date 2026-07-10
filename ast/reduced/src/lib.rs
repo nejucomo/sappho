@@ -1,4 +1,4 @@
-//! The Reduced Abstract Syntax Tree is a subset of [`sappho-ast`] for evaluation
+//! The Reduced Abstract Syntax Tree is a subset of `sappho-ast` for evaluation
 
 mod expr;
 mod pattern;
