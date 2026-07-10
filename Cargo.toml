@@ -15,7 +15,7 @@ members = [
   "listform",
   "object",
   "parser",
-  "rand-dcomp",
+  "rand-dcomp", "repl",
   "source",
   "transform",
   "unparse",

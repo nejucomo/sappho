@@ -652,6 +652,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "sappho-repl"
+version = "0.1.0"
+
+[[package]]
 name = "sappho-source"
 version = "0.1.0"
 dependencies = [
