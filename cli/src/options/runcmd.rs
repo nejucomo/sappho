@@ -18,7 +18,7 @@ impl RunCommand for Command {
         use Command::*;
 
         match self {
-            Repl => cmds::repl(),
+            Repl => cmds::repl()?,
             Eval(opts) => cmds::eval(&opts.source)?,
             Parse(opts) => cmds::parse(&opts.source.source, &opts.format)?,
             Fuzz(opts) => cmds::fuzz(opts.max_depth, &opts.format),

@@ -5,7 +5,7 @@ use crate::{SourceOption, UnparseFormat};
 
 // HACK FIXME: we need a new error type rather than a source-based error.
 pub fn repl() -> Result<(), sappho_repl::ReplError> {
-    todo!();
+    sappho_repl::run_repl()
 }
 
 pub fn eval(source: &SourceOption) -> Result<(), sappho_interpreter::Error<'_>> {
