@@ -542,6 +542,7 @@ dependencies = [
  "sappho-ast-fuzz",
  "sappho-interpreter",
  "sappho-parser",
+ "sappho-repl",
  "sappho-source",
  "sappho-transform",
  "simplelog",
@@ -599,6 +600,7 @@ dependencies = [
  "sappho-parser",
  "sappho-source",
  "sappho-transform",
+ "thiserror",
 ]
 
 [[package]]
@@ -654,6 +656,9 @@ dependencies = [
 [[package]]
 name = "sappho-repl"
 version = "0.1.0"
+dependencies = [
+ "thiserror",
+]
 
 [[package]]
 name = "sappho-source"

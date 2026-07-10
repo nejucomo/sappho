@@ -1,6 +1,6 @@
 mod runcmd;
 
-use crate::{Result, SourceOption};
+use crate::{CliResult, SourceOption};
 use clap::{ArgEnum, Parser, Subcommand};
 
 /// sappho interpreter
@@ -19,7 +19,7 @@ impl Options {
         <Options as Parser>::parse()
     }
 
-    pub fn run(&self) -> Result<'_, ()> {
+    pub fn run(&self) -> CliResult<'_, ()> {
         use self::runcmd::RunCommand;
 
         self.cmd_run(self)
