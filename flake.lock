@@ -24,11 +24,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1783458575,
-        "narHash": "sha256-ZkOLiAqrlR6xkd5YFh1XvjcpEUaggRGJLCpsm4+EK9U=",
+        "lastModified": 1783893700,
+        "narHash": "sha256-TPQj0MHNHPYchHQ0wHYbOn0vlB6T6Ibl4MiIuKvWt9U=",
         "owner": "nejucomo",
         "repo": "dry-flakes",
-        "rev": "c35d3a1ab7aa2489e3f40c2955384b02e614c79c",
+        "rev": "6dc3beabaa06b3193670c32be70f1d01e1b1c2a3",
         "type": "github"
       },
       "original": {
