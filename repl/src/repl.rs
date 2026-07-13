@@ -1,3 +1,8 @@
+use sappho_code_origin::CodeOrigin;
+use sappho_eval::eval;
+use sappho_parser::parse;
+use sappho_transform::reduce;
+
 use crate::interaction::Interaction;
 use crate::outcome::ExecOutcome;
 use crate::ReplResult;
@@ -45,7 +50,8 @@ impl Repl {
     }
 
     fn exec(&mut self, code: CodeOrigin<'_>) -> ExecOutcome {
-        let expr = sappho_parser::parse(code)?;
-        todo!("{input:?}")
+        let expr = parse(code)?;
+        let val = eval(reduce(expr))?;
+        Ok(val)
     }
 }

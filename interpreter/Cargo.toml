@@ -11,6 +11,6 @@ anyhow.workspace = true
 derive_more.workspace = true
 sappho-eval.workspace = true
 sappho-parser.workspace = true
-sappho-source.workspace = true
+sappho-code-origin.workspace = true
 sappho-transform.workspace = true
 thiserror.workspace = true

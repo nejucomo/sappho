@@ -8,6 +8,8 @@ homepage.workspace = true
 [dependencies]
 derive-new.workspace = true
 derive_more = { workspace = true, features = ["from"] }
+sappho-code-origin.workspace = true
 sappho-eval.workspace = true
 sappho-parser.workspace = true
+sappho-transform.workspace = true
 thiserror.workspace = true

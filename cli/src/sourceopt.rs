@@ -1,7 +1,8 @@
-use sappho_source::{CodeOrigin, LoadSource};
 use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
+
+use sappho_code_origin::CodeOrigin;
 
 #[derive(Debug, Default)]
 pub enum SourceOption {
@@ -11,16 +12,21 @@ pub enum SourceOption {
 }
 use SourceOption::*;
 
-impl<'a> LoadSource<'a> for &'a SourceOption {
-    fn load(self) -> anyhow::Result<CodeOrigin<'a>> {
+impl SourceOption {
+    pub fn try_load_code(&self) -> anyhow::Result<CodeOrigin<'static>> {
+        use SourceOption::*;
+
         match self {
             Stdin => {
-                use std::io::Read;
-                let mut s = String::new();
-                std::io::stdin().read_to_string(&mut s)?;
-                s.load()
+                use std::io::{stdin, Read as _};
+
+                let mut code = "".to_string();
+                let n = stdin().read_to_string(&mut code)?;
+                assert_eq!(n, code.len());
+
+                Ok(CodeOrigin::new(code, "<stdin>"))
             }
-            Path(p) => p.as_path().load(),
+            Path(path) => CodeOrigin::load_path(path),
         }
     }
 }

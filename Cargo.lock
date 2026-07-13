@@ -540,13 +540,22 @@ dependencies = [
  "log",
  "sappho-ast",
  "sappho-ast-fuzz",
+ "sappho-code-origin",
  "sappho-interpreter",
  "sappho-parser",
  "sappho-repl",
- "sappho-source",
  "sappho-transform",
  "simplelog",
  "thiserror",
+]
+
+[[package]]
+name = "sappho-code-origin"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "anyhow-std",
+ "derive-new",
 ]
 
 [[package]]
@@ -584,6 +593,7 @@ dependencies = [
  "anyhow-std",
  "derive_more",
  "indoc",
+ "sappho-code-origin",
  "sappho-interpreter",
  "sappho-parser",
  "sappho-transform",
@@ -596,9 +606,9 @@ dependencies = [
  "anyhow",
  "anyhow-std",
  "derive_more",
+ "sappho-code-origin",
  "sappho-eval",
  "sappho-parser",
- "sappho-source",
  "sappho-transform",
  "thiserror",
 ]
@@ -638,10 +648,10 @@ dependencies = [
  "sappho-ast-core",
  "sappho-ast-effect",
  "sappho-attrs",
+ "sappho-code-origin",
  "sappho-identifier",
  "sappho-listform",
  "sappho-object",
- "sappho-source",
  "test-case",
 ]
 
@@ -659,18 +669,11 @@ version = "0.1.0"
 dependencies = [
  "derive-new",
  "derive_more",
+ "sappho-code-origin",
  "sappho-eval",
  "sappho-parser",
+ "sappho-transform",
  "thiserror",
-]
-
-[[package]]
-name = "sappho-source"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "anyhow-std",
- "derive-new",
 ]
 
 [[package]]

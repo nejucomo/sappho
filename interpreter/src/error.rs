@@ -1,10 +1,11 @@
 use derive_more::From;
+use sappho_parser::ParseErrors;
 use thiserror::Error;
 
 #[derive(Debug, Error, From)]
 pub enum Error<'a> {
     #[error("{0}")]
-    LoadParse(sappho_parser::LoadParseError<'a>),
+    Parse(ParseErrors<'a>),
     #[error("eval error: {0}")]
     Eval(sappho_eval::Error),
 }

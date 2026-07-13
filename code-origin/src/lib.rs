@@ -15,7 +15,7 @@ pub struct CodeOrigin<'a> {
 }
 
 impl<'a> CodeOrigin<'a> {
-    /// Load source from a [Path] or [PathBuf].
+    /// Load source from a [Path] or [PathBuf](std::path::PathBuf).
     pub fn load_path(path: impl AsRef<Path>) -> anyhow::Result<CodeOrigin<'a>> {
         use anyhow_std::PathAnyhow as _;
 

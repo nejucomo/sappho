@@ -8,7 +8,9 @@ pub enum CliError<'e> {
     #[error(transparent)]
     Eval(sappho_interpreter::Error<'e>),
     #[error("{0}")]
-    LoadParse(sappho_parser::LoadParseError<'e>),
+    Parse(sappho_parser::ParseErrors<'e>),
+    #[error(transparent)]
+    Anyhow(anyhow::Error),
 }
 
 pub type CliResult<'e, T> = Result<T, CliError<'e>>;

@@ -5,6 +5,7 @@ use sappho_ast_core::{
 };
 use sappho_ast_effect::Effect;
 use sappho_attrs::Attrs;
+use sappho_code_origin::CodeOrigin;
 use sappho_identifier::RcId;
 use test_case::test_case;
 
@@ -375,7 +376,7 @@ fn list_pat<const K: usize>(pats: [Pattern; K], tail: Option<&'static str>) -> P
     ; "let list singleton and tail"
 )]
 fn positive(input: &str) -> PureExpr {
-    match crate::parse(input) {
+    match crate::parse(CodeOrigin::new(input, "<test input>")) {
         Ok(x) => x,
         Err(e) => {
             eprintln!("{}", e);

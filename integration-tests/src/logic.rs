@@ -1,9 +1,11 @@
 use std::path::PathBuf;
 
+use sappho_code_origin::CodeOrigin;
+
 pub fn test_eval(inpath: PathBuf, input: &str, expected: &str) {
     use sappho_interpreter::interpret;
 
-    let res = interpret((inpath.as_path(), input));
+    let res = interpret(codor(inpath, input));
     let actual = match res {
         Ok(x) => x.to_string(),
         Err(x) => x.to_string(),
@@ -16,7 +18,7 @@ pub fn test_unparse(inpath: PathBuf, input: &str, expected: &str, style: &str) {
     use sappho_parser::parse;
     use sappho_transform::{canonicalize, reduce};
 
-    let ast = parse((inpath.as_path(), input)).unwrap();
+    let ast = parse(codor(inpath, input)).unwrap();
     let actual = if style == "canonical" {
         canonicalize(ast).to_string()
     } else if style == "reduced" {
@@ -36,4 +38,8 @@ fn check_equal(expected: &str, actual: String) {
             actual.replace('\n', "\n  ")
         );
     }
+}
+
+fn codor(inpath: PathBuf, input: &str) -> CodeOrigin<'_> {
+    CodeOrigin::new(input, format!("file {:?}", inpath.display()))
 }
