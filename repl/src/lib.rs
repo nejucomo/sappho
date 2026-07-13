@@ -1,5 +1,7 @@
 #[deny(unsafe_code)]
 mod error;
+mod interaction;
+mod outcome;
 mod repl;
 
 pub use self::error::{ReplError, ReplResult};
