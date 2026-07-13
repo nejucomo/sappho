@@ -1,15 +1,15 @@
 use crate::error::{BareError, Span};
-use sappho_source::Source;
+use sappho_source::CodeOrigin;
 use std::fmt;
 
 #[derive(Debug)]
 pub struct SourcedError<'a> {
-    source: Source<'a>,
+    source: CodeOrigin<'a>,
     bare: BareError,
 }
 
 impl<'a> SourcedError<'a> {
-    pub fn new(source: Source<'a>, bare: BareError) -> Self {
+    pub fn new(source: CodeOrigin<'a>, bare: BareError) -> Self {
         SourcedError { source, bare }
     }
 }

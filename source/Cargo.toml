@@ -8,3 +8,4 @@ homepage.workspace = true
 [dependencies]
 anyhow.workspace = true
 anyhow-std.workspace = true
+derive-new.workspace = true

@@ -660,6 +660,7 @@ dependencies = [
  "derive-new",
  "derive_more",
  "sappho-eval",
+ "sappho-parser",
  "thiserror",
 ]
 
@@ -669,6 +670,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "anyhow-std",
+ "derive-new",
 ]
 
 [[package]]

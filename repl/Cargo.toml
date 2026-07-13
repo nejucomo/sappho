@@ -9,4 +9,5 @@ homepage.workspace = true
 derive-new.workspace = true
 derive_more = { workspace = true, features = ["from"] }
 sappho-eval.workspace = true
+sappho-parser.workspace = true
 thiserror.workspace = true

@@ -16,16 +16,17 @@ impl Repl {
 
     fn handle_one_interaction(&mut self) -> ReplResult<()> {
         let ix = self.history.len();
-        let input = self.prompt_for_input(ix)?;
-        let outcome = self.exec(&input);
+        let origin = format!("input {ix}");
+        let input = self.prompt_for_input(&origin)?;
+        let outcome = self.exec(CodeOrigin::new(&input, &origin));
         let ntx = Interaction::new(ix, input, outcome);
         self.print(ntx.to_string())?;
         self.history.push(ntx);
         Ok(())
     }
 
-    fn prompt_for_input(&mut self, ix: usize) -> ReplResult<String> {
-        self.print(format!("input {ix}: "))?;
+    fn prompt_for_input(&mut self, label: &str) -> ReplResult<String> {
+        self.print(format!("{label}: "))?;
 
         let mut input = "".to_string();
         let n = std::io::stdin().read_line(&mut input)?;
@@ -43,7 +44,8 @@ impl Repl {
         Ok(())
     }
 
-    fn exec(&mut self, input: &str) -> ExecOutcome {
+    fn exec(&mut self, code: CodeOrigin<'_>) -> ExecOutcome {
+        let expr = sappho_parser::parse(code)?;
         todo!("{input:?}")
     }
 }
