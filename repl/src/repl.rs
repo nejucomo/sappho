@@ -14,24 +14,27 @@ pub(crate) struct Repl {
 
 impl Repl {
     pub(crate) fn run(mut self) -> ReplResult<()> {
-        loop {
-            self.handle_one_interaction()?;
-        }
-    }
-
-    fn handle_one_interaction(&mut self) -> ReplResult<()> {
-        let ix = self.history.len();
-        let origin = format!("input {ix}");
-        let input = self.prompt_for_input(&origin)?;
-        let outcome = self.exec(CodeOrigin::new(&input, &origin));
-        let ntx = Interaction::new(ix, input, outcome);
-        self.print(ntx.to_string())?;
-        self.history.push(ntx);
+        while self.handle_one_interaction()? {}
         Ok(())
     }
 
+    fn handle_one_interaction(&mut self) -> ReplResult<bool> {
+        let ix = self.history.len();
+        let origin = format!("input {ix}");
+        let input = self.prompt_for_input(&origin)?;
+        let has_input = !input.trim_end().is_empty();
+
+        if has_input {
+            let outcome = self.exec(CodeOrigin::new(&input, &origin));
+            let ntx = Interaction::new(ix, input, outcome);
+            self.print(ntx.outcome_string())?;
+            self.history.push(ntx);
+        }
+        Ok(has_input)
+    }
+
     fn prompt_for_input(&mut self, label: &str) -> ReplResult<String> {
-        self.print(format!("{label}: "))?;
+        self.print(format!("\n{label}: "))?;
 
         let mut input = "".to_string();
         let n = std::io::stdin().read_line(&mut input)?;
