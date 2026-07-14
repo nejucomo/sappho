@@ -1,14 +1,14 @@
 use crate::error::{BareError, SourcedError};
-use sappho_source::Source;
+use sappho_code_origin::CodeOrigin;
 use std::fmt;
 
 #[derive(Debug)]
 pub struct ErrorSet<E>(Vec<E>);
 
-pub type Errors<'a> = ErrorSet<SourcedError<'a>>;
+pub type ParseErrors<'a> = ErrorSet<SourcedError<'a>>;
 
-impl<'a> Errors<'a> {
-    pub fn attach_source(source: Source<'a>, bares: Vec<BareError>) -> Self {
+impl<'a> ParseErrors<'a> {
+    pub fn attach_source(source: CodeOrigin<'a>, bares: Vec<BareError>) -> Self {
         ErrorSet(
             bares
                 .into_iter()

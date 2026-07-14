@@ -5,6 +5,10 @@ use sappho_value::{BindFailure, CoercionFailure, Unbound, ValRef};
 use std::fmt;
 
 /// An evaluation error.
+///
+/// # TODO
+///
+/// Change to `thiserror::Error`
 #[derive(Debug, From)]
 pub enum Error {
     Unbound(Unbound),
