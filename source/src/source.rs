@@ -13,7 +13,7 @@ pub struct Source<'a> {
 
 impl<'a> Source<'a> {
     /// Load source from a [Path].
-    pub fn load_path(path: &Path) -> Result<Source> {
+    pub fn load_path(path: &Path) -> Result<Source<'_>> {
         use anyhow_std::PathAnyhow;
 
         let text = path.read_to_string_anyhow()?;

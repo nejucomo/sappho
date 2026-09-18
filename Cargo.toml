@@ -22,6 +22,9 @@ members = [
   "value",
 ]
 
+[workspace.metadata.crane]
+name = "sappho"
+
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
